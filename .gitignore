@@ -4,3 +4,4 @@
 *.out
 *.fls
 *.synctex.gz
+*.synctex(busy)
