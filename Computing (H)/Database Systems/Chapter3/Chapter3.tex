@@ -141,9 +141,9 @@ The fundamental challenge is that a database is too large to fit in the main mem
     \item Since the hard disk is not CPU-accessible, we need to first load the data into main memory from the disk, and then process it in the main memory.
     \item The speed of data access becomes low- data access from HDD takes 30ms, while it only takes about 30ns in RAM.
 \end{itemize}
-So, the main bottleneck is transferring data from the disk to main memory. We will organise data on disks in such a way that minimises this latency.
+So, the main bottleneck in query execution is transferring data from the disk to main memory. We will organise data on disks in such a way that minimises this latency.
 
-Our first challenge is therefore to organise tuples on the disk to minimise I/O access cost. We will first consider how data is represented. A tuple is represented as a record- a sequence of binary digits. Records are grouped together into blocks. A file is composed of many blocks. This is illustrated below.
+Our first challenge is therefore to organise tuples on the disk to minimise I/O access cost. We will first consider how data is represented. A tuple is represented as a sequence of binary digits. Records are grouped together into blocks. A file is composed of many blocks. This is illustrated below.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -161,6 +161,7 @@ Our first challenge is therefore to organise tuples on the disk to minimise I/O 
     \end{tikzpicture}
     \caption{A file stored in blocks}
 \end{figure}
+\noindent Here, the 3 tables form a file; each table represents a block; and a cell in the table is a record.
 
 Records can be of fixed or variable length. This depends on whether the attributes have a fixed size (in bytes), or whether the size of the attributes can vary. We will assume that the attributes have fixed size. 
 
@@ -177,9 +178,9 @@ Then, a tuple takes
 \[30 + 10 + 4 + 4 + 20 + 6 = 74\]
 bytes.
 
-A block is of fixed length. It is somewhere between 512 bytes and 4096 bytes typically. If we have a record of $R$ bytes and a block of $B$ bytes. The blocking factor (\textit{bfr}) is the number of records that can be stored in a block. It is given by
-\[\textit{bfr} = \operatorname{floor}(B/R).\]
-For example, if $\textit{bfr} = 100$, then we can store up to 100 records in a single block. We must have at least one record per block, so we require $B \geq R$.
+A block is of fixed length. It is somewhere between 512 bytes and 4 096 bytes typically. The blocking factor (\textit{bfr}) is the number of records that can be stored in a block. It is given by
+\[\textit{bfr} = \operatorname{floor}(B/R),\]
+where a record occupies $R$ bytes and a block can store $B$ bytes. For example, if $\textit{bfr} = 100$, then we can store up to 100 records in a single block. We must have at least one record per block, so we require $B \geq R$.
 
 Another challenge is how we allocate the blocks of files on the disk. We can use linked allocation. Here, each block $i$ has a pointer to the physical address to the logically next block $i+1$ anywhere on the disk. So, it is essentially a linked list of blocks. This is illustrated below.
 \begin{figure}[H]
@@ -204,7 +205,7 @@ Another challenge is how we allocate the blocks of files on the disk. We can use
     \caption{A file as a linked list of blocks}
 \end{figure}
 
-Now, assume we have the relation \texttt{Employee} with $r = 1103$ tuples, each one corresponding to a fixed-length record. Moreover, each record has the following fields:
+Now, we consider an example. Assume we have the relation \texttt{Employee} with $r = 1103$ tuples, each one corresponding to a fixed-length record. Moreover, each record has the following fields:
 \begin{itemize}
     \item \texttt{Name} (30 bytes),
     \item \texttt{SSN} (10 bytes), and
@@ -216,7 +217,7 @@ bytes. Therefore, the tuple size $R = 100$ bytes. Then, if the block size $B = 5
 \[\textit{bfr} = \operatorname{floor}(B/R) = 5.\]
 This means that we can store at most 5 tuples per a block. So, to store all $r = 1103$ tuples, we need
 \[b = \operatorname{ceil}(r/\textit{bfr}) = 221\]
-blocks to store all the records.
+blocks.
 
 Our next challenge is to distribute records within blocks to minimise I/O cost. For this, we will consider 3 representations of data:
 \begin{itemize}
@@ -238,10 +239,10 @@ Inserting a new record is efficient for heap files. We just load the last block 
 
 Searching for a record is inefficient. We have to perform a linear search through all the $b$ file blocks. In particular, we load a block at a time from disk to memory and search for the record. If the searched tuple is not unique, we need to access all the files. Assuming that the searched tuple is unique, then it takes about $b/2$ block accesses to find it. In both cases, this is $O(b)$ block accesses. Since databases store large amounts of data, this is considered inefficient.
 
-Similarly, deleting a file is inefficient. We need to first search the records. Then, we remove it from the block and write the block back to the disk. This leaves unused spaces within blocks, which is quite inefficient. So, this is also $O(b)$ block access. To simulate deletion, we use deletion markers. It is a single bit, where the value 1 means that the record has been deleted. We periodically reorganise the file by gathering the non-deleted records and freeing up blocks with deleted records.
+Similarly, deleting a file is inefficient. We need to first search the records. Then, we remove it from the block and write the block back to the disk. This leaves unused spaces within blocks, which is quite inefficient. So, this is also $O(b)$ block access. To simulate deletion and avoid this inefficiency, we can use deletion markers. In that case, each record stores an extra bit, where the value 1 means that the record has been deleted. We periodically reorganise the file by gathering the non-deleted records and freeing up blocks with deleted records.
 
 \subsection{Sequential files}
-All the records in a sequential file are physically sorted by an ordering field, and we keep the files sorted at all times. Sequential file storage is suitable for queries that require:
+All the records in a sequential file are physically sorted by an ordering field. We keep the files sorted at all times. Sequential file storage is suitable for queries that require:
 \begin{itemize}
     \item sequential scanning, i.e. data returned in some order (if it is the same as the ordering field);
     \item order searching, e.g. data similar to given values; and
@@ -256,7 +257,7 @@ Range queries (with respect to the ordering field) are efficient for sequential 
 
 Insertion is not efficient for sequential files. We first locate the block where the record should be inserted- this requires $O(\log_2 b)$. On average, we will need to move half of the records to make room for the new record. This is very expensive for large files. We can alternatively use chain pointers. Here, each record points to the logically next ordered record. If there is free space in the right block, we insert the new there. Otherwise, we insert the new record in an overflow block and use chain pointers. Pointers must be updated; it is a sorted linked-list. Having pointers increases overflow, and we will have to periodically reorganise the blocks.
 
-Deleting a tuple is expensive as well. First, we have to locate whether the record is to be deleted. We update the deletion marker from 0 to 1, and update the pointer not to point to the deleted record. We have to periodically reorganise the blocks in this case as well.
+Deleting a tuple is expensive as well. First, we have to locate whether the record is to be deleted. We can delete the entry, which would add a gap. Also, we can make use of deletion markers. In that case, we update the deletion marker from 0 to 1, and update the pointer not to point to the deleted record. In both cases, we have to periodically reorganise the blocks.
 
 Updating on the ordering field is expensive. The record is deleted from the old position and gets inserted into its new position- it involves both insertion and deletion, both of which are expensive. However, updating on a non-ordering field is efficient. We just find the tuple and update one attribute, and write the block back to the disk. So, this involves $O(\log_2 b) + O(1)$ block accesses.
 
@@ -291,7 +292,7 @@ If the hash function is $h(k) = k \bmod{3}$, then we can assign the employees in
             
             \draw[fill=blue!30, opacity=0.3] (0.5, \i+1.4) -- (0.5, \i+0.6) -- (2.5, \i+0.6) -- (2.5, \i+1.4) -- cycle;
         };
-        \draw[fill=gray!30, opacity=0.3] (3, 2.4) -- (3, 1.6) -- (5, 1.6) -- (5, 2.4) -- cycle;
+        \draw[fill=green!30, opacity=0.3] (3, 2.4) -- (3, 1.6) -- (5, 1.6) -- (5, 2.4) -- cycle;
         
         \node at (1, 1) {\texttt{4541}};
         \node at (1, 2) {\texttt{1000}};
@@ -303,7 +304,7 @@ If the hash function is $h(k) = k \bmod{3}$, then we can assign the employees in
         \draw[->] (2.5, 2) -- (3, 2);
     \end{tikzpicture}
 \end{figure}
-\noindent The blue blocks are part of the main bucket, while the gray ones are the overflow blocks. We require 4 buckets to hash these values. If we were using heap or sequential representation, we would only need 3 blocks. Since the hashing function does not uniformly distribute the blocks, we instead require 4 here.
+\noindent The blue blocks are part of the main bucket, while the green ones are the overflow blocks. We require 4 buckets to hash these values. If we were using heap or sequential representation, we would only need 3 blocks. Since the hashing function does not uniformly distribute the blocks, we instead require 4 here.
 
 Now, we calculate the expected number of block accesses. We are searching with respect to the \texttt{SSN} attribute. We assume that each bucket has equal probability. If the hashed value is 0, then we need to access 1 block and 1 record. The same is true if the hashed value is 2. Instead, if the hashed value is 1, then we need to access 2 blocks- 2 records in the main bucket and 2 overflown buckets. So, the expected block access is
 \[\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 = \frac{4}{3}.\]
@@ -387,7 +388,7 @@ block accesses. We can plot these lines and see which option is better depending
 \section{Indexing Methodology}
 We have looked at physical design of the database. The objective there was that, given a specific file type, we provide a primary access path based on a specific searching field. Now, we will look at index design. In this case, our objective is, given any file type, we provide a secondary access path using more than one searching field. 
 
-Adding a secondary access path means that we need to store additional (metadata) files on the disk. Moreover, we need to maintain them so that they are consistent with the actual data. However, we significantly improve the searching process by avoiding linear scanning.
+Adding a secondary access path means that we need to store additional (metadata) files on the disk. Moreover, we need to maintain them so that they are consistent with the actual data. Although the overhead has increased, we significantly improve the searching process by avoiding linear scanning.
 
 % The image below summarises the trade-off between the overhead (storage and maintenance) and the speed of query execution using primary and second access paths.
 % \begin{figure}[H]
@@ -491,7 +492,7 @@ There are 2 indexing strategies. A dense index has an index entry for every reco
 
 Another expectation we have is than searching over index is faster than over the file. Since indexing file is an ordered file, we can adopt a binary/tree-based approach to find the pointer to the actual data block. This makes the procedure much faster than linear search.
 
-There are 3 types of index types- primary, clustering and secondary index. Primary index is where the index field is an ordering, key field of a sequential file (e.g. \texttt{SSN}, where the file is sorted by \texttt{SSN}). Clustering index is where the index field is an ordering, non-key field of a sequential file (e.g. \texttt{DNO}, where the file is sorted by \texttt{DNO}). Secondary index, where the index field is non-ordering, i.e. the files are not sorted with respect to this attribute. The index field may be key or non-key.
+There are 3 types of index types- primary, clustering and secondary index. Primary index is where the index field is an ordering, key field of a sequential file (e.g. \texttt{SSN}, where the file is sorted by \texttt{SSN}). Clustering index is where the index field is an ordering, non-key field of a sequential file (e.g. \texttt{DNO}, where the file is sorted by \texttt{DNO}). Secondary index is where the index field is non-ordering, i.e. the files are not sorted with respect to this attribute. The index field may be key or non-key.
 
 \subsection{Primary Index}
 A primary index is built over a sequential file, where the indexing field is the field the files are sorted by. Since the data file is sorted, we can use sparse indexing to index the data files, as illustrated below.
@@ -582,7 +583,7 @@ blocks to store all the index files. So, we require 28 more blocks for primary i
 
 Next, we compute the number of block accesses with the primary index. We first search for the SSN in the index, so on average, it takes about
 \[\log_2 28 \approx 4.8\]
-block accesses to find it. After finding the index block, we need to load the data block. So, we have 6 block accesses to find the relevant tuple. This is a 53\% increase in execution compared to no indexing in the case of a binary search, and 99\% over the linear search. 
+block accesses to find it. After finding the index block, we need to load the data block. So, we have 5.8 block accesses to find the relevant tuple. This is a 53\% increase in execution compared to no indexing in the case of a binary search, and 99\% over the linear search. 
 % This can be visualised in the graph below.
 % \begin{figure}[H]
 %     \centering
@@ -794,7 +795,7 @@ An illustration of secondary non-ordering key index is given below:
             \node at (6.125, \i*0.5-1.5-0.25) {\texttt{\y}};
         }
     \end{tikzpicture}
-    \caption{Secondary Index on a non-ordering, key index}
+    \caption{Secondary Index on a non-ordering, key index. Note that we are linking to tuples in the figure for simplicity, and not to blocks.}
 \end{figure}
 \noindent For each index entry, we store the block pointer where the tuple can be found.
 
@@ -887,7 +888,7 @@ This is illustrated in the figure below.
             \node at (6.125, \i*0.5-1.5-0.25) {\texttt{\y}};
         }
     \end{tikzpicture}
-    \caption{Secondary index on a non-ordering, non-key attribute.}
+    \caption{Secondary index on a non-ordering, non-key attribute. Note that we are linking to tuples in the figure for simplicity, and not to blocks.}
 \end{figure}
 \noindent In the figure above, we have 2 possible values for the index- \texttt{2} and \texttt{3}. Within the indexing file, we point to a secondary indexing file. In the secondary index file, we have block pointers for all the data records that have the matching index value (a cluster/group). Indexing at the first level is sparse since there are many tuples in the data field with the index value since this value is not unique.
 

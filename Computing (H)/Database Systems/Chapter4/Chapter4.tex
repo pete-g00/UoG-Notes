@@ -306,7 +306,199 @@ block accesses. The B+ Tree on \texttt{SUPER\_SSN} requires fewer block accesses
 \newpage
 
 \section{Query Optimisation}
-% Lecture: Query Optimisation: Part I
-% Lecture: Query Optimisation: Part II
+There are two fundamental concepts in optimisation- join and selection selectivity. Selection selectivity is the fraction of tuples satisfying a condition. Join selectivity is the fraction of matching tuples in the Cartesian product.
+
+Before running a query, we would like to predict the selection and the join selectivity, and hence the number of blocks we expect to retrieve. Then, using the actual block accesses, we aim to refine the expected cost. The expected cost is expressed as a function of selectivity. Using this result, we choose the optimal strategy to run a query.
+
+In query optimisation, we are given a query as an input. The output is the optimal execution plan. There are two types of query optimisations:
+\begin{itemize}
+    \item Heuristic optimisation- we transform a SQL query into an equivalent and efficient query using Relational Algebra.
+    \item Cost-based optimisation- we provide many execution plans and estimate their costs, and choose the plan with the minimum cost.
+\end{itemize}
+The cost function is what we want to optimise. It has parameters- the number of block accesses, the memory requirements, the CPU computational cost, the network bandwith, etc. We will consider the number of block accesses and memory requirements. 
+
+We will use statistical information available to estimate the execution of a query. To do this, we store the following information for each relation:
+\begin{itemize}
+    \item the number of records $r$, and the (average) size of each record $R$.
+    \item the number of blocks $b$, and the blocking factor $f$.
+    \item the primary file organisation (heap, hash or sequential).
+    \item the available indices- primary, clustering, secondary or B+ Trees.
+\end{itemize}
+For each attribute, we further store the following:
+\begin{itemize}
+    \item the number of distinct values (NDV) $n$ of the attribute.
+    \item the domain range- the minimum and the maximum value of the attribute (among the tuples).
+    \item the type of attribute- continuous or discrete, key or non-key.
+    \item level $t$ of Index of the attribute, if present.
+    \item the probability distribution function $P(A = x)$, which indicates the frequency of each value $x$ of the attribute $A$ in the relation.
+\end{itemize}
+A good approximation of the distribution is a histogram.
+% TODO: Draw histogram
+% PDF of Salary 
+% TODO: Example P(Salary \leq 30 000) \approx 0.18
+
+\subsection{Selection selectivity}
+Selection selectivity of an attribute $A$, denoted by $\operatorname{sl}(A)$, is the fraction of tuples that satisfy a given condition. Therefore, its value is between 0 and 1. If $\operatorname{sl}(A) = 0$, then none of the records satisfy this condition with respect to the attribute $A$. On the other hand, if $\operatorname{sl}(A) = 1$, then all the records satisfy the condition with respect to the attribute $A$. As a probability, the selection selectivity tells us how likely is it for a tuple to satisfy the given condition with respect to an attribute.
+
+The selection cardinality $s$ is the number of tuples we expect to satisfy a query with respect to a given attribute. In other words, the selection cardinality
+\[s = \operatorname{sl}(A) \cdot r,\]
+where $r$ is the number of tuples present. So, the value is between 0 and $r$. We predict this value without scanning any block. For example, if $r = 1 \ 000$ and $\operatorname{sl}(A) = 0.3$, then the selection cardinality $s = 300$. 
+
+To predict selectivity, we can approximate the distribution of attribute values using a histogram. This allows us to maintain an accurate selectivity estimate. However, we must maintain this histogram whenever there is a change to the attribute for any of the tuples. In this case, we assume that
+\[\operatorname{sl}(A = x) \approx P(A = x).\]
+That is, the selection selectivity is approximately equal to the probability that the value of the attribute is that value.
+
+Another possible approximation is that all values are uniformly distributed. This means that we do not need to maintain a histogram- all the values are of equal probability, so we barely need to store one value.
+% TODO: Add histogram
+This means that we do not need to maintain a histogram. However, we provide a less accurate prediction for the selection selectivity. In this case, we assume that
+\[\operatorname{sl}(A = x) \approx \frac{1}{n},\]
+where $n$ is the number of distinct values of $A$. Note that the selectivity is a constant value independent of $x$. 
+
+If $A$ is a key attribute, then
+\[\operatorname{sl}(A = x) \approx \frac{1}{r}\]
+is a good estimate. There is only one tuple that satisfies the condition, so the selection cardinality $s = 1$. So, the uniformity assumption is valid in this case. We do not need to build a histogram.
+
+Now, if $A$ is a non-key attribute, with $n = NDV(A)$, the number of distinct values of $A$ present. Then, the estimate
+\[\operatorname{sl}(A = x) \approx \frac{1}{n}\]
+is not a good estimate. This is under the assumption that all the records are uniformly distributed across the $n$ distinct values. This is not true in general.
+
+Next, consider the following range selection selectivity.
+\[\texttt{SELECT * FROM RELATION WHERE A>= x}\]
+The domain range is defined to be $\max (A) - \min (A)$, and the query range in this case is $\max(A) - x$. If $x > \max(A)$, then $\operatorname{sl}(A \geq x) = 0$. Otherwise,
+\[\operatorname{sl}(A \geq x) = \frac{\max(A) - x}{\max(A) - \min(A)},\]
+under the uniformity assumption.
+
+In particular, if we have $r = 1 \ 000$ employees, the attribute value ranges from $100$ to $10 \ 000$ and $x = 1000$, then the selection selectivity is
+\[\operatorname{sl}(A \geq 1000) = \frac{\max(A) - x}{\max(A) - \min(A)} = \frac{10 \ 000 - 1000}{10 \ 000 - 100} = 0.909\]
+In that case, the selection cardinality is $909$ tuples.
+
+Now, consider the conjunctive selectivity, i.e. a query satisfying 2 conditions. An example is given below.
+\[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
+If the two attributes $A$ and $B$ are statistically independent, then the selectivity of the conjunction query $q$ is
+\[\operatorname{sl}(q) = \operatorname{sl}(A = x) \cdot \operatorname{sl}(B = y).\]
+
+Next, consider the following query.
+\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 AND SALARY = 40 000;}\]
+Assume that:
+\begin{itemize}
+    \item the number of distinct values of salary NDV(Salary) = 100;
+    \item the number of distinct values of department numbers NDV(DNO) = 10;
+    \item there are $r = 1000$ employees that are evenly distributed among salaries and departments.
+\end{itemize}
+The selection selectivity for the Salary attribute is
+\[\operatorname{sl}(40 \ 000) = \frac{1}{100} = 0.01\]
+Moreover, the selection selectivity for the DNO attribute is
+\[\operatorname{sl}(5) = \frac{1}{10} = 0.1.\]
+So, under the assumption that salary is independent of the department, we find that the selection selectivity of the query is
+\[\operatorname{sl}(Q) = \operatorname{sl}(40 \ 000) \cdot \operatorname{sl}(5) = 0.001.\]
+In terms of the selection cardinality, this is 1 tuple.
+
+Now, we consider a disjunctive selectivity condition, i.e. a query satisfying one of 2 conditions. An example is given below.
+\[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
+Then, the selection selectivity of this query is
+\[\operatorname{sl}(Q) = \operatorname{sl}(A) + \operatorname{sl}(B) - \operatorname{sl}(A) \operatorname{sl}(B).\]
+Here as well, we assume that the two attributes $A$ and $B$ are statistically independent.
+
+Consider the following query
+\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 OR SALARY = 40 000;}\]
+We find that the selectivity of this query is
+\[\operatorname{sl}(Q) = \operatorname{sl}(40 \ 000) + \operatorname{sl}(5) - \operatorname{sl}(40 \ 000) \cdot \operatorname{sl}(5) = 0.109.\]
+In terms of the selection cardinality, this is 109 tuples.
+
+Now, assume that we have $r$ tuples, and the attribute $A$ has $n$ number of distinct values. Under the uniform assumption of the attribute, the expected number of block accesses is
+\[\operatorname{ceil}(s/f) = \operatorname{ceil}(r/f \cdot n),\]
+where $s$ is the selection cardinality and $f$ is the blocking factor. The graph below summarises this.
+% TODO: ADD GRAPH
+
+Now, we apply this formula to refine the selection cost. Assume that we have the query
+\[\texttt{SELECT * FROM RELATION WHERE A = x;}\]
+We have $b$ blocks; the blocking factor is $f$; we have $r$ records; and the number of distinct values of the attribute $A$ is $n$. We propose different approaches and the expected number of block accesses in each case.
+\begin{itemize}
+    \item Assuming that the tuples are sorted with respect to the attribute $A$, we can use a binary search algorithm. 
+    \begin{itemize}
+        \item If $A$ is a key attribute, then the expected cost is $\log_2 b$ block accesses. It is independent of the selection selectivity.
+        \item If $A$ is not a key attibute, then it takes $\log_2 b$ block accesses to find the first block with record $A = x$. We then access all the contiguous blocks whose records satisfy $A = x$. This takes $\operatorname{ceil}(s/f) - 1$ further block accesses. In total, the expected cost is
+        \[\log_2 b + \operatorname{ceil}(s/f) - 1 = \log_2 + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f) - 1.\]
+        This is a function of the selection selectivity.
+    \end{itemize}
+
+    \item Now, assume that we have a level-$t$ multilevel primary/clustering index on the attribute.
+    \begin{itemize}
+        \item If $A$ is a key attribute, then the expected cost is $t + 1$ block accesses. It is independent of the selection selectivity.
+        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. The selection cardinality is $s = r \cdot \operatorname{sl}(A)$ tuples. So, we require $\operatorname{ceil}(s/f)$ block accesses, where $f$ is the blocking factor. So, the expected cost is
+        \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f).\]
+        This is a function of the selection selectivity.
+    \end{itemize}
+
+    \item Assume next that we have a level-$t$ B+ tree on the attribute.
+    \begin{itemize}
+        \item If $A$ is a key attribute, then the expected cost is $t + 1$ block accesses. It is independent of the selection selectivity.
+        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. At this point, we have access to the block pointer to all the blocks containing a tuple satisfying the condition. The selection cardinality is $s = r \cdot \operatorname{sl}(A)$ tuples. Since the tuples are not sorted with respected to $A$, we assume that we must access $s$ blocks to retrieve all the tuples. In that case, the expected number of block accesses is
+        \[t + 1 + s = t + 1 + r \cdot \operatorname{sl}(A).\]
+        This is a function of the selection selectivity.
+    \end{itemize}
+
+    \item Finally, assume that we are using a hash file structure.
+    \begin{itemize}
+        \item If $A$ is a key attribute, then the expected cost is just 1 block access (if there are no overflown buckets). This is independent of the selection selectivity.
+        \item 
+    \end{itemize}
+\end{itemize}
+
+Next, assume that we have the query
+\[\texttt{SELECT * FROM RELATION WHERE A >= x};\]
+\begin{itemize}
+    \item Assume further that we have a level $t$ primary index and $A$ is a key attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is $s = r \cdot \operatorname{sl}(A \geq x)$. So, we further access $\operatorname{ceil}(s/f)$ blocks. In total, we have
+    \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f)\]
+    block accesses. This is a function of the selection selectivity.
+\end{itemize}
+
+Now, we consider the best way of executing the following query.
+\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 AND SALARY = 30000 AND EXP = 0}.\]
+There are 10 000 records, and the blocking factor is 5. So, there are 2 000 blocks. The file is sorted with respect to the Salary attribute. There are 500 distinct salary values, 125 departments, and 2 values of EXP (experienced or inexperienced). We can fit 100 blocks in memory. Moreover, we have built the following access paths:
+\begin{itemize}
+    \item A clustering index on Salary, with 3 levels.
+    \item A B+ Tree on DNO, with 2 levels.
+    \item A B+ Tree on EXP, with 2 levels.
+\end{itemize}
+We consider different strategies to execute the query.
+\begin{itemize}
+    \item We can linearly search all the tuples and return those tuples satisfying the query. This requires 2 000 block accesses since none of the searching attributes are key.
+    \item We can make use of the B+ Tree on DNO. Here, we first get all the tuples that satisfy \texttt{DNO = 5}. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\text{DNO}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that
+    \[s_{\text{DNO}} = \frac{1}{125} \cdot 10000 = 80.\]
+    Since we expect 80 tuples to satisfy this condition, we can fit all of them in 16 blocks (we know that \textit{bfr} = 5). This fits in memory. So, after finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 83 block accesses.
+    \item We can make use of the clustering index on Salary. For this, we require 3 block accesses to descend the multilevel index and get to the first level of index. Then, it takes
+    \[\operatorname{ceil}(s_{\text{Salary}}/f)\]
+    block accesses to retrieve all the tuples satisfying \texttt{Salary = 30 000}, where $f = 5$ is the blocking factor. Under the uniformity assumption, we find that
+    \[s_{\text{Salary}} = \frac{1}{500} \cdot 10000 = 20.\]
+    Since we expect 20 tuples to satisfy this condition, we can fit them in 4 blocks- this fits in memory. After finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 7 block accesses.
+    \item We can make use of the B+ Tree on EXP. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\text{EXP}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that
+    \[s_{\text{EXP}} = \frac{1}{2} \cdot 10000 = 5000.\]
+    The 5000 tuples occupy 1000 blocks, so they cannot all fit in memory. One approach would be to write 900 of the blocks back and keep them for processing later. We would further need to read them at a later point to check that they satisfy the other conditions. So, this requires 6803 block accesses.
+\end{itemize}
+Clearly, the best way to execute this query is by using the clustering index on Salary. This only requires 7 block accesses.
+
+Next, we consider the best way of executing the following query.
+\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 OR (SALARY >= 500 AND EXP = 0);}\]
+We have the same case as above. Also, now we can fit 1100 blocks in memory. Moreover, the minimum Salary value is 100 and maximum Salary is 10 000. The conjunction \texttt{SALARY >= 500 AND EXP = 0} has selection selectivity
+\[slc = sl(\text{Salary}) \cdot sl(\text{EXP}) = \frac{10 \ 000 - 5000}{10 \ 000 - 100} \cdot \frac{1}{2} = 0.4795.\]
+In that case, the disjunction \texttt{DNO = 5 OR (SALARY >= 500 AND EXP = 0)} has selection selectivity
+\[\operatorname{sl}(\text{DNO}) + slc - \operatorname{sl}(\text{DNO}) \cdot slc = \frac{1}{125} + 0.4795 - \frac{1}{125} \cdot 0.4795 = 0.4837.\]
+So, we expect 4837 tuples to satisfy this condition. In that case, the least number of blocks we need to access would be
+\[\operatorname{ceil}(4837/5) = 968\]
+blocks. We consider different strategies to execute the query.
+\begin{itemize}
+    \item We can linearly search all the tuples and return those tuples satisfies the query. This requires 2 000 block accesses.
+    \item We can make use of the access paths. First, we acccess 83 blocks to get all the tuples that satisfy \texttt{DNO = 5}. Now, we consider how we find all the tuples that satisfy \texttt{SALARY >= 500 AND EXP = 0}. 
+    \begin{itemize}
+        \item First, we use the B+ Tree on \texttt{EXP}. It takes 5003 block accesses to find the 5000 tuples that satisfy the condition. This fits in 1000 blocks, so we can store it in memory. Overall, this takes 5086 block accesses.
+        \item Next, we use the B+ Tree on \texttt{Salary}. It takes 1921 block access to find the 1918 blocks that satisfy the condition. This does not fit in memory. 
+        % TODO: Complete this
+    \end{itemize}
+\end{itemize}
+Therefore, the best choice here is linear searching. Moreover, even if we could fit infinite blocks fit in memory, using the B+ Tree on \texttt{Salary} would need 2003 block accesses.
+
+\subsection{Join selectivity}
+
 
 \end{document}
