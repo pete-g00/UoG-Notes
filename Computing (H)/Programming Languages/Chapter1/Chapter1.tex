@@ -736,7 +736,7 @@ Values are grouped into types according to the operations that may be performed 
 A value $v$ of type $T$ is an element $v \in T$. For example, the value \texttt{false} is of type \texttt{BOOL}, and the value \texttt{13} is of type \texttt{INT}. An expression $E$ is of type $T$ if its (expected) evaluation results in a value $v$ of type $T$. For example, if \texttt{n} is of type \texttt{INT}, then \texttt{n - 1} is an expression of type \texttt{INT}, and \texttt{n > 0} is an expression of type \texttt{BOOL}.
 
 \subsection{Primitive types}
-A primitive type is a type whose values are primitive, meaning that they cannot be decomposed into smaller values. Every PL has many built-in primitive types. The choice of primitive types is influenced by the PL's intended application area, e.g.
+A primitive type is a type whose values are primitive. That is, they cannot be decomposed into smaller values. Every PL has many built-in primitive types. The choice of primitive types is influenced by the PL's intended application area, e.g.
 \begin{itemize}
     \item Fortran (scientific computing) has floating point numbers,
     \item Cobol (data processing) has fixed-length strings,
@@ -762,7 +762,7 @@ The types \texttt{CHAR}, \texttt{INT} and \texttt{FLOAT} are present in most PLs
 The definition of primitive types depends on the PL, e.g. in C, booleans, characters and enums are just (small) numbers.
 
 \subsection{Composite types}
-A composite type is a type whose values are composite. This means that these values can be decomposed into simpler values. In a programming language, there are 4 fundamental ways of generating composite types from primitive/composite types:
+A composite type is a type whose values are composite. This means that these values can be decomposed into simpler values. In a PL, there are 4 fundamental ways of generating composite types from primitive/composite types:
 \begin{itemize}
     \item Cartesian products, which gives rise to tuples, structs and records;
     \item disjoint unions, which give algebraic types, variant records and objects;
@@ -804,7 +804,7 @@ There are 3 basic operations we can perform on disjoint-union values:
 \begin{itemize}
     \item construction of a disjoint-union value from its tag and variant;
     \item tag test, to inspect the tag of the disjoint-union value;
-    \item projection, to recover a specific variant of a disjoint-union value (e.g. its $T_1$ variant)- trying to recover the wrong variant will fail.
+    \item projection, to recover a specific variant of a disjoint-union value (e.g. its $T_1$ variant). Trying to recover the wrong variant will fail.
 \end{itemize}
 
 Haskell algebraic types, Pascal/Ada variant records and Java objects can be understood in terms of disjoint unions. The following shows the disjoint-union operations on Java objects:
@@ -849,6 +849,7 @@ if (p instanceof Circle) {
 }
 \end{lstlisting}
 We construct objects in lines 1 and 2. In line 5, we perform a tag test- \texttt{p instanceof Circle}. In line 5, we project a point into a circle- \texttt{(Circle) p}.
+
 The set of objects in a Java program is open-ended. Initially, the set contains objects of library classes (non-abstract). Subsequently, the set is augmented by each declared class (non-abstract). We exclude abstract classes since it is not possible to instantiate those.
 
 \subsubsection{Mapping types}
@@ -893,7 +894,7 @@ Functions can also be understood as mappings. They map arguments to results. For
 \end{itemize}
 A function can represent an infinite mapping (if $\# S = \infty$). This is not an issue since the results are computed on demand. On the other hand, this is an issue for an array since all the components within the array are stored.
 
-A binary function $f$ has arguments of type $S_1$ and $S_2$, and result of type $T$. In most PLs, we view $f$ as mapping a single pair of arguments (i.e. $S_1 \times S_2$) to a result. So, the function $f: (S_1 \times S_2) \to T$. Then, we can think of $f$ as a unary function. This can be generalised to $n$-ary functions, i.e. $f: (S_1 \times \dots \times S_n) \to T$.
+A binary function $f$ has arguments of type $S_1$ and $S_2$, and result of type $T$. In most PLs, we view $f$ as mapping a single pair of arguments (i.e. $S_1 \times S_2$) to a result. So, the function is of the form $f: (S_1 \times S_2) \to T$. Then, we can think of $f$ as a unary function. This can be generalised to $n$-ary functions, i.e. $f: (S_1 \times \dots \times S_n) \to T$.
 
 Now, consider the following unary function in C:
 \begin{lstlisting}[language=C]
@@ -1010,13 +1011,13 @@ Here, the parameter \texttt{value} can be a list, or tuple, and its components c
 
 There are advantages and disadvantages to both static and dynamic typing:
 \begin{itemize}
-    \item Static typing is more efficient. It only requires compile-time type checks. On the other hand, dynamic typing requires run-time type checks, which makes the program to run slower. Moreover, we also need to tag all the values, which uses more space.
+    \item Static typing is more efficient. It only requires compile-time type checks. On the other hand, dynamic typing requires run-time type checks, which makes the program run slower. Moreover, we also need to tag all the values, which uses more space.
     \item Static typing is more secure. The compiler can guarantee that the object program contains no type errors. Dynamic typing provides no such security.
     \item Static typing is less flexible. Certain computations cannot be expressed naturally. Dynamic typing is more natural when processing data whose types are not known at compile-time.
 \end{itemize}
 
 \subsection{Expressions}
-An expression is a program construct that will be evaluated to yield a value. Simple expressions are literals and variables. Compound expressions are given below:
+An expression is a program construct that can be evaluated to yield a value. Simple expressions are literals and variables. Compound expressions are given below:
 \begin{itemize}
     \item A function call is an expression that computes a result by applying a function to argument(s).
     \item A construction is an expression that constructs a composite value from its components.
