@@ -146,9 +146,45 @@ void e() {
 }
 \end{lstlisting}
 The following is the lifetime of global and local variables.
-% TODO: Add diagram
-
-Global and local variable's lifetimes are nested. They cannot overlap.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (6.75, 0)
+            -- (6.75, 0.75)
+            -- (0, 0.75)
+            -- cycle;
+        \node at (3, 0.375) {\texttt{x1, x2}};
+        
+        \draw (0.75, 0.75) -- (6, 0.75)
+            -- (6, 1.5)
+            -- (0.75, 1.5)
+            -- cycle;
+        \node at (3, 1.125) {\texttt{m1, m2}};
+        \node at (0, 1.125) {\texttt{main()}};
+        
+        \draw (1.5, 1.5) -- (3.75, 1.5)
+            -- (3.75, 2.25)
+            -- (1.5, 2.25)
+            -- cycle;
+        \node at (2.625, 1.875) {\texttt{f1, f2}};
+        \node at (1, 1.875) {\texttt{f()}};
+        
+        \draw (2.25, 2.25) -- (3, 2.25)
+            -- (3, 3)
+            -- (2.25, 3)
+            -- cycle;
+        \node at (2.625, 2.625) {\texttt{e1}};
+        \node at (1.75, 2.625) {\texttt{e()}};
+        
+        \draw (4.5, 1.5) -- (5.25, 1.5)
+            -- (5.25, 2.25)
+            -- (4.5, 2.25)
+            -- cycle;
+        \node at (4.875, 1.875) {\texttt{e1}};
+        \node at (4.125, 1.875) {\texttt{e()}};
+    \end{tikzpicture}
+\end{figure}
+\noindent Global and local variable's lifetimes are nested. They cannot overlap.
 
 Next, we consider a recursive program.
 \begin{lstlisting}[language=C]
@@ -167,8 +203,39 @@ void r(int n) {
 }
 \end{lstlisting}
 The following is the lifetime of the local variables.
-% TODO: Add diagram
-A local variable of a recursive procedure/function has several nested lifetimes.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (5.25, 0)
+            -- (5.25, 0.75)
+            -- (0, 0.75)
+            -- cycle;
+        \node at (2.625, 0.375) {\texttt{m}};
+        \node at (-0.625, 0.375) {\texttt{main()}};
+        
+        \draw (0.75, 0.75) -- (4.5, 0.75)
+            -- (4.5, 1.5)
+            -- (0.75, 1.5)
+            -- cycle;
+        \node at (2.625, 1.125) {\texttt{i}};
+        \node at (0.25, 1.125) {\texttt{f(3)}};
+        
+        \draw (1.5, 1.5) -- (3.75, 1.5)
+            -- (3.75, 2.25)
+            -- (1.5, 2.25)
+            -- cycle;
+        \node at (2.625, 1.875) {\texttt{i}};
+        \node at (1, 1.875) {\texttt{f(2)}};
+        
+        \draw (2.25, 2.25) -- (3, 2.25)
+            -- (3, 3)
+            -- (2.25, 3)
+            -- cycle;
+        \node at (2.625, 2.625) {\texttt{i}};
+        \node at (1.75, 2.625) {\texttt{f(1)}};
+    \end{tikzpicture}
+\end{figure}
+\noindent A local variable of a recursive procedure/function has several nested lifetimes.
 
 Now, we consider heap variables. Consider the C program below.
 \begin{lstlisting}[language=C]
@@ -197,8 +264,47 @@ The variables \texttt{l1} and \texttt{l2} are heap variables since they are init
 % TODO: Add diagram
 
 The value \texttt{5} is not reachable after calling \texttt{d}. In this case, the lifetime of the local and heap variables is given below.
-% TODO: Add diagram
-The lifetime of heap variables can overlap each other, and other local/global variable's lifetimes.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (5.25, 0)
+            -- (5.25, 0.75)
+            -- (0, 0.75)
+            -- cycle;
+        \node at (2.625, 0.375) {\texttt{l1, l2}};
+        \node at (-0.625, 0.375) {\texttt{main()}};
+        
+        \draw (0.75, 0.75) -- (4.5, 0.75)
+            -- (4.5, 1.5)
+            -- (0.75, 1.5)
+            -- cycle;
+        \node at (2.125, 1.125) {\texttt{3}};
+        \node at (-0.25, 1.125) {\texttt{c(3, ...)}};
+        
+        \draw (1.5, 1.5) -- (3.75, 1.5)
+            -- (3.75, 2.25)
+            -- (1.5, 2.25)
+            -- cycle;
+        \node at (2.5, 1.875) {\texttt{5}};
+        \node at (0.5, 1.875) {\texttt{c(5, ...)}};
+        \node at (4.5, 1.875) {\texttt{d(...)}};
+        
+        \draw (2.25, 2.25) -- (4.5, 2.25)
+            -- (4.5, 3)
+            -- (2.25, 3)
+            -- cycle;
+        \node at (3.5, 2.625) {\texttt{7}};
+        \node at (1.25, 2.625) {\texttt{c(7, ...)}};
+        
+        \draw (3, 3) -- (4.5, 3)
+            -- (4.5, 3.75)
+            -- (3, 3.75)
+            -- cycle;
+        \node at (3.5, 3.375) {\texttt{2}};
+        \node at (2, 3.375) {\texttt{c(2, ...)}};
+    \end{tikzpicture}
+\end{figure}
+\noindent The lifetime of heap variables can overlap each other, and other local/global variable's lifetimes.
 
 An allocator is an operation that creates a heap variable, yielding a pointer to the heap variable. For example, in C, the function \texttt{malloc} is the allocator, and in Java, an expression of the form \texttt{new C(..)} is an allocator. A deallocator is an operation that explicitly destroys a designated heap variable. For example, in C, the function \texttt{free} is the deallocator. Java does not have a deallocator.
 
@@ -454,7 +560,306 @@ int length(IntList * list) {
     }
 }
 \end{lstlisting}
+\newpage
 
+\section{Abstraction}
+In programming, abstraction means the distinction between what a program unit does and how it performs the task. This supports a separation of concerns between the implementor (i.e. who codes the program unit) and the application programmer (i.e. who uses it). Program units include procedures, packages, classes and generic packages.
 
+\subsection{Procedural Abstraction}
+A proper procedure (or just procedure) embodies a command to be executed. A procedure call is a command. It causes the procedure's body to be executed. It results in the update of some variables.
+
+A function procedure (or just function) embodies an expression to be evaluated. A function call is an expression. It causes the function's body to be evaluated. It results in a value (which is returned by the function).
+
+Imperative PLs usually support both procedures and functions. For example, in Pascal and Ada, procedures and functions are syntatically distinct. However, in C and Java, the only distinction is that a procedure's result type is \texttt{VOID}. Functional PLs only support functions. Object-oriented PLs also support procedures as methods. A static method is a procedure exported by a class. An instance method is a procedure attached to an object.
+
+The following is a procedure in C.
+\begin{lstlisting}[language=C]
+void print(Date date) {
+    int y = date.y,
+        m = date.m,
+        d = date.d;
+    printf("%d4-%d2-%d2", y, m, d);
+}
+\end{lstlisting}
+The procedure body is a block command. The execution of the procedure results in the variables \texttt{y}, \texttt{m} and \texttt{d} being created.
+
+The following is a function in Haskell.
+\begin{lstlisting}[language=Haskell]
+power   ::  (Float, Int) -> Float
+power (b, n) =
+    if n == 0
+    then 1.0
+    else b * power(b, n-1)
+\end{lstlisting}
+The body of the function is an expression. The following is the same function in C.
+\begin{lstlisting}[language=C]
+float power(float b, float n) {
+    float p = 1;
+    while (n > 0) {
+        p *= b;
+        n--;
+    }
+    return p;
+}
+\end{lstlisting}
+Here, the body of the function is still a block command.
+
+In most imperative and object-oriented PLs, the function's body is syntatically a block command. This is executed until a return determines the function's result. This means that the full expressive power is available to define a function (e.g. instantiate variables). However, this is a roundabout way to compute a result. In fact, a return might never be executed (e.g. because of an infinite loop). Moreover, side effects are possible.
+
+In functional PLs, the function's body is syntatically an expression. This is evaluated to yield the function's result. This means that the design is simple and natural. However, the expressive power of the PL is limited. This can be remedied by allowing conditional and iterative expressions, nonetheless.
+
+An argument is a value (or another entity) that is passed to a procedure. An actual parameter is an expression that yields an argument. A formal parameter is an identifier through which a procedure can access an argument. We can pass the following as arguments:
+\begin{itemize}
+    \item values,
+    \item variables, or pointers to variables, and
+    \item procedures, or pointers to procedures.
+\end{itemize}
+
+A parameter mechanism is a means by which a formal parameter provides access to the corresponding argument. Different PLs support a variety of parameter mechanisms: value, result, value-result, constant, variable, procedural and functional parameters. These can all be understood in terms of two underlying concepts: copy parameter mechanisms and reference parameter mechanisms.
+
+With a copy parameter mechanism, a value is copied into and/or out of a procedure. A formal parameter is bound to a local variable of the procedure. A value is copied into that local variable on calling the procedure. A value is copied into that local variable on calling the procedure. The value can also be copied out of that local variable to an argument variable on return. There are 2 copy parameter mechanisms- copy in and copy out parameter.
+
+In copy-in parameter (or value parameter), the argument is a value. On call, a local variable is created and initialised with the argument value. On return, the local variable is destroyed.
+
+In copy-out parameter (or result parameter), the argument is a variable. On call, a local variable is created but not initialised. On return, the local variable's final value is assigned to the argument variable, then the local variable is destroyed.
+
+The following is some functions in C.
+\begin{lstlisting}[language=C]
+void print(Date date) {
+    printf("%d-%d-%d", date.y, date.m, date.d);
+}
+
+void main() {
+    Date today = {2022, 3, 7};
+    print(today);
+}
+\end{lstlisting}
+At line 1, the local variable \texttt{date} is initialised to the argument value. At line 7, the argument value is \texttt{\{2022, 3, 7\}}.
+
+With a reference parameter mechanism, the formal parameter is a reference to the argument. The formal parameter FP is bound to a reference to the argument. Every accessed to FP is an indirect access to the argument. There are 3 principal reference parameter mechanisms- constant, variable and procedural parameter.
+
+In a constant parameter mechanism, the argument is a value. So, any inspection of the FP is an indirect inspection of the argument value. In a variable parameter mechanism, the argument is a variable. So, any access (inspection or update) of the FP is an indirect access of the argument variable. In a procedural parameter mechanism, the argument is a procedure. So, any call to the FP is an indirect call to the argument procedure.
+
+The following is some methods in Java.
+\begin{lstlisting}[language=Java]
+public void print(Date date) {
+    System.out.println(date.y & "-" date.m & "-" & data.d);
+}
+
+public static void main() {
+    Date today = new Date(2022, 3, 7);
+    print(today);
+}
+\end{lstlisting}
+At line 1, the local variable \texttt{date} is a reference to the argument object. At line 7, the argument is the object to which \texttt{today} refers. Java supports copy-in parameter mechanism for primitive types. Also, Java supports the reference parameter mechanism for object types.
+
+\subsection{Data abstraction}
+A package (or module) is a named group of components declared for a common purpose. These components may be types, constants, variables, procedures, inner packages, etc. The meaning of a package is the set of bindings exported by the package. These are often called the packages's application program interface (API).
+
+An example is given below in Python.
+\begin{lstlisting}[language=python]
+words = [...]
+
+def contains(word):
+    global words
+    return word in words
+
+def add(word):
+    global words
+    if word not in words:
+        words += [word]
+\end{lstlisting}
+This module's API contains the variable \texttt{words} and the functions \texttt{contains} and \texttt{add}.
+
+Some of the components of a program unit (package/class) may be private. This is called encapsulation. There are many levels of privacy, as given below.
+\begin{itemize}
+    \item A component is private if it is visible only inside the program unit.
+    \item A component is protected if it is visible only inside the program unit and certain other program units.
+    \item A component is public if it is visible to application code outside the program unit.
+\end{itemize}
+A program unit API consists of its public bindings only.
+
+Most PLs (such as Ada, java, Haskell) allow individual components of a program unit to be specified as private, protected or public. Python has a convention that components whose names start with "\_" are private, and anything else is public. This is not enforced by the Python compiler.
+
+In Java, the components of a package are classes and inner packages. Package components are added incrementally. The following is the outline of a class declaration within a package.
+\begin{lstlisting}[language=java]
+package sprockets;
+
+import widgets.*;
+
+public class C {
+    ...
+}
+\end{lstlisting}
+At line 1, we declare that the class \texttt{C} is a component of the package \texttt{sprockets}. At line 3, we declare that the class \texttt{C} uses public components of the pakcage \texttt{widgets}.
+
+An object is a tagged tuple of variable components (instance variables), equipped with operations that access these instance variables. A constructor is an operation that initialises a newly created object. An instance method is an operation that inspects and/or updates an existing object of the class. That object (called the receiver object) is determined by the method call. A class is a set of similar objects. All objects of a given class have similar instance variables, and are equipped with the same operations.
+
+A Java class declaration declares its instance variables and defines its constructors and instance methods. It also specifies whether each of these is private, protected or public. A Java instance method call has the form \texttt{O.M(...)}. The expression \texttt{O} yields the receiver object. \texttt{M} is the name of the instance method to be called. The call executes the method body, with \texttt{this} bound to the receiver object \texttt{O}.
+
+We illustrate this with an example.
+\begin{lstlisting}[language=java]
+class Dict {
+    private int size;
+    private String[] words;
+
+    public Dict(int capacity) {
+        ...
+    }
+
+    public void add (String w) {
+        if (!this.contains(w)) {
+            this.words[this.size++] = w;
+        }
+    }
+
+    public boolean contains (String w) {
+        ...
+    }
+}
+\end{lstlisting}
+A possible application code is the following.
+\begin{lstlisting}[language=java]
+Dict mainDict = new Dict(10000);
+Dict userDict = new Dict(100);
+...
+if (!mainDict.contains(currentWord) && !userDict.contains(currentWord)) {
+    userDict.add(currentWord);
+}
+\end{lstlisting}
+It is not however possible to do the following.
+\begin{lstlisting}[language=java]
+userDict.size = 0;
+System.out.println(userDict.words[0]);
+\end{lstlisting}
+This is because the two instance variables are private.
+
+If $C'$ is a subclass of $C$ (or $C$ is a superclass of $C'$), then $C'$ is a set of objects that are similar to one another, but richer than the objects of class $C$. In particular, an object of class $C'$ has all the instance variables of an object of class $C$. But, it can have extra instance variables. Similarly, an object of class $C'$ is equipped with all the instance methods of class $C$. But, it can also override some of them, and there might be extra instance methods.
+
+By default, a subclass inherits (or shares) it superclass' instance methods. Alternatively, a subclass may override some of its superclass' instance methods by providing more specialised versions of these methods.
+
+To illustrate this, consider the following class in Java.
+\begin{lstlisting}[language=java]
+class Shape {
+    protected float x, y;
+
+    public Shape() {
+        this.x = 0.0;
+        this.y = 0.0;
+    }
+
+    public final void move(float dx, float dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+
+    // draw a point at (x, y)
+    public void draw() {
+        ...
+    }
+}
+\end{lstlisting}
+We define the subclass \texttt{Circle}.
+\begin{lstlisting}[language=java]
+class Circle extends Shape {
+    private float r;
+
+    public Circle(float radius) {
+        this.x = 0;
+        this.y = 0;
+        this.r = radius;
+    }
+
+    // draw a circle at (x, y) of radius r
+    @override
+    public void draw() {
+        ...
+    }
+
+    public float diameter() {
+        return 2.0 * r;
+    }
+}
+\end{lstlisting}
+A possible application code is given below.
+\begin{lstlisting}[language=java]
+Shape s = new Shape();
+Circle c = new Circle(10.0);
+s.move(12.0, 5.0);
+c.move(3.0, 4.0);
+
+System.out.println(c.diameter());
+s.draw();
+c.draw();
+
+s = c;
+s.draw();
+\end{lstlisting}
+At line 7, we draw a point at \texttt{(12, 5)}. At line 8, we draw a circle at \texttt{(3, 4)} with radius \texttt{10}. We draw the same circle at line 11. This is dynamic dispatch- we draw a circle since \texttt{s} is a \texttt{Circle}.
+
+Each instance method of a class $C$ is inherited by the subclass $C'$, unless it is overriden by $C'$. The overriding method in class $C'$ has the same name and type as the original method in class $C$. Most object-oriented PLs allow the programmer to specify whether an instance method is \texttt{virtual} (may be overriden) or not. For example, in C++, an instance method specified by \texttt{virtual} may be overriden. In Java, an instance method specified by \texttt{final} cannot be overriden.
+
+In every object-oriented PL, a variable of type $C$ may refer to an object of any subclass of $C$. If a method $M$ is virtual, then the method call \texttt{O.M} entails dynamic dispatch. The compiler infers the type of $O$ as class $C$. It then checks that class $C$ is equipped with an instance method named $M$ of the appropriate type. At run-time, however, it might turn out that the receiver object is of class $C'$, a subclass of $C$. The receiver object's tag is used to determine its actual class, and hence determine which of the methods named $M$ is to be called.
+
+An object-oriented PL supports single inheritance if each class has at most one superclass. Single inheritance gives rise to a hierarchy of class. Single inheritance is supported by most object-oriented PLs. 
+
+Multiple inheritance allows each class to have any number of superclasses. It is supported by C++. Multiple inheritance gives rise to both conceptual and implementation problems.
+% TODO: Add diagram
+
+\subsection{Generic abstraction}
+A program unit is generic if it is parameterised with respect to a type on which it depends. Many reusable program units (e.g. stack, list) are naturally generic. Generic program units include: generic packages, generic classes and generic procedures.
+
+In Java, a generic class GC is parameterised with respect to a type $T$ on which it depends.
+\begin{lstlisting}[language=Java]
+class GC<T> {
+    ...
+}
+\end{lstlisting}
+The generic class must be instantiated by substituting a type argument $A$ for the type parameter $T$, i.e. \texttt{GC<A>}. This instantiation generates an ordinary class.
+
+The following is a declaration of a generic class.
+\begin{lstlisting}[language=Java]
+class List<T> {
+    private static final cap = 100;
+    private int size;
+    private T[] elems;
+
+    public List() {
+        size = 0;
+        elems = (T[]) new Object[cap];
+    }
+
+    public void add(T elem) {
+        elems[size++] = elem;
+    }
+}
+\end{lstlisting}
+We can then make use of this class as follows.
+\begin{lstlisting}[language=Java]
+public static void main() {
+    List<String> sentence;
+    sentence = new List<String>();
+    sentence.add("...");
+}
+\end{lstlisting}
+In Java, the type argument must be a class, not a primitive type.
+
+Java also supports generic interfaces, such as \texttt{Comparable}.
+\begin{lstlisting}[language=Java]
+interface Comparable<T> {
+    public int compareTo(T that);
+}
+\end{lstlisting}
+If a class $C$ is declared as implementing \texttt{Comparable<C>}, then $C$ must be equipped with a \texttt{compareTo} method that compares objects of type $C$.
+
+Consider a generic class \texttt{GC<T>} that requires \texttt{T} to be equipped with some specific methods. Then, \texttt{T} may be specified as bounded by a class \texttt{C}.
+\begin{lstlisting}[language=Java]
+class GC<T extends C> {
+    ...
+}
+\end{lstlisting}
+\texttt{T} is known to be equipped with all the methods of \texttt{C}, so we can make use of them within this class. Now, the type argument must be a subclass of \texttt{C}. Alternatively, \texttt{T} may be specified as bounded by an interface \texttt{I}. Moreover, \texttt{GC<T>} actually stands for \texttt{GC<T extends Object>}. The type argument must be a subclass of \texttt{Object}, which applies to all the classes.
+
+% TODO: PQueue example?
 
 \end{document}

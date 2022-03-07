@@ -79,15 +79,17 @@ Although the example illustrates a way we can use an if-statement, it does not t
 \end{itemize}
 
 \subsection{Formal specification of syntax}
-There are two ways to specify the syntax- informal and formal specification. An informal specification is expressed in a natural language (e.g. English), while a formal specification is expressed in a precise notation. Formal specifications are more precise, usually more concise, while informal specifications tend to be ambiguous, inconsistent or incomplete. However, formal specifications are only accessible to those who are familiar with the notation, and is often difficult to use in practice.
+There are two ways to specify the syntax- informal and formal specification. An informal specification is expressed in a natural language (e.g. English), while a formal specification is expressed in a precise notation. 
+
+Formal specifications are more precise, usually more concise, while informal specifications tend to be ambiguous, inconsistent or incomplete. However, formal specifications are only accessible to those who are familiar with the notation, and is often difficult to use in practice.
 
 We will illustrate the two types of specification with a while loop in a C-like language.
 \begin{itemize}
-    \item Informal specification: A while-command consists of \texttt{while}, followed by an expression enclosed in parentheses, followed by a command. A sequential command consists of a sequence of one or more commands, enclosed by \texttt{\{} and \texttt{\}}.
+    \item Informal specification: A while-command consists of \texttt{while}, followed by an expression enclosed in parentheses, followed by a sequential command. A sequential command consists of a sequence of one or more commands, enclosed by \texttt{\{} and \texttt{\}}.
     \item Formal specification, using EBNF:
     \begin{align*}
-        \textit{while-command} =& \texttt{while }  ( \texttt{ expression } )  \texttt{ command} \\
-        \textit{sequential-command} =& \{ \texttt{command} \}
+        \textit{while-command} =& \text{ `}\texttt{while}\text{' }  ( \textit{ expression } )  \textit{ sequential-command} \\
+        \textit{sequential-command} =& \ \{ \textit{command}^+ \}
     \end{align*}
 \end{itemize}
 
@@ -107,9 +109,9 @@ We will illustrate syntax using the PL Calc. It is a very simple calculator lang
 The following is a Calc program:
 \begin{lstlisting}[language=calc]
 set x = 13
-set y = x*(x+1)
+set y = x * (x + 1)
 put x
-put y-2
+put y / 2
 \end{lstlisting}
 
 \subsubsection{Regular expressions}
@@ -197,21 +199,21 @@ while (r > 0) {
 }
 \end{lstlisting}
 \end{itemize}
-cannot be expressed using REs. To specify the syntax of nested phrases such as expressions and commands, we need a context-free grammar. The grammar of a language is a set of rules specifying how the phrases of that language are formed. Each rule specifies how each phrase may be formed from symbols, such as words and punctuation, and simpler phrases.
+cannot be expressed using REs. 
 
-We are familiar with grammar in English. For example, the following sentences in English are valid: \texttt{I smell a rat} and \texttt{the cat sees me}. We refer to the symbols \texttt{a}, \texttt{cat}, \texttt{I}, etc. by terminal symbols. We denote these words using grammatical words, such as sentence, subject, object, etc. These are non-terminal symbols.
+To specify the syntax of nested phrases such as expressions and commands, we need a context-free grammar. The grammar of a language is a set of rules specifying how the phrases of that language are formed. Each rule specifies how each phrase may be formed from symbols, such as words and punctuation, and simpler phrases.
+
+We are familiar with grammar in English. For example, the following sentences in English are valid: \texttt{I smell a rat} and \texttt{the cat sees me}. We refer to the symbols \texttt{a}, \texttt{cat}, \texttt{I}, etc. by terminal symbols. We denote these words using grammatical words, such as \textit{sentence}, \textit{subject}, \textit{object}, etc. These are non-terminal symbols.
 
 To produce sentences in English, we have production rules, some of which are given below:
 \begin{align*}
-    \textit{sentence } =& \textit{ subject} \ \ \textit{verb} \ \ \textit{object} \\
-    \textit{subject } =& \texttt{ I } | \texttt{ a } \textit{noun } | \texttt{ the } \textit{noun } \\
-    \textit{object } =& \texttt{ me } | \texttt{ a } \textit{noun } | \texttt{ the } \textit{noun } \\
-    \textit{noun } =& \texttt{ cat } | \texttt{ mat } | \texttt{ rat} \\
-    \textit{verb } =&  \texttt{ see } | \texttt{ sees } | \texttt{ smell } | \texttt{ smells}
+    \textit{sentence } =& \textit{ subject} \ \ \textit{verb} \ \ \textit{object} \text{ `}\texttt{.}\text{'} \\
+    \textit{subject } =& \text{ `}\texttt{I}\text{' } | \text{ `}\texttt{a}\text{' } \textit{noun } | \text{ `}\texttt{the}\text{' } \textit{noun} \\
+    \textit{object } =& \text{ `}\texttt{me}\text{' } | \text{ `}\texttt{a}\text{' } \textit{noun } | \text{ `}\texttt{the}\text{' } \textit{noun} \\
+    \textit{noun } =& \text{ `}\texttt{cat}\text{' } | \text{ `}\texttt{mat}\text{' } | \text{ `}\texttt{rat}\text{'} \\
+    \textit{verb } =&  \text{ `}\texttt{see}\text{' } | \text{ `}\texttt{sees}\text{' } | \text{ `}\texttt{smell}\text{' } | \text{ `}\texttt{smells}\text{'}
 \end{align*}
-We use equality to show precisely what we mean, e.g. by a sentence. We use the pipe | to denote different possible values, e.g. a noun can be \texttt{cat}, \texttt{mat} or \texttt{rat}. Using the production rules, we can describe how the sentence \texttt{I smell a rat} 
-% and \texttt{the cat sees me}
-is structured, using a syntax tree.
+We use equality to show precisely what we mean, e.g. by a sentence. We use the pipe | to denote different possible values, e.g. a noun can be \texttt{cat}, \texttt{mat} or \texttt{rat}. Using the production rules, we can describe how the sentence \texttt{I smell a rat} is structured, using a syntax tree.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -245,41 +247,7 @@ is structured, using a syntax tree.
     \end{tikzpicture}
     \caption{The syntax tree for \texttt{I smell a rat}}
 \end{figure}
-
-% \begin{figure}[H]
-%     \centering
-%     \begin{tikzpicture}[
-%     level 1/.style={sibling distance=3cm}
-%     ]
-%         \node[ellipse, draw] {\textit{sentence}}
-%         child {
-%             node[ellipse, draw] {\textit{subject}}
-%             child {
-%                 node {\texttt{the}}
-%             }
-%             child {
-%                 node[ellipse, draw] {\textit{noun}}
-%                 child {
-%                     node {\texttt{cat}}
-%                 }
-%             }
-%         }
-%         child {
-%             node[ellipse, draw] {\textit{verb}}
-%             child {
-%                 node {\texttt{sees}}
-%             }
-%         }
-%         child {
-%             node[ellipse, draw] {\textit{object}}
-%             child {
-%                 node {\texttt{me}}
-%             }
-%         };
-%     \end{tikzpicture}
-%     \caption{The syntax tree for \texttt{The cat sees me}}
-% \end{figure}
-\noindent We will circle the non-terminal symbols. Note that the terminal symbols are precisely composed of the leaves. Reading left to right allows us to reconstruct the sentence.
+\noindent The non-terminal symbols are circled. Note that the terminal symbols are precisely composed of the leaves. Reading left to right allows us to reconstruct the sentence.
 
 Formally, a (context-free) grammar consists of:
 \begin{itemize}
@@ -289,32 +257,38 @@ Formally, a (context-free) grammar consists of:
     \item a set of production rules that specify how phrases are composed from terminal symbols and sub-phrases.
 \end{itemize}
 
-Backus Naur Form (BNF) is a notation for expressing a grammar, which we saw above. So, a production rule in BNF looks like: $N = \alpha$, where $N$ is a non-terminal symbol and $\alpha$ is a sequence of terminal and non-terminal symbols. We say that $N$ consists of $\alpha$, meaning that a value of type $N$ is an instance of the values in $\alpha$ presented in the given order. It is possible that a production rule has several alternatives, e.g. $N = \alpha | \beta | \gamma$. The pipe symbol | gives the different possibilities for $N$.
+Backus Naur Form (BNF) is a notation for expressing a grammar, which we saw above. So, a production rule in BNF is given by
+\[N = \alpha,\]
+where $N$ is a non-terminal symbol and $\alpha$ is a sequence of terminal and non-terminal symbols. We say that $N$ consists of $\alpha$, meaning that a value of type $N$ is an instance of the values in $\alpha$ presented in the given order. It is possible that a production rule has several alternatives, e.g. 
+\[N = \alpha \ | \ \beta \ | \ \gamma.\]
+The pipe symbol | gives the different possibilities for $N$.
 
 Now, we will characterise the grammar of the PL Calc using BNF. The terminal symbols in Calc are: \texttt{put}, \texttt{set}, \texttt{=}, \texttt{+}, \texttt{-}, \texttt{*}, \texttt{(}, \texttt{)}, \texttt{\textbackslash n}, \texttt{a}, \texttt{b}, ..., \texttt{z}, \texttt{0}, \texttt{1}, ..., \texttt{9}. The non-terminal symbols in Calc are: prog, com, exp, prim, num, id, where prog is the sentence symbol. The production rules for Calc are given below:
 \begin{figure}[H]
     \begin{align*}
         \textit{prog} =& \textit{ eof} \\
         |\hspace{2pt} & \textit{ com prog} \\
-        \textit{com} =& \texttt{ put} \textit{ expr eol} \\
-        |\hspace{2pt} & \texttt{ set} \textit{ id } \texttt{=} \textit{ expr eol} \\
+        \textit{com} =& \text{ `}\texttt{put}\text{' } \textit{expr eol} \\
+        |\hspace{2pt} & \text{ `}\texttt{set}\text{' } \textit{id} \text{ `}\texttt{=}\text{' } \textit{expr eol} \\
         \textit{expr} =& \textit{  prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{+} \textit{ prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{-} \textit{ prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{*} \textit{ prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{+}\text{' } \textit{prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{-}\text{' } \textit{prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{*}\text{' } \textit{prim} \\
         \textit{prim} =& \textit{ num} \\
         |\hspace{2pt} & \textit{ id} \\
-        |\hspace{2pt} & \texttt{ (} \textit{ expr } \texttt{)} \\
+        |\hspace{2pt} & \text{ `}\texttt{(}\text{' } \textit{ expr } \text{ `}\texttt{)}\text{'} \\
         \textit{num} =& \textit{ digit } | \textit{ num digit} \\
         \textit{id} =& \textit{ letter} \\
-        \textit{letter} =& \texttt{ a } | \texttt{ b } | \dots | \texttt{ z} \\
-        \textit{digit} =& \texttt{ 0 } | \texttt{ 1 } | \dots | \texttt{ 9} \\
-        \textit{eol} =& \texttt{ \textbackslash n}
+        \textit{letter} =& \text{ `}\texttt{a}\text{' } | \text{ `}\texttt{b}\text{' } | \dots | \text{ `}\texttt{z}\text{' } \\
+        \textit{digit} =& \text{ `}\texttt{0}\text{' } | \text{ `}\texttt{1}\text{' } | \dots | \text{ `}\texttt{9}\text{'} \\
+        \textit{eol} =& \text{ `}\texttt{\textbackslash n}\text{'}
     \end{align*}
     \caption{The BNF production rules for Calc.}
 \end{figure}
 
-A grammar defines how phrases may be formed from sub-phrases in the language. This is called phrase structure. Every phrase in the language has a syntax tree that explicitly represents in structure. We saw the syntax trees of two English sentences above. We will now look at the syntax trees of some commands in Calc using the production rules above. First, we look at some commands below.
+A grammar defines how phrases may be formed from sub-phrases in the language. This is called phrase structure. Every phrase in the language has a syntax tree that explicitly represents in structure.
+
+We will now look at the syntax trees of some code in Calc using the production rules above. The following is the syntax tree for the expression \texttt{n + 1}.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -344,64 +318,9 @@ A grammar defines how phrases may be formed from sub-phrases in the language. Th
             }
         };
     \end{tikzpicture}
-    \caption{The syntax tree for \texttt{n + 1}}
+    \caption{The syntax tree for the expression \texttt{n + 1}}
 \end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-        level 1/.style={sibling distance=2.5cm},
-        level 2/.style={sibling distance=2cm},
-        level 3/.style={sibling distance=1cm}
-    ]
-        \node[ellipse, draw] {\textit{expr}}
-        child {
-            node[ellipse, draw] {\textit{prim}}
-            child {
-                node[ellipse, draw] {\textit{id}}
-                child {
-                    node {\texttt{x}}
-                }
-            }
-        }
-        child {
-            node {\texttt{*}}
-        }
-        child {
-            node[ellipse, draw] {\textit{prim}}
-            child {
-                node {\texttt{(}}
-            }
-            child {
-                node[ellipse, draw] {\textit{expr}}
-                child {
-                    node[ellipse, draw] {\textit{num}}
-                    child {
-                        node {\texttt{22}}
-                    }
-                }
-                child {
-                    node {\texttt{-}}
-                }
-                child {
-                    node[ellipse, draw] {\textit{prim}}
-                    child {
-                        node[ellipse, draw] {\textit{id}}
-                        child {
-                            node {\texttt{y}}
-                        }
-                    }
-                }
-            }
-            child {
-                node {\texttt{)}}
-            }
-        };
-    \end{tikzpicture}
-    \caption{The syntax tree for \texttt{x * (22 - y)}}
-\end{figure}
-
-\noindent Next, we look at some commands.
+\noindent The following is the syntax tree for the command \texttt{put n \textbackslash n}.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -425,42 +344,7 @@ A grammar defines how phrases may be formed from sub-phrases in the language. Th
             node {\texttt{\textbackslash n}}
         };
     \end{tikzpicture}
-    \caption{The syntax tree for \texttt{put n \textbackslash n}}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \node[ellipse, draw] {\textit{com}}
-        child {
-            node {\texttt{set}}
-        }
-        child {
-            node[ellipse, draw] {\textit{id}}
-            child {
-                node {\texttt{n}}
-            }
-        }
-        child {
-            node {\texttt{=}}
-        }
-        child {
-            node[ellipse, draw] {\textit{expr}}
-            child {
-                node[ellipse, draw] {\textit{prim}}
-                child {
-                    node[ellipse, draw] {\textit{num}}
-                    child {
-                        node {\texttt{42}}
-                    }
-                }
-            }
-        }
-        child {
-            node {\texttt{\textbackslash n}}
-        };
-    \end{tikzpicture}
-    \caption{The syntax tree for \texttt{set n = 42 \textbackslash n}}
+    \caption{The syntax tree for the command \texttt{put n \textbackslash n}}
 \end{figure}
 
 Formally, for a grammar $G$, the syntax tree of $G$ is a tree where:
@@ -486,16 +370,16 @@ For example, consider the grammar below:
     \centering
     \begin{align*}
         \textit{expr} =& \textit{  prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{+} \textit{ prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{-} \textit{ prim} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{*} \textit{ prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{+}\text{' } \textit{prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{-}\text{' } \textit{prim} \\
+        |\hspace{2pt} & \textit{ expr} \text{ `}\texttt{*}\text{' } \textit{prim} \\
         \textit{prim} =& \textit{ num} \\
         |\hspace{2pt} & \textit{ id} \\
-        |\hspace{2pt} & \texttt{ (} \textit{ expr } \texttt{)} \\
+        |\hspace{2pt} & \text{ `}\texttt{(}\text{' } \textit{ expr } \text{ `}\texttt{)}\text{'} \\
         \textit{num} =& \textit{ digit } | \textit{ num digit} \\
         \textit{id} =& \textit{ letter} \\
-        \textit{letter} =& \texttt{ a } | \texttt{ b } | \dots | \texttt{ z} \\
-        \textit{digit} =& \texttt{ 0 } | \texttt{ 1 } | \dots | \texttt{ 9}
+        \textit{letter} =& \text{ `}\texttt{a}\text{' } | \text{ `}\texttt{b}\text{' } | \dots | \text{ `}\texttt{z}\text{' } \\
+        \textit{digit} =& \text{ `}\texttt{0}\text{' } | \text{ `}\texttt{1}\text{' } | \dots | \text{ `}\texttt{9}\text{'} 
     \end{align*}
 \end{figure}
 \noindent In this grammar, the operators \texttt{+}, \texttt{-} and \texttt{*} have the same precendence, as we can see in the syntax tree below.
@@ -618,17 +502,17 @@ Now, consider the following grammar:
     \centering
     \begin{align*}
         \textit{expr} =& \textit{  term} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{+} \textit{ term} \\
-        |\hspace{2pt} & \textit{ expr } \texttt{-} \textit{ term} \\
+        |\hspace{2pt} & \textit{ expr } \text{`}\texttt{+}\text{'} \textit{ term} \\
+        |\hspace{2pt} & \textit{ expr } \text{`}\texttt{-}\text{'} \textit{ term} \\
         \textit{term} =& \textit{ prim} \\
-        |\hspace{2pt} & \textit{ term } \texttt{*} \textit{ prim} \\
+        |\hspace{2pt} & \textit{ term } \text{`}\texttt{*}\text{'} \textit{ prim} \\
         \textit{prim} =& \textit{ num} \\
         |\hspace{2pt} & \textit{ id} \\
-        |\hspace{2pt} & \texttt{ (} \textit{ expr } \texttt{)} \\
+        |\hspace{2pt} & \text{ `}\texttt{(}\text{' } \textit{ expr } \text{ `}\texttt{)}\text{'} \\
         \textit{num} =& \textit{ digit } | \textit{ num digit} \\
         \textit{id} =& \textit{ letter} \\
-        \textit{letter} =& \texttt{ a } | \texttt{ b } | \dots | \texttt{ z} \\
-        \textit{digit} =& \texttt{ 0 } | \texttt{ 1 } | \dots | \texttt{ 9}
+        \textit{letter} =& \text{ `}\texttt{a}\text{' } | \text{ `}\texttt{b}\text{' } | \dots | \text{ `}\texttt{z}\text{' } \\
+        \textit{digit} =& \text{ `}\texttt{0}\text{' } | \text{ `}\texttt{1}\text{' } | \dots | \text{ `}\texttt{9}\text{'} 
     \end{align*}
 \end{figure}
 \noindent Within this grammar, we have a higher precedence for \texttt{*} than \texttt{+} and \texttt{-}. This can be seen in the syntax tree below.
@@ -694,9 +578,9 @@ To illustrate an ambiguous grammar, consider the following grammar.
 \begin{figure}[H]
     \centering
     \begin{align*}
-        \textit{com} =& \texttt{ put} \textit{ expr} \\
-        |\hspace{2pt} & \texttt{ if} \textit{ expr } \texttt{then} \textit{ com} \\
-        |\hspace{2pt} & \texttt{ if} \textit{ expr } \texttt{then} \textit{ com } \texttt{else} \textit{ com } \\
+        \textit{com} =& \text{ `}\texttt{put}\text{' } \textit{expr} \\
+        |\hspace{2pt} & \text{ `}\texttt{if}\text{' } \textit{expr} \text{ `}\texttt{then}\text{' } \textit{com} \\
+        |\hspace{2pt} & \text{ `}\texttt{if}\text{' } \textit{expr} \text{ `}\texttt{then}\text{' } \textit{com} \text{ `}\texttt{else}\text{' } \textit{com} \\
         |\hspace{2pt} & \ \dots
     \end{align*}
 \end{figure}
@@ -758,7 +642,7 @@ To illustrate an ambiguous grammar, consider the following grammar.
             }
         };
     \end{tikzpicture}
-    \caption{The syntax tree for \texttt{if b then if c then put 1 else put 2}}
+    \caption{A syntax tree for \texttt{if b then if c then put 1 else put 2}}
 \end{figure}
 \begin{figure}[H]
     \centering
@@ -817,7 +701,7 @@ To illustrate an ambiguous grammar, consider the following grammar.
             }
         };
     \end{tikzpicture}
-    \caption{The syntax tree for \texttt{if b then if c then put 1 else put 2}}
+    \caption{A syntax tree for \texttt{if b then if c then put 1 else put 2}}
 \end{figure}
 \noindent A PL should not be ambiguous.
 
@@ -831,15 +715,15 @@ The EBNF production rules for Calc is given below:
 \begin{figure}[H]
     \begin{align*}
         \textit{prog} =& \textit{ com}^{\texttt{*}}  \textit{ eof} \\
-        \textit{com} =& \texttt{ put} \textit{ expr eol} \\
-        |\hspace{2pt} & \texttt{ set} \textit{ id } \texttt{=} \textit{ expr eol} \\
-        \textit{expr} =& \textit{  prim } (\texttt{+} \textit{ prim }|\texttt{ -} \textit{ prim }|\texttt{ *} \textit{ prim})^{\texttt{*}} \\
+        \textit{com} =& \text{ `}\texttt{put}\text{' } \textit{expr eol} \\
+        |\hspace{2pt} & \text{ `}\texttt{set}\text{' } \textit{id } \text{`}\texttt{=}\text{'} \textit{ expr eol} \\
+        \textit{expr} =& \textit{  prim } (\text{`}\texttt{+}\text{'} \textit{ prim }|\text{ `}\texttt{-}\text{'} \textit{ prim }|\text{ `}\texttt{*}\text{'} \textit{ prim})^{\texttt{*}} \\
         \textit{prim} =& \textit{ num} \\
         |\hspace{2pt} & \textit{ id} \\
-        |\hspace{2pt} & \texttt{ (} \textit{ expr } \texttt{)} \\
-        \textit{num} =& \ (\texttt{0 } | \texttt{ 1 } | \dots | \texttt{ 9})^{\texttt{*}} \\
-        \textit{id} =& \texttt{ a } | \texttt{ b } | \dots | \texttt{ z} \\
-        \textit{eol} =& \texttt{ \textbackslash n}
+        |\hspace{2pt} & \text{ `}\texttt{(}\text{' } \textit{ expr } \text{ `}\texttt{)}\text{'} \\
+        \textit{letter} =& \text{ `}\texttt{a}\text{' } | \text{ `}\texttt{b}\text{' } | \dots | \text{ `}\texttt{z}\text{' } \\
+        \textit{digit} =& \text{ `}\texttt{0}\text{' } | \text{ `}\texttt{1}\text{' } | \dots | \text{ `}\texttt{9}\text{'} \\
+        \textit{eol} =& \text{ `}\texttt{\textbackslash n}\text{'}
     \end{align*}
     \caption{The EBNF production rules for Calc.}
 \end{figure}
