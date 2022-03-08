@@ -89,777 +89,1397 @@
 \setcounter{chapter}{2}
 
 \begin{document}
-\chapter{Concepts}
+\chapter{The compilation process}
+\section{Syntactic Analysis}
+Syntactic analysis checks that the source program is well-formed and determines its phrase structure. The process of syntactic analysis can be broken into 2 further subphrases:
+\begin{itemize}
+    \item a lexer, which breaks the source program down into tokens; and
+    \item a parser, which determines the phrase structure of the program.
+\end{itemize}
 
-\section{Variables and lifetime}
-In functional PLS, a variable stands for a fixed, but a possibly unknown, value. In imperative and object-oriented PLs, a variable contains a value. The variable may be inspected and updated as often as desired. Such a variable can be used to model a real-world object whose state changes over time.
-
-To understand imperative variables, we assume an abstract storage model. A store is a collection of cells, each of which has a unique address. Each cell is either allocated or unallocated. Each allocated cell contains either a simple value or undefined. An allocated cell can be inspected, unless it contains undefined. An allocated cell can be updated at any time.
-
-There are two classes of variables- simple and composite variables. A simple variable is one that contains a primitive value or a pointer. A simple variable occupies a single allocated cell. A composite variable is one that contains a composite value. A composite variable occupies a group of adjacent allocated cells.
-
-A variable of a composite type has the same structure as a value of the same type. For instance, a tuple variable is a tuple of component variables. Similarly, an array variable is a mapping from an index range to a group of component variables. Depending on the PL, a composite variable can be totally updated (all at once), and/or selectively updated (one component at a time).
-
-We illustrate declaration and updating of composite variables in C:
-\begin{lstlisting}[language=C]
-struct Date {int y, m, d;}
-struct Date xmas, today;
-
-// selective updating
-xmas.d = 25;
-xmas.m = 12;
-xmas.y = 2022;
-
-// total updating
-today = xmas;
-\end{lstlisting}
-
-Every variable is created at some definite time, and destroyed at some later time when it is no longer needed. A variable's lifetime is the interval between its creation and destruction. A variable occupies cells only during its lifetime. When the variable is destroyed, these cells may be de-allocated. Moreover, these cells may subsequently be re-allocated to other variable(s).
-
-A global variable's lifetime is the program's entire runtime. It is created by a global declaration. A local variable's time is an activation of a block. It is created by a declaration within that block, and destroyed on exit from that block. A heap variable's lifetime is arbitrary, but can be bounded by the program's runtime. It can be created at any time (by an allocator), and may be destroyed at any later time. It is accessed through a pointer.
-
-The following is a C program, with different variable types.
-\begin{lstlisting}[language=C]
-// global variables
-extern int x1, x2;
-
-void main() {
-    // local variables
-    int m1;
-    float m2;
-    // .. 
-    f();
-    e();
-}
-
-void f() {
-    // local variables
-    float f1;
-    int f2;
-    // ..
-    e();
-}
-
-void e() {
-    // local variable
-    int e1;
-}
-\end{lstlisting}
-The following is the lifetime of global and local variables.
+The syntactic analyser inputs a source program and outputs an AST. Inside the syntactic analyser, the lexer channels a stream of tokens to the parser, as shown below.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \draw (0, 0) -- (6.75, 0)
-            -- (6.75, 0.75)
-            -- (0, 0.75)
-            -- cycle;
-        \node at (3, 0.375) {\texttt{x1, x2}};
+        \node[draw, text width=2cm, align=center] (SA) at (0, 0) {lexer};
+        \node[draw, text width=2cm, align=center] (CA) at (3.5, 0) {parser};
         
-        \draw (0.75, 0.75) -- (6, 0.75)
-            -- (6, 1.5)
-            -- (0.75, 1.5)
-            -- cycle;
-        \node at (3, 1.125) {\texttt{m1, m2}};
-        \node at (0, 1.125) {\texttt{main()}};
+        \draw[->] (-2.5, 0) -- (SA);
+        \node[text width=2cm, align=center] at (-1.75, -.5) {source program};
+        \draw[->] (SA) -- (0, -2);
+        \node[text width=2cm, align=center] at (0.75, -1.5) {lexical \\ errors};
         
-        \draw (1.5, 1.5) -- (3.75, 1.5)
-            -- (3.75, 2.25)
-            -- (1.5, 2.25)
-            -- cycle;
-        \node at (2.625, 1.875) {\texttt{f1, f2}};
-        \node at (1, 1.875) {\texttt{f()}};
+        \draw[->] (SA) -- (CA);
+        \node[text width=2cm, align=center] at (1.75, -.4) {token \\ stream};
+        \draw[->] (CA) -- (3.5, -2);
+        \node[text width=2cm, align=center] at (4.5, -1.5) {syntactic errors};
         
-        \draw (2.25, 2.25) -- (3, 2.25)
-            -- (3, 3)
-            -- (2.25, 3)
-            -- cycle;
-        \node at (2.625, 2.625) {\texttt{e1}};
-        \node at (1.75, 2.625) {\texttt{e()}};
-        
-        \draw (4.5, 1.5) -- (5.25, 1.5)
-            -- (5.25, 2.25)
-            -- (4.5, 2.25)
-            -- cycle;
-        \node at (4.875, 1.875) {\texttt{e1}};
-        \node at (4.125, 1.875) {\texttt{e()}};
+        \node[text width=2cm, align=center] at (5.25, -.2) {AST};
     \end{tikzpicture}
+    \caption{The data flow within the syntactic analysis phase.}
 \end{figure}
-\noindent Global and local variable's lifetimes are nested. They cannot overlap.
 
-Next, we consider a recursive program.
-\begin{lstlisting}[language=C]
-void main() {
-    float m;
-    // ..
-    r(3);
-}
+\subsection{Tokens}
+Tokens are textual symbols that influence the source program's phrase structures, such as literals, identifiers, operators, keywords and punctuation (e.g. commas, colons, parentheses). Each token has a tag and a text. For example, the addition operator might have tag PLUS and text \texttt{+}; a numeral might have tag NUM and text \texttt{1}; and an identifier might have tag ID and text \texttt{x}. These will become the leaves of the AST.
 
-void r(int n) {
-    int i;
-    if (n > 1) {
-        // ..
-        r(n-1);
-    }
-}
-\end{lstlisting}
-The following is the lifetime of the local variables.
+Separators are pieces of text that do not influence the phrase structure, such as spaces and comments. An end-of-line is a separator in most PLs, but a token in Python.
+
+The following are tokens in Calc:
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \draw (0, 0) -- (5.25, 0)
-            -- (5.25, 0.75)
-            -- (0, 0.75)
-            -- cycle;
-        \node at (2.625, 0.375) {\texttt{m}};
-        \node at (-0.625, 0.375) {\texttt{main()}};
+        \node[draw, label=-90:PUT] at (0, 0) {\texttt{put}};
+        \node[draw, label=-90:SET] at (2, 0) {\texttt{set}};
         
-        \draw (0.75, 0.75) -- (4.5, 0.75)
-            -- (4.5, 1.5)
-            -- (0.75, 1.5)
-            -- cycle;
-        \node at (2.625, 1.125) {\texttt{i}};
-        \node at (0.25, 1.125) {\texttt{f(3)}};
+        \node[draw, label=-90:ASSN] at (-2, -1.25) {\texttt{=}};
+        \node[draw, label=-90:PLUS] at (0, -1.25) {\texttt{+}};
+        \node[draw, label=-90:MINUS] at (2, -1.25) {\texttt{-}};
+        \node[draw, label=-90:TIMES] at (4, -1.25) {\texttt{*}};
         
-        \draw (1.5, 1.5) -- (3.75, 1.5)
-            -- (3.75, 2.25)
-            -- (1.5, 2.25)
-            -- cycle;
-        \node at (2.625, 1.875) {\texttt{i}};
-        \node at (1, 1.875) {\texttt{f(2)}};
+        \node[draw, label=-90:LPAR] at (0, -2.5) {\texttt{(}};
+        \node[draw, label=-90:RPAR] at (2, -2.5) {\texttt{)}};
         
-        \draw (2.25, 2.25) -- (3, 2.25)
-            -- (3, 3)
-            -- (2.25, 3)
-            -- cycle;
-        \node at (2.625, 2.625) {\texttt{i}};
-        \node at (1.75, 2.625) {\texttt{f(1)}};
+        \node[draw, label=-90:NUM] at (0, -3.75) {\dots};
+        \node[draw, label=-90:ID] at (2, -3.75) {\dots};
+        
+        \node[draw, label=-90:EOL] at (0, -5) {\texttt{\textbackslash n}};
+        \node[draw, label=-90:EOF] at (2, -5) {$\epsilon$};
     \end{tikzpicture}
 \end{figure}
-\noindent A local variable of a recursive procedure/function has several nested lifetimes.
-
-Now, we consider heap variables. Consider the C program below.
-\begin{lstlisting}[language=C]
-struct IntNode {int elem; IntList succ;}
-typedef struct IntNode * IntList;
-
-IntList c (int h, IntList t) {
-    IntList ns = (IntList) malloc (sizeof IntNode);
-    ns -> element = h;
-    ns -> succ = t;
-    return ns;
-}
-
-void d (IntList ns) {
-    ns -> succ = ns -> succc -> succ;
-}
-
-void main() {
-    IntList l1, l2;
-    l1 = c(3, c(5, c(7, NULL)));
-    l2 = c(2, l1);
-    d(l1);
-}
+\noindent Now, assume we have the following Calc program:
+\begin{lstlisting}[language=Calc]
+set x = 7
+put x * (x + 1)
 \end{lstlisting}
-The variables \texttt{l1} and \texttt{l2} are heap variables since they are initialised using the \texttt{malloc} keyword. The following is the heap representation of \texttt{l1} and \texttt{l2}.
-% TODO: Add diagram
-
-The value \texttt{5} is not reachable after calling \texttt{d}. In this case, the lifetime of the local and heap variables is given below.
+We get the following token stream from the lexer:
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \draw (0, 0) -- (5.25, 0)
-            -- (5.25, 0.75)
-            -- (0, 0.75)
-            -- cycle;
-        \node at (2.625, 0.375) {\texttt{l1, l2}};
-        \node at (-0.625, 0.375) {\texttt{main()}};
+        \node[draw, label=-90:SET] at (0, 0) {\texttt{set}};
+        \node[draw, label=-90:ID] at (1.5, 0) {\texttt{x}};
+        \node[draw, label=-90:ASSN] at (3, 0) {\texttt{=}};
+        \node[draw, label=-90:NUM] at (4.5, 0) {\texttt{7}};
+        \node[draw, label=-90:EOL] at (6, 0) {\texttt{\textbackslash n}};
         
-        \draw (0.75, 0.75) -- (4.5, 0.75)
-            -- (4.5, 1.5)
-            -- (0.75, 1.5)
-            -- cycle;
-        \node at (2.125, 1.125) {\texttt{3}};
-        \node at (-0.25, 1.125) {\texttt{c(3, ...)}};
+        \node[draw, label=-90:PUT] at (0, -1.5) {\texttt{put}};
+        \node[draw, label=-90:ID] at (1.5, -1.5) {\texttt{x}};
+        \node[draw, label=-90:TIMES] at (3, -1.5) {\texttt{*}};
+        \node[draw, label=-90:LPAREN] at (4.5, -1.5) {\texttt{(}};
+        \node[draw, label=-90:ID] at (6, -1.5) {\texttt{x}};
+        \node[draw, label=-90:PLUS] at (7.5, -1.5) {\texttt{+}};
+        \node[draw, label=-90:NUM] at (9, -1.5) {\texttt{1}};
+        \node[draw, label=-90:RPAREN] at (10.5, -1.5) {\texttt{)}};
         
-        \draw (1.5, 1.5) -- (3.75, 1.5)
-            -- (3.75, 2.25)
-            -- (1.5, 2.25)
-            -- cycle;
-        \node at (2.5, 1.875) {\texttt{5}};
-        \node at (0.5, 1.875) {\texttt{c(5, ...)}};
-        \node at (4.5, 1.875) {\texttt{d(...)}};
-        
-        \draw (2.25, 2.25) -- (4.5, 2.25)
-            -- (4.5, 3)
-            -- (2.25, 3)
-            -- cycle;
-        \node at (3.5, 2.625) {\texttt{7}};
-        \node at (1.25, 2.625) {\texttt{c(7, ...)}};
-        
-        \draw (3, 3) -- (4.5, 3)
-            -- (4.5, 3.75)
-            -- (3, 3.75)
-            -- cycle;
-        \node at (3.5, 3.375) {\texttt{2}};
-        \node at (2, 3.375) {\texttt{c(2, ...)}};
+        \node[draw, label=-90:EOL] at (0, -3) {\texttt{\textbackslash n}};
+        \node[draw, label=-90:EOF] at (1.5, -3) {$\epsilon$};
     \end{tikzpicture}
 \end{figure}
-\noindent The lifetime of heap variables can overlap each other, and other local/global variable's lifetimes.
 
-An allocator is an operation that creates a heap variable, yielding a pointer to the heap variable. For example, in C, the function \texttt{malloc} is the allocator, and in Java, an expression of the form \texttt{new C(..)} is an allocator. A deallocator is an operation that explicitly destroys a designated heap variable. For example, in C, the function \texttt{free} is the deallocator. Java does not have a deallocator.
-
-A heap variable remains reachable as long as it can be accessed by following pointers from a local or a global variable. A heap variable's lifetime extends from its creation until:
+The lexer converts source source code into a token stream. At each step, the lexer inspects the next character of the source code and acts accordingly. When there is no source code left, the lexer outputs an EOF token. Depending on the next character, we choose what to do as follows:
 \begin{itemize}
-    \item it is destroyed by a deallocator,
-    \item it becomes unreachable, or
-    \item the program terminates.
+    \item space- we discard it
+    \item the start of a comment- we scan the rest of the comment and then discard it
+    \item punctuation mark- we output the corresponding token
+    \item digit- we scan the remaining digits and output the corresponding token (a NUM)
+    \item letter- we scan the remaining letters and output the corresponding token (either an ID or a keyword)
 \end{itemize}
 
-A pointer is a reference to a particular variable. A pointer's referent is the variable to which it refers. A null pointer is a special pointer value that has no referent. A pointer is essentially the address of its referent in the store. However, each pointer also has a type, and the type of a pointer allows us to infer the type of its referent.
+\subsection{Parser}
+The parser converts a token stream into an AST. Parsing is divided into two kinds, reflected in how the parse tree is constructed- top-down (recursive-descent or backtracking), and bottom-up. Recursive-descent (RD) parsing is common and particularly simple. It uses recursive procedures to process the stream of tokens. Give a suitable grammar for the source language, we can systematically write a RD parser for it.
 
-Pointers and heap variables can be used to represent recursive variables such as lists and trees. But, the pointer itself is a low-level concept. Manipulation of pointers is notoriously error-prone and hard to understand. For example, the C assignment \texttt{p -> succ = q;} appears to manipulate a list, but which list? Also,
+A recursive-descent parser consists of:
 \begin{itemize}
-    \item Does it delete nodes from the list?
-    \item Does it stitch together parts of two different lists?
-    \item Does it introduce a cycle?
+    \item a family of parsing methods, one for each non-terminal symbol of the source language's grammar; and
+    \item an auxiliary method \texttt{match}.
+\end{itemize}
+We say that these methods consume the token stream from left to right. Moreover, in recursive-descent parser, these families of methods perform the following checks/parsing.
+\begin{itemize}
+    \item The method \texttt{match(t)} checks whether the next token tag \texttt{t}. If yes, it consumes the token. Otherwise, it reports a syntactic error.
+    \item For each non-terminal symbol $N$, the method \texttt{N()} checks whether the next few tokens constitute a phrase of class $N$. If yes, it consumes those tokens (and returns an AST representing the parsed phrase). Otherwise, it reports a syntactic error.
 \end{itemize}
 
-A dangling pointer is a pointer to a variable that has been destroyed. Dangling pointers arise when
+Now, we consider a Calc parser. The parsing methods for Calc are:
 \begin{itemize}
-    \item a pointer to a heap variable still exists after the heap variable is destroyed by a deallocator
-    \item a pointer to a local variable still exists at exit from the block in which the local variable was declared
+    \item \texttt{prog()}, which parses a program;
+    \item \texttt{com()}, which parses a command;
+    \item \texttt{expr()}, which parses an expression;
+    \item \texttt{prim()}, which parses an primary expression;
+    \item \texttt{var()}, which parses a variable.
 \end{itemize}
-A deallocator immediately destroys a heap variable. All existing pointers to that heap variable then become dangling pointers. For this reason, deallocators are inherently unsafe.
+Assume that we have the following token stream.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[draw, label=-90:SET] at (0, 0) {\texttt{set}};
+        \node[draw, label=-90:ID] at (1.5, 0) {\texttt{x}};
+        \node[draw, label=-90:ASSN] at (3, 0) {\texttt{=}};
+        \node[draw, label=-90:NUM] at (4.5, 0) {\texttt{7}};
+        \node[draw, label=-90:EOL] at (6, 0) {\texttt{\textbackslash n}};
+        
+        % \node[draw, label=-90:PUT] at (0, -1.5) {\texttt{put}};
+        % \node[draw, label=-90:ID] at (1.5, -1.5) {\texttt{x}};
+        % \node[draw, label=-90:TIMES] at (3, -1.5) {\texttt{*}};
+        % \node[draw, label=-90:LPAREN] at (4.5, -1.5) {\texttt{(}};
+        % \node[draw, label=-90:ID] at (6, -1.5) {\texttt{x}};
+        % \node[draw, label=-90:PLUS] at (7.5, -1.5) {\texttt{+}};
+        % \node[draw, label=-90:NUM] at (9, -1.5) {\texttt{1}};
+        % \node[draw, label=-90:RPAREN] at (10.5, -1.5) {\texttt{)}};
+        
+        % \node[draw, label=-90:EOL] at (0, -3) {\texttt{\textbackslash n}};
+        % \node[draw, label=-90:EOF] at (1.5, -3) {$\epsilon$};
+    \end{tikzpicture}
+\end{figure}
+\noindent Then, the following figure illustrates the recursive nature of the parsing method.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (5, 0) -- (5, -1) -- (0, -1) -- cycle;
+        \draw (5, -1) -- (5, -2) -- (0, -2) -- (0, -1);
+        \draw (.9, -2) -- (.9, -3) -- (2.1, -3) -- (2.1, -2);
+        \draw (2.9, -2) -- (2.9, -3) -- (4.1, -3) -- (4.1, -2);
+        \draw (2.9, -3) -- (2.9, -4) -- (4.1, -4) -- (4.1, -3);
+        
+        \node at (2.5, -.5) {\texttt{prog()}};
+        \node at (2.5, -1.5) {\texttt{com()}};
+        \node at (1.5, -2.5) {\texttt{var()}};
+        \node at (3.5, -2.5) {\texttt{expr()}};
+        \node at (3.5, -3.5) {\texttt{prim()}};
+        
+        \node[draw, label=-90:SET] at (0.5, -5) {\texttt{set}};
+        \node[draw, label=-90:ID] at (1.5, -5) {\texttt{x}};
+        \node[draw, label=-90:ASSN] at (2.5, -5) {\texttt{=}};
+        \node[draw, label=-90:NUM] at (3.5, -5) {\texttt{7}};
+        \node[draw, label=-90:EOL] at (4.5, -5) {\texttt{\textbackslash n}};
+    \end{tikzpicture}
+\end{figure}
+\noindent We say that the entire token stream is consumed by \texttt{com()}, the ID token is consumed by \texttt{var()}, and so on.
 
-This means that C is somewhat unsafe and Java is safe. After a heap variable is destroyed in C, pointers to it might still exist. The same is true for local variables after we have exited their block. Java has no deallocator, so pointers to local variables cannot be obtained.
-
-Now, consider the following C code.
-\begin{lstlisting}[language=C]
-struct Date {int y, m, d;}
-typedef Date * DatePtr;
-
-// date1 points to a newly-allocated heap node
-DatePtr date1 = (DatePtr) malloc (sizeof Date);
-date1->y = 2022;
-date1->m = 1;
-date1->d = 1;
-
-// date2 points to the same heap variable
-DatePtr date2 = date1;
-
-// deallocates that heap variable- date1 and date2 now contain 
-// dangling pointers
-free(date2);
-
-// behaves unpredictably
-printf("%d4", date1->y);
-date2->y = 2009;
-\end{lstlisting}
-
-A command (often called a statement) is a program construct that will be executed to update variables. Commands are characteristic of imperative and object-oriented PLs. Simple commands include:
-\begin{itemize}
-    \item A skip command is a command that does nothing.
-    \item An assignment command is a command that uses a value to update a variable.
-    \item A procedure call is a command that calls a proper procedure with argument(s). Its net effect is to update some variables.
-\end{itemize}
-Compound commands include:
-\begin{itemize}
-    \item A sequential command is a command that executes its sub-commands in sequence.
-    \item A conditional command is a command that chooses one of its sub-commands to execute.
-    \item An iterative command is a command that executes it sub-command repeatedly. This may be definite iteration, where the number of repetitions is known in advance, or an indefinite iteration, where the number is not known.
-    \item A block command is a command that contains declarations of local variables.
-\end{itemize}
-Below are some examples in Java.
-\begin{lstlisting}[language=Java]
-// single assignment
-m = n + 1;
-
-// multiple assignment
-m = n = 0;
-
-// assignment with a binary operator
-m += 7;
-n /= b;
-
-// if command
-if (x > y) {
-    System.out.println(x);
-} else {
-    System.out.println(y);
-}
-
-// switch command
-Date today = ...;
-switch (today.m) {
-    case 1:
-        System.out.println("JAN");
-        break;
-    ...
-    case 12:
-        System.out.println("DEC");
-        break;
-}
-
-// while command
-Date[] dates;
-// ...
-int i = 0;
-while (i < dates.length) {
-    System.out.println(dates[i]);
-    i++;
-}
-
-// for command
-for (int i = 0; i < dates.length; i++) {
-    System.out.println(dates[i]);
-}
-
-// block command
-if (x > y) {
-    int z = x;
-    x = y;
-    y = z;
-}
-\end{lstlisting}
-
-The primary purpose of evaluating an expression is to yield a value. In most imperative and object-oriented PLs, evaluating expressions can also update variables. These are side effects. In C and Java, the body of a function is a command. If that command updates a global or a heap variable, calling the function has side effects. In C and Java, assignments are expressions with side effects- \texttt{V = E} stores the value of \texttt{E} in \texttt{V}, as well as yielding that value.
-
-The C function \texttt{getchar(fp)} reads a character and updates the file variable \texttt{fp} points to. So, the following C code is correct.
-\begin{lstlisting}[language=C]
-char ch;
-while ((ch = getchar(fp)) != NULL) {
-    putchar(ch);
-}
-\end{lstlisting}
-On the other hand, the following C code is incorrect.
-\begin{lstlisting}[language=C]
-enum Gender {FEMALE, MALE};
-Gender g;
-if (getchar(fp) == "F") {
-    g = FEMALE;
-} else if (getchar(fp) = "M") {
-    g = MALE;
-}
-\end{lstlisting}
-\noindent This is wrong since the second invocation of \texttt{getchar(fp)} has moved past the character.
-\newpage
-
-\section{Bindings and Scope}
-The meaning of an expression/command depends on the declarations of any identifiers used. A binding is a fixed association between an identifier and an entity (such as a value, variable or procedure). An environment (or namespace) is a set of bindings.
-
-Each declaration produces some bindings which are added to the surrounding environment. Each expression/command is interpreted in a particular environment. Every identifier used in the expression/command have a binding in that environment.
-
-The following is a C program outline, showing the environments for the two functions.
-\begin{lstlisting}[language=C]
-extern int z;
-extern const float c = 3.0e6;
-
-void f() {
-    // ..
-
-    // ENVIRONMENT:
-        // c -> the FLOAT value 3 X 10^6
-        // f -> a VOID -> VOID function
-        // g -> a FLOAT -> VOID function
-        // z -> an INT global variable
-}
-
-void g (float x) {
-    char c;
-    int i;
-    // ..
-    
-    // ENVIRONMENT:
-        // c -> a CHAR local variable
-        // f -> a VOID -> VOID function
-        // g -> a FLOAT -> VOID function
-        // i -> an INT local variable
-        // x -> a FLOAT local variable
-        // z -> an INT global variable
-}
-\end{lstlisting}
-
-The scope of a declaration (or of a binding) is the portion of the program text over which it has effect. In some early PLs, the scope of every declaration was the whole program. In modern PLs, the scope of each declaration is controlled by the program's block structure.
-
-A block is a program construct that delimits the scope of any declarations within it. Each PL has its own forms of blocks:
-\begin{itemize}
-    \item In C, block commands (\texttt{\{ ... \}}), function bodies and compilation units are used;
-    \item In Java, block commands (\texttt{\{ ... \}}), method bodies and class declarations are used;
-    \item In Haskell, block expressions (\texttt{let ... in ...}), function bodies and modules are used.
-\end{itemize}
-A PL's block structure is the way in which blocks are arranged in the program text.
-
-Some PLs such as Cobol have monolithic block structure- the whole program is a single block. The scope of every declaration is the whole program. This is depicted in the figure below.
-% TODO: Add image
-
-Some PLs such as Fortran have flat block structure- the program is partitioned into blocks, but these blocks may not contain inner blocks. This is depicted in the figure below.
-% TODO: Add image
-
-Modern PLs have nested block structure- blocks may be nested freely within other blocks. This is depicted in the figure below.
-% TODO: Add image
-With nested block structure, the scope of a declaration excludes any inner block whether the same identifier is declared.
-
-For example, C has a flat block structure for functions, but nested block structure for variables. This is depicted in the figure below.
-% TODO: Add image
-Having a flat block structure for functions means that we cannot declare functions within functions, but that they can be accessed from anywhere within the program.
-
-A binding occurrence of identifier $I$ is an occurrence of $I$ where $I$ is bound to some entity $e$. An applied occurrence of identifier $I$ is an occurrence of $I$ where use is made of the entity $e$ to which $I$ is bound. If the PL is statically scoped, every applied occurrence of $I$ should correspond to exactly one binding occurrence of $I$. Below we have a C program, with binding occurrences and applied occurrences.
-% TODO: ADD IMAGE
-For each applied occurrence, there is one binding occurrence.
-
-A PL is statically scoped if the body of a procedure is executed in the environment of the procedure definition. Then, we can decide at compile-time which binding occurrence of an identifier corresponds to a given applied occurrence. 
-
-A PL is dynamically scoped if the body of a procedure is executed in the environment of the procedure call site. Then, we cannot decide until runtime which occurrence of an identifier corresponds to a given applied occurrence, since the environment may vary from one call site to another.
-
-The following is a program in C, a statically scoped language.
-% TODO: Add diagram
-In a hypothetical, dynamically scoped PL, we get the following situation.
-% TODO: Add diagram
-
-Dynamic scoping fits badly with static typing. Nearly all PLs are statically scoped. Only a few PLs, such as Smalltalk and Lisp are dynamically scoped.
-
-A declaration is a program construct that will be elaborated to produce binding(s). A declaration may also have side effects, such as creating a variable. A definition is a declaration whose only effect is to produce binding(s). It has no side effects.
-
-Simple declarations include:
-\begin{itemize}
-    \item A type declaration binds an identifier to an existing or new type.
-    \item A constant definition binds an identifier to a value, possible after computation.
-    \item A variable declaration binds an identifier to a newly-created variable.
-    \item A procedure definition binds an identifier to a procedure.
-\end{itemize}
-
-A recursive definition is one that uses the bindings it produces itself. In almost all PLs, recursion is restricted to type (or class) declarations and procedure (or method) declarations. 
-
-An example below is given of a recursive Java class, with a recursive method.
-\begin{lstlisting}[language=Java]
-class IntList {
-    int head;
-    IntList tail;
-    
-    static int length(IntList list) {
-        if (list == null) {
-            return 0;
-        } else {
-            return 1 + length(list.tail);
-        }
-    }
-}
-\end{lstlisting}
-C struct type declarations may be recursive, but only via pointers. Also, C function definitions may be recursive. Below is the C version of the class \texttt{IntList} above.
-\begin{lstlisting}[language=C]
-struct IntList {
-    int head;
-    struct IntList * tail;
-}
-
-int length(IntList * list) {
-    if (list == NULL) {
-        return 0;
+In Calc, the EBNF production rule for command is:
+\begin{align*}
+    \textit{com } =& \texttt{ put} \textit{ expr eol} \\
+    \hspace{2pt} |& \texttt{ set} \textit{ var } \texttt{=} \textit{ expr eol}
+\end{align*}
+So, the parsing method for the command (in Java) is given by the following:
+\begin{lstlisting}[language=java]
+public void com() {
+    // if the next token is `put'
+    if (tokenStream.next() == "put") {
+        match(PUT);
+        expr();
+        match(EOL);
+    } else if (tokenStream.next() == "set") {
+        match(SET);
+        var();
+        match(ASSN);
+        expr();
+        match(EOL);
     } else {
-        return 1 + length(list->tail);
+        // syntactic error
     }
 }
 \end{lstlisting}
+This is the way we convert EBNF rules into parsing methods. The EBNF production rule for program is:
+\[\textit{prog } = \textit{ com}^* \textit{ eof}\]
+So, its parsing method is given below.
+\begin{lstlisting}[language=java]
+public void prog() {
+    // while the next token matches a command token,
+    while (tokenStream.next().isCom()) {
+        com();
+    }
+    match(EOF);
+}
+\end{lstlisting}
+In general, if we have the rule $N = t$, where $t$ is a terminal system, we produce the following method.
+\begin{lstlisting}[language=java]
+public void N() {
+    match(t);
+}
+\end{lstlisting}
+Instead, if we have the rule $N = M$, where $M$ is a non-terminal system, we produce the following method.
+\begin{lstlisting}[language=java]
+public void N() {
+    M();
+}
+\end{lstlisting}
+If we have the rule $N = RE_1 RE_2$, where $RE_1$ and $RE_2$ are two regular expressions, we produce the following method.
+\begin{lstlisting}[language=java]
+public void N() {
+    // match RE1
+    // match RE2
+}
+\end{lstlisting}
+Next, if we have the rule $N = RE^*$, where $RE$ is a regular expression, we produce the following method.
+\begin{lstlisting}[language=java]
+public void N() {
+    // while the next token can be RE,
+    while (tokenStream.next().isRE()) {
+        // match RE
+    }
+}
+\end{lstlisting}
+Now, if we have the rule $N = RE_1 | RE_2$, where $RE_1$ and $RE_2$ are two regular expressions, we produce the following method.
+\begin{lstlisting}[language=java]
+public void N() {
+    // while the next token can be RE1,
+    if (tokenStream.next().isRE1()) {
+        // match RE1
+    }
+    // if the next token can be RE2,
+    else if (tokenStream.next().isRE2()) {
+        // match RE2
+    }
+    // while the next token can be RE,
+    else {
+        // syntactic error
+    }
+}
+\end{lstlisting}
+This only works if no token can start both $RE_1$ and $RE_2$. In particular, it does not work if a product rule is left-recursive, i.e. it is of the form $N = X | N \ Y$.
+
+Syntactic analysis has a variety of applications.
+\begin{itemize}
+    \item It is used in compilers, as we have been used to compile Calc.
+    \item It is used in XML applications to convert them to tree form.
+    \item It is used in web browsers to parse and render HTML documents.
+    \item It is used in natural language applications to parse and translate NL documents.
+\end{itemize}
+
+\subsection{Compiler generator tools}
+A compiler generation tool automates the process of building compiler components. It takes as input the specification of what the compiler component is supposed to do, e.g. the input to a parser generator is a grammar. Examples of compiler generator tools include lex and yacc, JavaCC, ANTLR, etc.
+
+We will look at ANTLR (Another tool for language recognition). It automatically generates a lexer and a recursive-descent parser, starting from a grammar file (.g4). It allows to build and walk a parse tree. We start by expressing the source language's grammar in ANTLR notation, which is very close to the EBNF notation.
+
+ANTLR is composed of two main parts:
+\begin{itemize}
+    \item the tool, which is used to generate the lexer and the parser, and
+    \item the runtime, which is used to run them.
+\end{itemize}
+The tool is a Java program, whether the runtime is different for every language targeted. When we run ANTLR tool, we can specify the target language (Java by default) to generate a parser, e.g. in Python. ANTLR can generate listeners (by default) and visitors, which are the basis for implementing a contextual analyser and a code generator.
+
+The ANTLR notation is very similar to EBNF. Lexer rules (at the end of the file) are all uppercase, and parser rules are all lowercase. The syntax of a rule is- name, a colon, the definition of the rule, and a terminating semicolon. The Calc grammar in ANTLR is shown below.
+\begin{verbatim}
+grammar Calc;
+prog
+        :   com* EOF
+        ;
+com
+        :   PUT expr EOL            # put
+        |   SET var ASSN expr EOL   # set
+        ;
+expr
+        :   prim
+            (operator += 
+                (PLUS | MINUS | TIMES)
+            prim)*                  # op
+prim
+        :   NUM                     # num
+        |   ID                      # id
+        |   LPAR expr RPAR          # parens
+        ;
+var
+        : ID
+        ;
+PUT     : "put";
+SET     : "set";
+ASSN    : "=";
+PLUS    : "+";
+MINUS   : "-";
+TIMES   : "*";
+LPAR    : "(";
+RPAR    : ")"
+ID      : "a" .. "z";
+NUM     : "0".."9"+;
+EOL     : "\r"? "\n";
+SPACE   : (" "| "\t")+ -> skip;
+\end{verbatim}
+If we run the ANTLR tool on the grammar above, ANTLR will generate the following classes:
+\begin{itemize}
+    \item The class \texttt{CalcLexer}, which contains methods that convert an input stream (source code) to a token stream.
+    \item The class \texttt{CalcParser}, which contains parsing methods \texttt{prog()}, \texttt{com()}, etc. that consume the token stream.
+\end{itemize}
+We then write a driver program that runs \texttt{CalcParser}'s method \texttt{prog()}:
+\begin{lstlisting}[language=java]
+public class CalcRun {
+    public static void main(String[] args) {
+        // create the input stream
+        InputStream source = new FileInputStream(args[0]);
+        // create the lexer
+        CalcLexer lexer = new CalcLexer(
+            new ANTLRInputStream(source)
+        );
+        // run the lexer (creates a token stream)
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        // create a parser
+        CalcParser parser = new CalcParser(tokens);
+        // run the parser
+        ParseTree tree = parser.prog();
+    }
+}
+\end{lstlisting}
+
+When compiled and run, \texttt{CalcRun} performs syntactic analysis on the source program and reports any syntactic errors. It also constructs a syntax tree. The syntax tree can be viewed with the ANTLR \texttt{TestRig} tool. However, \texttt{CalcRun} does not execute the program. The program can be executed by traversing the syntax tree, left to right, depth first, and interpreting each command.
+
+We get the syntax tree automatically by ANTLR. But, to implement an interpreter or compile, we need to walk over the tree and analyse its structure. We will use ASTs to explain, but ANTLR makes use of the full syntax tree with all the tokens. ANTLR uses the Visitor pattern to define tree walkers. It is also possible to use the Listener pattern to do so.
+
+It is possible to configure ANTLR so that we visit the AST. Using a different command, ANTLR generates two further files:
+\begin{itemize}
+    \item the interface \texttt{CalcVisitor}, which specifies a \texttt{visit} method for each type of syntax tree node, e.g. \texttt{visitProg}, \texttt{visitPut}, etc. The visitor methods have a single parameter \texttt{context}, which has the syntax tree node we are visiting.
+    \item the class \texttt{CalcBaseVisitor}, which implements \texttt{CalcVisitor}. Initially, it is formatted to just walk over the syntax tree. We will need to adapt it so that it does what we want it to do.
+\end{itemize}
+
+Assume that we want \texttt{CalcRun} to perform calculations, i.e. \texttt{put} \textit{expr} should evaluate the expression and print the result, and \texttt{set} \textit{var} \texttt{=} \textit{expr} should evaluate the expression and then store the result in the given variable. For this, we define the class \texttt{ExecVisitor} that extends \texttt{CalcBaseVisitor} and overrides the \texttt{visit} methods so that they interpret the program while walking over the syntax tree.
+
+The following is the class \texttt{ExecVisitor}:
+\begin{lstlisting}[language=java]
+class ExecVisitor extends CalcBaseVisitor<Integer> {
+    // variables
+    int[] store = new int[26];
+    
+    public Integer visitProg(CalcParser.ProgContext ctx) {
+        // interpret every command in the program
+        return visitChildren(ctx);
+    }
+    
+    public Integer visitPut(CalcParser.PutContext ctx) {
+        // visit the relevant expression
+        int value = visit(ctx.expr());
+        System.out.println(value);
+        // no true value to return
+        return 0;
+    }
+    
+    public Integer visitSet(CalcParser.SetContext ctx) {
+        // visit the relevant expression
+        int value = visit(ctx.expr());
+        // get the index corresponding to the variable
+        int address = ctx.var().ID().getText().charAt(0) - "a";
+        // add the value to the index
+        store[address] = value;
+        return 0;
+    }
+    
+    public Integer visitOp(CalcParser.OpContext ctx) {
+        // get the values and the operations
+        List<CalcParser.PrimContext> prims = ctx.prim();
+        List<Token> ops = ctx.operator;
+        // visit the first value
+        int value = visit(prims.get(0));
+        // apply the operation to each of the next values
+        for (int i = 1; i < prims.size(); i++) {
+            switch (ops.get(i-1).getType()) {
+                case CalcParser.PLUS;
+                    value = value + visit(prims.get(i));
+                    break;
+                case CalcParser.MINUS;
+                    value = value - visit(prims.get(i));
+                    break;
+                ...
+            }
+        }
+    return value;
+    }
+    
+    public Integer visitNum(CalcParser.NumContext ctx) {
+        return Integer.valueOf(ctx.NUM().getText());
+    }
+    
+    public Integer visitId(CalcParser.IdContext ctx) {
+        int address = ctx.ID().getText().charAt(0) - "a";
+        return store[address];
+    }
+    
+    public Integer visitParens(CalcParser.ParensContext ctx) {
+        return visit(ctx.expr());
+    }
+}
+\end{lstlisting}
+
+The driver program needs to be extended to create and call an \texttt{ExecVisitor}.
+
+\begin{lstlisting}[language=java]
+public class CalcRun {
+    public static void main(String[] args) {
+        InputStream source = new FileInputStream(args[0]);
+        CalcLexer lexer = new CalcLexer(
+            new ANTLRInputStream(source)
+        );
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CalcParser parser = new CalcParser(tokens);
+        ParseTree tree = parser.prog();
+        ExecVisitor exec = new ExecVisitor();
+        exec.visit(tree);
+    }
+}
+\end{lstlisting}
+When compiled and run, \texttt{CalcRun} performs syntactic analysis on the source program and then interprets it.
+
+Below is the Fun grammar in the ANTLR notation.
+\begin{verbatim}
+grammar Fun;
+
+prog    
+        :   var_decl* proc_decl+ EOF        # prog
+        ;
+var_decl
+        :   type ID ASSN expr               # var
+        ;
+type
+        :   BOOL                            # bool
+        |   INT
+        ;
+com
+        :   ID ASSN expr                    # assn
+        |   WHILE expr COLON seq_com DOT    # while
+seq_com
+        :   com*                            # seq
+        ;
+expr    :   e1=sec_expr ...
+sec_expr
+        :   e1=prim_expr
+            ( op = (PLUS | MINUS | TIMES | DIV)
+                e2 = sec_expr
+            ) ?
+prim_expr
+        :   NUM                             # num
+        |   ID                              # id
+        |   LPAR expr RPAR                  # parens
+        |   ...
+\end{verbatim}
+Running this with the ANTLR tool generates a lexer and a parser. This creates the classes \texttt{FunLexer} and \texttt{FunParser}. The \texttt{prog()} method returns a full syntax tree.
 \newpage
 
-\section{Abstraction}
-In programming, abstraction means the distinction between what a program unit does and how it performs the task. This supports a separation of concerns between the implementor (i.e. who codes the program unit) and the application programmer (i.e. who uses it). Program units include procedures, packages, classes and generic packages.
+\section{Contextual Analysis}
+Contextual analysis checks whether the source program (represented by an AST or a syntax tree) satisfies the source language's scope rules and type rules. Logically, there are 2 phases to contextual analysis:
+\begin{itemize}
+    \item scope checking, which ensures that every identifier used in the source program is declared, and
+    \item type checking, which ensures that every operation has operands with the expected types.
+\end{itemize}
 
-\subsection{Procedural Abstraction}
-A proper procedure (or just procedure) embodies a command to be executed. A procedure call is a command. It causes the procedure's body to be executed. It results in the update of some variables.
+For example, consider the following source program in Fun:
+\begin{lstlisting}[language=fun]
+int n = 15
+# div program
+proc main ():
+    while n > 1:
+        n = n/2 .
+.
+\end{lstlisting}
+\noindent After syntactic analysis, we get the following AST.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance=5cm},
+        level 2/.style={sibling distance=3cm},
+        level 3/.style={sibling distance=2cm},
+        level 4/.style={sibling distance=1cm},
+    ]
+        \node[ellipse, draw] {PROG}
+        child[
+            level 2/.style={sibling distance=1cm}
+        ] {
+            node[ellipse, draw] {VAR}
+            child {
+                node[draw, label=-90:INT] {\texttt{int}}
+            }
+            child {
+                node[draw, label=-90:ID] {\texttt{n}}
+            }
+            child {
+                node[draw, label=-90:NUM] {\texttt{15}}
+            }
+        }
+        child {
+            node[ellipse, draw] {PROC}
+            child {
+                node[draw, label=-90:ID] {\texttt{main}}
+            }
+            child {
+                node[ellipse, draw] {NOFORMAL}
+            }
+            child {
+                node[ellipse, draw] {WHILE}
+                child {
+                    node[ellipse, draw] {GT}
+                    child {
+                        node[draw, label=-90:ID] {\texttt{n}}
+                    }
+                    child {
+                        node[draw, label=-90:NUM] {\texttt{1}}
+                    }
+                }
+                child {
+                    node[ellipse, draw] {ASSN}
+                    child {
+                        node[draw, label=-90:ID] {\texttt{n}}
+                    }
+                    child {
+                        node[ellipse, draw] {DIV}
+                        child {
+                            node[draw, label=-90:ID] {\texttt{n}}
+                        }
+                        child {
+                            node[draw, label=-90:NUM] {\texttt{2}}
+                        }
+                    }
+                }
+            }
+        };
+    \end{tikzpicture}
+\end{figure}
+\noindent During contextual analysis, we will infer the types of the variables and functions, and get the following enhanced AST:
 
-A function procedure (or just function) embodies an expression to be evaluated. A function call is an expression. It causes the function's body to be evaluated. It results in a value (which is returned by the function).
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance=5cm},
+        level 2/.style={sibling distance=3cm},
+        level 3/.style={sibling distance=2cm},
+        level 4/.style={sibling distance=1cm},
+    ]
+        \node[ellipse, draw] {PROG}
+        child[
+            level 2/.style={sibling distance=1cm}
+        ] {
+            node[ellipse, draw] {VAR}
+            child {
+                node[draw, label=-90:INT] {\texttt{int}}
+            }
+            child {
+                node[draw, label=-90:ID] {\texttt{n}}
+            }
+            child {
+                node[draw, label=-90:NUM, fill=blue!50, opacity=0.5] {\texttt{15}}
+            }
+        }
+        child {
+            node[ellipse, draw] {PROC}
+            child {
+                node[draw, label=-90:ID] {\texttt{main}}
+            }
+            child {
+                node[ellipse, draw] {NOFORMAL}
+            }
+            child {
+                node[ellipse, draw] {WHILE}
+                child {
+                    node[ellipse, draw, fill=red!50, opacity=0.5] {GT}
+                    child {
+                        node[draw, label=-90:ID, fill=blue!50, opacity=0.5] {\texttt{n}}
+                    }
+                    child {
+                        node[draw, label=-90:NUM, fill=blue!50, opacity=0.5] {\texttt{1}}
+                    }
+                }
+                child {
+                    node[ellipse, draw] {ASSN}
+                    child {
+                        node[draw, label=-90:ID, fill=blue!50, opacity=0.5] {\texttt{n}}
+                    }
+                    child {
+                        node[ellipse, draw, fill=blue!50, opacity=0.5] {DIV}
+                        child {
+                            node[draw, label=-90:ID, fill=blue!50, opacity=0.5] {\texttt{n}}
+                        }
+                        child {
+                            node[draw, label=-90:NUM, fill=blue!50, opacity=0.5] {\texttt{2}}
+                        }
+                    }
+                }
+            }
+        };
+    \end{tikzpicture}
+\end{figure}
+\noindent A red value represents a \texttt{BOOL}, while a blue value represents an \texttt{INT}. We want to keep a type table for each variable. For example, the identifier \texttt{n} is known to be an integer. When we assign \texttt{n = n/2}, this is valid since the division operation returns an integer. In contextual analysis, we check whether the variable exists (scope) and whether it matches the expected type. We also check that the division operator receives 2 integers, and the condition on a while statement is of type bool.
 
-Imperative PLs usually support both procedures and functions. For example, in Pascal and Ada, procedures and functions are syntatically distinct. However, in C and Java, the only distinction is that a procedure's result type is \texttt{VOID}. Functional PLs only support functions. Object-oriented PLs also support procedures as methods. A static method is a procedure exported by a class. An instance method is a procedure attached to an object.
+\subsection{Scope checking}
+Scope checking is the collection and dissemination of information about declared identifiers. The contextual analyser employs a type table. This contains the type of each declared variable, e.g.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c}
+        \texttt{n} & \texttt{BOOL} \\
+        \texttt{fac} & \texttt{INT} $\to$ \texttt{INT} \\
+        \texttt{main} & \texttt{INT} $\to$ \texttt{VOID}
+    \end{tabular}
+    \caption{A type table}
+\end{table}
 
-The following is a procedure in C.
-\begin{lstlisting}[language=C]
-void print(Date date) {
-    int y = date.y,
-        m = date.m,
-        d = date.d;
-    printf("%d4-%d2-%d2", y, m, d);
+Whenever an identifier is declared, we put the identifier and its type into the type table. If the identifier is already in the type table (and in the same scope), we report a scope error. Whenever an identifier is used, we check that it is in the type table, and retrieve its type. If the identifier is not in the type table, we report a scope error.
+
+We illustrate the process with Fun scope checking. In Fun, a declaration of a variable identifier is of the form
+\[\textit{type id } \texttt{=} \textit{ expr}\]
+So, we put the identifier value into the type table, along with its type. If the identifier already exists, we return a scope error.
+% Finally, we check that the value of the expression matches the given type. -> type checking
+Similarly, a use of a variable identifier in Fun is of the form
+\[\textit{id } \texttt{=} \textit{ expr}\]
+In this case, we lookup the identifier in the type type and retrieve its type. If the identifier does not exist, we return a scope error.
+% We require the type of the expression to match this type. -> type checking
+
+\subsection{Type checking}
+Type checking is the process of checking that every command and expression is well-typed, meaning that it does not contain any errors. The compiler only performs type checking if the source language is statically typed, i.e. the type of an identifier is known at compile-time.
+
+For example, at each expression, we check the type of each sub-expression. We then infer the type of the expression as a whole. If a sub-expression has unexpected type, we report a type error. Similarly, at each command, we check the type of any constituent expression. If an expression has unexpected type, we report a type error. We do not return a type at the end.
+
+Now, we consider some Fun type checking. The greater than expression is of the form
+\[\textit{expr}_1 > \textit{expr}_2\]
+We walk $\texttt{expr}_1$ and check that its type is \texttt{INT}, and do the same thing for $\texttt{expr}_2$. We then infer that the type of the whole expression is \texttt{BOOL}. An assignment command is of the form
+\[\textit{id } \texttt{=} \textit{ expr}\]
+We lookup the identifier and find its type. We then walk the expression and note its value. At the end, we require that the two types are equivalent. An if-command is of the form
+\[\texttt{if } \textit{expr com}\]
+We first walk expression, and check that its type is \texttt{BOOL}. We then walk the command to ensure that there are no type errors within the command.
+
+\subsection{Contextual Analysis in ANTLR}
+Contextual analysis is done by walking over the syntax tree. We created a base visitor class during syntactical analysis, so we create another class that extends this class. For contextual analysis, we require also \texttt{SymbolTable}. We use the class \texttt{Type} to representation the type of a value in Fun.
+
+Visting an expression returns the type of the expression, if any. For example, the \texttt{visitNum} method is of the form:
+\begin{lstlisting}[language=java]
+Type visitNum(FunParser.NumContext ctx) {
+    return Type.INT;
 }
 \end{lstlisting}
-The procedure body is a block command. The execution of the procedure results in the variables \texttt{y}, \texttt{m} and \texttt{d} being created.
-
-The following is a function in Haskell.
-\begin{lstlisting}[language=Haskell]
-power   ::  (Float, Int) -> Float
-power (b, n) =
-    if n == 0
-    then 1.0
-    else b * power(b, n-1)
+The \texttt{visitID} method, that visits an identifier is given below.
+\begin{lstlisting}[language=java]
+Type visitID(FunParser.IdContext ctx) {
+    return retrieve(ctx.ID().getText(), ctx);
+}
 \end{lstlisting}
-The body of the function is an expression. The following is the same function in C.
-\begin{lstlisting}[language=C]
-float power(float b, float n) {
-    float p = 1;
-    while (n > 0) {
-        p *= b;
-        n--;
+To get the type of an identifier, we use the \texttt{retrieve} method. This is returned from the type table. We also pass in the parameter \texttt{ctx} to extract the line number in the case of a type/scope error.
+
+In Fun, an expression is of the form
+\[\textit{e}_1 = \textit{ sec\_expr } (\textit{op} = (\texttt{= }|\texttt{ < }| \texttt{ >}) \textit{ e}_2 = \textit{ sec\_expr})?\]
+So, the \texttt{visitExpr} method is the following.
+\begin{lstlisting}[language=java]
+Type visitExpr(FunParser.ExprContext ctx) {
+    Type t1 = visit(ctx.e1);
+    if (ctx.e2 != null) {
+        Type t2 = visit(ctx.e2);
+        return checkBinary(COMPTYPE, t1, t2, ctx);
     }
-    return p;
+    else {
+        return t1;
+    }
 }
 \end{lstlisting}
-Here, the body of the function is still a block command.
+\noindent Every expression has $\textit{e}_1$, so we visit it. If $\textit{e}_2$ does not exist, then the type of the expression is the same as the type of $\textit{e}_1$. Otherwise, we visit the second expression and ensure that both the types are \texttt{INT}. The function \texttt{checkBinary} returns the type \texttt{BOOL} after checking the types. The type \texttt{COMPTYPE} is the type representing $\texttt{INT} \times \texttt{INT} \to \texttt{BOOL}$.
 
-In most imperative and object-oriented PLs, the function's body is syntatically a block command. This is executed until a return determines the function's result. This means that the full expressive power is available to define a function (e.g. instantiate variables). However, this is a roundabout way to compute a result. In fact, a return might never be executed (e.g. because of an infinite loop). Moreover, side effects are possible.
-
-In functional PLs, the function's body is syntatically an expression. This is evaluated to yield the function's result. This means that the design is simple and natural. However, the expressive power of the PL is limited. This can be remedied by allowing conditional and iterative expressions, nonetheless.
-
-An argument is a value (or another entity) that is passed to a procedure. An actual parameter is an expression that yields an argument. A formal parameter is an identifier through which a procedure can access an argument. We can pass the following as arguments:
-\begin{itemize}
-    \item values,
-    \item variables, or pointers to variables, and
-    \item procedures, or pointers to procedures.
-\end{itemize}
-
-A parameter mechanism is a means by which a formal parameter provides access to the corresponding argument. Different PLs support a variety of parameter mechanisms: value, result, value-result, constant, variable, procedural and functional parameters. These can all be understood in terms of two underlying concepts: copy parameter mechanisms and reference parameter mechanisms.
-
-With a copy parameter mechanism, a value is copied into and/or out of a procedure. A formal parameter is bound to a local variable of the procedure. A value is copied into that local variable on calling the procedure. A value is copied into that local variable on calling the procedure. The value can also be copied out of that local variable to an argument variable on return. There are 2 copy parameter mechanisms- copy in and copy out parameter.
-
-In copy-in parameter (or value parameter), the argument is a value. On call, a local variable is created and initialised with the argument value. On return, the local variable is destroyed.
-
-In copy-out parameter (or result parameter), the argument is a variable. On call, a local variable is created but not initialised. On return, the local variable's final value is assigned to the argument variable, then the local variable is destroyed.
-
-The following is some functions in C.
-\begin{lstlisting}[language=C]
-void print(Date date) {
-    printf("%d-%d-%d", date.y, date.m, date.d);
-}
-
-void main() {
-    Date today = {2022, 3, 7};
-    print(today);
-}
-\end{lstlisting}
-At line 1, the local variable \texttt{date} is initialised to the argument value. At line 7, the argument value is \texttt{\{2022, 3, 7\}}.
-
-With a reference parameter mechanism, the formal parameter is a reference to the argument. The formal parameter FP is bound to a reference to the argument. Every accessed to FP is an indirect access to the argument. There are 3 principal reference parameter mechanisms- constant, variable and procedural parameter.
-
-In a constant parameter mechanism, the argument is a value. So, any inspection of the FP is an indirect inspection of the argument value. In a variable parameter mechanism, the argument is a variable. So, any access (inspection or update) of the FP is an indirect access of the argument variable. In a procedural parameter mechanism, the argument is a procedure. So, any call to the FP is an indirect call to the argument procedure.
-
-The following is some methods in Java.
-\begin{lstlisting}[language=Java]
-public void print(Date date) {
-    System.out.println(date.y & "-" date.m & "-" & data.d);
-}
-
-public static void main() {
-    Date today = new Date(2022, 3, 7);
-    print(today);
-}
-\end{lstlisting}
-At line 1, the local variable \texttt{date} is a reference to the argument object. At line 7, the argument is the object to which \texttt{today} refers. Java supports copy-in parameter mechanism for primitive types. Also, Java supports the reference parameter mechanism for object types.
-
-\subsection{Data abstraction}
-A package (or module) is a named group of components declared for a common purpose. These components may be types, constants, variables, procedures, inner packages, etc. The meaning of a package is the set of bindings exported by the package. These are often called the packages's application program interface (API).
-
-An example is given below in Python.
-\begin{lstlisting}[language=python]
-words = [...]
-
-def contains(word):
-    global words
-    return word in words
-
-def add(word):
-    global words
-    if word not in words:
-        words += [word]
-\end{lstlisting}
-This module's API contains the variable \texttt{words} and the functions \texttt{contains} and \texttt{add}.
-
-Some of the components of a program unit (package/class) may be private. This is called encapsulation. There are many levels of privacy, as given below.
-\begin{itemize}
-    \item A component is private if it is visible only inside the program unit.
-    \item A component is protected if it is visible only inside the program unit and certain other program units.
-    \item A component is public if it is visible to application code outside the program unit.
-\end{itemize}
-A program unit API consists of its public bindings only.
-
-Most PLs (such as Ada, java, Haskell) allow individual components of a program unit to be specified as private, protected or public. Python has a convention that components whose names start with "\_" are private, and anything else is public. This is not enforced by the Python compiler.
-
-In Java, the components of a package are classes and inner packages. Package components are added incrementally. The following is the outline of a class declaration within a package.
+In Fun, an assignment command is of the form
+\[\textit{ID} \texttt{ = } \textit{expr}\]
+So, the \texttt{visitAssn} method is the following.
 \begin{lstlisting}[language=java]
-package sprockets;
-
-import widgets.*;
-
-public class C {
-    ...
+Type visitAssn(FunParser.AssnContext ctx) {
+    Type tvar = retrieve(ctx.ID().getText(), ctx);
+    Type t = visit(ctx.expr());
+    checkType(tvar, t, ctx);
+    return null;
 }
 \end{lstlisting}
-At line 1, we declare that the class \texttt{C} is a component of the package \texttt{sprockets}. At line 3, we declare that the class \texttt{C} uses public components of the pakcage \texttt{widgets}.
+We first try to find the type of the identifier. Then, we visit the expression and check that the type of the expression matches the type of the identifier. We return \texttt{null} at the end since a command does not have a type.
 
-An object is a tagged tuple of variable components (instance variables), equipped with operations that access these instance variables. A constructor is an operation that initialises a newly created object. An instance method is an operation that inspects and/or updates an existing object of the class. That object (called the receiver object) is determined by the method call. A class is a set of similar objects. All objects of a given class have similar instance variables, and are equipped with the same operations.
-
-A Java class declaration declares its instance variables and defines its constructors and instance methods. It also specifies whether each of these is private, protected or public. A Java instance method call has the form \texttt{O.M(...)}. The expression \texttt{O} yields the receiver object. \texttt{M} is the name of the instance method to be called. The call executes the method body, with \texttt{this} bound to the receiver object \texttt{O}.
-
-We illustrate this with an example.
+In Fun, an if command is of the form
+\[\texttt{IF } \textit{expr} \texttt{:} \textit{c}_1 = \textit{seq\_com} (\texttt{.} \ | \ \texttt{ELSE:} \textit{c}_2 = \textit{seq\_com } \texttt{.})\]
+So, the \texttt{visitIf} method is the following.
 \begin{lstlisting}[language=java]
-class Dict {
-    private int size;
-    private String[] words;
+Type visitIf(FunParser.IfContext ctx) {
+    Type t = visit(ctx.expr());
+    visit(ctx.c1);
+    if (ctx.c2 != null) {
+        visit(ctx.c2);
+    }
+    checkType(Type.BOOL, t, ctx);
+    return null;
+}
+\end{lstlisting}
+We first visit the expression, and then the commands. We require the type of the expression to be \texttt{BOOL}.
 
-    public Dict(int capacity) {
+A sequence of commands is given by
+\[\textit{com}^*\]
+So, the \texttt{visitSeq} method is the following.
+\begin{lstlisting}[language=java]
+Type visitSeq(FunParser.SeqContext ctx) {
+    visitChildren(ctx);
+    return null;
+}
+\end{lstlisting}
+We are just visiting all the children nodes in the tree and not type checking anything at this level.
+
+A variable declaration is given by
+\[\textit{type id} \texttt{ = } \textit{expr}.\]
+So, the \texttt{visitVar} method is the following.
+\begin{lstlisting}[language=java]
+Type visitVar(FunParser.VarContext ctx) {
+    Type t1 = visit(ctx.type());
+    Type t2 = visit(ctx.expr());
+    define(ctx.ID().getText(), t1, ctx);
+    checkType(t1, t2, ctx);
+    return null;
+}
+\end{lstlisting}
+We define the identifier to be of the given type. Then, we check that the type of the expression matches the type of the identifier given.
+
+Finally, a program is given by
+\[\textit{var\_decl}^* \textit{proc\_decl}^+ \]
+So, the \texttt{visitProg} method is the following.
+\begin{lstlisting}[language=java]
+Type visitProg(FunParser.ProgContext ctx) {
+    predefine();
+    visitChildren(ctx);
+    Type tmain = retrieve("main", ctx);
+    checkType(MAINTYPE, tmain, ctx);
+    return null;
+}
+\end{lstlisting}
+The function \texttt{predefine} adds the read and write functions into the type table. We visit all the children to find any type errors within the program. We expect there to be a \texttt{main} procedure in each program, so we check that it exists and its type is $\texttt{VOID} \to \texttt{VOID}$ (called \texttt{MAINTYPE}).
+
+The driver program visits the tree, as given below.
+\begin{lstlisting}[language=java]
+public static void main(String[] args) {
+    ..
+    // Syntactic analysis 
+    ParseTree tree = parser.program();
+    // Contextual analysis
+    FunCheckerVisitor checker = new FunCheckVisitor(tokens);
+    checker.visit(tree);
+}
+\end{lstlisting}
+
+\subsection{Representing types}
+To implement type checking, we need a way to represent the source language's types. We know that the type of a variable/function can be primitive, Cartesian product, disjoint union or mapping. In the Fun language, we have primitive, Cartesian product and mapping.
+
+We represent Fun primitive data types by \texttt{Type.BOOL} and \texttt{Type.INT} static variables. For a function, we use a mapping type, e.g. $\texttt{T} \to \texttt{T}'$ or $\texttt{VOID} \to \texttt{T}'$. We can represent procedures in a similar way, e.g. $\texttt{T} \to \texttt{VOID}$ or $\texttt{VOID} \to \texttt{VOID}$. We also use mapping types for operators, e.g. \texttt{+}, \texttt{-}, \texttt{*} and \texttt{\textbackslash} are of type $\texttt{(INT} \times \texttt{INT)} \to \texttt{INT}$; \texttt{==}, \texttt{<} and \texttt{>} are of type $(\texttt{INT} \times \texttt{INT)} \to \texttt{BOOL}$; and \texttt{not} is of type $\texttt{BOOL} \to \texttt{BOOL}$.
+
+The class \texttt{Type} is of the following format.
+\begin{lstlisting}[language=java]
+public abstract class Type {
+    public abstract boolean equiv(Type t);
+    
+    public static class Primitive extends Type {
         ...
     }
+    
+    public static class Pair extends Type {
+        ...
+    }
+    
+    public static class Mapping extends Type {
+        ...
+    }
+}
+\end{lstlisting}
+The 3 subclasses are used for the 3 types of types. The subclass \texttt{Type.Primitive} has a field that distinguishes different primitive types.
+\begin{lstlisting}[language=java]
+public static final Type 
+    VOID = new Type.Primitive(0),
+    BOOL = new Type.Primitive(1),
+    INT = new Type.Primitive(2);
+\end{lstlisting}
+The subclass \texttt{Type.Pair} has two \texttt{Type} fields, which are the types of the pair components, e.g.
+\begin{lstlisting}[language=java]
+Type prod = new Type.Pair(Type.BOOL, Type.INT);
+\end{lstlisting}
+represents the type $\texttt{BOOL} \times \texttt{INT}$. Similarly, the subclass \texttt{Type.Mapping} has two \texttt{Type} fields. These are the domain type and range of the mapping type, e.g.
+\begin{lstlisting}[language=java]
+Type proctype = new Type.Mapping(Type.INT, Type.VOID);
+Type optype = new Type.Mapping(
+    new Type.Pair(Type.INT, Type.INT), Type.BOOL
+);
+\end{lstlisting}
+The type \texttt{proctype} corresponds to the map $\texttt{INT} \to \texttt{VOID}$, while the type \texttt{optype} corresponds to the map $(\texttt{INT} \times \texttt{INT}) \to \texttt{BOOL}$.
 
-    public void add (String w) {
-        if (!this.contains(w)) {
-            this.words[this.size++] = w;
+\section{Scopes}
+In Fun, declarations are global or local. A PL of this structure is said to have flat block structure. The same identifier can be declared both globally and locally, e.g.
+\begin{lstlisting}[language=fun]
+int x = 1
+
+proc main ():
+    int x = 2
+    write(x)
+.
+
+proc p (bool x):
+    if x:
+        write(9)
+    .
+.
+\end{lstlisting}
+The variable \texttt{x} declared at line 1 is a global variable. The variables \texttt{x} at lines 4 and 9 are local variables, and do not affect the value of the global variable.
+
+The type table must distinguish between global and local entries. The global entries are always present. Local entries are present only when analysing an inner scope. At any given point during analysis of the source program, the same identifier may occur in at most one global entry and at most one local entry. Most PLs have nested scopes instead of this flat global/local scope.
+
+For the Fun program above, the type table of the program at line 1 is the following.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        global & \texttt{x} & \texttt{INT} \\
+        \hline
+    \end{tabular}
+\end{table}
+\noindent At line 4, the type table is the following.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        global & \texttt{x} & \texttt{INT} \\
+        \hline
+        global & \texttt{main} & $\texttt{VOID} \to \texttt{VOID}$ \\
+        \hline
+        local & \texttt{x} & $\texttt{INT}$ \\
+        \hline
+    \end{tabular}
+\end{table}
+\noindent At line 9, the type table is the following.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        global & \texttt{x} & \texttt{INT} \\
+        \hline
+        global & \texttt{main} & $\texttt{VOID} \to \texttt{VOID}$ \\
+        \hline
+        global & \texttt{p} & $\texttt{BOOL} \to \texttt{VOID}$ \\
+        \hline
+        local & \texttt{x} & $\texttt{BOOL}$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+To implement the type table, we can use 2 hash tables- one for global variables and one for local. This is shown below.
+\begin{lstlisting}[language=java]
+public class SymbolTable<A> {
+    private HashMap<String, A> globals, locals;
+    
+    public SymbolTable() {
+        globals = new HashMap<String, A>();
+        locals = null;
+    }
+}
+\end{lstlisting}
+When the symbol table gets initialised, the local scope does not exist.
+
+We can enter and leave the local scope whenever we want as follows.
+\begin{lstlisting}[language=java]
+public void enterLocalScope() {
+    locals = new HashMap<String, A>();
+}
+
+public void exitLocalScope() {
+    locals = null;
+}
+\end{lstlisting}
+So, we are at a local scope if and only if the variable \texttt{locals} is not null.
+
+We can add variables and retrieve them to the symbol table as follows.
+\begin{lstlisting}[language=java]
+public void put (String id, A attr) {
+    if (locals != null) {
+        locals.put(id, attr);
+    } else {
+        globals.put(id, attr);
+    }
+}
+
+public A get(String id) {
+    if (locals != null && locals.containsKey(id)) {
+        return locals.get(id);
+    } else {
+        return globals.get(id);
+    }
+}
+\end{lstlisting}
+Each time, we check whether we are in a local scope or a global scope. In the \texttt{put} case, we add the entry to the relevant map. In the \texttt{get} case, we first check whether we have the entry in the local scope. If so, we return that value; otherwise, we return the value at the global scope.
+
+\newpage
+
+\section{Code Generation}
+Code generation translates the source program (represented by an AST or a syntax tree) into equivalent object code. In general, code generation can be broken into:
+\begin{itemize}
+    \item address allocation, where we declare the representation and address of each variable in the source program;
+    \item code selection, where we select and generate object code; and
+    \item register allocation, where we assign registers to local and temporary variables, if applicable.
+\end{itemize}
+
+We will focus on stack-based virtual machines. In that case, address allocation and code generation are straightforward, and we do not have register allocation. For real machines, register allocation is somewhat complicated.
+
+The following is a program in Fun.
+\begin{lstlisting}[language=Fun]
+int n = 15
+proc main():
+    while n > 1:
+        n = n/2
+    .
+.
+\end{lstlisting}
+The corresponding AST for it that we generate after syntactic analysis is given below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance=5cm},
+        level 2/.style={sibling distance=3cm},
+        level 3/.style={sibling distance=2cm},
+        level 4/.style={sibling distance=1cm},
+    ]
+        \node[ellipse, draw] {PROG}
+        child[
+            level 2/.style={sibling distance=1cm}
+        ] {
+            node[ellipse, draw] {VAR}
+            child {
+                node[draw, label=-90:INT] {\texttt{int}}
+            }
+            child {
+                node[draw, label=-90:ID] {\texttt{n}}
+            }
+            child {
+                node[draw, label=-90:NUM] {\texttt{15}}
+            }
+        }
+        child {
+            node[ellipse, draw] {PROC}
+            child {
+                node[draw, label=-90:ID] {\texttt{main}}
+            }
+            child {
+                node[ellipse, draw] {NOFORMAL}
+            }
+            child {
+                node[ellipse, draw] {WHILE}
+                child {
+                    node[ellipse, draw] {GT}
+                    child {
+                        node[draw, label=-90:ID] {\texttt{n}}
+                    }
+                    child {
+                        node[draw, label=-90:NUM] {\texttt{1}}
+                    }
+                }
+                child {
+                    node[ellipse, draw] {ASSN}
+                    child {
+                        node[draw, label=-90:ID] {\texttt{n}}
+                    }
+                    child {
+                        node[ellipse, draw] {DIV}
+                        child {
+                            node[draw, label=-90:ID] {\texttt{n}}
+                        }
+                        child {
+                            node[draw, label=-90:NUM] {\texttt{2}}
+                        }
+                    }
+                }
+            }
+        };
+    \end{tikzpicture}
+\end{figure}
+\noindent In code generation, we take this AST and convert it into the following SVM object code.
+\begin{lstlisting}[language=SVM]
+// load constant 15
+LOADC 15
+// go to 7 = line 8
+CALL 7
+// stop
+HALT
+// load the variable at address 0 (variable n)
+LOADG 0
+// load constant 1
+LOADC 1
+// compare n > 1
+COMPGT
+// if false, go to 30 = line 26 (and halt)
+JUMPF 30
+// load the variable at address 0 (variable n)
+LOADG 0
+// load constant 2
+LOADC 2
+// compute n/2
+DIV
+// store the result at address 0
+STOREG 0
+// go to 7 = line 8
+JUMP 7
+// return the value at address 0 (variable n)
+RETURN 0
+\end{lstlisting}
+The address table is:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \texttt{n} & 0 (global) \\
+        \hline
+        \texttt{main} & 7 (code) \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Address allocation}
+Address allocation requires collection and dissemination of information about declared variables, procedures, etc. The code generator employs an address table. This contains the address of each declared variable, procedure, etc.
+
+At each variable declaration, we allocate a suitable address, and put the identifier and address into address table. Wherever a variable is used (e.g. in a command or expression), we retrieve its address. At each procedure declaration, we note the address of its entry point, and put the identifier and address into the address table. Wherever a procedure is called, we retrieve its address.
+
+We typically allocate consecutive addresses to variables, taking account of their size, e.g. we can have a variable of size 4, 2 or so on. In Fun, all variables are of size 1.
+
+\subsection{Code selection}
+The code generator will walk the AST. For each construct (e.g. an expression or a command) in the AST, the code generator must emit suitable object code. We must plan what object code will be selected by the code generator.
+
+For each construct in the source language, we devise a code template. This specifies what object code will be selected. The code template to evaluate an expression should include code to evaluate any sub-expressions, together with any other necessary instructions. The code template to execute a command should include code to evaluate any sub-expressions amd code to execute any sub-commands, together with any other necessary instructions.
+
+We will now look at some SVM code templates for different expressions. The addition operation is of the form
+\[\textit{expr}_1 \texttt{ + } \textit{expr}_2.\]
+The code template here is: 
+\begin{itemize}
+    \item we evaluate $\textit{expr}_1$; 
+    \item we evaluate $\textit{expr}_2$; and 
+    \item we run the \texttt{ADD} operation.
+\end{itemize}
+For example, if we have \texttt{m + (7 * n)}, then the SVM code is:
+\begin{lstlisting}[language=SVM]
+// load variable m
+LOADG 3
+// load constant 7
+LOADC 7
+// load variable n
+LOADG 4
+// compute 7 * n
+MUL
+// compute m + (7 * n)
+ADD
+\end{lstlisting}
+Because of the stack nature of data store, this SVM code gets implemented in the expected manner.
+
+The code template specifies what code should be selected. The action specifies what the code generator will actually do to generate the selected code. A template can have several actions, depending on the object code language. For example, the action would be different if we were not using SVM, but the template remains the same.
+
+The assignment command is of the form
+\[\textit{ID} \texttt{ = } \textit{expr}\]
+The code template here is:
+\begin{itemize}
+    \item we evaluate \textit{expr}
+    \item we run the \texttt{STOREG} or \texttt{STOREL} operation to store the value at a specified address offset.
+\end{itemize}
+For example, if we have \texttt{m = n - 9}, then the SVM code is:
+\begin{lstlisting}[language=SVM]
+// load the variable n
+LOADG 4
+// load the constant 9
+LOADC 9
+// compute n - 9
+SUB
+// store the result as variable m
+STOREG 3
+\end{lstlisting}
+The code generator action for the assignment command is:
+\begin{itemize}
+    \item walk \texttt{expr} and generate the code;
+    \item lookup the identifier and retrieve its address $d$;
+    \item emit instruction \texttt{STOREG} $d$ (if global variable), or \texttt{STOREL} $d$ (if local variable).
+\end{itemize}
+
+The code generator emits instructions one by one. When an instruction is emitted, it is added to the end of the object code. At the destination of a jump instruction, the code generator must note the destination address and incorporate it into the jump instruction.
+
+For a backward jump, the destination address is already known when the jump instruction is emitted. On the other hand, for a forward jump, the destination address is unknown when the jump instruction is emitted. In that case, we emit an incomplete jump address (with 0 in its address field) and note its address. When the destination address becomes known later, we patch that address into the jump instruction.
+
+We can see this in the if command. An if command is of the form
+\[\texttt{if } \textit{expr } \textit{com}\]
+The code template is:
+\begin{itemize}
+    \item evaluate the \textit{expr}
+    \item \texttt{JUMPF} to the end of \textit{com}
+    \item evaluate the \textit{com}
+    \item patch the location of \texttt{JUMPF} with the end of \textit{com} evaluation.
+\end{itemize}
+For example, if we want to execute \texttt{if m > n: m = n.}, then we get the following SVM code:
+\begin{lstlisting}[language=SVM]
+// load variable m
+LOADG 3
+// load variable n
+LOADG 4
+// compute m > n
+COMPGT
+// if false, jump to the end
+JUMPF *
+// load variable m
+LOADG 4
+// store as variable n
+STOREG 3
+\end{lstlisting}
+The code generator action for if-command is:
+\begin{itemize}
+    \item walk \textit{expr} and generate code;
+    \item emit the instruction \texttt{JUMPF 0};
+    \item walk \textit{com} and generate code;
+    \item patch the correct address into the \texttt{JUMPF} instruction.
+\end{itemize}
+
+Next, we consider the while command. It is of the form
+\[\texttt{while} \textit{ expr com}\]
+The code template here is:
+\begin{itemize}
+    \item evaluate the \textit{expr}
+    \item \texttt{JUMPF} to after the end of \textit{com}
+    \item evaluate the \textit{com}
+    \item \texttt{JUMP} to before \textit{expr}
+\end{itemize}
+
+\subsection{Code generation with ANTLR}
+The code generator is a visitor, with a similar structure to the contextual analysis visitor. For each type of syntax tree node, the visit method implements the code generation action. The preamble is given below:
+\begin{lstlisting}[language=java]
+// creates an instance of SVM. The code generator will emit
+// instructions directly into its code store
+SVM obj = new SVM();
+int globalvaraddr = 0;
+int localvaraddr = 0;
+int currentLocale = Adress.GLOBAL;
+
+SymbolTable<Address> addrTable = new SymbolTable<>();
+\end{lstlisting}
+
+We need to implement visit methods for each kind of node in the AST. The following is the method for visiting numbers.
+\begin{lstlisting}[language=java]
+void visitNum(FunParser.NumContext ctx) {
+    int value = Integer.parseInt(ctx.NUM().getText());
+    obj.emit12(SVM.LOADC, value);
+}
+\end{lstlisting}
+The command \texttt{emit12} means 1 opcode and 2 byte operand. 
+
+The visit identifier method is given below.
+\begin{lstlisting}[language=java]
+void visitId(FunParser.IDContext ctx) {
+    String id = ctx.ID().getText();
+    Address varaddr = addrTable.get(id);
+    switch (varaddr.locale) {
+        case Address.GLOBAL:
+            obj.emit12(SVM.LOADG, varaddr.offset);
+            break;
+        case Address.LOCAL:
+            obj.emit12(SVM.LOADL, varaddr.offset);
+            break;
+    }
+}
+\end{lstlisting}
+
+The visit expression method is given below.
+\begin{lstlisting}[language=java]
+void visitExpr(FunParser.ExprContext ctx) {
+    // generate code to evaluate e1
+    visit(ctx.e1);
+    // if e2 exists, then generate code to evaluate e2
+    if (ctx.e2 != null) {
+        visit(ctx.e2);
+        
+        // generate an instruction for each operator
+        switch (ctx.op.getType()) {
+            case FunParser.EQ:
+                obj.emit1(SVM.CMPEQ);
+                break;
+            case FunParser.LT:
+                obj.emit1(SVM.CMPLT);
+                break;
+            case FunParser.GT:
+                obj.emit1(SVM.CMPGT);
+                break;
         }
     }
-
-    public boolean contains (String w) {
-        ...
-    }
 }
 \end{lstlisting}
-A possible application code is the following.
+The command \texttt{emit1} means just 1 opcode.
+
+The visit assignment method is given below.
 \begin{lstlisting}[language=java]
-Dict mainDict = new Dict(10000);
-Dict userDict = new Dict(100);
-...
-if (!mainDict.contains(currentWord) && !userDict.contains(currentWord)) {
-    userDict.add(currentWord);
+void visitAssn(FunParser.AssnContext ctx) {
+    // generate code to evaluate expr
+    visit(ctx.expr());
+    String id = ctx.ID().getText();
+    
+    // find the address of the variable
+    // this always succeeds, because we added the address
+    // during contextual analysis
+    Address varaddr = addrTable.get(id);
+    switch (varaddr.locale) {
+        case Address.GLOBAL:
+            obj.emit12(SVM.STOREG, varaddr.offset);
+            break;
+        case Address.LOCAL:
+            obj.emit12(SVM.STOREL, varaddr.offset);
+            break;
+
+    }
 }
 \end{lstlisting}
-It is not however possible to do the following.
+
+The visit if method is given below.
 \begin{lstlisting}[language=java]
-userDict.size = 0;
-System.out.println(userDict.words[0]);
+void visitIf(Funparser.IfContext ctx) {
+    visit(ctx.expr());
+    int condaddr = obj.currentOffset();
+    // This has to be patched later
+    obj.emit12(SVM.JUMPF, 0);
+    // IF without ELSE
+    if (ctx.c2 == null) {
+        visit(ctx.c1);
+        int exitaddr = obj.currentOffset();
+        obj.patch12(condaddr, exitaddr);
+    } else {
+        visit(ctx.c1);
+        int jumpaddr = obj.currentOffset();
+        obj.emit12(SVM.JUMP, 0);
+        int elseaddr = obj.currentOffset();
+        obj.patch12(conaddr, elseaddr);
+        visit(ctx.c2);
+        int exitaddr = obj.currentOffset();
+        obj.patch12(jumpaddr, exitaddr);
+    }
+}
 \end{lstlisting}
-This is because the two instance variables are private.
 
-If $C'$ is a subclass of $C$ (or $C$ is a superclass of $C'$), then $C'$ is a set of objects that are similar to one another, but richer than the objects of class $C$. In particular, an object of class $C'$ has all the instance variables of an object of class $C$. But, it can have extra instance variables. Similarly, an object of class $C'$ is equipped with all the instance methods of class $C$. But, it can also override some of them, and there might be extra instance methods.
-
-By default, a subclass inherits (or shares) it superclass' instance methods. Alternatively, a subclass may override some of its superclass' instance methods by providing more specialised versions of these methods.
-
-To illustrate this, consider the following class in Java.
+The visit var method is given below.
 \begin{lstlisting}[language=java]
-class Shape {
-    protected float x, y;
-
-    public Shape() {
-        this.x = 0.0;
-        this.y = 0.0;
-    }
-
-    public final void move(float dx, float dy) {
-        this.x += dx;
-        this.y += dy;
-    }
-
-    // draw a point at (x, y)
-    public void draw() {
-        ...
+void visitVar(FunParser.VarContext ctx) {
+    visit(ctx.expr());
+    String id = ctx.ID().getText();
+    switch (currentLocale) {
+        // adding the variable to the address table always 
+        // succeeds because we have done contextual analysis
+        case Address.LOCAL:
+            addrTable.put(id, new Address(localvaraddr++, 
+                Address.LOCAL));
+            break;
+        case Address.GLOBAL:
+            addrTable.put(id, new Address(globalvaraddr++, 
+                Address.GLOBAL));
+            break;
     }
 }
 \end{lstlisting}
-We define the subclass \texttt{Circle}.
+
+\subsection{Storage organisation}
+Each variable occupies storage space throughout its lifetime. This storage must be allocated at the start of the variable's lifetime and deallocated at the end of the variable's lifetime. For a statically typed PL, every variable's type is known to the compiler. Moreover, we assume that all variables of the same type occupy the same amount of storage space.
+
+A global variable's lifetime is the program's entire runtime. For global variables, the compiler allocates fixed storage space. On the other hand, a local variable's lifetime is an activation of the block in which variable is declared. The lifetime of local variables are nested. For local variables, the compiler allocates storage space on a stack.
+
+At any given time, the stack contains one or more activation frames. The frame at the base of the stack contains the global variables. For each active procedure $P$, there is a frame containing $P$'s local variables. An active procedure is one that has been called but not yet returned. A frame for a procedure $P$ is pushed onto the stack when $P$ is called, and popped off the stack when $P$ returns.
+
+The compiler fixes the size and layout of each frame. The offset of each global and local variable (relative to the frame) is known to the compiler.
+
+This can be seen in the figure below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (1, 0)
+            -- (1, 5.5)
+            -- (0, 5.5)
+            -- cycle;
+        
+        \foreach \i in {0, 1, ..., 8} {
+            \node at (-0.25, \i*0.5) {\tiny\texttt{\i}};
+            \draw (0, \i*0.5) -- (1, \i*0.5);
+        }
+        \draw[blue] (0, 2) -- (1, 2);
+        \draw[blue] (0, 3) -- (1, 3);
+        \draw[blue] (0, 4) -- (1, 4);
+        
+        \node at (-0.25, 4.5) {\tiny\texttt{9}};
+        \node at (-0.25, 5) {\tiny$\dots$};
+        
+        \node[text width=1cm] at (1.75, 1.75) {global frame};
+        \node[text width=1cm] at (1.75, 2.75) {frame for $P$};
+        \node[text width=1cm] at (1.75, 3.75) {frame for $Q$};
+        \node at (1.75, 4.75) {unused};
+        
+        \draw[->] (-.9, 4.5) -- (-.5, 4.5);
+        \node at (-1.2, 4.5) {\texttt{sp}};
+        
+        \draw[->] (-.9, 3) -- (-.5, 3);
+        \node at (-1.2, 3) {\texttt{fp}};
+    \end{tikzpicture}
+\end{figure}
+\noindent The diagram represents the SVM data store when the main program has called $P$, and $P$ has called $Q$. A local frame contains the local variables, the return address and the dynamic link which points to the previous frame. The stack pointer (sp) points to the first cell above the top of the stack, and the frame pointer (fp) points to the first cell of the topmost frame.
+
+% TODO: Compilation of a program
+
+We will use this for procedure declaration, whose visit method is given below.
 \begin{lstlisting}[language=java]
-class Circle extends Shape {
-    private float r;
-
-    public Circle(float radius) {
-        this.x = 0;
-        this.y = 0;
-        this.r = radius;
+void visitProc(FunParser.ProcContext ctx) {
+    String id = ctx.ID().getText();
+    Address procaddr = new Address(obj.currentOffset(), 
+        Address.CODE);
+    addrTable.put(id, procaddr);
+    addrTable.enterLocalScope();
+    currentLocale = Address.LOCAL;
+    localvaraddr = 2;
+    
+    FunParser.Formal_declContext fd = ctx.formal_decl();
+    if (fd != null)
+        visit(fd);
+    List<FunParser.Var_declContext> var_decl = ctx.var_decl();
+    for (FunParser.Var_declContext vd : var_decl) {
+        visit(vd);
     }
-
-    // draw a circle at (x, y) of radius r
-    @override
-    public void draw() {
-        ...
-    }
-
-    public float diameter() {
-        return 2.0 * r;
-    }
+    visit(ctx.seq_com());
+    // 0 because there is no result
+    obj.emit11(SVM.RETURN, 0);
+    addrTable.exitLocalScope();
+    currentLocale = Address.GLOBAL;
 }
 \end{lstlisting}
-A possible application code is given below.
+
+The visit formal method is given below.
 \begin{lstlisting}[language=java]
-Shape s = new Shape();
-Circle c = new Circle(10.0);
-s.move(12.0, 5.0);
-c.move(3.0, 4.0);
-
-System.out.println(c.diameter());
-s.draw();
-c.draw();
-
-s = c;
-s.draw();
-\end{lstlisting}
-At line 7, we draw a point at \texttt{(12, 5)}. At line 8, we draw a circle at \texttt{(3, 4)} with radius \texttt{10}. We draw the same circle at line 11. This is dynamic dispatch- we draw a circle since \texttt{s} is a \texttt{Circle}.
-
-Each instance method of a class $C$ is inherited by the subclass $C'$, unless it is overriden by $C'$. The overriding method in class $C'$ has the same name and type as the original method in class $C$. Most object-oriented PLs allow the programmer to specify whether an instance method is \texttt{virtual} (may be overriden) or not. For example, in C++, an instance method specified by \texttt{virtual} may be overriden. In Java, an instance method specified by \texttt{final} cannot be overriden.
-
-In every object-oriented PL, a variable of type $C$ may refer to an object of any subclass of $C$. If a method $M$ is virtual, then the method call \texttt{O.M} entails dynamic dispatch. The compiler infers the type of $O$ as class $C$. It then checks that class $C$ is equipped with an instance method named $M$ of the appropriate type. At run-time, however, it might turn out that the receiver object is of class $C'$, a subclass of $C$. The receiver object's tag is used to determine its actual class, and hence determine which of the methods named $M$ is to be called.
-
-An object-oriented PL supports single inheritance if each class has at most one superclass. Single inheritance gives rise to a hierarchy of class. Single inheritance is supported by most object-oriented PLs. 
-
-Multiple inheritance allows each class to have any number of superclasses. It is supported by C++. Multiple inheritance gives rise to both conceptual and implementation problems.
-% TODO: Add diagram
-
-\subsection{Generic abstraction}
-A program unit is generic if it is parameterised with respect to a type on which it depends. Many reusable program units (e.g. stack, list) are naturally generic. Generic program units include: generic packages, generic classes and generic procedures.
-
-In Java, a generic class GC is parameterised with respect to a type $T$ on which it depends.
-\begin{lstlisting}[language=Java]
-class GC<T> {
-    ...
-}
-\end{lstlisting}
-The generic class must be instantiated by substituting a type argument $A$ for the type parameter $T$, i.e. \texttt{GC<A>}. This instantiation generates an ordinary class.
-
-The following is a declaration of a generic class.
-\begin{lstlisting}[language=Java]
-class List<T> {
-    private static final cap = 100;
-    private int size;
-    private T[] elems;
-
-    public List() {
-        size = 0;
-        elems = (T[]) new Object[cap];
-    }
-
-    public void add(T elem) {
-        elems[size++] = elem;
+void visitFormal(FunParser.FormalContext ctx) {
+    FunParser.TypeContext tc = ctx.type();
+    if (tc != null) {
+        String id = ctx.ID().getText();
+        // A parameter is like a local variable
+        addrTable.put(id, new Address(localvaraddr++, 
+            Address.LOCAL));
+        // copy arguments into the stack frame
+        obj.emit11(SVM.COPYARG, 1);
     }
 }
 \end{lstlisting}
-We can then make use of this class as follows.
-\begin{lstlisting}[language=Java]
-public static void main() {
-    List<String> sentence;
-    sentence = new List<String>();
-    sentence.add("...");
+
+Finally, the visit program method is given below.
+\begin{lstlisting}[language=java]
+void visitProg(FunParser.ProgContext ctx) {
+    // add read and write to the address table
+    predefine();
+    List<FunParser.Var_declContext> var_decl = ctx.var_decl();
+    for (FunParser.Var_declContext vd: var_decl) {
+        visit(vd);
+    }
+    int calladdr = obj.currentOffset();
+    // call the main method (will patch)
+    obj.emit12(SVM.CALL, 0);
+    obj.emit1(SVM.HALT);
+    List<FunParser.Proc_declContext> proc_decl = ctx.proc_decl();
+    for (FunParser.Proc_declContext pd : proc_decl) {
+        visit(pd);
+    }
+    int mainaddr = addrTable.get("main").offset;
+    obj.patch12(calladdr, mainaddr);
 }
 \end{lstlisting}
-In Java, the type argument must be a class, not a primitive type.
 
-Java also supports generic interfaces, such as \texttt{Comparable}.
-\begin{lstlisting}[language=Java]
-interface Comparable<T> {
-    public int compareTo(T that);
+The code generator must distinguish between three kinds of addresses:
+\begin{itemize}
+    \item code addresses, which refers to an instruction within the space allocated to the object code.
+    \item global address, which refers to a location within the space allocated to global variables.
+    \item local address, which refers to a location within a space allocated to a group of local variables.
+\end{itemize}
+
+The implementation of address in Java is given below.
+\begin{lstlisting}[language=java]
+public class Address {
+    public static final int 
+        CODE = 0, GLOBAL = 1, LOCAL = 2
+    public int offset;
+    // CODE, GLOBAL or LOCAL
+    public int locale; 
+    
+    public Address(int off, int loc) {
+        offset = off; 
+        locale = loc;
+    }
 }
 \end{lstlisting}
-If a class $C$ is declared as implementing \texttt{Comparable<C>}, then $C$ must be equipped with a \texttt{compareTo} method that compares objects of type $C$.
-
-Consider a generic class \texttt{GC<T>} that requires \texttt{T} to be equipped with some specific methods. Then, \texttt{T} may be specified as bounded by a class \texttt{C}.
-\begin{lstlisting}[language=Java]
-class GC<T extends C> {
-    ...
-}
-\end{lstlisting}
-\texttt{T} is known to be equipped with all the methods of \texttt{C}, so we can make use of them within this class. Now, the type argument must be a subclass of \texttt{C}. Alternatively, \texttt{T} may be specified as bounded by an interface \texttt{I}. Moreover, \texttt{GC<T>} actually stands for \texttt{GC<T extends Object>}. The type argument must be a subclass of \texttt{Object}, which applies to all the classes.
-
-% TODO: PQueue example?
-
 \end{document}
