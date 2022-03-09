@@ -115,12 +115,13 @@ The syntactic analyser inputs a source program and outputs an AST. Inside the sy
         \node[text width=2cm, align=center] at (4.5, -1.5) {syntactic errors};
         
         \node[text width=2cm, align=center] at (5.25, -.2) {AST};
+        \draw[->] (CA) -- (6, 0);
     \end{tikzpicture}
     \caption{The data flow within the syntactic analysis phase.}
 \end{figure}
 
 \subsection{Tokens}
-Tokens are textual symbols that influence the source program's phrase structures, such as literals, identifiers, operators, keywords and punctuation (e.g. commas, colons, parentheses). Each token has a tag and a text. For example, the addition operator might have tag PLUS and text \texttt{+}; a numeral might have tag NUM and text \texttt{1}; and an identifier might have tag ID and text \texttt{x}. These will become the leaves of the AST.
+Tokens are textual symbols that influence the source program's phrase structures, such as literals, identifiers, operators, keywords and punctuation (e.g. commas, colons, parentheses). Each token has a tag and a text. For example, the addition operator might have tag PLUS and text `\texttt{+}'; a numeral might have tag NUM and text `\texttt{1}'; and an identifier might have tag ID and text `\texttt{x}'. These will become the leaves of the AST.
 
 Separators are pieces of text that do not influence the phrase structure, such as spaces and comments. An end-of-line is a separator in most PLs, but a token in Python.
 
@@ -128,22 +129,22 @@ The following are tokens in Calc:
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \node[draw, label=-90:PUT] at (0, 0) {\texttt{put}};
-        \node[draw, label=-90:SET] at (2, 0) {\texttt{set}};
+        \node[draw, label=-90:PUT] at (0, 0) {`\texttt{put}'};
+        \node[draw, label=-90:SET] at (2, 0) {`\texttt{set}'};
         
-        \node[draw, label=-90:ASSN] at (-2, -1.25) {\texttt{=}};
-        \node[draw, label=-90:PLUS] at (0, -1.25) {\texttt{+}};
-        \node[draw, label=-90:MINUS] at (2, -1.25) {\texttt{-}};
-        \node[draw, label=-90:TIMES] at (4, -1.25) {\texttt{*}};
+        \node[draw, label=-90:ASSN] at (-2, -1.25) {`\texttt{=}'};
+        \node[draw, label=-90:PLUS] at (0, -1.25) {`\texttt{+}'};
+        \node[draw, label=-90:MINUS] at (2, -1.25) {`\texttt{-}'};
+        \node[draw, label=-90:TIMES] at (4, -1.25) {`\texttt{*}'};
         
-        \node[draw, label=-90:LPAR] at (0, -2.5) {\texttt{(}};
-        \node[draw, label=-90:RPAR] at (2, -2.5) {\texttt{)}};
+        \node[draw, label=-90:LPAR] at (0, -2.5) {`\texttt{(}'};
+        \node[draw, label=-90:RPAR] at (2, -2.5) {`\texttt{)}'};
         
-        \node[draw, label=-90:NUM] at (0, -3.75) {\dots};
-        \node[draw, label=-90:ID] at (2, -3.75) {\dots};
+        \node[draw, label=-90:NUM] at (0, -3.75) {`\dots'};
+        \node[draw, label=-90:ID] at (2, -3.75) {`\dots'};
         
-        \node[draw, label=-90:EOL] at (0, -5) {\texttt{\textbackslash n}};
-        \node[draw, label=-90:EOF] at (2, -5) {$\epsilon$};
+        \node[draw, label=-90:EOL] at (0, -5) {`\texttt{\textbackslash n}'};
+        \node[draw, label=-90:EOF] at (2, -5) {`$\epsilon$'};
     \end{tikzpicture}
 \end{figure}
 \noindent Now, assume we have the following Calc program:
@@ -155,23 +156,23 @@ We get the following token stream from the lexer:
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-        \node[draw, label=-90:SET] at (0, 0) {\texttt{set}};
-        \node[draw, label=-90:ID] at (1.5, 0) {\texttt{x}};
-        \node[draw, label=-90:ASSN] at (3, 0) {\texttt{=}};
-        \node[draw, label=-90:NUM] at (4.5, 0) {\texttt{7}};
-        \node[draw, label=-90:EOL] at (6, 0) {\texttt{\textbackslash n}};
+        \node[draw, label=-90:SET] at (0, 0) {`\texttt{set}'};
+        \node[draw, label=-90:ID] at (1.5, 0) {`\texttt{x}'};
+        \node[draw, label=-90:ASSN] at (3, 0) {`\texttt{=}'};
+        \node[draw, label=-90:NUM] at (4.5, 0) {`\texttt{7}'};
+        \node[draw, label=-90:EOL] at (6, 0) {`\texttt{\textbackslash n}'};
         
-        \node[draw, label=-90:PUT] at (0, -1.5) {\texttt{put}};
-        \node[draw, label=-90:ID] at (1.5, -1.5) {\texttt{x}};
-        \node[draw, label=-90:TIMES] at (3, -1.5) {\texttt{*}};
-        \node[draw, label=-90:LPAREN] at (4.5, -1.5) {\texttt{(}};
-        \node[draw, label=-90:ID] at (6, -1.5) {\texttt{x}};
-        \node[draw, label=-90:PLUS] at (7.5, -1.5) {\texttt{+}};
-        \node[draw, label=-90:NUM] at (9, -1.5) {\texttt{1}};
-        \node[draw, label=-90:RPAREN] at (10.5, -1.5) {\texttt{)}};
+        \node[draw, label=-90:PUT] at (0, -1.5) {`\texttt{put}'};
+        \node[draw, label=-90:ID] at (1.5, -1.5) {`\texttt{x}'};
+        \node[draw, label=-90:TIMES] at (3, -1.5) {`\texttt{*}'};
+        \node[draw, label=-90:LPAREN] at (4.5, -1.5) {`\texttt{(}'};
+        \node[draw, label=-90:ID] at (6, -1.5) {`\texttt{x}'};
+        \node[draw, label=-90:PLUS] at (7.5, -1.5) {`\texttt{+}'};
+        \node[draw, label=-90:NUM] at (9, -1.5) {`\texttt{1}'};
+        \node[draw, label=-90:RPAREN] at (10.5, -1.5) {`\texttt{)}'};
         
-        \node[draw, label=-90:EOL] at (0, -3) {\texttt{\textbackslash n}};
-        \node[draw, label=-90:EOF] at (1.5, -3) {$\epsilon$};
+        \node[draw, label=-90:EOL] at (0, -3) {`\texttt{\textbackslash n}'};
+        \node[draw, label=-90:EOF] at (1.5, -3) {`$\epsilon$'};
     \end{tikzpicture}
 \end{figure}
 
@@ -189,13 +190,13 @@ The parser converts a token stream into an AST. Parsing is divided into two kind
 
 A recursive-descent parser consists of:
 \begin{itemize}
-    \item a family of parsing methods, one for each non-terminal symbol of the source language's grammar; and
-    \item an auxiliary method \texttt{match}.
+    \item a family of parsing methods \texttt{N()}, one for each non-terminal symbol \texttt{N} of the source language's grammar; and
+    \item an auxiliary method \texttt{match()}.
 \end{itemize}
 We say that these methods consume the token stream from left to right. Moreover, in recursive-descent parser, these families of methods perform the following checks/parsing.
 \begin{itemize}
     \item The method \texttt{match(t)} checks whether the next token tag \texttt{t}. If yes, it consumes the token. Otherwise, it reports a syntactic error.
-    \item For each non-terminal symbol $N$, the method \texttt{N()} checks whether the next few tokens constitute a phrase of class $N$. If yes, it consumes those tokens (and returns an AST representing the parsed phrase). Otherwise, it reports a syntactic error.
+    \item For each non-terminal symbol \texttt{N}, the method \texttt{N()} checks whether the next few tokens constitute a phrase of class $N$. If yes, it consumes those tokens (and returns an AST representing the parsed phrase). Otherwise, it reports a syntactic error.
 \end{itemize}
 
 Now, we consider a Calc parser. The parsing methods for Calc are:
@@ -215,18 +216,6 @@ Assume that we have the following token stream.
         \node[draw, label=-90:ASSN] at (3, 0) {\texttt{=}};
         \node[draw, label=-90:NUM] at (4.5, 0) {\texttt{7}};
         \node[draw, label=-90:EOL] at (6, 0) {\texttt{\textbackslash n}};
-        
-        % \node[draw, label=-90:PUT] at (0, -1.5) {\texttt{put}};
-        % \node[draw, label=-90:ID] at (1.5, -1.5) {\texttt{x}};
-        % \node[draw, label=-90:TIMES] at (3, -1.5) {\texttt{*}};
-        % \node[draw, label=-90:LPAREN] at (4.5, -1.5) {\texttt{(}};
-        % \node[draw, label=-90:ID] at (6, -1.5) {\texttt{x}};
-        % \node[draw, label=-90:PLUS] at (7.5, -1.5) {\texttt{+}};
-        % \node[draw, label=-90:NUM] at (9, -1.5) {\texttt{1}};
-        % \node[draw, label=-90:RPAREN] at (10.5, -1.5) {\texttt{)}};
-        
-        % \node[draw, label=-90:EOL] at (0, -3) {\texttt{\textbackslash n}};
-        % \node[draw, label=-90:EOF] at (1.5, -3) {$\epsilon$};
     \end{tikzpicture}
 \end{figure}
 \noindent Then, the following figure illustrates the recursive nature of the parsing method.
@@ -252,12 +241,12 @@ Assume that we have the following token stream.
         \node[draw, label=-90:EOL] at (4.5, -5) {\texttt{\textbackslash n}};
     \end{tikzpicture}
 \end{figure}
-\noindent We say that the entire token stream is consumed by \texttt{com()}, the ID token is consumed by \texttt{var()}, and so on.
+% \noindent We say that the entire token stream is consumed by \texttt{com()}, the ID token is consumed by \texttt{var()}, and so on.
 
 In Calc, the EBNF production rule for command is:
 \begin{align*}
-    \textit{com } =& \texttt{ put} \textit{ expr eol} \\
-    \hspace{2pt} |& \texttt{ set} \textit{ var } \texttt{=} \textit{ expr eol}
+    \textit{com } =& \text{ `}\texttt{put}\text{'} \textit{ expr eol} \\
+    \hspace{2pt} |& \text{ `}\texttt{set}\text{'} \textit{ var } \text{`}\texttt{=}\text{'} \textit{ expr eol}
 \end{align*}
 So, the parsing method for the command (in Java) is given by the following:
 \begin{lstlisting}[language=java]
@@ -329,7 +318,6 @@ public void N() {
     else if (tokenStream.next().isRE2()) {
         // match RE2
     }
-    // while the next token can be RE,
     else {
         // syntactic error
     }
@@ -355,10 +343,10 @@ ANTLR is composed of two main parts:
     \item the tool, which is used to generate the lexer and the parser, and
     \item the runtime, which is used to run them.
 \end{itemize}
-The tool is a Java program, whether the runtime is different for every language targeted. When we run ANTLR tool, we can specify the target language (Java by default) to generate a parser, e.g. in Python. ANTLR can generate listeners (by default) and visitors, which are the basis for implementing a contextual analyser and a code generator.
+The tool is a Java program, even if the runtime is different for every language targeted. When we run ANTLR tool, we can specify the target language (Java by default) to generate a parser, e.g. in Python. ANTLR can generate listeners (by default) and visitors, which are the basis for implementing a contextual analyser and a code generator.
 
 The ANTLR notation is very similar to EBNF. Lexer rules (at the end of the file) are all uppercase, and parser rules are all lowercase. The syntax of a rule is- name, a colon, the definition of the rule, and a terminating semicolon. The Calc grammar in ANTLR is shown below.
-\begin{verbatim}
+\begin{lstlisting}
 grammar Calc;
 prog
         :   com* EOF
@@ -372,6 +360,7 @@ expr
             (operator += 
                 (PLUS | MINUS | TIMES)
             prim)*                  # op
+        ;
 prim
         :   NUM                     # num
         |   ID                      # id
@@ -392,7 +381,7 @@ ID      : "a" .. "z";
 NUM     : "0".."9"+;
 EOL     : "\r"? "\n";
 SPACE   : (" "| "\t")+ -> skip;
-\end{verbatim}
+\end{lstlisting}
 If we run the ANTLR tool on the grammar above, ANTLR will generate the following classes:
 \begin{itemize}
     \item The class \texttt{CalcLexer}, which contains methods that convert an input stream (source code) to a token stream.
@@ -428,7 +417,7 @@ It is possible to configure ANTLR so that we visit the AST. Using a different co
     \item the class \texttt{CalcBaseVisitor}, which implements \texttt{CalcVisitor}. Initially, it is formatted to just walk over the syntax tree. We will need to adapt it so that it does what we want it to do.
 \end{itemize}
 
-Assume that we want \texttt{CalcRun} to perform calculations, i.e. \texttt{put} \textit{expr} should evaluate the expression and print the result, and \texttt{set} \textit{var} \texttt{=} \textit{expr} should evaluate the expression and then store the result in the given variable. For this, we define the class \texttt{ExecVisitor} that extends \texttt{CalcBaseVisitor} and overrides the \texttt{visit} methods so that they interpret the program while walking over the syntax tree.
+Assume that we want \texttt{CalcRun} to perform calculations, i.e. `\texttt{put}' \textit{expr} should evaluate the expression and print the result, and `\texttt{set}' \textit{var} `\texttt{=}' \textit{expr} should evaluate the expression and then store the result in the given variable. For this, we define the class \texttt{ExecVisitor} that extends \texttt{CalcBaseVisitor} and overrides the \texttt{visit} methods so that they interpret the program while walking over the syntax tree.
 
 The following is the class \texttt{ExecVisitor}:
 \begin{lstlisting}[language=java]
@@ -477,7 +466,7 @@ class ExecVisitor extends CalcBaseVisitor<Integer> {
                 ...
             }
         }
-    return value;
+        return value;
     }
     
     public Integer visitNum(CalcParser.NumContext ctx) {
@@ -515,7 +504,7 @@ public class CalcRun {
 When compiled and run, \texttt{CalcRun} performs syntactic analysis on the source program and then interprets it.
 
 Below is the Fun grammar in the ANTLR notation.
-\begin{verbatim}
+\begin{lstlisting}
 grammar Fun;
 
 prog    
@@ -545,7 +534,7 @@ prim_expr
         |   ID                              # id
         |   LPAR expr RPAR                  # parens
         |   ...
-\end{verbatim}
+\end{lstlisting}
 Running this with the ANTLR tool generates a lexer and a parser. This creates the classes \texttt{FunLexer} and \texttt{FunParser}. The \texttt{prog()} method returns a full syntax tree.
 \newpage
 
@@ -562,10 +551,11 @@ int n = 15
 # div program
 proc main ():
     while n > 1:
-        n = n/2 .
+        n = n/2 
+    .
 .
 \end{lstlisting}
-\noindent After syntactic analysis, we get the following AST.
+\noindent After syntactic analysis, we have the following AST.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -690,7 +680,7 @@ proc main ():
         };
     \end{tikzpicture}
 \end{figure}
-\noindent A red value represents a \texttt{BOOL}, while a blue value represents an \texttt{INT}. We want to keep a type table for each variable. For example, the identifier \texttt{n} is known to be an integer. When we assign \texttt{n = n/2}, this is valid since the division operation returns an integer. In contextual analysis, we check whether the variable exists (scope) and whether it matches the expected type. We also check that the division operator receives 2 integers, and the condition on a while statement is of type bool.
+\noindent A red value represents a \texttt{BOOL}, while a blue value represents an \texttt{INT}. We want to keep a type table for each variable. For example, the identifier \texttt{n} is known to be an integer. When we assign \texttt{n = n/2}, this is valid since the division operation returns an integer. In contextual analysis, we check whether the variable exists (scope) and whether it matches the expected type. We also check that the division operator receives 2 integers, and the condition on a while statement is of type \texttt{BOOL}.
 
 \subsection{Scope checking}
 Scope checking is the collection and dissemination of information about declared identifiers. The contextual analyser employs a type table. This contains the type of each declared variable, e.g.
@@ -698,8 +688,9 @@ Scope checking is the collection and dissemination of information about declared
     \centering
     \begin{tabular}{c|c}
         \texttt{n} & \texttt{BOOL} \\
+        \hline
         \texttt{fac} & \texttt{INT} $\to$ \texttt{INT} \\
-        \texttt{main} & \texttt{INT} $\to$ \texttt{VOID}
+        \texttt{main} & \texttt{VOID} $\to$ \texttt{VOID}
     \end{tabular}
     \caption{A type table}
 \end{table}
@@ -709,11 +700,10 @@ Whenever an identifier is declared, we put the identifier and its type into the 
 We illustrate the process with Fun scope checking. In Fun, a declaration of a variable identifier is of the form
 \[\textit{type id } \texttt{=} \textit{ expr}\]
 So, we put the identifier value into the type table, along with its type. If the identifier already exists, we return a scope error.
-% Finally, we check that the value of the expression matches the given type. -> type checking
+
 Similarly, a use of a variable identifier in Fun is of the form
 \[\textit{id } \texttt{=} \textit{ expr}\]
 In this case, we lookup the identifier in the type type and retrieve its type. If the identifier does not exist, we return a scope error.
-% We require the type of the expression to match this type. -> type checking
 
 \subsection{Type checking}
 Type checking is the process of checking that every command and expression is well-typed, meaning that it does not contain any errors. The compiler only performs type checking if the source language is statically typed, i.e. the type of an identifier is known at compile-time.
@@ -721,11 +711,11 @@ Type checking is the process of checking that every command and expression is we
 For example, at each expression, we check the type of each sub-expression. We then infer the type of the expression as a whole. If a sub-expression has unexpected type, we report a type error. Similarly, at each command, we check the type of any constituent expression. If an expression has unexpected type, we report a type error. We do not return a type at the end.
 
 Now, we consider some Fun type checking. The greater than expression is of the form
-\[\textit{expr}_1 > \textit{expr}_2\]
-We walk $\texttt{expr}_1$ and check that its type is \texttt{INT}, and do the same thing for $\texttt{expr}_2$. We then infer that the type of the whole expression is \texttt{BOOL}. An assignment command is of the form
-\[\textit{id } \texttt{=} \textit{ expr}\]
+\[\textit{expr}_1 \text{ `}\texttt{>}\text{' } \textit{expr}_2\]
+We walk $\textit{expr}_1$ and check that its type is \texttt{INT}, and do the same thing for $\textit{expr}_2$. We then infer that the type of the whole expression is \texttt{BOOL}. An assignment command is of the form
+\[\textit{id } \text{`}\texttt{=}\text{'} \textit{ expr}\]
 We lookup the identifier and find its type. We then walk the expression and note its value. At the end, we require that the two types are equivalent. An if-command is of the form
-\[\texttt{if } \textit{expr com}\]
+\[\text{`}\texttt{if}\text{' } \textit{expr com}\]
 We first walk expression, and check that its type is \texttt{BOOL}. We then walk the command to ensure that there are no type errors within the command.
 
 \subsection{Contextual Analysis in ANTLR}
@@ -746,7 +736,7 @@ Type visitID(FunParser.IdContext ctx) {
 To get the type of an identifier, we use the \texttt{retrieve} method. This is returned from the type table. We also pass in the parameter \texttt{ctx} to extract the line number in the case of a type/scope error.
 
 In Fun, an expression is of the form
-\[\textit{e}_1 = \textit{ sec\_expr } (\textit{op} = (\texttt{= }|\texttt{ < }| \texttt{ >}) \textit{ e}_2 = \textit{ sec\_expr})?\]
+\[\textit{e}_1 = \textit{ sec\_expr } (\textit{op} = (\text{`}\texttt{=}\text{' } | \text{ `}\texttt{<}\text{' } | \text{ `}\texttt{>}\text{'}) \textit{ e}_2 = \textit{ sec\_expr})^?\]
 So, the \texttt{visitExpr} method is the following.
 \begin{lstlisting}[language=java]
 Type visitExpr(FunParser.ExprContext ctx) {
@@ -763,7 +753,7 @@ Type visitExpr(FunParser.ExprContext ctx) {
 \noindent Every expression has $\textit{e}_1$, so we visit it. If $\textit{e}_2$ does not exist, then the type of the expression is the same as the type of $\textit{e}_1$. Otherwise, we visit the second expression and ensure that both the types are \texttt{INT}. The function \texttt{checkBinary} returns the type \texttt{BOOL} after checking the types. The type \texttt{COMPTYPE} is the type representing $\texttt{INT} \times \texttt{INT} \to \texttt{BOOL}$.
 
 In Fun, an assignment command is of the form
-\[\textit{ID} \texttt{ = } \textit{expr}\]
+\[\textit{ID} \text{ `}\texttt{=}\text{' } \textit{expr}\]
 So, the \texttt{visitAssn} method is the following.
 \begin{lstlisting}[language=java]
 Type visitAssn(FunParser.AssnContext ctx) {
@@ -776,7 +766,7 @@ Type visitAssn(FunParser.AssnContext ctx) {
 We first try to find the type of the identifier. Then, we visit the expression and check that the type of the expression matches the type of the identifier. We return \texttt{null} at the end since a command does not have a type.
 
 In Fun, an if command is of the form
-\[\texttt{IF } \textit{expr} \texttt{:} \textit{c}_1 = \textit{seq\_com} (\texttt{.} \ | \ \texttt{ELSE:} \textit{c}_2 = \textit{seq\_com } \texttt{.})\]
+\[\text{`}\texttt{if}\text{' } \textit{expr} \text{ `}\texttt{:}\text{' } \textit{c}_1 = \textit{seq\_com} (\text{`}\texttt{.}\text{' } | \text{ `}\texttt{else:}\text{' } \textit{c}_2 = \textit{seq\_com} \text{ `}\texttt{.}\text{'})\]
 So, the \texttt{visitIf} method is the following.
 \begin{lstlisting}[language=java]
 Type visitIf(FunParser.IfContext ctx) {
@@ -885,7 +875,7 @@ Type optype = new Type.Mapping(
 \end{lstlisting}
 The type \texttt{proctype} corresponds to the map $\texttt{INT} \to \texttt{VOID}$, while the type \texttt{optype} corresponds to the map $(\texttt{INT} \times \texttt{INT}) \to \texttt{BOOL}$.
 
-\section{Scopes}
+\subsection{Scopes}
 In Fun, declarations are global or local. A PL of this structure is said to have flat block structure. The same identifier can be declared both globally and locally, e.g.
 \begin{lstlisting}[language=fun]
 int x = 1
@@ -1119,7 +1109,7 @@ At each variable declaration, we allocate a suitable address, and put the identi
 
 We typically allocate consecutive addresses to variables, taking account of their size, e.g. we can have a variable of size 4, 2 or so on. In Fun, all variables are of size 1.
 
-\subsection{Code selection}
+\subsection{Code template}
 The code generator will walk the AST. For each construct (e.g. an expression or a command) in the AST, the code generator must emit suitable object code. We must plan what object code will be selected by the code generator.
 
 For each construct in the source language, we devise a code template. This specifies what object code will be selected. The code template to evaluate an expression should include code to evaluate any sub-expressions, together with any other necessary instructions. The code template to execute a command should include code to evaluate any sub-expressions amd code to execute any sub-commands, together with any other necessary instructions.
