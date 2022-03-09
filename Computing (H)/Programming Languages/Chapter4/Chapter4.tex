@@ -261,9 +261,41 @@ void main() {
 }
 \end{lstlisting}
 The variables \texttt{l1} and \texttt{l2} are heap variables since they are initialised using the \texttt{malloc} keyword. The following is the heap representation of \texttt{l1} and \texttt{l2}.
-% TODO: Add diagram
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[draw] (3) at (1, 0) {\texttt{3}};
+        \node[draw] (5) at (2, 0) {\texttt{5}};
+        \node[draw] (7) at (3, 0) {\texttt{7}};
+        \node[draw] (2) at (0, -0.75) {\texttt{2}};
 
-The value \texttt{5} is not reachable after calling \texttt{d}. In this case, the lifetime of the local and heap variables is given below.
+        \draw[->] (3) -- (5);
+        \draw[->] (5) -- (7);
+        \draw[->] (2) -- (3);
+
+        \node at (-1, 0) {\texttt{l1}};
+        \node at (-1, -0.75) {\texttt{l2}};
+    \end{tikzpicture}
+\end{figure}
+\noindent After we call \texttt{d(l1)}, the state of \texttt{l1} and \texttt{l2} is the following.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[draw] (3) at (1, 0) {\texttt{3}};
+        \node[draw, opacity=0.3] (5) at (2, 0) {\texttt{5}};
+        \node[draw] (7) at (3, 0) {\texttt{7}};
+        \node[draw] (2) at (0, -0.75) {\texttt{2}};
+
+        \draw[->] (3) -- (7);
+        \draw[->] (2) -- (3);
+
+        \node at (-1, 0) {\texttt{l1}};
+        \node at (-1, -0.75) {\texttt{l2}};
+    \end{tikzpicture}
+\end{figure}
+\noindent As we can see, the value \texttt{5} is not reachable after calling \texttt{d}. 
+
+The lifetime of the local and heap variables is given below.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -490,16 +522,79 @@ A block is a program construct that delimits the scope of any declarations withi
 A PL's block structure is the way in which blocks are arranged in the program text.
 
 Some PLs such as Cobol have monolithic block structure- the whole program is a single block. The scope of every declaration is the whole program. This is depicted in the figure below.
-% TODO: Add image
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (0, 1.5)
+            -- (1, 1.5)
+            -- (1, 0)
+            -- cycle;
+
+        \node at (0.25, 1.25) {\texttt{x}};
+        \node at (0.25, 0.75) {\texttt{y}};
+        \node at (0.25, 0.25) {\texttt{z}};
+    \end{tikzpicture}
+\end{figure}
 
 Some PLs such as Fortran have flat block structure- the program is partitioned into blocks, but these blocks may not contain inner blocks. This is depicted in the figure below.
-% TODO: Add image
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (0, 1.5)
+            -- (1, 1.5)
+            -- (1, 0)
+            -- cycle;
+            
+        \draw[fill=blue!30, opacity=0.3] (0.1, 0.1) -- (0.1, 0.4)
+            -- (0.9, 0.4)
+            -- (0.9, 0.1)
+            -- cycle;
+        
+        \draw[fill=blue!30, opacity=0.3] (0.1, 0.6) -- (0.1, 0.9)
+            -- (0.9, 0.9)
+            -- (0.9, 0.6)
+            -- cycle;
+
+        \node at (0.25, 1.25) {\texttt{x}};
+        \node at (0.35, 0.75) {\texttt{y}};
+        \node at (0.35, 0.25) {\texttt{z}};
+    \end{tikzpicture}
+\end{figure}
 
 Modern PLs have nested block structure- blocks may be nested freely within other blocks. This is depicted in the figure below.
-% TODO: Add image
-With nested block structure, the scope of a declaration excludes any inner block whether the same identifier is declared.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) -- (0, 2)
+            -- (1, 2)
+            -- (1, 0)
+            -- cycle;
+            
+        \draw[fill=blue!30, opacity=0.3] (0.1, 0.1) -- (0.1, 0.4)
+            -- (0.9, 0.4)
+            -- (0.9, 0.1)
+            -- cycle;
+        
+        \draw[fill=blue!30, opacity=0.3] (0.1, 0.6) -- (0.1, 1.4)
+            -- (0.9, 1.4)
+            -- (0.9, 0.6)
+            -- cycle;
+        
+        \draw[fill=red!30, opacity=0.3] (0.15, 0.65) -- (0.15, 0.9)
+            -- (0.85, 0.9)
+            -- (0.85, 0.65)
+            -- cycle;
 
-For example, C has a flat block structure for functions, but nested block structure for variables. This is depicted in the figure below.
+        \node at (0.25, 1.75) {\texttt{w}};
+        \node at (0.35, 1.25) {\texttt{x}};
+        \node at (0.35, 0.75) {\texttt{y}};
+        \node at (0.35, 0.25) {\texttt{z}};
+    \end{tikzpicture}
+\end{figure}
+\noindent With nested block structure, the scope of a declaration excludes any inner block whether the same identifier is declared.
+
+For example, C has a flat block structure for functions, but nested block structure for variables. 
+% This is depicted in the figure below.
 % TODO: Add image
 Having a flat block structure for functions means that we cannot declare functions within functions, but that they can be accessed from anywhere within the program.
 
@@ -803,8 +898,7 @@ In every object-oriented PL, a variable of type $C$ may refer to an object of an
 
 An object-oriented PL supports single inheritance if each class has at most one superclass. Single inheritance gives rise to a hierarchy of class. Single inheritance is supported by most object-oriented PLs. 
 
-Multiple inheritance allows each class to have any number of superclasses. It is supported by C++. Multiple inheritance gives rise to both conceptual and implementation problems.
-% TODO: Add diagram
+Multiple inheritance allows each class to have any number of superclasses. It is supported by C++. Multiple inheritance gives rise to both conceptual and implementation problems. For example, if both the superclasses override a method, then which version should be used within the subclass. To mitigate this, we might require the subclass to override the method, or use a priority system with the superclasses.
 
 \subsection{Generic abstraction}
 A program unit is generic if it is parameterised with respect to a type on which it depends. Many reusable program units (e.g. stack, list) are naturally generic. Generic program units include: generic packages, generic classes and generic procedures.
@@ -859,7 +953,5 @@ class GC<T extends C> {
 }
 \end{lstlisting}
 \texttt{T} is known to be equipped with all the methods of \texttt{C}, so we can make use of them within this class. Now, the type argument must be a subclass of \texttt{C}. Alternatively, \texttt{T} may be specified as bounded by an interface \texttt{I}. Moreover, \texttt{GC<T>} actually stands for \texttt{GC<T extends Object>}. The type argument must be a subclass of \texttt{Object}, which applies to all the classes.
-
-% TODO: PQueue example?
 
 \end{document}

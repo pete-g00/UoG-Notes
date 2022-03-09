@@ -1144,7 +1144,7 @@ We can envisage a multi-level index as a tree. This can be done by turning it cl
 \end{figure}
 \noindent Here, the root is the level-2 index. The children of the root are level-1 index blocks. The leaves are the actual data blocks.
 
-There is a limitation to this. The tree need to be balanced. This is because it does not adjust to keys' distribution. That is, the leaf nodes are at different levels. The number of block accesses in a multi-level index depends on the depth of the tree, so we would like the tree to be as balanced as possible. In the worst case, we have a linked list of nodes.
+There is a limitation to this. The tree needs to be balanced. This is because it does not adjust to keys' distribution. That is, the leaf nodes are at different levels. The number of block accesses in a multi-level index depends on the depth of the tree, so we would like the tree to be as balanced as possible. In the worst case, we would end up with a linked list of nodes.
 
 Our first challenge is to ensure that the tree is balanced by minimising the tree depth $t$. This challenge has two parts- how do we deal with insertion into a full node, and deletion of a node. We can split a node into two if the node is full, and merge two nodes if a node is to be deleted. This increases the overhead, but is required to keep the tree balanced.
 
@@ -1173,7 +1173,7 @@ A pictorial representation of this is given below.
     \end{tikzpicture}
 \end{figure}
 
-The advantage of B trees is that every time we descend a level, we split the searching space into $p$ subtrees, which exponentially lowers the searching space. If $p = 2$, this is equivalent to binary search. We typically have $p > 2$. Like in the case above, a tree of order $p$ can store up to $p$ tree pointers (shown in black) and up to $p-1$ key values and their block pointers (shown in red).
+The advantage of B trees is that every time we descend a level, we split the searching space into $p$ subtrees, which exponentially lowers the searching space. If $p = 2$, this is equivalent to binary search. We typically have $p > 2$. Like in the case above, a tree of order $p$ can store up to $p$ tree pointers (shown in black) and up to $p-1$ key values and their block pointers (shown in red). In the case above, we have $p = 3$- 3 tree pointers, 2 key values and data pointers in each node.
 
 When searching for a tuple of a value using a B tree, we start from the root and descend in the right branches until we get to a key value corresponding to the tuple. Then, we access the corresponding data block and return the matching tuple. 
 
@@ -1229,7 +1229,20 @@ where
     \item $P_i$ is a tree pointer for those tuples with $X < K_i$,
     \item $P_{i+1}$ is a tree pointer for those tuples with $X > K_i$.
 \end{itemize}
-A pictorial representation of this is given below.
+A B+ tree of order $p$ can store up to $p$ tree pointers and up to $p-1$ key values.
+%  In this case, the order $p$ of the internal node is 3, and the order $p_L$ of the leaf node is 2.
+
+A B+ internal node of order $p_L$ is of the form
+\[\{(K_1, Q_1), (K_2, Q_2), \dots, (K_{p_L}, Q_{p_L}), P_{\text{next}}\},\]
+where
+\begin{itemize}
+    \item $K_i$ is a key value,
+    \item $Q_i$ is a data pointer for $K_i$,
+    \item $P_{\text{next}}$ points to the next block of leaf nodes.
+\end{itemize}
+We store a linked list of leaf nodes. All the leaf nodes are at the same level, meaning that the tree is balanced. 
+
+An example of a B+ tree is given below.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[scale=0.95]
@@ -1257,29 +1270,7 @@ A pictorial representation of this is given below.
         \draw[->] (6, -2.75) -- (7, -2.75);
     \end{tikzpicture}
 \end{figure}
-\noindent A B+ tree of order $p$ can store up to $p$ tree pointers and up to $p-1$ key values. 
-
-A B+ internal node of order $p_L$ is of the form
-\[\{(K_1, Q_1), (K_2, Q_2), \dots, (K_{p_L}, Q_{p_L}), P_{\text{next}}\},\]
-where
-\begin{itemize}
-    \item $K_i$ is a key value,
-    \item $Q_i$ is a data pointer for $K_i$,
-    \item $P_{\text{next}}$ points to the next block of leaf nodes.
-\end{itemize}
-% A pictorial representation of this is given below.
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[scale=0.45]{src/2.3/2.3.6.PNG}
-% \end{figure}
-\noindent We have a linked list of leaf nodes. All the leaf nodes are at the same level, meaning that the tree is balanced.
-
-% An example of a B+ tree is given below.
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[scale=0.5]{src/2.3/2.3.7.PNG}
-% \end{figure}
-% \noindent Here, the internal nodes have order $p = 3$ and leaf nodes have order $p_L = 2$. 
+\noindent Here, the internal nodes have order $p = 3$ and leaf nodes have order $p_L = 2$. 
 
 The leaf nodes are linked and sorted by key. All keys of the file appear at the leaf nodes. The leaf nodes contain data pointers only, to expedite navigation. Leaf nodes are balanced for constant I/O cost. Some selected keys are replicated in the internal nodes for efficiency.
 
