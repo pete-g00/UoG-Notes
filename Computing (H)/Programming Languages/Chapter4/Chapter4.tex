@@ -293,9 +293,7 @@ The variables \texttt{l1} and \texttt{l2} are heap variables since they are init
         \node at (-1, -0.75) {\texttt{l2}};
     \end{tikzpicture}
 \end{figure}
-\noindent As we can see, the value \texttt{5} is not reachable after calling \texttt{d}. 
-
-The lifetime of the local and heap variables is given below.
+\noindent As we can see, the value \texttt{5} is not reachable after calling \texttt{d}. The lifetime of the local and heap variables is given below.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -593,23 +591,33 @@ Modern PLs have nested block structure- blocks may be nested freely within other
 \end{figure}
 \noindent With nested block structure, the scope of a declaration excludes any inner block whether the same identifier is declared.
 
-For example, C has a flat block structure for functions, but nested block structure for variables. 
-% This is depicted in the figure below.
-% TODO: Add image
-Having a flat block structure for functions means that we cannot declare functions within functions, but that they can be accessed from anywhere within the program.
+For example, C has a flat block structure for functions, but nested block structure for variables. Having a flat block structure for functions means that we cannot declare functions within functions, but that they can be accessed from anywhere within the program.
 
-A binding occurrence of identifier $I$ is an occurrence of $I$ where $I$ is bound to some entity $e$. An applied occurrence of identifier $I$ is an occurrence of $I$ where use is made of the entity $e$ to which $I$ is bound. If the PL is statically scoped, every applied occurrence of $I$ should correspond to exactly one binding occurrence of $I$. Below we have a C program, with binding occurrences and applied occurrences.
-% TODO: ADD IMAGE
-For each applied occurrence, there is one binding occurrence.
+A binding occurrence of identifier $I$ is an occurrence of $I$ where $I$ is bound to some entity $e$. An applied occurrence of identifier $I$ is an occurrence of $I$ where use is made of the entity $e$ to which $I$ is bound. If the PL is statically scoped, every applied occurrence of $I$ should correspond to exactly one binding occurrence of $I$. Below we have a C program.
 
 A PL is statically scoped if the body of a procedure is executed in the environment of the procedure definition. Then, we can decide at compile-time which binding occurrence of an identifier corresponds to a given applied occurrence. 
 
 A PL is dynamically scoped if the body of a procedure is executed in the environment of the procedure call site. Then, we cannot decide until runtime which occurrence of an identifier corresponds to a given applied occurrence, since the environment may vary from one call site to another.
 
-The following is a program in C, a statically scoped language.
-% TODO: Add diagram
-In a hypothetical, dynamically scoped PL, we get the following situation.
-% TODO: Add diagram
+The following is a program.
+\begin{lstlisting}[language=C]
+const int s = 2;
+
+int f (int x) {
+    return x * s;
+}
+
+void g (int y) {
+    print (f (y));
+}
+
+void h (int z) {
+    const int s = 3;
+    print (f (z));
+} 
+    
+\end{lstlisting}
+In a statically scoped language, the value of \texttt{s} at line \texttt{4} will always be the value of the global variable \texttt{2}. In a dynamically scoped language, the value of \texttt{s} depends on where we call it- at line \texttt{8}, we have \texttt{s = 2}, but at line \texttt{13}, we have \texttt{s = 3} because of the local variable defined at line \texttt{12}. So, there are multiple applied occurences for a single identifier in a dynamically scoped language.
 
 Dynamic scoping fits badly with static typing. Nearly all PLs are statically scoped. Only a few PLs, such as Smalltalk and Lisp are dynamically scoped.
 
