@@ -165,20 +165,20 @@ Our first challenge is therefore to organise tuples on the disk to minimise I/O 
 
 Records can be of fixed or variable length. This depends on whether the attributes have a fixed size (in bytes), or whether the size of the attributes can vary. We will assume that the attributes have fixed size. 
 
-For example, assume that we have the following attributes in a tuple:
-\begin{itemize}
-    \item \texttt{Name}, which takes 30 bytes;
-    \item \texttt{SSN}, which takes 10 bytes;
-    \item \texttt{Salary}, which takes 4 bytes;
-    \item \texttt{Job\_Code}, which takes 4 bytes;
-    \item \texttt{Department}, which takes 20 bytes; and
-    \item \texttt{Hire\_Date}, which takes 6 bytes.
-\end{itemize}
-Then, a tuple takes
-\[30 + 10 + 4 + 4 + 20 + 6 = 74\]
-bytes.
+% For example, assume that we have the following attributes in a tuple:
+% \begin{itemize}
+%     \item \texttt{Name}, which takes 30 bytes;
+%     \item \texttt{SSN}, which takes 10 bytes;
+%     \item \texttt{Salary}, which takes 4 bytes;
+%     \item \texttt{Job\_Code}, which takes 4 bytes;
+%     \item \texttt{Department}, which takes 20 bytes; and
+%     \item \texttt{Hire\_Date}, which takes 6 bytes.
+% \end{itemize}
+% Then, a tuple takes
+% \[30 + 10 + 4 + 4 + 20 + 6 = 74\]
+% bytes.
 
-A block is of fixed length. It is somewhere between 512 bytes and 4 096 bytes typically. The blocking factor (\textit{bfr}) is the number of records that can be stored in a block. It is given by
+A block is of fixed length. The blocking factor (\textit{bfr}) is the number of records that can be stored in a block. It is given by
 \[\textit{bfr} = \operatorname{floor}(B/R),\]
 where a record occupies $R$ bytes and a block can store $B$ bytes. For example, if $\textit{bfr} = 100$, then we can store up to 100 records in a single block. We must have at least one record per block, so we require $B \geq R$.
 
@@ -205,19 +205,19 @@ Another challenge is how we allocate the blocks of files on the disk. We can use
     \caption{A file as a linked list of blocks}
 \end{figure}
 
-Now, we consider an example. Assume we have the relation \texttt{Employee} with $r = 1103$ tuples, each one corresponding to a fixed-length record. Moreover, each record has the following fields:
-\begin{itemize}
-    \item \texttt{Name} (30 bytes),
-    \item \texttt{SSN} (10 bytes), and
-    \item \texttt{ADDRESS} (60 bytes).
-\end{itemize}
-So, each tuple takes
-\[30 + 10 + 60 = 100\]
-bytes. Therefore, the tuple size $R = 100$ bytes. Then, if the block size $B = 512$, we have the blocking factor
-\[\textit{bfr} = \operatorname{floor}(B/R) = 5.\]
-This means that we can store at most 5 tuples per a block. So, to store all $r = 1103$ tuples, we need
-\[b = \operatorname{ceil}(r/\textit{bfr}) = 221\]
-blocks.
+% Now, we consider an example. Assume we have the relation \texttt{Employee} with $r = 1103$ tuples, each one corresponding to a fixed-length record. Moreover, each record has the following fields:
+% \begin{itemize}
+%     \item \texttt{Name} (30 bytes),
+%     \item \texttt{SSN} (10 bytes), and
+%     \item \texttt{ADDRESS} (60 bytes).
+% \end{itemize}
+% So, each tuple takes
+% \[30 + 10 + 60 = 100\]
+% bytes. Therefore, the tuple size $R = 100$ bytes. Then, if the block size $B = 512$, we have the blocking factor
+% \[\textit{bfr} = \operatorname{floor}(B/R) = 5.\]
+% This means that we can store at most 5 tuples per a block. So, to store all $r = 1103$ tuples, we need
+% \[b = \operatorname{ceil}(r/\textit{bfr}) = 221\]
+% blocks.
 
 Our next challenge is to distribute records within blocks to minimise I/O cost. For this, we will consider 3 representations of data:
 \begin{itemize}
@@ -306,19 +306,19 @@ If the hash function is $h(k) = k \bmod{3}$, then we can assign the employees in
 \end{figure}
 \noindent The blue blocks are part of the main bucket, while the green ones are the overflow blocks. We require 4 buckets to hash these values. If we were using heap or sequential representation, we would only need 3 blocks. Since the hashing function does not uniformly distribute the blocks, we instead require 4 here.
 
-Now, we calculate the expected number of block accesses. We are searching with respect to the \texttt{SSN} attribute. We assume that each bucket has equal probability. If the hashed value is 0, then we need to access 1 block and 1 record. The same is true if the hashed value is 2. Instead, if the hashed value is 1, then we need to access 2 blocks- 2 records in the main bucket and 2 overflown buckets. So, the expected block access is
-\[\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 = \frac{4}{3}.\]
-In the best case, we find the value in the first block. So, we would have 1 block access.
+% Now, we calculate the expected number of block accesses. We are searching with respect to the \texttt{SSN} attribute. We assume that each bucket has equal probability. If the hashed value is 0, then we need to access 1 block and 1 record. The same is true if the hashed value is 2. Instead, if the hashed value is 1, then we need to access 2 blocks- 2 records in the main bucket and 2 overflown buckets. So, the expected block access is
+% \[\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 = \frac{4}{3}.\]
+% In the best case, we find the value in the first block. So, we would have 1 block access.
 
-If we use the heap file structure, we have 3 blocks. In the worst case, we have 3 block accesses. In the sequential file, we have $\log_2(3) \approx 1.58$ block accesses. In both cases, the best case results in just 1 block access. 
+% If we use the heap file structure, we have 3 blocks. In the worst case, we have 3 block accesses. In the sequential file, we have $\log_2(3) \approx 1.58$ block accesses. In both cases, the best case results in just 1 block access. 
 
-The expected block access for heap representation in the average case is
-\[\frac{1 + 3}{2} = 2\]
-block accesses. The average block access for hash representation is
-\[\frac{1 + 1/2 \cdot 1 + 1/2 \cdot 2 + 1}{3} = 1.15\]
-block accesses. For sequential binary search, the average block access is
-\[\log_2(3) \approx 1.58\]
-block access. So, in all the cases- best, worst and average, the hash representation performs best when checking with respect to the hashed value.
+% The expected block access for heap representation in the average case is
+% \[\frac{1 + 3}{2} = 2\]
+% block accesses. The average block access for hash representation is
+% \[\frac{1 + 1/2 \cdot 1 + 1/2 \cdot 2 + 1}{3} = 1.15\]
+% block accesses. For sequential binary search, the average block access is
+% \[\log_2(3) \approx 1.58\]
+% block access. So, in all the cases- best, worst and average, the hash representation performs best when checking with respect to the hashed value.
 
 However, range queries are inefficient in hash representation, even when the range is over the hashed field. For each value in the range, we have to find and retrieve the bucket and select the value from the record. The hash function uniformly distributes the values, so we would not want it to be possible to retrieve all values within the same bucket. So, it takes $O(m) + O(mn)$ bucket accesses where $m$ is the range of the distinct values in the range and $O(n)$ overflow blocks per bucket. This is not efficient. Sequential files are much better in this case.
 
@@ -344,44 +344,44 @@ blocks. Instead, if we want to get people aged 60, we need to only retrieve
 \[\operatorname{ceil}(23/40) = 1\]
 block. So, the number of block accesses depends on the value.
 
-Now, assume that we have hash, heap and sorted file like in the example above:
-\begin{itemize}
-    \item we have 3 blocks in heap and sorted file;
-    \item we have 4 blocks in the hash file- 3 main blocks and 1 overflown block.
-\end{itemize}
-Also, let $k$ be the hash attribute, and let $p\%$ be the proportion of the queries that involve the attribute $k$. Then, in the worst case, heap file would take 3 block accesses- the attribute $k$ does not matter because the search is always linear. Instead, if we use sorted representation, we have
-\[p \cdot (\log_2 3) + (1 - p) \cdot 3 = 3 + p \cdot (\log_2 3 - 3).\]
-If we have the attribute $k$ in the search, we only require $O(\log_2 b)$ block accesses, but if $k$ is not part of the search, we require $O(b)$ block accesses. Now, if we use hash representation, we have
-\[p \cdot (\tfrac{1}{3} \cdot 1 + \tfrac{1}{3} \cdot 2 + \tfrac{1}{3} \cdot 1) + (1 - p) \cdot 3 = 4 - \tfrac{8}{3} p\]
-block accesses. We can plot these lines and see which option is better depending on the value of $p$.
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-            axis lines=center,
-            xlabel=$p$,
-            xmin=0, ymin=0, ymax=4.5,
-        ]
-            \addplot[
-                domain=0:1,
-                samples=100,
-                gray
-            ] {3};
-            \addplot[
-                domain=0:1,
-                samples=100,
-                blue
-            ] {4 - 8/3*x};
-            \addplot[
-                domain=0:1,
-                samples=100,
-                red
-            ] {3 + (ln(3)/ln(2) - 3)*x};
-            \legend{Heap, Hash, Sorted}
-        \end{axis}
-    \end{tikzpicture}
-\end{figure}
-\noindent So, if $p < 0.8$, we should use the sorted representation. Instead, if $p > 0.8$, we should use the hash representation.
+% Now, assume that we have hash, heap and sorted file like in the example above:
+% \begin{itemize}
+%     \item we have 3 blocks in heap and sorted file;
+%     \item we have 4 blocks in the hash file- 3 main blocks and 1 overflown block.
+% \end{itemize}
+% Also, let $k$ be the hash attribute, and let $p\%$ be the proportion of the queries that involve the attribute $k$. Then, in the worst case, heap file would take 3 block accesses- the attribute $k$ does not matter because the search is always linear. Instead, if we use sorted representation, we have
+% \[p \cdot (\log_2 3) + (1 - p) \cdot 3 = 3 + p \cdot (\log_2 3 - 3).\]
+% If we have the attribute $k$ in the search, we only require $O(\log_2 b)$ block accesses, but if $k$ is not part of the search, we require $O(b)$ block accesses. Now, if we use hash representation, we have
+% \[p \cdot (\tfrac{1}{3} \cdot 1 + \tfrac{1}{3} \cdot 2 + \tfrac{1}{3} \cdot 1) + (1 - p) \cdot 3 = 4 - \tfrac{8}{3} p\]
+% block accesses. We can plot these lines and see which option is better depending on the value of $p$.
+% \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}
+%         \begin{axis}[
+%             axis lines=center,
+%             xlabel=$p$,
+%             xmin=0, ymin=0, ymax=4.5,
+%         ]
+%             \addplot[
+%                 domain=0:1,
+%                 samples=100,
+%                 gray
+%             ] {3};
+%             \addplot[
+%                 domain=0:1,
+%                 samples=100,
+%                 blue
+%             ] {4 - 8/3*x};
+%             \addplot[
+%                 domain=0:1,
+%                 samples=100,
+%                 red
+%             ] {3 + (ln(3)/ln(2) - 3)*x};
+%             \legend{Heap, Hash, Sorted}
+%         \end{axis}
+%     \end{tikzpicture}
+% \end{figure}
+% \noindent So, if $p < 0.8$, we should use the sorted representation. Instead, if $p > 0.8$, we should use the hash representation.
 
 \newpage
 
@@ -545,45 +545,45 @@ If the anchor record is deleted/updated, we need to update the sequential data f
 
 If a non-anchor record is updated, we need to update the sequential data file. This need not be propagated to the index file if the order of the blocks isn't affected. If the order of the blocks is affected, or the non-anchor record is deleted, we need to update the data file and the index file like we did previously.
 
-Next, we consider an example. Assume we have the \texttt{EMPLOYEE} table with key attribute \texttt{SSN}.
-\begin{itemize}
-    \item We have $r = 300 \ 000$ records.
-    \item A record takes $R = 100$ bytes.
-    \item The block size is $B = 4 \ 096$ bytes.
-    \item The attribute \texttt{SSN} occupies 9 bytes.
-    \item A pointer occupies 6 bytes.
-    \item The data files are sorted with respect to \texttt{SSN}.
-\end{itemize}
-We want to execute the query
-\begin{lstlisting}[language=SQL]
-SELECT  *
-FROM    EMPLOYEE
-WHERE   SSN = k;
-\end{lstlisting}
-The blocking factor is
-\[\textit{bfr} = \operatorname{floor}(B/R) = \operatorname{floor}(4096/100) = 40.\]
-So, the number of blocks we need is
-\[b = \operatorname{ceil}(r/\textit{bfr}) = 7 \ 500.\]
-If we use the primary access path to search for the tuple, a linear search takes on average
-\[b/2 = 3 \ 750\]
-block accesses, and a binary search takes on average
-\[\log_2 b \approx 11.9\]
-block accesses. 
+% Next, we consider an example. Assume we have the \texttt{EMPLOYEE} table with key attribute \texttt{SSN}.
+% \begin{itemize}
+%     \item We have $r = 300 \ 000$ records.
+%     \item A record takes $R = 100$ bytes.
+%     \item The block size is $B = 4 \ 096$ bytes.
+%     \item The attribute \texttt{SSN} occupies 9 bytes.
+%     \item A pointer occupies 6 bytes.
+%     \item The data files are sorted with respect to \texttt{SSN}.
+% \end{itemize}
+% We want to execute the query
+% \begin{lstlisting}[language=SQL]
+% SELECT  *
+% FROM    EMPLOYEE
+% WHERE   SSN = k;
+% \end{lstlisting}
+% The blocking factor is
+% \[\textit{bfr} = \operatorname{floor}(B/R) = \operatorname{floor}(4096/100) = 40.\]
+% So, the number of blocks we need is
+% \[b = \operatorname{ceil}(r/\textit{bfr}) = 7 \ 500.\]
+% If we use the primary access path to search for the tuple, a linear search takes on average
+% \[b/2 = 3 \ 750\]
+% block accesses, and a binary search takes on average
+% \[\log_2 b \approx 11.9\]
+% block accesses. 
 
-We can create a primary index on \texttt{SSN}. In SQL, we do this as follows:
-\begin{lstlisting}[language=SQL]
-CREATE  INDEX
-ON      EMPLOYEE(SSN);
-\end{lstlisting}
-The index entry has components: $\texttt{(SSN, Pointer)}$. We know that we need 9 bytes for SSN and 6 for the pointer, so we need 15 bytes for each index. Therefore, the indexing blocking factor is
-\[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
-We have 7 500 data blocks, so 7 500 index tuples. So, we need
-\[\textit{ib} = \operatorname{ceil}(7500/273) = 28\]
-blocks to store all the index files. So, we require 28 more blocks for primary indices. This is about 0.37\% increase in storage.
+% We can create a primary index on \texttt{SSN}. In SQL, we do this as follows:
+% \begin{lstlisting}[language=SQL]
+% CREATE  INDEX
+% ON      EMPLOYEE(SSN);
+% \end{lstlisting}
+% The index entry has components: $\texttt{(SSN, Pointer)}$. We know that we need 9 bytes for SSN and 6 for the pointer, so we need 15 bytes for each index. Therefore, the indexing blocking factor is
+% \[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
+% We have 7 500 data blocks, so 7 500 index tuples. So, we need
+% \[\textit{ib} = \operatorname{ceil}(7500/273) = 28\]
+% blocks to store all the index files. So, we require 28 more blocks for primary indices. This is about 0.37\% increase in storage.
 
-Next, we compute the number of block accesses with the primary index. We first search for the SSN in the index, so on average, it takes about
-\[\log_2 28 \approx 4.8\]
-block accesses to find it. After finding the index block, we need to load the data block. So, we have 5.8 block accesses to find the relevant tuple. This is a 53\% increase in execution compared to no indexing in the case of a binary search, and 99\% over the linear search. 
+% Next, we compute the number of block accesses with the primary index. We first search for the SSN in the index, so on average, it takes about
+% \[\log_2 28 \approx 4.8\]
+% block accesses to find it. After finding the index block, we need to load the data block. So, we have 5.8 block accesses to find the relevant tuple. This is a 53\% increase in execution compared to no indexing in the case of a binary search, and 99\% over the linear search. 
 % This can be visualised in the graph below.
 % \begin{figure}[H]
 %     \centering
@@ -711,41 +711,41 @@ An illustration of clustering index is given below.
 \end{figure}
 \noindent The number of index entries is the same as the number of the clusters. Each pointer in the index entry points to the first entry of the cluster. Each block is pointing to the next contiguous blocks using a linked list data structure.
 
-We will now analyse the performance of the clustering index. Assume we have the \texttt{EMPLOYEE} table with non-key attribute \texttt{DNO}.
-\begin{itemize}
-    \item We have $r = 300 \ 000$ records.
-    \item A record takes $R = 100$ bytes.
-    \item The block size is $B = 4 \ 096$ bytes.
-    \item The attribute \texttt{DNO} occupies 9 bytes.
-    \item A pointer occupies 6 bytes.
-    \item The data files are sorted with respect to \texttt{DNO}.
-    \item There are 10 departments.
-    \item The \texttt{DNO} values are uniformly distributed over the tuples, i.e. there are $30 \ 000$ employees in each department.
-\end{itemize}
-We want to execute the query
-\begin{lstlisting}[language=SQL]
-SELECT  *
-FROM    EMPLOYEE
-WHERE   DNO = x;
-\end{lstlisting}
-The blocking factor is
-\[\textit{bfr} = \operatorname{floor}(4096/100) = 40.\]
-So, the number of blocks we need is
-\[b = \operatorname{ceil}(r/\textit{bfr}) = 7 \ 500.\]
+% We will now analyse the performance of the clustering index. Assume we have the \texttt{EMPLOYEE} table with non-key attribute \texttt{DNO}.
+% \begin{itemize}
+%     \item We have $r = 300 \ 000$ records.
+%     \item A record takes $R = 100$ bytes.
+%     \item The block size is $B = 4 \ 096$ bytes.
+%     \item The attribute \texttt{DNO} occupies 9 bytes.
+%     \item A pointer occupies 6 bytes.
+%     \item The data files are sorted with respect to \texttt{DNO}.
+%     \item There are 10 departments.
+%     \item The \texttt{DNO} values are uniformly distributed over the tuples, i.e. there are $30 \ 000$ employees in each department.
+% \end{itemize}
+% We want to execute the query
+% \begin{lstlisting}[language=SQL]
+% SELECT  *
+% FROM    EMPLOYEE
+% WHERE   DNO = x;
+% \end{lstlisting}
+% The blocking factor is
+% \[\textit{bfr} = \operatorname{floor}(4096/100) = 40.\]
+% So, the number of blocks we need is
+% \[b = \operatorname{ceil}(r/\textit{bfr}) = 7 \ 500.\]
 
-We first consider a linear scan with an exiting feature- we stop as soon as we have found all the tuples. Based on the uniformity assumption, each department has 750 blocks. If we have \texttt{DNO = 1}, then we retrieve the first 750 blocks and then stop. If \texttt{DNO = 2}, then we retrieve the first two 750 blocks and then stop. Assuming that it is equally likely for the \texttt{DNO} to take all these values and that the value \texttt{x} is a valid \texttt{DNO}, the expected block accesses is:
-\[\frac{1}{10} \cdot 750 + \frac{1}{10} (750 \cdot 2) + \dots + \frac{1}{10} (750 \cdot 10) = 4125.\]
-In general, if we have $n$ clusters and $b$ blocks, then linear search with an exiting feature on an ordered data file is
-\[\frac{b(n+1)}{2n}.\]
+% We first consider a linear scan with an exiting feature- we stop as soon as we have found all the tuples. Based on the uniformity assumption, each department has 750 blocks. If we have \texttt{DNO = 1}, then we retrieve the first 750 blocks and then stop. If \texttt{DNO = 2}, then we retrieve the first two 750 blocks and then stop. Assuming that it is equally likely for the \texttt{DNO} to take all these values and that the value \texttt{x} is a valid \texttt{DNO}, the expected block accesses is:
+% \[\frac{1}{10} \cdot 750 + \frac{1}{10} (750 \cdot 2) + \dots + \frac{1}{10} (750 \cdot 10) = 4125.\]
+% In general, if we have $n$ clusters and $b$ blocks, then linear search with an exiting feature on an ordered data file is
+% \[\frac{b(n+1)}{2n}.\]
 
-We can also create a clustering index on DNO. The indexing blocking factor is
-\[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
-We have 10 data blocks, so we need
-\[\textit{ib} = \operatorname{ceil}(10/273) = 1\]
-block to store all the index files. So, the overhead is 0.01\% additional storage. When executing the query, we find the block pointer corresponding to \texttt{DNO = x} in 1 block access. Then, we load the 750 contiguous blocks to find all the relevant tuples. This requires 751 block accesses.
+% We can also create a clustering index on DNO. The indexing blocking factor is
+% \[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
+% We have 10 data blocks, so we need
+% \[\textit{ib} = \operatorname{ceil}(10/273) = 1\]
+% block to store all the index files. So, the overhead is 0.01\% additional storage. When executing the query, we find the block pointer corresponding to \texttt{DNO = x} in 1 block access. Then, we load the 750 contiguous blocks to find all the relevant tuples. This requires 751 block accesses.
 
-We should create a clustering index if it allows us to find the result in fewer block accesses. In particular, if we have $m$ clustering index blocks, $b$ data blocks and $n$ clusters, we should create the index if
-\[\log_2 m <  \frac{b(n-1)}{2n} \implies m < 2^{\frac{b(n-1)}{2n}.}\]
+% We should create a clustering index if it allows us to find the result in fewer block accesses. In particular, if we have $m$ clustering index blocks, $b$ data blocks and $n$ clusters, we should create the index if
+% \[\log_2 m <  \frac{b(n-1)}{2n} \implies m < 2^{\frac{b(n-1)}{2n}.}\]
 % Moreover, as $n \to \infty$, the linear search over an ordering non-key field with exiting feature is bound by $b/2$. So, as 
 % i.e. we have an infinite number of distinct values, then the linear search over an ordering non-key field with exiting feature is bound by $b/2$, which is half of the naive linear search, i.e.
 % \[\lim_{n \to \infty} \frac{b(n+1)}{2n} = \frac{b}{2} < b.\]
@@ -799,37 +799,37 @@ An illustration of secondary non-ordering key index is given below:
 \end{figure}
 \noindent For each index entry, we store the block pointer where the tuple can be found.
 
-Now, we will compute block accesses for a secondary index on a non-ordering key attribute. Assume we have the \texttt{EMPLOYEE} table with non-ordering key attribute \texttt{SSN}. 
-\begin{itemize}
-    \item We have $r = 300 \ 000$ records.
-    \item A record takes $R = 100$ bytes.
-    \item The block size is $B = 4 \ 096$ bytes.
-    \item The attribute \texttt{SSN} occupies 9 bytes.
-    \item A pointer occupies 6 bytes.
-\end{itemize}
-We want to run the query
-\begin{lstlisting}[language=SQL]
-SELECT  *
-FROM    EMPLOYEE
-WHERE   SSN = x;
-\end{lstlisting}
-The blocking factor is
-\[\textit{bfr} = \operatorname{floor}(B/R) = 40\]
-records per block. So, we need
-\[b = \operatorname{ceil}(r/\textit{bfr}) = 7500\]
-blocks to store all the data.
+% Now, we will compute block accesses for a secondary index on a non-ordering key attribute. Assume we have the \texttt{EMPLOYEE} table with non-ordering key attribute \texttt{SSN}. 
+% \begin{itemize}
+%     \item We have $r = 300 \ 000$ records.
+%     \item A record takes $R = 100$ bytes.
+%     \item The block size is $B = 4 \ 096$ bytes.
+%     \item The attribute \texttt{SSN} occupies 9 bytes.
+%     \item A pointer occupies 6 bytes.
+% \end{itemize}
+% We want to run the query
+% \begin{lstlisting}[language=SQL]
+% SELECT  *
+% FROM    EMPLOYEE
+% WHERE   SSN = x;
+% \end{lstlisting}
+% The blocking factor is
+% \[\textit{bfr} = \operatorname{floor}(B/R) = 40\]
+% records per block. So, we need
+% \[b = \operatorname{ceil}(r/\textit{bfr}) = 7500\]
+% blocks to store all the data.
 
-An index entry takes 15 bytes. So, the index blocking factor is
-\[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
-Since we are using a dense index, we have 300 000 index entries. So, we need
-\[\textit{ib} = \operatorname{ceil}(300000/273) = 1099\]
-blocks. We have 14\% overhead in that case.
+% An index entry takes 15 bytes. So, the index blocking factor is
+% \[\textit{ibfr} = \operatorname{floor}(4096/15) = 273.\]
+% Since we are using a dense index, we have 300 000 index entries. So, we need
+% \[\textit{ib} = \operatorname{ceil}(300000/273) = 1099\]
+% blocks. We have 14\% overhead in that case.
 
-To search for a single employee, we first search within the index. Since the index file is sorted, we can find it in
-\[\operatorname{ceil}(\log_2(\textit{ib})) = 11\]
-block accesses. Next, we load the unique block pointed by the index entry. So, we require 12 block accesses to find the relevant tuple. If we were to just use a serial search on the file, it would take on average 
-\[b/2 = 3750\]
-block accesses. So, we have a 99.7\% speed up. 
+% To search for a single employee, we first search within the index. Since the index file is sorted, we can find it in
+% \[\operatorname{ceil}(\log_2(\textit{ib})) = 11\]
+% block accesses. Next, we load the unique block pointed by the index entry. So, we require 12 block accesses to find the relevant tuple. If we were to just use a serial search on the file, it would take on average 
+% \[b/2 = 3750\]
+% block accesses. So, we have a 99.7\% speed up. 
 % This is illustrated below.
 % \begin{figure}[H]
 %     \centering
@@ -994,13 +994,13 @@ The value $m$ is known as fan-out.
 \[t + n = \log_m b + n\]
 block accesses to retrieve the relevant tuple(s).
 
-Now, assume that we have the \texttt{EMPLOYEE} table on the non-ordering key attribute \texttt{SSN}. We have $b = 7 \ 500$ blocks and $r = 300 \ 000$ records. Previously, we saw that the blocking factor of the L1 index is $m = 273$. At L1 index, we have 
-\[b_1 = \operatorname{ceil}(r/m) = 1 \ 099\]
-index blocks, since the index is dense. So, in level-2, we have $1 \ 099$ index entries, and we require
-\[b_2 = \operatorname{ceil}(b_1/m) = 5\]
-blocks to store them. Furthermore, at level-3, we have $5$ index entries, and we just require
-\[b_3 = \operatorname{ceil}(b_2/m) = 1\]
-block for it. Since we just need 1 block here, we build a 3-level index. Now, to find the unique employee we are searching for, we just need 4 block accesses- 3 going from one index level to a lower level, and the last one to get the data block. At level-1, we required 12 block accesses. Moreover, we need on average 3 750 block accesses with a linear search.
+% Now, assume that we have the \texttt{EMPLOYEE} table on the non-ordering key attribute \texttt{SSN}. We have $b = 7 \ 500$ blocks and $r = 300 \ 000$ records. Previously, we saw that the blocking factor of the L1 index is $m = 273$. At L1 index, we have 
+% \[b_1 = \operatorname{ceil}(r/m) = 1 \ 099\]
+% index blocks, since the index is dense. So, in level-2, we have $1 \ 099$ index entries, and we require
+% \[b_2 = \operatorname{ceil}(b_1/m) = 5\]
+% blocks to store them. Furthermore, at level-3, we have $5$ index entries, and we just require
+% \[b_3 = \operatorname{ceil}(b_2/m) = 1\]
+% block for it. Since we just need 1 block here, we build a 3-level index. Now, to find the unique employee we are searching for, we just need 4 block accesses- 3 going from one index level to a lower level, and the last one to get the data block. At level-1, we required 12 block accesses. Moreover, we need on average 3 750 block accesses with a linear search.
 
 % We can plot the performance of heap file, L1 and L3 indices in the trade off curve below.
 % \begin{figure}[H]
@@ -1184,33 +1184,33 @@ Normally, a data block contains all the elements of the tree. So, each tree node
     \item If we search for 31, we first access the root block. This node does not contain 7, so we descend the root branch. This block also doesn't contain 31, but we know there is no right tree pointer here. This means that there is no record corresponding to the value 31. So, we just need 2 block accesses.
 \end{itemize}
 
-Now, assume that we have created a 3-level B tree of order $p = 23$ that is $69\%$ full. So, in each block, we store
-\[69\% \times 23 \approx 16\]
-tree pointers, and 15 data pointers. In that case, the root block contains 16 tree pointers and 15 data pointers. At level 1, we have 16 blocks, each of which contains 16 tree pointers and 15 data pointers. At level 2, we have $16^2$ blocks, each of which contains 16 tree pointers and 15 data pointers. At level 3, we have $16^3$ blocks, each of which contains no tree pointers and 15 data pointers. This is summarised in the table below.
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        level & data pointers & tree pointers \\
-        \hline
-        0 & 15 & 16 \\
-        1 & $16 \cdot 15$ & $16^2$ \\
-        2 & $16^2 \cdot 15$ & $16^3$ \\
-        3 & $16^3 \cdot 15$ & 0 \\
-        \hline
-    \end{tabular}
-\end{table}
-In total, we can store 65 535 data pointers and 4 368 tree pointers. If we want to add an extra tuple, then we would need to add another level. Since B trees are balanced, we need to add all $16^4$ tree pointers. But then, 93.3\% of the leaf nodes at level 4 are empty. We need to choose a good value for $p$ to reduce this redundancy. This gives rise to another challenge.
+% Now, assume that we have created a 3-level B tree of order $p = 23$ that is $69\%$ full. So, in each block, we store
+% \[69\% \times 23 \approx 16\]
+% tree pointers, and 15 data pointers. In that case, the root block contains 16 tree pointers and 15 data pointers. At level 1, we have 16 blocks, each of which contains 16 tree pointers and 15 data pointers. At level 2, we have $16^2$ blocks, each of which contains 16 tree pointers and 15 data pointers. At level 3, we have $16^3$ blocks, each of which contains no tree pointers and 15 data pointers. This is summarised in the table below.
+% \begin{table}[H]
+%     \centering
+%     \begin{tabular}{|c|c|c|}
+%         \hline
+%         level & data pointers & tree pointers \\
+%         \hline
+%         0 & 15 & 16 \\
+%         1 & $16 \cdot 15$ & $16^2$ \\
+%         2 & $16^2 \cdot 15$ & $16^3$ \\
+%         3 & $16^3 \cdot 15$ & 0 \\
+%         \hline
+%     \end{tabular}
+% \end{table}
+% In total, we can store 65 535 data pointers and 4 368 tree pointers. If we want to add an extra tuple, then we would need to add another level. Since B trees are balanced, we need to add all $16^4$ tree pointers. But then, 93.3\% of the leaf nodes at level 4 are empty. We need to choose a good value for $p$ to reduce this redundancy. This gives rise to another challenge.
 
-Now, assume that the block size is $B = 512$ bytes, data pointer $Q = 7$ bytes, tree pointer $P = 6$ bytes and key values $V = 9$ bytes. Then, the index is
-\[65 \ 536 \cdot (7 + 9) + 4 \ 368 \cdot 6 = 1.02 \text{ MB}.\]
-Moreover, each block has size
-\[15 \cdot (7 + 9) + 16 \cdot 6 = 336 \text{ bytes}.\]
-So, the blocking factor 
-\[\textit{bfr} = \operatorname{floor}(512/336) = 1.\]
-Finally, the number of blocks we need is
-\[1 + 16 + 16^2 + 16^3 = 4369\]
-blocks.
+% Now, assume that the block size is $B = 512$ bytes, data pointer $Q = 7$ bytes, tree pointer $P = 6$ bytes and key values $V = 9$ bytes. Then, the index is
+% \[65 \ 536 \cdot (7 + 9) + 4 \ 368 \cdot 6 = 1.02 \text{ MB}.\]
+% Moreover, each block has size
+% \[15 \cdot (7 + 9) + 16 \cdot 6 = 336 \text{ bytes}.\]
+% So, the blocking factor 
+% \[\textit{bfr} = \operatorname{floor}(512/336) = 1.\]
+% Finally, the number of blocks we need is
+% \[1 + 16 + 16^2 + 16^3 = 4369\]
+% blocks.
 
 \subsection{B+ Trees}
 A B Tree gives rise to a big metadata. We need to find another data structure so that it has the advantages of B tree while minimising storage. A B tree node stores a lot of data: tree pointers, data pointers and key values. We need tree pointers and key values to navigate the B tree. 
@@ -1276,173 +1276,173 @@ The leaf nodes are linked and sorted by key. All keys of the file appear at the 
 
 To find the block containing a given value, we must always descend to the leaf nodes. So, it will always take 3 block accesses to find the relevant tuple, assuming it is present.
 
-We will now compare the number of block accesses required when executing the following query for B and B+ trees:
-\begin{lstlisting}[language=SQL]
-SELECT  * 
-FROM    EMPLOYEE
-WHERE   SSN >= 3 AND SSN <= 10;
-\end{lstlisting}
-We have the following B Tree.
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \bnode{0}{0}{5, 8} 
-        \bnode{-3.5}{-1.5}{1, 3} 
-        \bnode{0}{-2.5}{6, 7} 
-        \bnode{3.5}{-1.5}{9, 12} 
+% We will now compare the number of block accesses required when executing the following query for B and B+ trees:
+% \begin{lstlisting}[language=SQL]
+% SELECT  * 
+% FROM    EMPLOYEE
+% WHERE   SSN >= 3 AND SSN <= 10;
+% \end{lstlisting}
+% We have the following B Tree.
+% \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}
+%         \bnode{0}{0}{5, 8} 
+%         \bnode{-3.5}{-1.5}{1, 3} 
+%         \bnode{0}{-2.5}{6, 7} 
+%         \bnode{3.5}{-1.5}{9, 12} 
         
-        \draw[->] (0.375, 0) -- (-3, -1);
-        \draw[->] (2.125, 0) -- (0.375, -2);
-        \draw[->] (3.875, 0) -- (3.875, -1);
-    \end{tikzpicture}
-\end{figure}
-\noindent We access the root block and get the values \texttt{SSN = 5} and \texttt{SSN = 8}. Since they are both in the range, we need to access all the 3 branches. 
+%         \draw[->] (0.375, 0) -- (-3, -1);
+%         \draw[->] (2.125, 0) -- (0.375, -2);
+%         \draw[->] (3.875, 0) -- (3.875, -1);
+%     \end{tikzpicture}
+% \end{figure}
+% \noindent We access the root block and get the values \texttt{SSN = 5} and \texttt{SSN = 8}. Since they are both in the range, we need to access all the 3 branches. 
 
-On the other hand, the B+ Tree we have is the following:
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[scale=0.95]
-        \bplusinternalnodesng{0}{0}{5}
-        \bplusinternalnodesng{-2}{-1.5}{3}
-        \bplusinternalnodedbl{3}{-1.5}{7, 8}
-        \bplusleafnodedbl{-3}{-3}{1, 3}
-        \bplusleafnodesng{0}{-3}{5}
-        \bplusleafnodedbl{2}{-3}{6, 7}
-        \bplusleafnodesng{5}{-3}{8}
-        \bplusleafnodedbl{7}{-3}{9, 12}
+% On the other hand, the B+ Tree we have is the following:
+% \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}[scale=0.95]
+%         \bplusinternalnodesng{0}{0}{5}
+%         \bplusinternalnodesng{-2}{-1.5}{3}
+%         \bplusinternalnodedbl{3}{-1.5}{7, 8}
+%         \bplusleafnodedbl{-3}{-3}{1, 3}
+%         \bplusleafnodesng{0}{-3}{5}
+%         \bplusleafnodedbl{2}{-3}{6, 7}
+%         \bplusleafnodesng{5}{-3}{8}
+%         \bplusleafnodedbl{7}{-3}{9, 12}
 
-        \draw[->] (0.375, 0) -- (-1.5, -1);
-        \draw[->] (1.75, 0) -- (3.25, -1);
+%         \draw[->] (0.375, 0) -- (-1.5, -1);
+%         \draw[->] (1.75, 0) -- (3.25, -1);
 
-        \draw[->] (-1.5, -1.5) -- (-2.75, -2.5);
-        \draw[->] (0, -1.5) -- (0.25, -2.5);
-        \draw[->] (3.25, -1.5) -- (2.25, -2.5);
-        \draw[->] (4.75, -1.5) -- (5.25, -2.5);
-        \draw[->] (6.375, -1.5) -- (7.25, -2.5);
+%         \draw[->] (-1.5, -1.5) -- (-2.75, -2.5);
+%         \draw[->] (0, -1.5) -- (0.25, -2.5);
+%         \draw[->] (3.25, -1.5) -- (2.25, -2.5);
+%         \draw[->] (4.75, -1.5) -- (5.25, -2.5);
+%         \draw[->] (6.375, -1.5) -- (7.25, -2.5);
         
-        \draw[->] (-1, -2.75) -- (0, -2.75);
-        \draw[->] (1, -2.75) -- (2, -2.75);
-        \draw[->] (4, -2.75) -- (5, -2.75);
-        \draw[->] (6, -2.75) -- (7, -2.75);
-    \end{tikzpicture}
-\end{figure}
-\noindent We access the root block and get the value \texttt{SSN = 5}. We want to find the tuple satisfying \texttt{SSN = 3}, so we just need to take the left branch. Now, we take the left branch in level 1. Then, we have found the first block that we require. We can make use of the sorted structure of the leaf nodes to find all the other tuples that satisfy \texttt{SSN >= 3} and \texttt{SSN <= 10}.
+%         \draw[->] (-1, -2.75) -- (0, -2.75);
+%         \draw[->] (1, -2.75) -- (2, -2.75);
+%         \draw[->] (4, -2.75) -- (5, -2.75);
+%         \draw[->] (6, -2.75) -- (7, -2.75);
+%     \end{tikzpicture}
+% \end{figure}
+% \noindent We access the root block and get the value \texttt{SSN = 5}. We want to find the tuple satisfying \texttt{SSN = 3}, so we just need to take the left branch. Now, we take the left branch in level 1. Then, we have found the first block that we require. We can make use of the sorted structure of the leaf nodes to find all the other tuples that satisfy \texttt{SSN >= 3} and \texttt{SSN <= 10}.
 
-By removing the data pointers from internal nodes, we obtain higher fan out, thus more index entries and quicker search process. We show this with an example. Assume we have block size $B = 512$ bytes, key value $V = 9$ bytes, data pointer $Q = 7$ bytes, tree pointer $P = 6$ bytes. A B tree node will take up
-\[p \cdot 6 + (p-1) \cdot (9+7) = 22p - 16\]
-bytes. The biggest possible value of $p$ satisfying $22p - 16 \leq 512$ is $p = 24$. On the other hand, for a B+ tree internal node, we require
-\[p \cdot 6 + (p-1) \cdot 9 = 15p - 9\]
-bytes. Here, the biggest possible value of $p$ is $p = 34$. For a B+ leaf node, we require
-\[p_L \cdot (9 + 7) + 9\]
-bytes. So, the biggest possible value of $p_L$ is $p_L = 31$. Clearly, we can store more entries in both the B+ tree nodes compared to a B tree. The fan out has indeed increased.
+% By removing the data pointers from internal nodes, we obtain higher fan out, thus more index entries and quicker search process. We show this with an example. Assume we have block size $B = 512$ bytes, key value $V = 9$ bytes, data pointer $Q = 7$ bytes, tree pointer $P = 6$ bytes. A B tree node will take up
+% \[p \cdot 6 + (p-1) \cdot (9+7) = 22p - 16\]
+% bytes. The biggest possible value of $p$ satisfying $22p - 16 \leq 512$ is $p = 24$. On the other hand, for a B+ tree internal node, we require
+% \[p \cdot 6 + (p-1) \cdot 9 = 15p - 9\]
+% bytes. Here, the biggest possible value of $p$ is $p = 34$. For a B+ leaf node, we require
+% \[p_L \cdot (9 + 7) + 9\]
+% bytes. So, the biggest possible value of $p_L$ is $p_L = 31$. Clearly, we can store more entries in both the B+ tree nodes compared to a B tree. The fan out has indeed increased.
 
-Now, we will construct a 3-level B+ Tree of order $p = 34$ and $p_L = 31$ that is $69\%$ full. So, we can fit 23 tree pointers in an internal node and 21 data pointers in a leaf node. The table below summarises the number of tree pointers and key values we can hold in the first 3 levels.
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        level & key values & tree pointers \\
-        \hline
-        0 & 22 & 23 \\
-        1 & $23 \cdot 22$ & $23^2$ \\
-        2 & $23^2 \cdot 22$ & $23^3$ \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent So, we can fit 12 720 tree pointers. At level 3, we can fit $23^3 \cdot 21 = 255 \ 507$ key values and data pointers. Moreover, we require
-\[1 + 23 + 23^2 + 23^3 = 12 \ 720\]
-blocks.
+% Now, we will construct a 3-level B+ Tree of order $p = 34$ and $p_L = 31$ that is $69\%$ full. So, we can fit 23 tree pointers in an internal node and 21 data pointers in a leaf node. The table below summarises the number of tree pointers and key values we can hold in the first 3 levels.
+% \begin{table}[H]
+%     \centering
+%     \begin{tabular}{|c|c|c|}
+%         \hline
+%         level & key values & tree pointers \\
+%         \hline
+%         0 & 22 & 23 \\
+%         1 & $23 \cdot 22$ & $23^2$ \\
+%         2 & $23^2 \cdot 22$ & $23^3$ \\
+%         \hline
+%     \end{tabular}
+% \end{table}
+% \noindent So, we can fit 12 720 tree pointers. At level 3, we can fit $23^3 \cdot 21 = 255 \ 507$ key values and data pointers. Moreover, we require
+% \[1 + 23 + 23^2 + 23^3 = 12 \ 720\]
+% blocks.
 
 For a B tree, we saw that we can store $65 \ 535$ key values and data pointers in the tree in a very similar scenario. Using a B+ tree, we have almost multiplied the capacity by 4. However, we require about 3 times more blocks for a B tree. Nonetheless, adding a new tuple to the B tree can be costly (e.g. if we add a $65 \ 536$th tuple). This is not the case for B+ trees- we might not even have to add the new entry to an internal block. Moreover, adding to the leaf nodes is simple since it is a linked list, even if we need to keep it sorted.
 
-Next, we compare block accesses and the number of extra blocks required to evaluate a query based on a secondary, non-ordering key field, where:
-\begin{itemize}
-    \item the size of a block $B = 512$ bytes;
-    \item the number of tuples $r = 100 \ 000$;
-    \item the blocking factor $\textit{bfr} = 10$ records/block;
-    \item a pointer takes up 10 bytes;
-    \item the indexing key takes 10 bytes.
-\end{itemize}
-We will consider 3 ways we can evaluate this query below.
-\begin{itemize}
-    \item First, we consider a linear search. Since there are 100 000 records and $\textit{bfr} = 10$, we have 10 000 data blocks. On average, the linear search will require 5 000 block accesses.
+% Next, we compare block accesses and the number of extra blocks required to evaluate a query based on a secondary, non-ordering key field, where:
+% \begin{itemize}
+%     \item the size of a block $B = 512$ bytes;
+%     \item the number of tuples $r = 100 \ 000$;
+%     \item the blocking factor $\textit{bfr} = 10$ records/block;
+%     \item a pointer takes up 10 bytes;
+%     \item the indexing key takes 10 bytes.
+% \end{itemize}
+% We will consider 3 ways we can evaluate this query below.
+% \begin{itemize}
+%     \item First, we consider a linear search. Since there are 100 000 records and $\textit{bfr} = 10$, we have 10 000 data blocks. On average, the linear search will require 5 000 block accesses.
     
-    \item Next, we consider a secondary index. Since the index is secondary, we need a dense index- every data record appears in the index, with a data pointer (10 bytes) and the key value (10 bytes). So, each record takes up 20 bytes. We know a block can store 512 bytes, so each block can hold
-    \[\operatorname{floor}(512/20) = 25\]
-    tuples. In that case, we require
-    \[\operatorname{ceil}(100 \ 000/25) = 4 \ 000\]
-    extra blocks to store the secondary index. Moreover, using the secondary index, we require $\log_2 4000 \approx 12$ block accesses to find the right tuple on the secondary index file, and then a further data block access to retrieve the tuple. In total, the search requires 13 block accesses. 
+%     \item Next, we consider a secondary index. Since the index is secondary, we need a dense index- every data record appears in the index, with a data pointer (10 bytes) and the key value (10 bytes). So, each record takes up 20 bytes. We know a block can store 512 bytes, so each block can hold
+%     \[\operatorname{floor}(512/20) = 25\]
+%     tuples. In that case, we require
+%     \[\operatorname{ceil}(100 \ 000/25) = 4 \ 000\]
+%     extra blocks to store the secondary index. Moreover, using the secondary index, we require $\log_2 4000 \approx 12$ block accesses to find the right tuple on the secondary index file, and then a further data block access to retrieve the tuple. In total, the search requires 13 block accesses. 
     
-    \item Finally, we consider a B+ tree index of order 25. So, each internal node can hold 24 key values and 25 tree pointers, and a leaf block can hold 24 key values and data pointers. A pointer and an indexing key takes 10 bytes, so an internal node takes up
-    \[25 \cdot 10 + 24 \cdot 10 = 490\]
-    bytes. Moreover, a leaf node takes up
-    \[24 \cdot 10 + 24 \cdot 10 + 10 = 490\]
-    bytes. So, we can fit 1 internal/leaf node per block. We require a 3-level B+ tree to store all the 100 000 tuples in the leaf node, where the following table shows how many entries are present in the internal nodes.
-    \begin{table}[H]
-        \centering
-        \begin{tabular}{|c|c|c|}
-            \hline
-            level & key values & tree pointers \\
-            \hline
-            0 & 24 & 25 \\
-            1 & $25 \cdot 24$ & $25^2$ \\
-            2 & $25^2 \cdot 24$ & $25^3$ \\
-            \hline
-        \end{tabular}
-    \end{table}
-    So, at level 3, we have
-    \[25^3 \cdot 24 = 375 \ 000\]
-    data pointers/key values. Since we only have $100 \ 000$ tuples, we are only using up about $30\%$ of the leaf nodes. Moreover, we need
-    \[1 + 25 + 25^2 + 25^3 = 16 \ 276\]
-    extra blocks to store the B+ tree. Nonetheless, we can find a tuple using a B+ tree with just 5 block accesses:
-    \begin{enumerate}
-        \item we access the root internal node, 
-        \item we descend to the relevant level 1 internal node,
-        \item we descend to the relevant level 2 internal node,
-        \item we descend to the relevant level 3 leaf node, and
-        \item we retrieve the relevant data block.
-    \end{enumerate}
-\end{itemize}
+%     \item Finally, we consider a B+ tree index of order 25. So, each internal node can hold 24 key values and 25 tree pointers, and a leaf block can hold 24 key values and data pointers. A pointer and an indexing key takes 10 bytes, so an internal node takes up
+%     \[25 \cdot 10 + 24 \cdot 10 = 490\]
+%     bytes. Moreover, a leaf node takes up
+%     \[24 \cdot 10 + 24 \cdot 10 + 10 = 490\]
+%     bytes. So, we can fit 1 internal/leaf node per block. We require a 3-level B+ tree to store all the 100 000 tuples in the leaf node, where the following table shows how many entries are present in the internal nodes.
+%     \begin{table}[H]
+%         \centering
+%         \begin{tabular}{|c|c|c|}
+%             \hline
+%             level & key values & tree pointers \\
+%             \hline
+%             0 & 24 & 25 \\
+%             1 & $25 \cdot 24$ & $25^2$ \\
+%             2 & $25^2 \cdot 24$ & $25^3$ \\
+%             \hline
+%         \end{tabular}
+%     \end{table}
+%     So, at level 3, we have
+%     \[25^3 \cdot 24 = 375 \ 000\]
+%     data pointers/key values. Since we only have $100 \ 000$ tuples, we are only using up about $30\%$ of the leaf nodes. Moreover, we need
+%     \[1 + 25 + 25^2 + 25^3 = 16 \ 276\]
+%     extra blocks to store the B+ tree. Nonetheless, we can find a tuple using a B+ tree with just 5 block accesses:
+%     \begin{enumerate}
+%         \item we access the root internal node, 
+%         \item we descend to the relevant level 1 internal node,
+%         \item we descend to the relevant level 2 internal node,
+%         \item we descend to the relevant level 3 leaf node, and
+%         \item we retrieve the relevant data block.
+%     \end{enumerate}
+% \end{itemize}
 
-Next, we consider when range queries are better (over a secondary, non-ordering key attribute) executed with a linear search or B+ tree. Assume that we have the query
-\begin{lstlisting}[language=SQL]
-SELECT  AVG(SALARY) 
-FROM    EMPLOYEE 
-WHERE   SSN >= L AND SSN <= U;
-\end{lstlisting}
-Here,
-\begin{itemize}
-    \item there are $b = 1 \ 250$ blocks,
-    \item there are $n = 1 \ 250$ employees,
-    \item the blocking factor $\textit{bfr} = 1$ employee/block,
-    \item \texttt{SSN} takes up 10 bytes,
-    \item a pointer takes up $P = 10$ bytes,
-    \item the B+ tree is of order $p = 5$ and $p_L = 10$,
-    \item the leaf nodes are full,
-    \item the SSN values range from 1 to 1250.
-\end{itemize}
-We know that an internal node can hold 4 key values and 5 data pointers. So, we need a 3-level B+ tree so that the leaf nodes can hold the $1 \ 250$ records. The table below shows how many entries are present in the internal nodes.
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        level & key values & tree pointers \\
-        \hline
-        0 & 4 & 5 \\
-        1 & $5 \cdot 4$ & $5^2$ \\
-        2 & $5^2 \cdot 4$ & $5^3$ \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent So, at level 3, we precisely have
-\[5^3 \cdot 10 = 1 \ 250\]
-key values/data pointers. Let $\alpha = \frac{U - L}{1250}$ be the ratio of employees selected by the query. When we execute this range query over the B+ tree, we need 3 block accesses to descend from the root to the leaf node containing the data pointer for \texttt{SSN = L}. Each leaf node contains 10 blocks, so we approximately need to access 
-\[\frac{U - L}{10} = \frac{1250 \alpha}{10} = 125 \alpha\]
-leaf blocks. Moreover, we need to access all $U - L = 1250 \alpha$ data blocks. Overall, we need to access
-\[3 + 125 \alpha + 1250 \alpha = 3 + 1375 \alpha\]
-blocks. Using a linear search, we need to access all the 1250 blocks since the tuples are not sorted with respect to \texttt{SSN}. Therefore, for B+ trees to be useful, we require 
-\[3 + 1375 \alpha < 1250 \implies \alpha < \frac{1247}{1375} \approx 0.906.\]
-So, if the ratio is less than $90.6\%$, then we should use B+ tree. Otherwise, we should use linear searching. 
+% Next, we consider when range queries are better (over a secondary, non-ordering key attribute) executed with a linear search or B+ tree. Assume that we have the query
+% \begin{lstlisting}[language=SQL]
+% SELECT  AVG(SALARY) 
+% FROM    EMPLOYEE 
+% WHERE   SSN >= L AND SSN <= U;
+% \end{lstlisting}
+% Here,
+% \begin{itemize}
+%     \item there are $b = 1 \ 250$ blocks,
+%     \item there are $n = 1 \ 250$ employees,
+%     \item the blocking factor $\textit{bfr} = 1$ employee/block,
+%     \item \texttt{SSN} takes up 10 bytes,
+%     \item a pointer takes up $P = 10$ bytes,
+%     \item the B+ tree is of order $p = 5$ and $p_L = 10$,
+%     \item the leaf nodes are full,
+%     \item the SSN values range from 1 to 1250.
+% \end{itemize}
+% We know that an internal node can hold 4 key values and 5 data pointers. So, we need a 3-level B+ tree so that the leaf nodes can hold the $1 \ 250$ records. The table below shows how many entries are present in the internal nodes.
+% \begin{table}[H]
+%     \centering
+%     \begin{tabular}{|c|c|c|}
+%         \hline
+%         level & key values & tree pointers \\
+%         \hline
+%         0 & 4 & 5 \\
+%         1 & $5 \cdot 4$ & $5^2$ \\
+%         2 & $5^2 \cdot 4$ & $5^3$ \\
+%         \hline
+%     \end{tabular}
+% \end{table}
+% \noindent So, at level 3, we precisely have
+% \[5^3 \cdot 10 = 1 \ 250\]
+% key values/data pointers. Let $\alpha = \frac{U - L}{1250}$ be the ratio of employees selected by the query. When we execute this range query over the B+ tree, we need 3 block accesses to descend from the root to the leaf node containing the data pointer for \texttt{SSN = L}. Each leaf node contains 10 blocks, so we approximately need to access 
+% \[\frac{U - L}{10} = \frac{1250 \alpha}{10} = 125 \alpha\]
+% leaf blocks. Moreover, we need to access all $U - L = 1250 \alpha$ data blocks. Overall, we need to access
+% \[3 + 125 \alpha + 1250 \alpha = 3 + 1375 \alpha\]
+% blocks. Using a linear search, we need to access all the 1250 blocks since the tuples are not sorted with respect to \texttt{SSN}. Therefore, for B+ trees to be useful, we require 
+% \[3 + 1375 \alpha < 1250 \implies \alpha < \frac{1247}{1375} \approx 0.906.\]
+% So, if the ratio is less than $90.6\%$, then we should use B+ tree. Otherwise, we should use linear searching. 
 % This can be seen in the graph below.
 % \begin{figure}[H]
 %     \centering
