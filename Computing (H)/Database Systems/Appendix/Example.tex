@@ -1,0 +1,456 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumitem}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+
+\usepackage[normalem]{ulem}
+\usepackage{graphicx}
+
+\usepackage[most]{tcolorbox}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\setlength{\parindent}{0pt}
+
+\theoremstyle{definition}
+\newtheorem{example}[subsection]{Example}
+
+\newtcolorbox{answer}[1][]{
+    #1,
+    colback=white,
+    enhanced,
+    breakable,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Database Systems}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{thestyle}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red!80}\bfseries,
+    ndkeywordstyle=\color{blue!80}\bfseries,
+    identifierstyle=\color{black},
+    commentstyle=\color{codegreen},
+    stringstyle=\color{codepurple},
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    % numberstyle=\tiny\color{codegray},
+    % numbers=left,
+    % numbersep=2pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,          
+    tabsize=2
+}
+
+\lstset{style=thestyle}
+
+\chapterstyle{thatcher}
+
+\setcounter{chapter}{4}
+
+\begin{document}
+\chapter{Appendix: Examples}
+\section{Chapter 1}
+
+\newpage
+
+\section{Chapter 2}
+
+\newpage
+
+\section{Chapter 3}
+
+\newpage
+
+\section{Chapter 4}
+\begin{example}
+    Consider the following query.
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE E, DEPARTMENT D
+WHERE   E.DNO = D.DNUMBER;
+\end{lstlisting}
+    Assume we have $n_E$ Employee blocks and $n_D$ Department blocks. Moreover, the memory can store $n_B$ blocks. We will predict the cost of using a nested-loop join with employee in the outer loop and department in the inner loop.    
+\end{example}
+\begin{answer}
+    % TODO: The general case should be in the notes; the example should stay here
+    In memory, we require a block for reading the inner file \texttt{D} and a further block to write the join result. The other $n_B - 2$ blocks can be used to read the outer file \texttt{E}. This is the chunk size.
+
+    When we run the nested-loop algorithm, we load $n_B - 2$ blocks for the outer relation, and then load each block from the inner relation one by one and check whether there are any possible tuples we can output. So, the outer loop runs for
+    \[\frac{n_E}{n_B - 2},\]
+    and the inner loop is $n_D$. The total number of block accesses is therefore
+    \[n_E + \frac{n_E}{n_B - 2} \cdot n_D.\]
+
+    If $n_E = 2 \ 000$ blocks, $n_D = 10$ blocks and $n_B = 7$ blocks, then we require 
+    \[2 \ 000 + 10 \cdot \frac{2000}{5} = 6 \ 000\]
+    block accesses. If swap the inner and the outer relations, we require
+    \[10 + 2 \ 000 \cdot \frac{10}{5} = 4 \ 010\]
+    block accesses.
+\end{answer}
+\newpage
+
+\begin{example}
+    Consider the following query.
+\begin{lstlisting}[language=SQL]
+SELECT  * 
+FROM    EMPLOYEE
+WHERE   DNO = 5 AND SALARY = 40 000;
+\end{lstlisting}
+    Assume that:
+    \begin{itemize}
+        \item the number of distinct values of salary NDV(\texttt{Salary}) = 100;
+        \item the number of distinct values of department numbers NDV(\texttt{DNO}) = 10;
+        \item there are $r = 1000$ employees that are evenly distributed among salaries and departments.
+    \end{itemize}
+    Compute the selection selectivity and the selection cardinality of the query.
+\end{example}
+\begin{answer}
+    The selection selectivity for the \texttt{Salary} attribute is
+    \[\textit{sl}(\texttt{Salary}) = \frac{1}{100} = 0.01\]
+    Moreover, the selection selectivity for the DNO attribute is
+    \[\textit{sl}(\texttt{DNO}) = \frac{1}{10} = 0.1.\]
+    So, under the assumption that salary is independent of the department, we find that the selection selectivity of the query $Q$ is
+    \[\textit{sl}(Q) = \textit{sl}(\texttt{Salary}) \cdot \textit{sl}(\texttt{DNO}) = 0.001.\]
+    In terms of the selection cardinality, this is 1 tuple.
+\end{answer}
+\newpage
+
+\begin{example}
+    Consider the following query
+\begin{lstlisting}[language=SQL]
+SELECT  * 
+FROM    EMPLOYEE
+WHERE   DNO = 5 OR SALARY = 40 000;
+\end{lstlisting}
+Assume that:
+\begin{itemize}
+    \item the number of distinct values of salary NDV(\texttt{Salary}) = 100;
+    \item the number of distinct values of department numbers NDV(\texttt{DNO}) = 10;
+    \item there are $r = 1000$ employees that are evenly distributed among salaries and departments.
+\end{itemize}
+Compute the selection selectivity and the selection cardinality of the query.    
+\end{example}
+\begin{answer}
+    The selection selectivity for the \texttt{Salary} attribute is
+    \[\textit{sl}(\texttt{Salary}) = \frac{1}{100} = 0.01\]
+    Moreover, the selection selectivity for the DNO attribute is
+    \[\textit{sl}(\texttt{DNO}) = \frac{1}{10} = 0.1.\]
+    So, under the assumption that salary is independent of the department, we find that the selection selectivity of the query $Q$ is
+    \[\textit{sl}(Q) = \textit{sl}(\texttt{Salary}) + \textit{sl}(\texttt{DNO}) - \textit{sl}(\texttt{Salary}) \cdot \textit{sl}(\texttt{DNO}) = 0.109.\]
+    In terms of the selection cardinality, this is 109 tuples.
+\end{answer}
+\newpage
+
+\begin{example}
+    We are given the following query.
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE
+WHERE   DNO = 5 AND SALARY = 30000 AND EXP = 0;
+\end{lstlisting}
+    Assume that:
+    \begin{itemize}
+        \item there are $r = 10 \ 000$ records in $b = 2000$ blocks.
+        \item the file is sorted with respect to the \texttt{Salary} attribute.
+        \item there are 500 distinct salary values, 125 departments, and 2 values of \texttt{EXP} (experienced or inexperienced). 
+        \item we can fit 100 blocks in memory.
+    \end{itemize}
+    Moreover, we have built the following access paths:
+    \begin{itemize}
+        \item A clustering index on Salary, with 3 levels.
+        \item A B+ Tree on \texttt{DNO}, with 2 levels.
+        \item A B+ Tree on \texttt{EXP}, with 2 levels.
+    \end{itemize}
+    Find the best way to execute this query.
+\end{example}
+\begin{answer}
+    \begin{itemize}
+        \item We can linearly search all the tuples and return those tuples satisfying the query. This requires 2000 block accesses since none of the searching attributes are key.
+        
+        \item We can make use of the B+ Tree on \texttt{DNO}. Here, we first get all the tuples that satisfy \texttt{DNO = 5}. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\texttt{DNO}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that the selection cardinality of \texttt{DNO} is 
+        \[s_{\texttt{DNO}} = \frac{1}{125} \cdot 10 \ 000 = 80.\]
+        Since we expect 80 tuples to satisfy this condition, we can fit all of them in 16 blocks (as \textit{bfr} = 5). This fits in memory. So, after finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 83 block accesses.
+        
+        \item We can make use of the clustering index on \texttt{Salary}. For this, we require 3 block accesses to descend the multilevel index and get to the first level of index. Then, it takes
+        \[\operatorname{ceil}(s_{\texttt{Salary}}/f)\]
+        block accesses to retrieve all the tuples satisfying \texttt{Salary = 30 000}, where $f = 5$ is the blocking factor. Under the uniformity assumption, we find that the selection cardinality of \texttt{Salary} is
+        \[s_{\texttt{Salary}} = \frac{1}{500} \cdot 10 \ 000 = 20.\]
+        In that case,
+        \[\operatorname{ceil}(s_{\texttt{Salary}}/f) = 4.\]
+        Since we expect 20 tuples to satisfy this condition, we can fit them in 4 blocks- this fits in memory. After finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 7 block accesses.
+
+        \item We can make use of the B+ Tree on \texttt{EXP}. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\texttt{EXP}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that the selection cardinality of \texttt{EXP} is
+        \[s_{\texttt{EXP}} = \frac{1}{2} \cdot 10 \ 000 = 5000.\]
+        The 5000 tuples occupy 1000 blocks, so they cannot all fit in memory. One approach would be to write 900 of the blocks back and keep them for processing later. We would further need to read them at a later point to check that they satisfy the other conditions. This would require 6803 block accesses.
+    \end{itemize}
+    Clearly, the best way to execute this query is by using the clustering index on \texttt{Salary}, requiring 7 block accesses.
+\end{answer}
+
+\newpage
+
+\begin{example}
+    We are given the following query.
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE
+WHERE   DNO = 5 OR (SALARY >= 500 AND EXP = 0);
+\end{lstlisting}
+    Assume that:
+    \begin{itemize}
+        \item there are $r = 10 \ 000$ records in $b = 2000$ blocks.
+        \item the file is sorted with respect to the \texttt{Salary} attribute.
+        \item there are 500 distinct salary values, 125 departments, and 2 values of \texttt{EXP} (experienced or inexperienced). 
+        \item we can fit 1100 blocks in memory.
+        \item the minimum salary value is 100 and the maximum is 10 000.
+    \end{itemize}
+    Moreover, we have built the following access paths:
+    \begin{itemize}
+        \item A clustering index on Salary, with 3 levels.
+        \item A B+ Tree on \texttt{DNO}, with 2 levels.
+        \item A B+ Tree on \texttt{EXP}, with 2 levels.
+    \end{itemize}
+    Find the best way to execute this query.
+\end{example}
+\begin{answer}
+    % The conjunction \texttt{SALARY >= 500 AND EXP = 0} has selection selectivity
+    % \[slc = sl(\texttt{Salary}) \cdot sl(\texttt{EXP}) = \frac{10 \ 000 - 5000}{10 \ 000 - 100} \cdot \frac{1}{2} = 0.4795.\]
+    % In that case, the disjunction \texttt{DNO = 5 OR (SALARY >= 500 AND EXP = 0)} has selection selectivity
+    % \[\operatorname{sl}(\texttt{DNO}) + slc - \operatorname{sl}(\texttt{DNO}) \cdot slc = \frac{1}{125} + 0.4795 - \frac{1}{125} \cdot 0.4795 = 0.4837.\]
+    % So, we expect 4837 tuples to satisfy this condition. 
+    % We consider different strategies to execute the query.
+    \begin{itemize}
+        \item We can linearly search all the tuples and return those tuples satisfies the query. This requires 2 000 block accesses.
+        
+        \item We can make use of the access paths. First, we get all the tuples that satisfy \texttt{DNO = 5} using the B+ tree on \texttt{DNO}. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\texttt{DNO}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that the selection cardinality of \texttt{DNO} is 
+        \[s_{\texttt{DNO}} = \frac{1}{125} \cdot 10 \ 000 = 80.\]
+        Since we expect 80 tuples to satisfy this condition, we can fit all of them in 16 blocks (as \textit{bfr} = 5). This fits in memory. So, after finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, this require 83 block accesses.
+
+        Next, we consider how we find all the tuples that satisfy \texttt{SALARY >= 500 AND EXP = 0}.
+        \begin{itemize}
+            \item We can use the B+ Tree on \texttt{EXP}. Under the uniformity assumption, we find that the selection cardinality of \texttt{EXP} is
+            \[s_{\texttt{EXP}} = \frac{1}{2} \cdot 10 \ 000 = 5000.\]
+            Since the tree has 2 levels, it takes 5003 block accesses to find the 5000 tuples that satisfy the condition. This fits in 1000 blocks, so we can store it in memory. Overall, this takes 5086 block accesses.
+
+            % TODO: Understand this and fix it?
+            \item We can also use the B+ Tree on \texttt{Salary}. Under the uniformity assumption, we find that the selection cardinality of \texttt{Salary} is
+            \[s_{\texttt{Salary}} = \frac{1}{500} \cdot 1000 = 20.\]
+            It takes 1921 block access to find the 1918 blocks that satisfy the condition. This does not fit in memory. 
+            % TODO: Complete this
+        \end{itemize}
+    \end{itemize}
+    Therefore, the best choice here is linear searching. 
+    % Moreover, even if we could fit infinite blocks fit in memory, using the B+ Tree on \texttt{Salary} would need 2003 block accesses.
+\end{answer}
+
+\newpage
+
+\begin{example}
+    % TODO: Add query
+    Next, we apply these equations to find the best algorithm to use when joining the relations \texttt{EMPLOYEE} and \texttt{DEPARTMENT}, where
+    \begin{itemize}
+        \item there are $r_E = 10 \ 000$ employee tuples that fit in $b_E = 2000$ blocks;
+        \item there are $r_D = 125$ department tuples that fit in $b_D = 13$ blocks;
+        \item the blocking factor of the joined tuple is $f_{RS} = 4$;
+        \item we can fit $n_B = 10$ blocks in memory.
+    \end{itemize}
+    Moreover, we have built the following primary access paths:
+    \begin{itemize}
+        \item Primary Index on DNUMBER $x_{Dnumber} = 1$ level.
+        \item B+ Tree Index on DNO $x_{Dno} = 2$ levels.
+    \end{itemize}
+    Using this information, find the best approach to execute this query.
+\end{example}
+\begin{answer}
+    The selection selectivity of the \texttt{DNO} attribute in the \texttt{DEPARTMENT} relation is given by
+    \[\textit{sl}(\texttt{DNO}) = 1/125 = 0.008,\]
+    under the uniformity assumption. An employee works in a department- this is the joining condition. Assuming that the department an employee works in is unique, the join selectivity is
+    \[\textit{js} = 1/\max(125, 125) = 0.008.\]
+    This means that the join cardinality is
+    \[\textit{jc} = \textit{js} \cdot r_E \cdot r_D = 10 \ 000\]
+    tuples. These fit in $2500$ blocks.
+    % TODO: Expand
+    \begin{itemize}
+        \item For nested loop join, we need
+        \[b_D + (\operatorname{ceil}(b_D / n_B \cdot 2)) \cdot b_E + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 6513\]
+        block accesses.
+        \item Using an index-based nested-loop join with employee as the outer relation, we need
+        \[b_E + r_E (x_{DNumber} + 1) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 24 \ 500\]
+        block accesses.
+        \item Using an index-based nested-loop join with department as the outer relation, we need
+        \[b_D + r_D (x_{DNO} + s_{DNO} + 1) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 12 \ 288\]
+        block accesses.
+        \item Using a hash-join, we need
+        \[3(b_D + b_E) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 8539\]
+        block accesses.
+        \item Since we have a B+ Tree built on \texttt{DNO}, we cannot use the sort-merge algorithm. The attribute must be non-ordering.
+    \end{itemize}
+    So, the best approach to join them is a nested-loop join.
+\end{answer}
+\newpage
+
+\begin{example}
+We want to execute the following SQL query.
+    \begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE E, DEPARTMENT D, DEPENDENT T
+WHERE   T.E_SSN = E.SSN AND E.SSN = D.MGR_SSN;
+\end{lstlisting}
+    We have
+    \begin{itemize}
+        \item $r_T = 50$ dependents in $b_T = 3$ blocks;
+        \item $r_D = 125$ departments in $b_D = 13$ blocks;
+        \item $r_E = 10 \ 000$ employees in $b_E = 2000$ blocks;
+        \item the blocking factor $f = 10$, and for the result block $f_{RS} = 2$;
+        \item maximum $n_B = 100$ blocks in memory.
+    \end{itemize}
+    Under the uniformity assumption, there are
+    \[50/10 = 5\]
+    dependents per employee. Moreover, we have the following primary access paths:
+    \begin{itemize}
+        \item A clustering index on \texttt{T.E\_SSN} of $x_{\text{E\_SSN}} = 2$ levels with 10 distinct \texttt{SSN} values.
+        \item A primary index on \texttt{D.MGR\_SSN} of $x_{\text{MGR\_SSN}} = 1$ level.
+        \item A B+ Tree on \texttt{E.SSN} of $x_{\text{SSN}} = 4$ levels.
+    \end{itemize}
+
+    Find the number of block acccesses require to compute the result using the following approaches:
+    \begin{enumerate}
+        \item First joining \texttt{EMPLOYEE} and \texttt{DEPENDENT}, and then joining the result with \texttt{DEPARTMENT}.
+        \item First joining \texttt{EMPLOYEE} and \texttt{DEPARTMENT}, and then joining the result with \texttt{DEPENDENT}.
+    \end{enumerate}
+\end{example}
+\begin{answer}
+    \begin{enumerate}
+        \item In the first case, we first join \texttt{EMPLOYEE} and \texttt{DEPENDENT}. The join selectivity in this case is
+        \[\textit{js} = 1/\max(10, 10 \ 000) = 0.01\%.\]
+        So, we expect
+        \[\textit{jc} = \textit{js} \cdot |E| \cdot |D| = 50\]
+        tuples to be selected in this process. 
+        
+        For each dependent, we get their employee using the B+ Tree on \texttt{E.SSN}. This takes
+        \[b_T + r_T \cdot (x_{SSN} + 1) + \textit{jc}/f_{RS} = 278\]
+        block accesses to read and write the tuples into memory. We can also use the clustering index on \texttt{T.E\_SSN}. For each dependent, we get the dependent using this index. This takes
+        \[b_E + r_E \cdot (x_{\text{E\_SSN}} + \operatorname{ceil}(s_{\texttt{E\_SSN}} / f)) + \textit{jc}/f_{RS} = 32 \ 025\]
+        block accesses to read and write the tuples into memory. Clearly, the better option is to use the B+ Tree.
+        
+        In this case, the intermediate result has $r_{ET} = 50$ tuples, which fit in 25 blocks. These blocks can fit in memory. Next, we take the intermediate result and join it with the \texttt{DEPARTMENT} relation. So, we take a tuple from the intermediate result in memory and check whether it is a manager. The join selectivity for \texttt{EMPLOYEE} and \texttt{MANAGER} is
+        \[\textit{js} = 1/\max(10\ 000, 125) = 0.01\%.\]
+        So, we expect
+        \[\textit{jc} = \textit{js} \cdot r_{ET} \cdot r_D = 0.625\]
+        tuples to be selected in the process. This will fit in 1 block. 
+        
+        We can use the primary index on \texttt{D.MGR\_SSN} to filter out the tuples. We take a tuple from the intermediate result and use the primary index to retrieve the manager details. This requires
+        \[r_{ET} \cdot (x_{\text{MGR\_SSN}} + 1) = 100\]
+        to read from memory. We do not need to load the intermediate blocks since they are already in memory. Moreover, we do not write the final outcome into disks. In total, this plan requires
+        \[278 + 100 = 378\]
+        block accesses.
+        
+        \item In the other plan, we first join \texttt{EMPLOYEE} and \texttt{DEPARTMENT}. Here, the join selectivity is
+        \[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
+        So, the join cardinality is
+        \[\textit{jc} = \textit{js} \cdot r_E \cdot r_D = 125\]
+        managers. Since the \texttt{DEPARTMENT} relation is sorted with respect to \texttt{MGR\_SSN}, we can find all the managers in
+        \[\operatorname{ceil}(\textit{jc}/f_{RS}) = 63\]
+        blocks.
+        
+        For each department, we can get its manager using the B+ Tree on \texttt{E.SSN}. This takes
+        \[b_D + r_D(x_{SSN} + 1) + \textit{jc}/f_{RS} = 701\]
+        block accesses. Also, for each employee, we can get the department they manage (if any) using the primary index on \texttt{D.MGR\_SSN}. This takes
+        \[b_E + r_E(x_{\text{MGR\_SSN}} + 1) + \textit{jc}/f_{RS} = 22 \ 063\]
+        block accesses. The better option here is to use the B+ Tree. 
+        
+        The intermediate result takes 63 blocks, which can fit in memory. We will now join this result with the \texttt{DEPENDENT} relation. The join selectivity for \texttt{EMPLOYEE} and \texttt{DEPENDENT} is
+        \[\textit{js} = 1/\max(10 \ 000, 10) = 0.01\%.\]
+        So, we expect
+        \[\textit{jc} = \textit{js} \cdot r_{ED} \cdot r_T = 0.625\]
+        tuples to be selected in the process. This will fit in 1 block.
+        
+        We can take one intermediate tuple from memory, and check whether the manager has a dependent, using the clustering index on \texttt{T.E\_SSN}. This requires
+        \[r_{ED} (x_{\text{E\_SSN}} + \operatorname{ceil}(s_{\texttt{E\_SSN}}/f)) = 375\]
+        block accesses. In total, this plan requires
+        \[701 + 375 = 1076\]
+        block accesses.
+    \end{enumerate}
+\end{answer}
+\newpage
+
+\begin{example}
+    We want to execute the following query:
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE E, DEPARTMENT D
+WHERE   E.Salary = 1000 AND E.SSN = D.MGR_SSN;
+\end{lstlisting}
+    There are $r_E = 10 \ 000$ employee tuples in $b_E = 2000$ blocks. There are $r_D = 125$ department tuples in $b_D = 13$ blocks. 
+
+    We have built the following primary access paths on the two relations:
+    \begin{itemize}
+        \item A clustering index over \texttt{E.Salary} of $x_{\text{Salary}} = 3$ levels. There are 500 distinct salary values.
+        \item A B+ tree over \texttt{E.SSN} of $x_{\text{SSN}} = 4$ levels.
+        \item A primary index over \texttt{D.MGR\_SSN}  of $x_{\text{MGR\_SSN}} = 1$ level.
+    \end{itemize}
+    The blocking factor of \texttt{E} and \texttt{D} is $f = 10$, and the joined tuple is $f_{RS} = 2$. We can fit $n_B = 100$ blocks in memory. 
+
+    Find the number of block acccesses required to compute the result using the following approaches:
+    \begin{enumerate}
+        \item First filtering and then joining.
+        \item First joining and then filtering.
+    \end{enumerate}
+\end{example}
+\begin{answer}
+    \begin{enumerate}
+        \item We will first consider the filter-then-join approach. We can use the clustering index on \texttt{E.Salary} to find all the employees that satisfy \texttt{Salary = 1000}. Under the uniformity assumption, the selection selectivity is
+        \[\textit{sl}(\text{Salary}) = 1/500 = 0.002.\]
+        So, the selection cardinality is
+        \[s_{\texttt{Salary}} = 0.002 \cdot 10 \ 000 = 20.\]
+        That is, there are $r_{FE} = 20$ employees that satisfy this condition. Using the clustering index, we require
+        \[x_{\text{Salary}} + \operatorname{ceil}(s_{\texttt{Salary}}/f) = 5\]
+        block accesses.
+    
+        Next, we join the intermediate result with the relation \texttt{DEPARTMENT}. Since the intermediate result occupies 2 blocks, it can fit in memory. The join selectivity is
+        \[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
+        So, the join cardinality is
+        \[\textit{jc} = \textit{js} \cdot r_{FE} \cdot r_D = 0.25.\]
+        This fits in 1 block. For each tuple in the intermediate result, we use the primary index over \texttt{D.MGR\_SSN} to get the relevant department tuple, if any. This requires
+        \[r_{FE} \cdot (x_{\text{MGR\_SSN}} + 1) = 40\]
+        block accesses. In total, we require
+        \[5 + 40 = 45\]
+        block accesses.
+
+        \item Next, we consider the join-then-filter approach. We will use the B+ Tree over \texttt{E.SSN} to join \texttt{EMPLOYEE} and \texttt{DEPARTMENT}. The selection selectivity is
+        \[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
+        Using the B+ Tree, we require
+        \[b_D + r_D \cdot (x_{\text{SSN}} + 1) + \operatorname{ceil}(\textit{js}/f_{RS}) = 701\]
+        block accesses. The intermediate result is 125 tuples (one for each department). This takes
+        \[\operatorname{ceil}(125/f_{RS}) = 2\]
+        blocks. This can fit in memory.
+    
+        Next, we filter the tuples from the intermediate result that satisfy \texttt{Salary = 1000}. This can be done by linearly scanning the entries in memory. It needs no further block access since the salary is already present in the intermediate result. So, it takes 701 block accesses in total.
+    \end{enumerate}
+\end{answer}
+
+\end{document}

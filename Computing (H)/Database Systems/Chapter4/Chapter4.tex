@@ -37,6 +37,43 @@
 \setcounter{chapter}{3}
 \pgfplotsset{compat=newest}
 
+\newcommand{\tuplesorted}[0]{
+    \draw (0, 0) -- (1.5, 0)
+    -- (1.5, -4)
+    -- (0, -4)
+    -- cycle;
+
+    \foreach \x/\y[count=\i] in {1/2, 2/3, 2/5, 3/8, 5/9, 5/11, 5/12, 6/13} {
+        \draw (0.75, -\i*0.5) -- (0.75, -\i*0.5 + 0.5);
+        \draw (0, -\i*0.5) -- (1.5, -\i*0.5);
+        \filldraw[blue!30, opacity=0.3] (0.75, -\i*0.5) -- (1.5, -\i*0.5)
+            -- (1.5, -\i*0.5 + 0.5)
+            -- (0.75, -\i*0.5 + 0.5)
+            -- cycle;
+        \filldraw[red!30, opacity=0.3] (0.75, -\i*0.5) -- (0, -\i*0.5)
+            -- (0, -\i*0.5 + 0.5)
+            -- (0.75, -\i*0.5 + 0.5)
+            -- cycle;
+        \node at (0.375, -\i*0.5 + 0.25) {\texttt{\x}};
+        \node at (1.125, -\i*0.5 + 0.25) {\texttt{\y}};
+    }
+
+    \draw (4.5, 0) -- (5.25, 0)
+        -- (5.25, -3)
+        -- (4.5, -3)
+        -- cycle;
+        
+    \foreach \i in {1, 2, ..., 6} {
+        \draw (4.5, -\i * 0.5) -- (5.25, -\i * 0.5);
+        \filldraw[red!30, opacity=0.3] (4.5, -\i*0.5) -- (5.25, -\i*0.5)
+            -- (5.25, -\i*0.5 + 0.5)
+            -- (4.5, -\i*0.5 + 0.5)
+            -- cycle;
+        \node at (4.875, -\i*0.5 + 0.25) {\texttt{\i}};
+    }
+}
+
+
 \begin{document}
 \chapter{Query Optimisation}
 \section{Query Processing}
@@ -68,6 +105,7 @@ This method is expensive as it is linear with respect to the number of blocks. M
 We will be considering queries of the form
 \[\texttt{SELECT * FROM } \textit{relation} \texttt{ WHERE } \textit{selection-conditions}\]
 
+\subsubsection{Key query}
 First, assume that selection condition is just a key attribute. An example of such a query is
 \[\texttt{SELECT * FROM EMPLOYEE WHERE SSN = `123';}\]
 \begin{itemize}
@@ -78,10 +116,12 @@ First, assume that selection condition is just a key attribute. An example of su
     \item Finally, if the file is not sorted over the attribute and we have a secondary index (B+ Tree of level $t$), then we require $t + 1$ block accesses.
 \end{itemize}
 
+\subsubsection{Range query}
 Next, assume that the selection condition is a range query with respect to a key attribute. An example of such a query is
 \[\texttt{SELECT * FROM DEPARTMENT WHERE DNumber >= 5;}\]
 If we have a primary index of level $t$ over the key, then it takes $t + O(b)$, where $b$ is the number of blocks in the worst case scenario. Since a primary index relation is sorted, we first find the value \texttt{DNumber = 5} and then keep going lower.
 
+\subsubsection{Non-key query}
 Now, assume that we have a clustering index over an ordering, non-key field. An example of such a query is
 \[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5};\]
 \begin{itemize}
@@ -89,6 +129,7 @@ Now, assume that we have a clustering index over an ordering, non-key field. An 
     \item If the file is not sorted with respect to the attribute and we have a secondary index (B+ Tree of level $t$), then we need $t + 1 + O(b)$ block accesses, where $b$ is the number of block pointers. Here, the B+ Leaf nodes point to a block of pointers to data blocks.
 \end{itemize}
 
+\subsubsection{Disjunctive query}
 Now, assume we have a disjunctive select statement, i.e. we have an \texttt{OR} present in the \texttt{WHERE} clause. An example is given below.
 \begin{verbatim}
 SELECT * FROM EMPLOYEE 
@@ -98,6 +139,7 @@ The result will be the union of tuples satisfying the two conditions.
 
 If an access path exists (e.g. B+, hash, primary index) index for all the attributes, we use each of them to retrieve the set of records satisfying each condition. Then, we return the union of the sets to get the final result. Otherwise, we must use a linear search.
 
+\subsubsection{Conjunctive query}
 On the other hand, assume that we have an conjunctive select statement, i.e. we have an \texttt{AND} present in the \texttt{WHERE} clause. An example is given below.
 \begin{verbatim}
 SELECT * FROM EMPLOYEE 
@@ -107,29 +149,18 @@ The result will be the intersection of tuples satisfying the two conditions.
 
 If an access path exists for any of the attribute, we can use that to construct an intermediate result. Then, we can use a linear search to validate the other conditions. If none of the attributes have an attribute path, we need to use linear search. If we have multiple access paths, we should choose the right index to generate the smallest intermediate result. We predict the selectivity (the number of tuples received) for each attribute to do this. This is query optimisation.
 
-Next, assume that we have a join query. Joining is the most resource-consuming operator. We will only be considering two-way equijoin. An example of such a query is
-\begin{verbatim}
-SELECT *
-FROM EMPLOYEE E, DEPARTMENT D
-WHERE E.DNO = D.DNUMBER;
-\end{verbatim}
-There are 5 ways for processing join queries:
-\begin{itemize}
-    \item Naive join (no access path)
-    \item Nested-loop join (no access path)
-    \item Index-based nested-loop join (index; B+ Trees)
-    \item Merge-join (sorted relations)
-    \item Hash-join (hashed relations)
-\end{itemize}
-
-Assume we have the following query.
+\subsection{Join queries}
+Next, assume that we have a join query. Joining is the most resource-consuming operator. We will only be considering two-way equijoin. These queries are of the following form.
 \begin{verbatim}
 SELECT  *
 FROM    R, S
 WHERE   R.A = S.B;
 \end{verbatim}
+There are 5 ways for processing join queries- naive join, nested-loop join, index-based nested-loop join, merge-join and hash-join.
+\subsubsection{Naive join}
 In naive join, we compute the Cartesian product of \texttt{R} and \texttt{S}, and then only filter the ones that satisfy \texttt{R.A = S.B}. This method is inefficient because we get rid of most of the tuples from the Cartesian product most of the time.
 
+\subsection{Nested loop join}
 In nested-loop join, we have a nested loop algorithm over the two relations to only generate products if they satisfy the join condition. In terms of relations, the algorithm is the following.
 \begin{verbatim}
 for each tuple r in R:
@@ -151,8 +182,10 @@ We say \texttt{R} is the outer relation and \texttt{S} is the inner relation. Th
     % Broken?
     \item After going through all the \texttt{R} blocks, go to the next set of \texttt{R} blocks.
 \end{itemize}
+It is more efficient to have the file with fewer blocks in the outer loop.
 
-If we have an index on either \texttt{A} or \textbf{B}, we can make use of it in the join. Assume that we have an index $I$ on \texttt{S.B}. Then, the algorithm becomes:
+\subsubsection{Index-based nested-loop join}
+If we have an index on either \texttt{A} or \texttt{B}, we can make use of it in the join. Assume that we have an index $I$ on \texttt{S.B}. Then, the algorithm becomes:
 \begin{verbatim}
 for each tuple r in R:
     use index of B to retrieve all tuples s in S 
@@ -161,6 +194,7 @@ for each tuple r in R:
 \end{verbatim} 
 This process is much faster than nested-loop join. If we have two indices, we need to choose the right one to minimise the join processing cost.
 
+\subsubsection{Merge-join}
 Now, assume that both \texttt{R} and \texttt{S} are physically ordered on their joining attribute \texttt{A} and \texttt{B}. Then, we can use the following approach to join them:
 \begin{itemize}
     \item Load a pair $(R', S')$ of sorted blocks into memory.
@@ -169,33 +203,47 @@ Now, assume that both \texttt{R} and \texttt{S} are physically ordered on their 
 \end{itemize}
 In this case, the blocks of each file are scanned only once. But, if \texttt{R} and \texttt{S} are not physically sorted, then we need to use the external sorting method.
 
-% TODO: Illustrate the algorithm
-% \begin{table}[H]
-%     \centering
-%     \begin{tabular}{|c|c|c|c|}
-%         \texttt{A} & sname & rating & age \\
-%         22 & Dustin & 7 & 45 \\
-%         28 & Yuppy & 9 & 35 \\
-%         44 & Guppy & 5 & 35 \\
-%         58 & Rusty & 10 & 35 \\
-%         \hline
-%     \end{tabular}
-% \end{table}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \tuplesorted
 
-% \begin{table}[H]
-%     \centering
-%     \begin{tabular}{|c|c|c|c|}
-%         \texttt{A} & bid & day & rname \\
-%         28 & 103 & 12/04/96 & Guppy \\
-%         28 & 103 & 11/03/96 & Yuppy \\
-%         31 & 101 & 10/10/96 & Dustin \\
-%         31 & 102 & 10/12/96 & Lubber \\
-%         31 & 101 & 10/11/96 & Lubber \\
-%         58 & 103 & 11/12/96 & Dustin  \\
-%         \hline
-%     \end{tabular}
-% \end{table}
+        \draw[->] (-0.5, -0.25) -- (0, -0.25);
+        \draw[->] (4, -0.25) -- (4.5, -0.25);
+    \end{tikzpicture}
+\end{figure}
 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \tuplesorted
+
+        \draw[->] (-0.5, -0.75) -- (0, -0.75);
+        \draw[->] (4, -0.25) -- (4.5, -0.25);
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \tuplesorted
+
+        \draw[->] (-0.5, -0.75) -- (0, -0.75);
+        \draw[->] (4, -0.75) -- (4.5, -0.75);
+    \end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \tuplesorted
+
+        \draw[->] (-0.5, -1.25) -- (0, -1.25);
+        \draw[->] (4, -0.75) -- (4.5, -0.75);
+    \end{tikzpicture}
+\end{figure}
+
+\subsubsection{Hash join}
 Now, if \texttt{R} and \texttt{S} are partioning into $M$ buckets with the same hash function over the join attributes \texttt{A} and \texttt{B}, then we can use a hash-join algorithm. Assuming \texttt{R} is the smallest file and fits into main memory, i.e. $M$ buckets of \texttt{R} are in memory, we start by partioning.
 \begin{verbatim}
 for each tuple r in R:
@@ -212,96 +260,80 @@ for each tuple s in S:
             add(r, s) to the result file;
 \end{verbatim}
 
-Assume that we have the following query.
-\begin{verbatim}
-SELECT *
-FROM EMPLOYEE E, DEPARTMENT D
-WHERE E.DNO = D.DNUMBER;
-\end{verbatim}
-Assume we have $n_E$ Employee blocks and $n_D$ Department blocks. Moreover, the memory can store $n_B$ blocks. We will predict the cost of using a nested-loop join with employee in the outer loop and department in the inner loop.
 
-In memory, we require a block for reading the inner file \texttt{D} and a further block to write the join result. The other $n_B - 2$ blocks can be used to read the outer file \texttt{E}. This is the chunk size.
 
-When we run the nested-loop algorithm, we load $n_B - 2$ blocks for the outer relation, and then load each block from the inner relation one by one and check whether there are any possible tuples we can output. So, the outer loop runs for $n_E/(n_B - 2)$, and the inner loop is $n_D$. The total number of block accesses is therefore
-\[n_E + (n_E/(n_B - 2))n_D.\]
-If $n_E = 2 \ 000$ blocks, $n_D = 10$ blocks and $n_B = 7$ blocks, then we require 
-\[2 \ 000 + 10 \cdot \frac{2000}{5} = 6 \ 000\]
-block accesses. If swap the inner and the outer relations, we require
-\[10 + 2 \ 000 \cdot \frac{10}{5} = 4 \ 010\]
-block accesses. So, it is better to have the file with fewer blocks in the outer loop.
+% Next, assume we have the query
+% \begin{verbatim}
+% SELECT *
+% FROM EMPLOYEE E, DEPARTMENT D
+% WHERE D.MGR_SSN = E.SSN;
+% \end{verbatim}
+% We have a B+ Tree on \texttt{Mgr\_SSN} with level $x_D = 2$, and a B+ Tree on \texttt{SSN} with level $x_E = 4$. Moreover, the record \texttt{E} has $r_E = 6 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and the record \texttt{D} has $r_D = 50$ tuples in $n_D = 10$ blocks. 
 
-Next, assume we have the query
-\begin{verbatim}
-SELECT *
-FROM EMPLOYEE E, DEPARTMENT D
-WHERE D.MGR_SSN = E.SSN;
-\end{verbatim}
-We have a B+ Tree on \texttt{Mgr\_SSN} with level $x_D = 2$, and a B+ Tree on \texttt{SSN} with level $x_E = 4$. Moreover, the record \texttt{E} has $r_E = 6 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and the record \texttt{D} has $r_D = 50$ tuples in $n_D = 10$ blocks. 
+% If we use index-based nested-loop on the B+ Tree for Department relation, we are searching the B+ tree to check whether a given \texttt{E.SSN} is also \texttt{D.Mgr\_SSN}. However, since not every employee is a manager, many of these searches fail. The probability of an employee being a manager is 
+% \[50/ 6 \ 000 = 0.83\%.\]
+% So, 99.16\% of searching using the B+ Tree is meaningless. During the process, we load each employee block, and for each tuple, we traverse the B+ Tree to find whether the SSN corresponds to a manager. This requires
+% \[n_E + r_E \cdot (x_D + 1) = 2 \ 000 + 6 \ 000 \cdot (2 + 1) = 20 \ 000,\]
+% block accesses. 
 
-If we use index-based nested-loop on the B+ Tree for Department relation, we are searching the B+ tree to check whether a given \texttt{E.SSN} is also \texttt{D.Mgr\_SSN}. However, since not every employee is a manager, many of these searches fail. The probability of an employee being a manager is 
-\[50/ 6 \ 000 = 0.83\%.\]
-So, 99.16\% of searching using the B+ Tree is meaningless. During the process, we load each employee block, and for each tuple, we traverse the B+ Tree to find whether the SSN corresponds to a manager. This requires
-\[n_E + r_E \cdot (x_D + 1) = 2 \ 000 + 6 \ 000 \cdot (2 + 1) = 20 \ 000,\]
-block accesses. 
+% Instead, if we use the B+ tree for Employee relation, then we require
+% \[n_D + r_D \cdot (x_E + 1) = 10 + 50 \cdot 5 = 260\]
+% block accesses. The probability of a manager being an employee is 100\%, so this approach is much more efficient.
 
-Instead, if we use the B+ tree for Employee relation, then we require
-\[n_D + r_D \cdot (x_E + 1) = 10 + 50 \cdot 5 = 260\]
-block accesses. The probability of a manager being an employee is 100\%, so this approach is much more efficient.
+% Next, we consider the sort-merge-join algorithm. We require the two relations to be sorted with respect to the joining attribute. We load each block from the two relations precisely once, so this requires $n_E + n_D = 2 \ 010$ block accesses. If both files are not sorted, we need to use external sorting algorithm to sort them. The external sorting process for the Employee relation requires
+% \[2n_E + 2n_E \log_2 (n_E/n_B)\]
+% block accesses- the value $n_E/n_B$ is the number of sub-files initially sorted, where $n_B$ is the number of available blocks in memory. We might have to sort the Department relation requires
+% \[2n_D + 2n_D \log_2 (n_D/n_B)\]
+% block accesses. In total, the sort-merge-join algorithm requires
+% \[(n_E + n_D) + (2n_E + 2n_E \log_2 (n_E/n_B)) + (2n_D + 2n_D \log)2 (n_D/n_B)) = 38 \ 690\]
+% block accesses if both the relations are not sorted. 
 
-Next, we consider the sort-merge-join algorithm. We require the two relations to be sorted with respect to the joining attribute. We load each block from the two relations precisely once, so this requires $n_E + n_D = 2 \ 010$ block accesses. If both files are not sorted, we need to use external sorting algorithm to sort them. The external sorting process for the Employee relation requires
-\[2n_E + 2n_E \log_2 (n_E/n_B)\]
-block accesses- the value $n_E/n_B$ is the number of sub-files initially sorted, where $n_B$ is the number of available blocks in memory. We might have to sort the Department relation requires
-\[2n_D + 2n_D \log_2 (n_D/n_B)\]
-block accesses. In total, the sort-merge-join algorithm requires
-\[(n_E + n_D) + (2n_E + 2n_E \log_2 (n_E/n_B)) + (2n_D + 2n_D \log)2 (n_D/n_B)) = 38 \ 690\]
-block accesses if both the relations are not sorted. 
+% Finally, we consider the hash-join algorithm. We assume that the smaller relation Department fits in memory (i.e. $n_B > n_D + 2$). During the hashing phase, we hash the smaller relation into buckets. During the probing phase, we load a block from the bigger relation, hash it and check within the bucket if there is a match. If we find a match, we add it to the output block. If there are no overflown buckets, this requires $n_E + n_D$ block accesses. Typically, the smaller relation doesn't fit in memory, so we require $3(n_E + n_D)$ block accesses.
 
-Finally, we consider the hash-join algorithm. We assume that the smaller relation Department fits in memory (i.e. $n_B > n_D + 2$). During the hashing phase, we hash the smaller relation into buckets. During the probing phase, we load a block from the bigger relation, hash it and check within the bucket if there is a match. If we find a match, we add it to the output block. If there are no overflown buckets, this requires $n_E + n_D$ block accesses. Typically, the smaller relation doesn't fit in memory, so we require $3(n_E + n_D)$ block accesses.
+% Next, assume we have the query
+% \begin{verbatim}
+% SELECT *
+% FROM EMPLOYEE E, DEPARTMENT D
+% WHERE E.SSN = D.MGR_SSN;
+% \end{verbatim}
+% Moreover, we have $n_E = 100$ Employee blocks, $r_D = 100$ Department tuples in $n_D = 10$ blocks. In memory, we can store $n_B = 12$ blocks. If we have a 2-level on \texttt{E.SSN}, then we can use nested-index join algorithm as follows:
+% \begin{verbatim}
+% for each Department d:
+%     use B+ Tree (e.SSN) to find Employee d.MGR_SSN
+%     output the tuple (d, e);
+% \end{verbatim}
+% So, we require
+% \[n_D + r_D (2 + 1) = 10 + 100 \cdot 3 = 310\]
+% block accesses. If we use a hash function on \texttt{D.MGR\_SSN}, into 10 buckets, then we can use hash-join algorithm as follows:
+% \begin{verbatim}
+% load all the Departments d
+% for each Employee e:
+%     use the hash function to find the bucket for Department d
+%     find the tuple d in the bucket
+%     output the tuple (d, e);
+% \end{verbatim}
+% So, we require
+% \[n_D + n_E = 10 + 100 = 110\]
+% block accesses.
 
-Next, assume we have the query
-\begin{verbatim}
-SELECT *
-FROM EMPLOYEE E, DEPARTMENT D
-WHERE E.SSN = D.MGR_SSN;
-\end{verbatim}
-Moreover, we have $n_E = 100$ Employee blocks, $r_D = 100$ Department tuples in $n_D = 10$ blocks. In memory, we can store $n_B = 12$ blocks. If we have a 2-level on \texttt{E.SSN}, then we can use nested-index join algorithm as follows:
-\begin{verbatim}
-for each Department d:
-    use B+ Tree (e.SSN) to find Employee d.MGR_SSN
-    output the tuple (d, e);
-\end{verbatim}
-So, we require
-\[n_D + r_D (2 + 1) = 10 + 100 \cdot 3 = 310\]
-block accesses. If we use a hash function on \texttt{D.MGR\_SSN}, into 10 buckets, then we can use hash-join algorithm as follows:
-\begin{verbatim}
-load all the Departments d
-for each Employee e:
-    use the hash function to find the bucket for Department d
-    find the tuple d in the bucket
-    output the tuple (d, e);
-\end{verbatim}
-So, we require
-\[n_D + n_E = 10 + 100 = 110\]
-block accesses.
-
-Now, assume that we have the query
-\begin{verbatim}
-SELECT *
-FROM EMPLOYEE E, EMPLOYEE S
-WHERE E.SUPER_SSN = S.SSN:
-\end{verbatim}
-Assume we have $r_E = 10 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and a 5-level B+ Tree on \texttt{SSN} and 2-level B+ Tree on \texttt{Super\_SSN}. The index-based nested-loop join algorithm for either B+ Tree is the following.
-\begin{verbatim}
-for each Employee e:
-    if e.Super_SSN IS NOT NULL: # employee is not supervisor
-        use B+ Tree to find Employee s.SSN
-        output the tuple (e, s);
-\end{verbatim}
-Assume that 10\% of the employees are supervisors. Then, using a level-$t$ B+ Tree, we need to retrieve all the employee blocks, and then $t+1$ block accesses for 90\% of the non-supervisor employees. So, if we use the 5-level B+ Tree on \texttt{SSN}, then we require
-\[n_E + 0.9 \cdot r_E (5 + 1) = 2000 + 0.9 \cdot 10000 \cdot (5 + 1) = 56 000\]
-block accesses. Instead, if we use the 2-level B+ Tree on \texttt{SUPER\_SSN}, then we require
-\[n_E + 0.9 \cdot r_E (2 + 1) = 2000 + 0.9 \cdot 10000 \cdot (2 + 1) = 29 000\]
-block accesses. The B+ Tree on \texttt{SUPER\_SSN} requires fewer block accesses since it only indexes supervisors, while the B+ Tree on \texttt{SSN} indexes both supervisors and non-supervisors.
+% Now, assume that we have the query
+% \begin{verbatim}
+% SELECT *
+% FROM EMPLOYEE E, EMPLOYEE S
+% WHERE E.SUPER_SSN = S.SSN:
+% \end{verbatim}
+% Assume we have $r_E = 10 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and a 5-level B+ Tree on \texttt{SSN} and 2-level B+ Tree on \texttt{Super\_SSN}. The index-based nested-loop join algorithm for either B+ Tree is the following.
+% \begin{verbatim}
+% for each Employee e:
+%     if e.Super_SSN IS NOT NULL: # employee is not supervisor
+%         use B+ Tree to find Employee s.SSN
+%         output the tuple (e, s);
+% \end{verbatim}
+% Assume that 10\% of the employees are supervisors. Then, using a level-$t$ B+ Tree, we need to retrieve all the employee blocks, and then $t+1$ block accesses for 90\% of the non-supervisor employees. So, if we use the 5-level B+ Tree on \texttt{SSN}, then we require
+% \[n_E + 0.9 \cdot r_E (5 + 1) = 2000 + 0.9 \cdot 10000 \cdot (5 + 1) = 56 000\]
+% block accesses. Instead, if we use the 2-level B+ Tree on \texttt{SUPER\_SSN}, then we require
+% \[n_E + 0.9 \cdot r_E (2 + 1) = 2000 + 0.9 \cdot 10000 \cdot (2 + 1) = 29 000\]
+% block accesses. The B+ Tree on \texttt{SUPER\_SSN} requires fewer block accesses since it only indexes supervisors, while the B+ Tree on \texttt{SSN} indexes both supervisors and non-supervisors.
 
 \newpage
 
@@ -337,72 +369,51 @@ A good approximation of the distribution is a histogram.
 % PDF of Salary 
 % TODO: Example P(Salary \leq 30 000) \approx 0.18
 
-Selection selectivity of an attribute $A$, denoted by $\operatorname{sl}(A)$, is the fraction of tuples that satisfy a given condition. Therefore, its value is between 0 and 1. If $\operatorname{sl}(A) = 0$, then none of the records satisfy this condition with respect to the attribute $A$. On the other hand, if $\operatorname{sl}(A) = 1$, then all the records satisfy the condition with respect to the attribute $A$. As a probability, the selection selectivity tells us how likely is it for a tuple to satisfy the given condition with respect to an attribute.
+Selection selectivity of an attribute $A$, denoted by $\textit{sl}(A)$, is the fraction of tuples that satisfy a given condition. Therefore, its value is between 0 and 1. If $\textit{sl}(A) = 0$, then none of the records satisfy this condition with respect to the attribute $A$. On the other hand, if $\textit{sl}(A) = 1$, then all the records satisfy the condition with respect to the attribute $A$. As a probability, the selection selectivity tells us how likely is it for a tuple to satisfy the given condition with respect to an attribute.
 
 The selection cardinality $s$ is the number of tuples we expect to satisfy a query with respect to a given attribute. In other words, the selection cardinality
-\[s = \operatorname{sl}(A) \cdot r,\]
-where $r$ is the number of tuples present. So, the value is between 0 and $r$. We predict this value without scanning any block. For example, if $r = 1 \ 000$ and $\operatorname{sl}(A) = 0.3$, then the selection cardinality $s = 300$. 
+\[s = \textit{sl}(A) \cdot r,\]
+where $r$ is the number of tuples present. So, the value is between 0 and $r$. We predict this value without scanning any block. For example, if $r = 1 \ 000$ and $\textit{sl}(A) = 0.3$, then the selection cardinality $s = 300$. 
 
 To predict selectivity, we can approximate the distribution of attribute values using a histogram. This allows us to maintain an accurate selectivity estimate. However, we must maintain this histogram whenever there is a change to the attribute for any of the tuples. In this case, we assume that
-\[\operatorname{sl}(A = x) \approx P(A = x).\]
+\[\textit{sl}(A = x) \approx P(A = x).\]
 That is, the selection selectivity is approximately equal to the probability that the value of the attribute is that value.
 
 Another possible approximation is that all values are uniformly distributed. This means that we do not need to maintain a histogram- all the values are of equal probability, so we barely need to store one value.
 % TODO: Add histogram
 This means that we do not need to maintain a histogram. However, we provide a less accurate prediction for the selection selectivity. In this case, we assume that
-\[\operatorname{sl}(A = x) \approx \frac{1}{n},\]
+\[\textit{sl}(A = x) \approx \frac{1}{n},\]
 where $n$ is the number of distinct values of $A$. Note that the selectivity is a constant value independent of $x$. 
 
 If $A$ is a key attribute, then
-\[\operatorname{sl}(A = x) \approx \frac{1}{r}\]
+\[\textit{sl}(A = x) \approx \frac{1}{r}\]
 is a good estimate. There is only one tuple that satisfies the condition, so the selection cardinality $s = 1$. So, the uniformity assumption is valid in this case. We do not need to build a histogram.
 
 Now, if $A$ is a non-key attribute, with $n = NDV(A)$, the number of distinct values of $A$ present. Then, the estimate
-\[\operatorname{sl}(A = x) \approx \frac{1}{n}\]
+\[\textit{sl}(A = x) \approx \frac{1}{n}\]
 is not a good estimate. This is under the assumption that all the records are uniformly distributed across the $n$ distinct values. This is not true in general.
 
 Next, consider the following range selection selectivity.
 \[\texttt{SELECT * FROM RELATION WHERE A>= x}\]
-The domain range is defined to be $\max (A) - \min (A)$, and the query range in this case is $\max(A) - x$. If $x > \max(A)$, then $\operatorname{sl}(A \geq x) = 0$. Otherwise,
-\[\operatorname{sl}(A \geq x) = \frac{\max(A) - x}{\max(A) - \min(A)},\]
+The domain range is defined to be $\max (A) - \min (A)$, and the query range in this case is $\max(A) - x$. If $x > \max(A)$, then $\textit{sl}(A \geq x) = 0$. Otherwise,
+\[\textit{sl}(A \geq x) = \frac{\max(A) - x}{\max(A) - \min(A)},\]
 under the uniformity assumption.
 
-In particular, if we have $r = 1 \ 000$ employees, the attribute value ranges from $100$ to $10 \ 000$ and $x = 1000$, then the selection selectivity is
-\[\operatorname{sl}(A \geq 1000) = \frac{\max(A) - x}{\max(A) - \min(A)} = \frac{10 \ 000 - 1000}{10 \ 000 - 100} = 0.909\]
+In particular, if we have $r = 1000$ employees, the attribute value ranges from $100$ to $10 \ 000$ and $x = 1000$, then the selection selectivity is
+\[\textit{sl}(A \geq 1000) = \frac{\max(A) - x}{\max(A) - \min(A)} = \frac{10 \ 000 - 1000}{10 \ 000 - 100} = 0.909\]
 In that case, the selection cardinality is $909$ tuples.
 
 Now, consider the conjunctive selectivity, i.e. a query satisfying 2 conditions. An example is given below.
 \[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
 If the two attributes $A$ and $B$ are statistically independent, then the selectivity of the conjunction query $q$ is
-\[\operatorname{sl}(q) = \operatorname{sl}(A = x) \cdot \operatorname{sl}(B = y).\]
+\[\textit{sl}(q) = \textit{sl}(A = x) \cdot \textit{sl}(B = y).\]
 
-Next, consider the following query.
-\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 AND SALARY = 40 000;}\]
-Assume that:
-\begin{itemize}
-    \item the number of distinct values of salary NDV(Salary) = 100;
-    \item the number of distinct values of department numbers NDV(DNO) = 10;
-    \item there are $r = 1000$ employees that are evenly distributed among salaries and departments.
-\end{itemize}
-The selection selectivity for the Salary attribute is
-\[\operatorname{sl}(40 \ 000) = \frac{1}{100} = 0.01\]
-Moreover, the selection selectivity for the DNO attribute is
-\[\operatorname{sl}(5) = \frac{1}{10} = 0.1.\]
-So, under the assumption that salary is independent of the department, we find that the selection selectivity of the query is
-\[\operatorname{sl}(Q) = \operatorname{sl}(40 \ 000) \cdot \operatorname{sl}(5) = 0.001.\]
-In terms of the selection cardinality, this is 1 tuple.
 
 Now, we consider a disjunctive selectivity condition, i.e. a query satisfying one of 2 conditions. An example is given below.
 \[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
 Then, the selection selectivity of this query is
-\[\operatorname{sl}(Q) = \operatorname{sl}(A) + \operatorname{sl}(B) - \operatorname{sl}(A) \operatorname{sl}(B).\]
+\[\textit{sl}(Q) = \textit{sl}(A) + \textit{sl}(B) - \textit{sl}(A) \textit{sl}(B).\]
 Here as well, we assume that the two attributes $A$ and $B$ are statistically independent.
-
-Consider the following query
-\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 OR SALARY = 40 000;}\]
-We find that the selectivity of this query is
-\[\operatorname{sl}(Q) = \operatorname{sl}(40 \ 000) + \operatorname{sl}(5) - \operatorname{sl}(40 \ 000) \cdot \operatorname{sl}(5) = 0.109.\]
-In terms of the selection cardinality, this is 109 tuples.
 
 Now, assume that we have $r$ tuples, and the attribute $A$ has $n$ number of distinct values. Under the uniform assumption of the attribute, the expected number of block accesses is
 \[\operatorname{ceil}(s/f) = \operatorname{ceil}(r/f \cdot n),\]
@@ -417,23 +428,23 @@ We have $b$ blocks; the blocking factor is $f$; we have $r$ records; and the num
     \begin{itemize}
         \item If $A$ is a key attribute, then the expected cost is $\log_2 b$ block accesses. It is independent of the selection selectivity.
         \item If $A$ is not a key attibute, then it takes $\log_2 b$ block accesses to find the first block with record $A = x$. We then access all the contiguous blocks whose records satisfy $A = x$. This takes $\operatorname{ceil}(s/f) - 1$ further block accesses. In total, the expected cost is
-        \[\log_2 b + \operatorname{ceil}(s/f) - 1 = \log_2 + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f) - 1.\]
+        \[\log_2 b + \operatorname{ceil}(s/f) - 1 = \log_2 + \operatorname{ceil}(r \cdot \textit{sl}(A)/f) - 1.\]
         This is a function of the selection selectivity.
     \end{itemize}
 
     \item Now, assume that we have a level-$t$ multilevel primary/clustering index on the attribute.
     \begin{itemize}
         \item If $A$ is a key attribute, then the expected cost is $t + 1$ block accesses. It is independent of the selection selectivity.
-        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. The selection cardinality is $s = r \cdot \operatorname{sl}(A)$ tuples. So, we require $\operatorname{ceil}(s/f)$ block accesses, where $f$ is the blocking factor. So, the expected cost is
-        \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f).\]
+        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. The selection cardinality is $s = r \cdot \textit{sl}(A)$ tuples. So, we require $\operatorname{ceil}(s/f)$ block accesses, where $f$ is the blocking factor. So, the expected cost is
+        \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \textit{sl}(A)/f).\]
         This is a function of the selection selectivity.
     \end{itemize}
 
     \item Assume next that we have a level-$t$ B+ tree on the attribute.
     \begin{itemize}
         \item If $A$ is a key attribute, then the expected cost is $t + 1$ block accesses. It is independent of the selection selectivity.
-        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. At this point, we have access to the block pointer to all the blocks containing a tuple satisfying the condition. The selection cardinality is $s = r \cdot \operatorname{sl}(A)$ tuples. Since the tuples are not sorted with respected to $A$, we assume that we must access $s$ blocks to retrieve all the tuples. In that case, the expected number of block accesses is
-        \[t + 1 + s = t + 1 + r \cdot \operatorname{sl}(A).\]
+        \item If $A$ is a non-key attribute, then it takes $t$ block accesses to descend the tree. At this point, we have access to the block pointer to all the blocks containing a tuple satisfying the condition. The selection cardinality is $s = r \cdot \textit{sl}(A)$ tuples. Since the tuples are not sorted with respected to $A$, we assume that we must access $s$ blocks to retrieve all the tuples. In that case, the expected number of block accesses is
+        \[t + 1 + s = t + 1 + r \cdot \textit{sl}(A).\]
         This is a function of the selection selectivity.
     \end{itemize}
 
@@ -447,58 +458,12 @@ We have $b$ blocks; the blocking factor is $f$; we have $r$ records; and the num
 Next, assume that we have the query
 \[\texttt{SELECT * FROM RELATION WHERE A >= x};\]
 \begin{itemize}
-    \item Assume further that we have a level $t$ primary index and $A$ is a key attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is $s = r \cdot \operatorname{sl}(A \geq x)$. So, we further access $\operatorname{ceil}(s/f)$ blocks. In total, we have
-    \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \operatorname{sl}(A)/f)\]
+    \item Assume further that we have a level $t$ primary index and $A$ is a key attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is $s = r \cdot \textit{sl}(A \geq x)$. So, we further access $\operatorname{ceil}(s/f)$ blocks. In total, we have
+    \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \textit{sl}(A)/f)\]
     block accesses. This is a function of the selection selectivity.
 \end{itemize}
 
-Now, we consider the best way of executing the following query.
-\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 AND SALARY = 30000 AND EXP = 0}.\]
-There are 10 000 records, and the blocking factor is 5. So, there are 2 000 blocks. The file is sorted with respect to the Salary attribute. There are 500 distinct salary values, 125 departments, and 2 values of EXP (experienced or inexperienced). We can fit 100 blocks in memory. Moreover, we have built the following access paths:
-\begin{itemize}
-    \item A clustering index on Salary, with 3 levels.
-    \item A B+ Tree on DNO, with 2 levels.
-    \item A B+ Tree on EXP, with 2 levels.
-\end{itemize}
-We consider different strategies to execute the query.
-\begin{itemize}
-    \item We can linearly search all the tuples and return those tuples satisfying the query. This requires 2 000 block accesses since none of the searching attributes are key.
-    \item We can make use of the B+ Tree on DNO. Here, we first get all the tuples that satisfy \texttt{DNO = 5}. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\text{DNO}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that
-    \[s_{\text{DNO}} = \frac{1}{125} \cdot 10000 = 80.\]
-    Since we expect 80 tuples to satisfy this condition, we can fit all of them in 16 blocks (we know that \textit{bfr} = 5). This fits in memory. So, after finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 83 block accesses.
-    \item We can make use of the clustering index on Salary. For this, we require 3 block accesses to descend the multilevel index and get to the first level of index. Then, it takes
-    \[\operatorname{ceil}(s_{\text{Salary}}/f)\]
-    block accesses to retrieve all the tuples satisfying \texttt{Salary = 30 000}, where $f = 5$ is the blocking factor. Under the uniformity assumption, we find that
-    \[s_{\text{Salary}} = \frac{1}{500} \cdot 10000 = 20.\]
-    Since we expect 20 tuples to satisfy this condition, we can fit them in 4 blocks- this fits in memory. After finding these tuples, we can linearly check whether they satisfy the other two conditions. Overall, we just require 7 block accesses.
-    \item We can make use of the B+ Tree on EXP. For this, we require 2 block accesses to descend the tree, 1 to get the block of pointers, and $s_{\text{EXP}}$ blocks to get the actual data blocks (in the worst case). Under the uniformity assumption, we find that
-    \[s_{\text{EXP}} = \frac{1}{2} \cdot 10000 = 5000.\]
-    The 5000 tuples occupy 1000 blocks, so they cannot all fit in memory. One approach would be to write 900 of the blocks back and keep them for processing later. We would further need to read them at a later point to check that they satisfy the other conditions. So, this requires 6803 block accesses.
-\end{itemize}
-Clearly, the best way to execute this query is by using the clustering index on Salary. This only requires 7 block accesses.
-
-Next, we consider the best way of executing the following query.
-\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5 OR (SALARY >= 500 AND EXP = 0);}\]
-We have the same case as above. Also, now we can fit 1100 blocks in memory. Moreover, the minimum Salary value is 100 and maximum Salary is 10 000. The conjunction \texttt{SALARY >= 500 AND EXP = 0} has selection selectivity
-\[slc = sl(\text{Salary}) \cdot sl(\text{EXP}) = \frac{10 \ 000 - 5000}{10 \ 000 - 100} \cdot \frac{1}{2} = 0.4795.\]
-In that case, the disjunction \texttt{DNO = 5 OR (SALARY >= 500 AND EXP = 0)} has selection selectivity
-\[\operatorname{sl}(\text{DNO}) + slc - \operatorname{sl}(\text{DNO}) \cdot slc = \frac{1}{125} + 0.4795 - \frac{1}{125} \cdot 0.4795 = 0.4837.\]
-So, we expect 4837 tuples to satisfy this condition. In that case, the least number of blocks we need to access would be
-\[\operatorname{ceil}(4837/5) = 968\]
-blocks. We consider different strategies to execute the query.
-\begin{itemize}
-    \item We can linearly search all the tuples and return those tuples satisfies the query. This requires 2 000 block accesses.
-    \item We can make use of the access paths. First, we acccess 83 blocks to get all the tuples that satisfy \texttt{DNO = 5}. Now, we consider how we find all the tuples that satisfy \texttt{SALARY >= 500 AND EXP = 0}. 
-    \begin{itemize}
-        \item First, we use the B+ Tree on \texttt{EXP}. It takes 5003 block accesses to find the 5000 tuples that satisfy the condition. This fits in 1000 blocks, so we can store it in memory. Overall, this takes 5086 block accesses.
-        \item Next, we use the B+ Tree on \texttt{Salary}. It takes 1921 block access to find the 1918 blocks that satisfy the condition. This does not fit in memory. 
-        % TODO: Complete this
-    \end{itemize}
-\end{itemize}
-Therefore, the best choice here is linear searching. Moreover, even if we could fit infinite blocks fit in memory, using the B+ Tree on \texttt{Salary} would need 2003 block accesses.
-\newpage
-
-\section{Join selectivity}
+\subsection{Join selectivity}
 We measure join selectivity with respect to the cartesian product of the two relations. For example, consider the following tables.
 % TODO: Add Tables
 Their Cartesian product has $5 \cdot 3 = 15$ entries. However, the following is the joined table with respect to \texttt{DNO} and \texttt{DNumber}.
@@ -528,203 +493,6 @@ Now, assume we have relations $R$ and $S$ with $b_R$ and $b_S$ blocks. They can 
 \[\textit{jc} = \textit{js} \cdot  |R| |S| = |R| |S| /\max(n, m).\]
 So, the number of result blocks is
 \[k = (\textit{js} \cdot |R| \cdot |S|)/f_{RS}.\]
-
-If we use a nested-loop join, then the expected cost to read the blocks is
-\[b_D + \operatorname{ceil}(b_D/(n_B-2)) \cdot b_E,\]
-where $D$ is the outer relation and $E$ the inner relation. The expected cost of reading and writing the results to memory is 
-\[b_D + \operatorname{ceil}(b_D/(n_B-2)) \cdot b_E + (\textit{js} \cdot |E| |D|)/ f_{RS}.\]
-This is a function of the join selectivity.
-
-If we use an index-based nested-loop join using a primary index on \texttt{D} with $x_D$ levels, then the cost to read the blocks is
-\[b_E + |E| \cdot (x_D + 1),\]
-where $b_E$ is the number of blocks in \texttt{E}. Then, the expected cost of reading and writing is
-\[b_E + |E| \cdot (x_D + 1) + (\textit{js} \cdot |E| |D|)/ f_{RS}.\]
-
-If we have a clustering index over \texttt{E} with $x_E$ levels with selection cardinality $s_E$ and blocking factor $f_E$, then the cost to read the blocks is
-\[b_D + |D| \cdot (x_E + \operatorname{ceil}(s_E/f_E)).\]
-Then, the expected cost of reading and writing is
-\[b_D + |D| \cdot (x_E + \operatorname{ceil}(s_E/f_E)) + (\textit{js} \cdot |E| |D|)/f_{RS}.\]
-This is a function of the selection selectivity and the join selectivity.
-
-If we have a B+ Tree over the non-key attribute \texttt{E} with $x_E$ levels with selection cardinality $s_E$ and blocking factor $f_E$, then the cost to read the blocks is
-\[b_D + |D| \cdot (x_E + 1 + s_E).\]
-Then, the expected cost of reading and writing is
-\[b_D + |D| \cdot (x_E + 1 + s_E) + (\textit{js} \cdot |E| |D|)/f_{RS}.\]
-
-If we use a sort-merge algorithm, then the cost to read and write is
-\[b_R + b_S + (\textit{js} \cdot |R| \cdot |S|)/f_{RS}.\]
-If we use a hash-join algorithm, the cost to read and write is
-\[3(b_R + b_S) + (\textit{js} \cdot |R| \cdot |S|)/f_{RS}.\]
-% TODO: Combine? Explain? Redact?
-
-Next, we apply these equations to find the best algorithm to use when joining the relations \texttt{EMPLOYEE} and \texttt{DEPARTMENT}, where
-\begin{itemize}
-    \item there are $r_E = 10 \ 000$ employee tuples that fit in $b_E = 2000$ blocks;
-    \item there are $r_D = 125$ department tuples that fit in $b_D = 13$ blocks;
-    \item the blocking factor of the joined tuple is $f_{RS} = 4$;
-    \item we can fit $n_B = 10$ blocks in memory.
-\end{itemize}
-The selection selectivity of the \texttt{DNO} attribute in the \texttt{DEPARTMENT} relation is given by
-\[\text{sl(DNO)} = 1/125 = 0.008,\]
-under the uniformity assumption. An employee works in a department- this is the joining condition. Assuming that the department an employee works in is unique, the join selectivity is
-\[\textit{js} = 1/\max(125, 125) = 0.008.\]
-This means that the join cardinality is
-\[\textit{jc} = \textit{js} \cdot r_E \cdot r_D = 10 \ 000\]
-tuples. These fit in $2500$ blocks. Moreover, we have built the following primary access paths:
-\begin{itemize}
-    \item Primary Index on DNUMBER $x_{Dnumber} = 1$ level.
-    \item B+ Tree Index on DNO $x_{Dno} = 2$ levels.
-\end{itemize}
-Using this information, we consider the number of block accesses we require for each algorithm.
-\begin{itemize}
-    \item For nested loop join, we need
-    \[b_D + (\operatorname{ceil}(b_D / n_B \cdot 2)) \cdot b_E + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 6513\]
-    block accesses.
-    \item Using an index-based nested-loop join with employee as the outer relation, we need
-    \[b_E + r_E (x_{DNumber} + 1) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 24 \ 500\]
-    block accesses.
-    \item Using an index-based nested-loop join with department as the outer relation, we need
-    \[b_D + r_D (x_{DNO} + s_{DNO} + 1) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 12 \ 288\]
-    block accesses.
-    \item Using a hash-join, we need
-    \[3(b_D + b_E) + (\textit{js} \cdot r_E \cdot r_D)/f_{RS} = 8539\]
-    block accesses.
-    \item Assuming that we have a B+ Tree built on \texttt{DNO}, we cannot use the sort-merge algorithm. The attribute must be non-ordering.
-\end{itemize}
-So, the best approach to join them is a nested-loop join.
-
-\subsection{3-way join optimisation}
-Now, we will consider joining 3 relations. Assume we want to execute the following SQL query.
-\begin{verbatim}
-SELECT  *
-FROM    EMPLOYEE E, DEPARTMENT D, DEPENDENT T
-WHERE   T.E_SSN = E.SSN AND E.SSN = D.MGR_SSN;
-\end{verbatim}
-We have
-\begin{itemize}
-    \item $r_T = 50$ dependents in $b_T = 3$ blocks;
-    \item $r_D = 125$ departments in $b_D = 13$ blocks;
-    \item $r_E = 10 \ 000$ employees in $b_E = 2000$ blocks;
-    \item the blocking factor $f = 10$, and for the result block $f_{RS} = 2$;
-    \item maximum $n_B = 100$ blocks in memory.
-\end{itemize}
-Moreover, we have the following primary access paths:
-\begin{itemize}
-    \item A clustering index on \texttt{T.E\_SSN} of $x_{\text{E\_SSN}} = 2$ levels with 10 distinct \texttt{SSN} values.
-    \item A primary index on \texttt{D.MGR\_SSN} of $x_{\text{MGR\_SSN}} = 1$ level.
-    \item A B+ Tree on \texttt{E.SSN} of $x_{\text{SSN}} = 4$ levels.
-\end{itemize}
-Under the uniformity assumption, there are
-\[50/10 = 5\]
-dependents per employee.
-
-There are 2 possible ways to join the 3 relations:
-\begin{itemize}
-    \item We find the employees which have at least one dependent, and then checking whether they are managers.
-    \item We find the employees that are managers, then check if these managers have dependents.
-\end{itemize}
-In the first case, we first join \texttt{EMPLOYEE} and \texttt{DEPENDENT}. The join selectivity in this case is
-\[\textit{js} = 1/\max(10, 10 \ 000) = 0.01\%.\]
-So, we expect
-\[\textit{jc} = \textit{js} \cdot |E| \cdot |D| = 50\]
-tuples to be selected in this process. 
-
-For each dependent, we get their employee using the B+ Tree on \texttt{E.SSN}. This takes
-\[b_T + r_T \cdot (x_{SSN} + 1) + \textit{jc}/f_{RS} = 278\]
-block accesses to read and write the tuples into memory. We can also use the clustering index on \texttt{T.E\_SSN}. For each dependent, we get the dependent using this index. This takes
-\[b_E + r_E \cdot (x_{\text{E\_SSN}} + \operatorname{ceil}(s_{\text{E\_SSN}} / f)) + \textit{jc}/f_{RS} = 32 \ 025\]
-block accesses to read and write the tuples into memory. Clearly, the better option is to use the B+ Tree.
-
-In this case, the intermediate result has $r_{ET} = 50$ tuples, which fit in 25 blocks. These blocks can fit in memory. Next, we take the intermediate result and join it with the \texttt{DEPARTMENT} relation. So, we take a tuple from the intermediate result in memory and check whether it is a manager. The join selectivity for \texttt{EMPLOYEE} and \texttt{MANAGER} is
-\[\textit{js} = 1/\max(10\ 000, 125) = 0.01\%.\]
-So, we expect
-\[\textit{jc} = \textit{js} \cdot r_{ET} \cdot r_D = 0.625\]
-tuples to be selected in the process. This will fit in 1 block. 
-
-We can use the primary index on \texttt{D.MGR\_SSN} to filter out the tuples. We take a tuple from the intermediate result and use the primary index to retrieve the manager details. This requires
-\[r_{ET} \cdot (x_{\text{MGR\_SSN}} + 1) = 100\]
-to read from memory. We do not need to load the intermediate blocks since they are already in memory. Moreover, we do not write the final outcome into disks. In total, this plan requires
-\[278 + 100 = 378\]
-block accesses.
-
-In the other plan, we first join \texttt{EMPLOYEE} and \texttt{DEPARTMENT}. Here, the join selectivity is
-\[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
-So, the join cardinality is
-\[\textit{jc} = \textit{js} \cdot r_E \cdot r_D = 125\]
-managers. Since the \texttt{DEPARTMENT} relation is sorted with respect to \texttt{MGR\_SSN}, we can find all the managers in
-\[\operatorname{ceil}(\textit{jc}/f_{RS}) = 63\]
-blocks.
-
-For each department, we can get its manager using the B+ Tree on \texttt{E.SSN}. This takes
-\[b_D + r_D(x_{SSN} + 1) + \textit{jc}/f_{RS} = 701\]
-block accesses. Also, for each employee, we can get the department they manage (if any) using the primary index on \texttt{D.MGR\_SSN}. This takes
-\[b_E + r_E(x_{\text{MGR\_SSN}} + 1) + \textit{jc}/f_{RS} = 22 \ 063\]
-block accesses. The better option here is to use the B+ Tree. 
-
-The intermediate result takes 63 blocks, which can fit in memory. We will now join this result with the \texttt{DEPENDENT} relation. The join selectivity for \texttt{EMPLOYEE} and \texttt{DEPENDENT} is
-\[\textit{js} = 1/\max(10 \ 000, 10) = 0.01\%.\]
-So, we expect
-\[\textit{jc} = \textit{js} \cdot r_{ED} \cdot r_T = 0.625\]
-tuples to be selected in the process. This will fit in 1 block.
-
-We can take one intermediate tuple from memory, and check whether the manager has a dependent, using the clustering index on \texttt{T.E\_SSN}. This requires
-\[r_{ED} (x_{\text{E\_SSN}} + \operatorname{ceil}(s_{\text{E\_SSN}}/f)) = 375\]
-block accesses. In total, this plan requires
-\[701 + 375 = 1076\]
-block accesses. So, the first plan is better.
-
-\subsection{Join and select optimisation}
-Now, we will consider the best way of executing a query involving both a join condition and a selection condition. The query is the following.
-\begin{verbatim}
-SELECT  *
-FROM    EMPLOYEE E, DEPARTMENT D
-WHERE   E.Salary = 1000 AND E.SSN = D.MGR_SSN;
-\end{verbatim}
-We have the following:
-\begin{itemize}
-    \item There are $r_E = 10 \ 000$ employee tuples in $b_E = 2000$ blocks.
-    \item There are $r_D = 125$ department tuples in $b_D = 13$ blocks.
-\end{itemize}
-We have built the following primary access paths on the two relations:
-\begin{itemize}
-    \item A clustering index over \texttt{E.Salary} of $x_{\text{Salary}} = 3$ levels. There are 500 distinct salary values.
-    \item A B+ tree over \texttt{E.SSN} of $x_{\text{SSN}} = 4$ levels.
-    \item A primary index over \texttt{D.MGR\_SSN}  of $x_{\text{MGR\_SSN}} = 1$ level.
-\end{itemize}
-The blocking factor of \texttt{E} and \texttt{D} is $f = 10$, and the joined tuple is $f_{RS} = 2$. We can fit $n_B = 100$ blocks in memory.
-
-We will consider different plans to execute this query.
-\begin{itemize}
-    \item We can first find the employees that have \texttt{Salary = 1000} and then join.
-    \item We can first join \texttt{EMPLOYEE} and \texttt{DEPARTMENT} and then filter the employees that have \texttt{Salary = 1000}.
-\end{itemize}
-
-We will first consider the filter-then-join approach. We can use the clustering index on \texttt{E.Salary} to find all the employees that satisfy \texttt{Salary = 1000}. Under the uniformity assumption, the selection selectivity is
-\[\textit{sl}(\text{Salary}) = 1/500 = 0.002.\]
-So, the selection cardinality is
-\[s_{\text{Salary}} = 0.002 \cdot 10 \ 000 = 20.\]
-That is, there are $r_{FE} = 20$ employees that satisfy this condition. Using the clustering index, we require
-\[x_{\text{Salary}} + \operatorname{ceil}(s_{\text{Salary}}/f) = 5\]
-block accesses.
-
-Next, we join the intermediate result with the relation \texttt{DEPARTMENT}. Since the intermediate result occupies 2 blocks, it can fit in memory. The join selectivity is
-\[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
-So, the join cardinality is
-\[\textit{jc} = \textit{js} \cdot r_{FE} \cdot r_D = 0.25.\]
-This fits in 1 block. For each tuple in the intermediate result, we use the primary index over \texttt{D.MGR\_SSN} to get the relevant department tuple, if any. This requires
-\[r_{FE} \cdot (x_{\text{MGR\_SSN}} + 1) = 40\]
-block accesses. In total, we require
-\[5 + 40 = 45\]
-block accesses.
-
-Next, we consider the join-then-filter approach. We will use the B+ Tree over \texttt{E.SSN} to join \texttt{EMPLOYEE} and \texttt{DEPARTMENT}. The selection selectivity is
-\[\textit{js} = 1/\max(10 \ 000, 125) = 0.01\%.\]
-Using the B+ Tree, we require
-\[b_D + r_D \cdot (x_{\text{SSN}} + 1) + \operatorname{ceil}(\textit{js}/f_{RS}) = 701\]
-block accesses. The intermediate result is 125 tuples (one for each department). This takes
-\[\operatorname{ceil}(125/f_{RS}) = 2\]
-blocks. This can fit in memory.
-
-Next, we filter the tuples from the intermediate result that satisfy \texttt{Salary = 1000}. This can be done by linearly scanning the entries in memory. It needs no further block access since the salary is already present in the intermediate result. So, it takes 701 block accesses in total. Clearly, it is better to use the filter-then-join approach.
+When executing a join query, this is the number of block accesses corresponding to store the result back into memory. This can be used for further processing of the data when it doesn't fit in memory, for example.  
 
 \end{document}
