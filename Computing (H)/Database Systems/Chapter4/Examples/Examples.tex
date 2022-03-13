@@ -71,23 +71,11 @@
 
 \chapterstyle{thatcher}
 
-\setcounter{chapter}{4}
+\setcounter{chapter}{3}
 
 \begin{document}
-\chapter{Appendix: Examples}
-\section{Chapter 1}
-
-\newpage
-
-\section{Chapter 2}
-
-\newpage
-
-\section{Chapter 3}
-
-\newpage
-
-\section{Chapter 4}
+\chapter{Examples- Chapter 4}
+\section{Query Processing}
 \begin{example}
     Consider the following query.
 \begin{lstlisting}[language=SQL]
@@ -114,6 +102,7 @@ WHERE   E.DNO = D.DNUMBER;
 \end{answer}
 \newpage
 
+\section{Selection selectivity}
 \begin{example}
     Consider the following query.
 \begin{lstlisting}[language=SQL]
@@ -269,6 +258,7 @@ WHERE   DNO = 5 OR (SALARY >= 500 AND EXP = 0);
 
 \newpage
 
+\section{Join selectivity}
 \begin{example}
     % TODO: Add query
     Next, we apply these equations to find the best algorithm to use when joining the relations \texttt{EMPLOYEE} and \texttt{DEPARTMENT}, where
