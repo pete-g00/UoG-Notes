@@ -474,8 +474,179 @@ Let $\Omega \subseteq \mathbb{C}$ be open, $c \in \Omega$ and $f: \Omega \setmin
     \item If $f$ has an essential singularity at $c$, then $f$ is unbounded on any neighbourhood of $c$ and $|f(z)| \not\to \infty$. Moreover, if $f$ is unbounded and $|f(z)| \to \infty$, then $f$ must have a finite pole. So, if $f$ is unbounded and $|f(z)| \not\to \infty$, then $f$ must have an essential singularity at $c$.
 \end{itemize}
 \end{proof}
+The following is another characterisation of essential singularity.
+\begin{theorem}[Casaroti-Weirstrass Theorem]
+    Let $\Omega$ be an open set in $\mathbb{C}$, let $c \in \Omega$, and let $f: \Omega \setminus \{c\} \to \mathbb{C}$ be a holomorphic wth an essential singulariy at $c$. Then, the image of any (punctured) disc $D_c$ under $f$ is dense in $\mathbb{C}$. That is, if $w = f(z)$, then the intersection $f(D_c) \cap \overline{D}$ for any disc $\overline{D}$ in the $w$-plane is non-empty.
+\end{theorem}
 
+\newpage
 
+\section{Calculus of residues}
+We will now look at poles of finite order in more detail. We do this using residues. The following is the definition of the residue.
+\begin{definition}
+    Let $f: \Omega \setminus \{c\} \to \mathbb{C}$ have an isolated singularity at $c \in \Omega$. Then, the coefficient
+    \[a_{-1} = \frac{1}{2\pi i} \oint_\gamma f(z) \ dz\]
+    in the Laurent series expansion of $f$ at $c$ is called the \emph{residue of $f$ at $c$}. It is denoted $\operatorname{res}(f, c)$. Here, $\gamma$ is a circle centered at $c$ and traced anti-clockwise.
+\end{definition}
+
+We will generalise Cauchy's Theorem for functions with isolated singularities.
+\begin{theorem}[Cauchy's Residue Theorem]
+    Let $\Omega \subseteq \mathbb{C}$ be open and $c_1, \dots, c_k \in \Omega$ be finitely many points at which $f: \Omega \setminus \{c_1, \dots, c_k \} \to \mathbb{C}$ is not holomorphic. For any simple closed path $\gamma \subseteq \Omega$ such that $c_1, \dots, c_k$ lie inside $\gamma$, we have
+    \[\oint_\gamma f(z) \ dz = 2\pi i \sum_{n=1}^k \operatorname{res}(f, c_n).\]
+\end{theorem}
+\begin{proof}
+    The path $\gamma$ is homotopic to the path $\delta_\varepsilon$ shown below.
+    % TODO: Draw the path
+    In that case,
+    \[\oint_\gamma f(z) \ dz = \oint_{\delta_\varepsilon} f(z) \ dz \to 2\pi i \sum_{n=1}^k \operatorname{res}(f, c_n)\]
+    as $\varepsilon \to 0$.
+    % They become residues around each of the, and follows by definition at 2.4.1
+\end{proof}
+
+Now, we will look at computing residues.
+\begin{proposition}
+    If $f: \Omega \setminus \{c\} \to \mathbb{C}$ is holomorphic and has a pole of order $m$ at $c \in \Omega$, then
+    \[\operatorname{res}(f, c) = \frac{1}{(m-1)!} \lim_{z \to c} \frac{d^{m-1}}{dz^{m-1}} \left((z - c)^m f(z)\right).\]
+\end{proposition}
+\begin{proof}
+    We know that $g: \Omega \to \mathbb{C}$ given by $g(z) = (z - c)^m f(z)$ is holomorphic on $\Omega$. In that case, we can find an open disc $D_c$ centered at $c$ such that
+    \[g(z) = a_0 + a_1 (z - c) + a_2 (z - c)^2 + \dots\]
+    So, the Laurent series of $f$ is
+    \[f(z) = a_0 (z - c)^{-m} + a_1 (z - c)^{-m + 1} + \dots + a_{m-1} (z - c)^{-1} + a_m + \dots\]
+    This implies that
+    \begin{align*}
+        \operatorname{res}(f, c) &= a_{m-1} \\
+        &= \frac{g^{(m-1)}(c)}{(m-1)!} \\ % Taylor series
+        &= \frac{1}{(m-1)!} \lim_{z \to c} \frac{d^{m-1}}{dz^{m-1}} \left((z - c)^m f(z) \right). % f isn't defined at c, so limit + write in Leibniz notation
+    \end{align*}
+\end{proof}
+\noindent This allows us to compute residues quite easily. An example is given below.
+\begin{example}
+    The function $f: \mathbb{C} \setminus \{1, e^{2\pi i/3}, e^{4\pi i/3}\} \to \mathbb{C}$ has 
+    \[\operatorname{res}(f, c) = \frac{1}{3c^2}\]
+    for $c \in \{1, e^{2\pi i/3}, e^{4\pi i/3}\}$.
+\end{example}
+\begin{proof}
+    We find that
+    \[z^3 - 1 = (z - 1) (z - e^{2\pi i/3}) (z - e^{4\pi i/3}).\]
+    So, $f$ has simple poles at $z = 1$, $z = e^{2\pi i/3}$ and $z = e^{4\pi i/3}$. In that case,
+    \begin{align*}
+        \operatorname{res}(f, c) &= \frac{1}{0!} \lim_{z \to c} \frac{z - c}{z^3 - 1} \\
+        &= \lim_{z \to c} \frac{1}{3z^2} \\
+        &= \frac{1}{3c^2}
+    \end{align*}
+    using L'Hopital's rule.
+\end{proof}
+
+% \[\frac{z^2 + 5z + 3}{z(z + 1)^2}\]
+
+% \[\frac{\sin z}{z^6}\]
+
+\begin{example}
+    Let $k: \mathbb{C} \setminus \{1, 2, 4\} \to \mathbb{C}$ be given by
+    \[k(z) = \frac{1}{z - 1} + \frac{3z + 1}{(z - 2)^2} + \frac{3}{z - 4}.\]
+    Then,
+    \[\operatorname{res}(k, 1) = 1, \qquad \operatorname{res}(k, 2) = 3, \qquad \operatorname{res}(k, 4) = 3.\]
+\end{example}
+\begin{proof}
+    We have isolated singularities at $z = 1$, $z = 2$ and $z = 4$. Moreover, there are simple poles at $z = 1$ and $z = 4$, and a pole of order 2 of $z = 2$. We find that
+    \begin{align*}
+        \operatorname{res}(k, 1) &= \lim_{z \to 1} \frac{z-1}{z-1} + \frac{(3z + 1)(z-1)}{(z - 2)^2} + \frac{3(z-1)}{z - 4} \\
+        &= \lim_{z \to 1} 1 + \frac{(3z + 1)(z-1)}{(z - 2)^2} + \frac{3(z-1)}{z - 4} = 1,
+    \end{align*}
+    and
+    \begin{align*}
+        \operatorname{res}(k, 2) &= \lim_{z \to 2} \frac{d}{dz} \frac{(3z + 1)(z-2)^2}{(z-2)^2} \\
+        &= \lim_{z \to 2} \frac{d}{dz} (3z + 1) = 3.
+    \end{align*}
+    Finally,
+    \[\operatorname{res}(k, 4) = \lim_{z \to 4} \frac{3(z-4)}{z - 4} = 3.\]
+\end{proof}
+So, Cauchy's Residue Theorem tells us that
+\[\oint_\gamma k(z) \ dz = 2\pi i (1 + 3) = 8\pi i,\]
+where $\gamma$ is centered at $0$ with radius $R \in (2, 4)$. Instead, if $R > 4$, Cauchy's Residue Theorem tells us that
+\[\oint_\gamma k(z) \ dz = 2\pi i (1 + 3 + 3) = 14\pi i.\]
+
+\subsection{Improper integrals}
+We can use residues to compute improper real integrals. We will consider integrals of the form
+\[I = \int_{-\infty}^\infty f(x) \ dx.\]
+To apply Cauchy's residue theorem, we first need to show that the integral $I$ converges.
+\begin{proposition}
+    Let $f: \Omega \to \mathbb{C}$ be a complex-valued function with $\mathbb{R} \subseteq \Omega$ such that $z^2 f(z)$ is bounded for large values of $|z|$. Then, the integral
+    \[\int_{-\infty}^\infty f(x) \ dx\]
+    converges.
+\end{proposition}
+\begin{proof}
+    Since $z^2 f(z)$ is bounded, there exists an $M > 0$ such that $|z^2 f(z)| \leq M$ for large values of $|z|$. In that case, we find that for large $x \in \mathbb{R}$,
+    \[|f(x)| \leq \frac{M}{|x|^2} \leq \frac{1}{1 + x^2}.\]
+    We know that
+    \[\int_{-\infty}^\infty \frac{1}{1 + x^2} = \lim_{R \to \infty} \left[\tan^{-1}(x)\right]_{-R}^{R} = \lim_{R \to \infty} 2\tan^{-1}(R) = \pi.\]
+    So, by comparison, we find that the integral $I$ converges.
+\end{proof}
+
+We will use this result to compute some integrals.
+\begin{example}
+    The integral 
+    \[\int_{-\infty}^\infty \frac{1}{(x^2 + 1)(x^2 + 4)} \ dx = \frac{\pi}{6}.\]
+\end{example}
+\begin{proof}
+    Let
+    \[f(z) = \frac{1}{(z^2 + 1)(z^2 + 4)} = \frac{1}{(z - i)(z + i)(z - 2i)(z + 2i)}.\]
+    For $R > 2$, let
+    \[I_R = \int_\gamma f(z) \ dz,\]
+    where $\gamma$ is the boundary of the upper half of the disc with center $0$ and radius $R$. There are no singularities of $f$ on $\gamma$, and the singularities inside $\gamma$ are at $i$ and $2i$. Moreover, both the singularities are poles of order $1$. In that case,
+    \begin{align*}
+        \operatorname{res}(f, i) &= \lim_{z \to i} \frac{z - i}{(z - i)(z + i)(z - 2i)(z + 2i)} \\
+        &= \frac{1}{(i + i)(i - 2i)(i + 2i)} = \frac{1}{6i},
+    \end{align*}
+    and
+    \begin{align*}
+        \operatorname{res}(f, 2i) &= \lim_{z \to 2i} \frac{z + 2i}{(z - i)(z + i)(z - 2i)(z + 2i)} \\
+        &= \frac{1}{(2i + i)(2i - i)(2i + 2i)} = -\frac{1}{12i}.
+    \end{align*}
+    So, Cauchy's residue theorem tells us that
+    \[I_R = 2\pi i \left(\frac{1}{6i} - \frac{1}{12i}\right) = \frac{\pi}{6}.\]
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \centering
+            \begin{axis}[
+                axis lines=center,
+                axis equal,
+                xmax=3, xmin=-3,
+                ymax=3, ymin=0,
+                xticklabels={$-R$, $R$},
+                xtick={-2.5, 2.5},
+                yticklabels={$R$},
+                ytick={2.5},
+            ]
+                \begin{scope}
+                    \clip (-2.5,0) rectangle (2.5,2.5);
+                    \draw[red] (0,0) circle (2.5);
+                    \draw[blue] (-2.5,0) -- (2.5,0);
+                \end{scope}
+
+                \node at (2, 2) {$\gamma^+$};
+                \node at (0.3, -0.2) {$\gamma$};
+
+                \draw[fill=blue] (0, 2/3) circle (2pt);
+                \draw[fill=blue] (0, 4/3) circle (2pt);
+            \end{axis}
+        \end{tikzpicture}
+    \end{figure}
+    \noindent The semicircle part $\gamma^+$ has length $\pi R$. In that case, the absolute value along $\gamma^+$ is at most
+    \[\pi R \max_{|z| = R} |f(z)|.\]
+    Since $|f(z)|$ is approximately $\frac{1}{R^4}$ for large $R$, we find that 
+    \[\pi R \max_{|z| = R} |f(z)| \approx \frac{\pi}{R^2} \to 0\]
+    as $R \to \infty$. The integral along the straight line part is
+    \[\int_{-R}^R f(x) \ dx\]
+    tends to the integral
+    \[\int_{-\infty}^\infty \frac{1}{(x^2 + 1)(x^2 + 4)} \ dx.\]
+    Moreover, 
+    \[z^2 f(z) = \frac{z^2}{(z^2 + 1)(z^2 + 4)} = \frac{1}{(1 + 1/z^2)(z^2 + 4)}.\]
+    So, $z^2 f(z)$ is bounded for large values of $|z|$. This implies that the integral converges, with
+    \[\int_{-\infty}^\infty \frac{1}{(x^2 + 1)(x^2 + 4)} \ dx = \frac{\pi}{6}.\]
+\end{proof}
 
 
 \end{document}
