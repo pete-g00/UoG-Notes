@@ -1,0 +1,278 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{float}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumitem}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+
+\usepackage[normalem]{ulem}
+\usepackage{graphicx}
+
+\usepackage[most]{tcolorbox}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\setlength{\parindent}{0pt}
+
+\theoremstyle{definition}
+\newtheorem{example}[subsection]{Example}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Database Systems}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\chapterstyle{thatcher}
+
+\newtcolorbox{answer}[1][]{
+    #1,
+    colback=white,
+    enhanced,
+    breakable,
+}
+
+\begin{document}
+    \chapter{Examples- Chapter 1}
+    \setcounter{section}{1}
+    \section{Relational Model}
+    \begin{example}
+        Consider the following problem:
+        \begin{itemize}[label=]
+            \item A company is organised into departments. Each department has a unique number, and a particular employee who manages the department. We keep track of the start date that the employee began managing the department. A department may have several locations. A department controls a number of projects, each of which has a unique name, number and a single location. The company stores the information about the employee (e.g. name, salary, birth date, etc.) and the unique social security number (SSN). An employee is assigned only to one department, but may work on several projects, which are not necessarily controlled by the same department. We keep track of the current hours per week that an employee works on each project and their direct supervisor, who is another employee. The company keeps track of the dependent (e.g. child) of each employee for insurance purposes and the corresponding relationship with the employee (e.g. son, daughter).
+        \end{itemize}
+        Create a relational model for the description above.
+    \end{example}
+    \begin{answer}
+        From the description, we find that:
+        \begin{itemize}
+            \item the schema is the company;
+            \item the entities are: department, employee, project and dependent; and
+            \item we have the following relationships:
+            \begin{itemize}
+                \item an employee manages a department;
+                \item a department may have several locations;
+                \item a department controls a number of projects;
+                \item an employee is assigned to one department;
+                \item an employee may work on several projects which are not necessarily controlled by the same department;
+                \item a department controls several projects;
+                \item an employee is supervised by a supervisor, who is another employee;
+                \item an employee has several dependents, each one corresponding to a specific relationship with the employee.
+            \end{itemize}
+        \end{itemize}
+
+        Using this, we get the following relations:
+        \begin{itemize}
+            \item Employee(Name, \underline{SSN}, BDate, Address, \dashuline{Salary}, \dashuline{Supervisor},  \dashuline{Department}),
+            \item Department(Name, \underline{Number}, \dashuline{Manager}, ManagerStartDate),
+            \item Dept\_Location(\underline{Department}, \underline{Location}),
+            \item Project(Name, \underline{Number}, Location, \dashuline{Department}),
+            \item Works\_In(\underline{Employee}, \underline{Project}, Hours),
+            \item Dependent(\underline{Employee}, \underline{Name}, BDate, Relationship).
+        \end{itemize}
+        The relations Employee, Department, Project and Dependent come from the identified entities. We have the relations Dept\_Location and Works\_In to represent relationships. The underlined attributes are primary keys and the dotted attributes are foreign keys.
+    \end{answer}
+
+    \newpage
+
+    \section{Functional Dependency}
+    \begin{example}
+        Assume we have the following relational schema.
+        \begin{itemize}
+            \item \texttt{Reader(Name, Age, Book Title, \underline{ID})},
+            \item \texttt{Book(Title, Subject, Number of Pages, \underline{ISBN})}.
+        \end{itemize}
+        Adapt the schema so that we obey relational constraints.
+    \end{example}
+    \begin{answer}
+        The PK of the reader record is the \texttt{ID}, and the PK of book is \texttt{ISBN}. The two relations are related by the \texttt{title} attribute. However, since title is not unique, it should be related by the \texttt{ISBN} attribute. Moreover, this relationship is going from \texttt{Book} to \texttt{Reader}- a person cannot read a book with ISBN that doesn't exist. So, the records should actually be the following:
+        \begin{itemize}
+            \item \texttt{Reader(Name, Age, ISBN, \underline{ID})},
+            \item \texttt{Book(Title, Subject, Number of Pages, \underline{ISBN})}.
+        \end{itemize}
+        This obeys the relational constraints.
+    \end{answer}
+
+    \begin{example}
+        Assume that we have the following relation.
+        \[R(B, O, I, S, Q, D)\]
+        We have the following FDs.
+        \begin{itemize}
+            \item FD1: $S \to D$
+            \item FD2: $I \to B$
+            \item FD3: $\{I, S\} \to Q$
+            \item FD4: $B \to O$.
+        \end{itemize}
+        Show that $\{I, S\}$ is a candidate key but $\{I, B\}$ is not.
+    \end{example}
+    \begin{answer}
+        \begin{itemize}
+            \item We show that we have the $\{I, S\}$ is a candidate key. We know that $I \to B$ and $B \to O$. So, transitivity tells us that $I \to O$. Therefore, $I \to \{B, O\}$. Moreover, $S \to D$, so $\{I, S\} \to \{B, O, D\}$. Since we also have $\{I, S\} \to Q$, we find that $\{I, S\} \to \{B, O, Q, D\}$. So, we have shown that $\{I, S\}$ determines all the attributes in the relation. This means that $\{I, S\}$ is a candidate key.
+
+            \item Now, we show that $\{I, B\}$ cannot be a candidate key. We know that $I \to B$ and $B \to O$, so $I \to O$. So, $\{I, B\} \to \{I, B, O\}$. We cannot add any further attribute into the set using the FDs given above- $D$, $Q$ and $S$ are not dependent on $\{I, B\}$. So, $\{I, B\}$ cannot be a candidate key.
+        \end{itemize}
+    \end{answer}
+    \newpage
+
+    \section{Normalisation Theory}
+    \begin{example}
+        Consider the Department relation below.
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                \texttt{DName} & \texttt{DNumber} & \texttt{DManager} & \texttt{DLocations} \\
+                \hline
+                Research & 5 & 333445555 & \{Beltaire, Sugarland, Houston\} \\
+                Administration & 4 & 987654321 & \{Stattford\} \\
+                Headquarters & 1 & 888866555 & \{Houston\} \\
+                \hline
+            \end{tabular}
+        \end{table}
+        Convert this relation into 1NF.
+    \end{example}
+    \begin{answer}
+        This relation is not in 1NF since the \texttt{DLocations} attribute is multi-valued. We normalise it by introducing a tuple for each of the value present, i.e. the following record:
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                \texttt{DName} & \texttt{DNumber} & \texttt{DManager} & \texttt{DLocations} \\
+                \hline
+                Research & 5 & 333445555 & Beltaire \\
+                Research & 5 & 333445555 & Sugarland \\
+                Research & 5 & 333445555 & Houston \\
+                Administration & 4 & 987654321 & Stattford \\
+                Headquarters & 1 & 888866555 & Houston \\
+                \hline
+            \end{tabular}
+        \end{table}
+        % \noindent This relation has redundancy which will result in some anomalies, but we can normalise it to 2NF and further to optimise it.
+    \end{answer}
+
+    \begin{example}
+        Consider the following relation.
+\begin{Verbatim}[commandchars=+\[\]]
+EMP_PROJ(+underline[SSN], +underline[PNumber], Hours, EName, PName, PLocation)
+\end{Verbatim}
+    Normalise it to 2NF.
+    \end{example}
+    \begin{answer}
+        This relation is in 1NF since every attribute is single-valued. We have the following FDs:
+        \begin{itemize}
+            \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{Hours}$ is a full FD;
+            \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{EName}$ is a partial FD with $\texttt{SSN} \to \texttt{EName}$ a full FD;
+            \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{PName}$ is a partial FD with $\texttt{PNumber} \to \texttt{PName}$ a full FD;
+            \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{PLocation}$ is a partial FD with $\texttt{PNumber} \to \texttt{PLocation}$ a full FD;
+        \end{itemize}
+        So, we will create 3 relations:
+\begin{Verbatim}[commandchars=+\[\]]
+R1(+underline[SSN], +underline[PNumber], Hours)
+R2(+underline[SSN], EName)
+R3(+underline[PNumber], PName, PLocation)
+\end{Verbatim}
+        Now, each of the three relations are in 2NF- each non-prime attribute fully depends on the primary key.
+        % Note that there is a natural meaning to the relations as well- \texttt{R2} contains the employee details, \texttt{R3} contains the project details and \texttt{R1} is the relationship between the employee and the project.
+    \end{answer}
+
+    \begin{example}
+        Assume that we have the following relation.
+\begin{Verbatim}[commandchars=+\[\]]
+EMP_DEPT(+underline[SSN], EName, BYear, Address, DNumber, DName, DMgr_SSN)
+\end{Verbatim}
+    Normalise it to 3NF.
+    \end{example}
+    \begin{answer}
+        The relation is in 1NF since every attribute is single-valued. Moreover, since the primary key is a single attribute, the relation is in 1NF. Also, the following are the FDs.
+        \begin{itemize}
+            \item the FD \texttt{SSN} $\to$ \texttt{DMgr\_SSN} is a transitive dependency via the non-prime attribute \texttt{DNumber};
+            \item the FD \texttt{SSN} $\to$ \texttt{DName} is a transitive dependency via the non-prime attribute \texttt{DNumber};
+            \item the FD \texttt{SSN} $\to$ \texttt{EName} is a direct dependency since there is no non-prime attribute that determines \texttt{EName};
+            \item the FD \texttt{SSN} $\to$ \texttt{BYear} is a direct dependency since there is no non-prime attribute that determines \texttt{BYear};
+            \item the FD \texttt{SSN} $\to$ \texttt{Address} is a direct dependency since there is no non-prime attribute that determines \texttt{Address}.
+        \end{itemize}
+        We transform a record in 2NF to a record in 3NF by splitting it into the non-prime transitive attribute and the other attributes. So, we split this record into the 2 records:
+\begin{Verbatim}[commandchars=+\[\]]
+R1(+underline[SSN], EName, BYear, Address, DNumber)
+R2(+underline[DNumber], DName, DMgr_SSN).
+\end{Verbatim}
+        By storing \texttt{DNumber} in \texttt{R1}, we can join the two records correctly. It is a foreign key. The two relations are in 3NF.
+    \end{answer}
+
+    \begin{example}
+        Consider the following instance of the \texttt{TEACH} relation.
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|}
+                \hline
+                \texttt{\underline{Student}} & \texttt{\underline{Course}} & \texttt{Instructor} \\
+                \hline
+                Naranyan & Database & Mark \\
+                Smith & Database & Navathe \\
+                Smith & Operating Systems & Ammar \\
+                Smith & Theory & Schulman \\
+                Wallace & Database & Mark \\
+                Wallace & Operating Systems & Ahamad \\
+                Zelaya & Database & Navathe \\
+                \hline
+            \end{tabular}
+        \end{table}
+        Normalise it to BCNF.
+    \end{example}
+    \begin{answer}
+        This relation is in 1NF since the attributes are single-valued. Moreover, the FDs are:
+        \begin{itemize}
+            \item $\{\texttt{Student}, \texttt{Course}\} \to \texttt{Instructor}$
+            \item \texttt{Instructor} $\to$ \texttt{Course}
+        \end{itemize}
+        So, the relation is in 2NF and 3NF, but not in BCNF. The violating attribute here is \texttt{Instructor} $\to$ \texttt{Course}, so $X = \{\texttt{Instructor}\}$ and $A = \{\texttt{Course}\}$. By the BCNF theorem, we know that we should create the relations:
+        \begin{Verbatim}[commandchars=+\[\]]
+        R1(+underline[Student], +underline[Instructor])
+        R2(+underline[Instructor], Course).
+        \end{Verbatim}
+        This gives us the following records:
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|}
+                \hline
+                \texttt{\underline{Student}} & \texttt{\underline{Instructor}} \\
+                \hline
+                Naranyan & Mark \\
+                Smith & Navathe \\
+                Smith & Ammar \\
+                Smith & Schulman \\
+                Wallace & Mark \\
+                Wallace & Ahamad \\
+                Zelaya & Navathe \\
+                \hline
+            \end{tabular}
+        \end{table}
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|}
+                \hline
+                \texttt{Course} & \texttt{\underline{Instructor}} \\
+                \hline
+                Database & Mark \\
+                Database & Navathe \\
+                Operating Systems & Ammar \\
+                Theory & Schulman \\
+                Operating Systems & Ahamad \\
+                \hline
+            \end{tabular}
+        \end{table}
+        \noindent Joining these two records will give us back the original record.
+    \end{answer}
+
+\end{document}

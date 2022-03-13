@@ -134,40 +134,6 @@ A tuple of a relation $R$ is an order set of values corresponding to the attribu
 
 The relational model also allows the value of an entity to be \texttt{null}. We use this value to represent a value that is either unknown, inapplicable, uncertain, or missing. So, the relational database scheme is a set of relations $S = \{R_1, R_2, \dots, R_n\} \cup \{\texttt{NULL}\}$.
 
-% \subsection{Example of the relational model}
-% Consider the following problem:
-
-% \begin{itemize}[label=]
-%     \item A company is organised into departments. Each department has a unique number, and a particular employee who manages the department. We keep track of the start date that the employee began managing the department. A department may have several locations. A department controls a number of projects, each of which has a unique name, number and a single location. The company stores the information about the employee (e.g. name, salary, birth date, etc.) and the unique social security number (SSN). An employee is assigned only to one department, but may work on several projects, which are not necessarily controlled by the same department. We keep track of the current hours per week that an employee works on each project and their direct supervisor, who is another employee. The company keeps track of the dependent (e.g. child) of each employee for insurance purposes and the corresponding relationship with the employee (e.g. son, daughter).
-% \end{itemize}
-% From the description, we find that:
-% \begin{itemize}
-%     \item the schema is the company;
-%     \item the entities are: department, employee, project and dependent; and
-%     \item we have the following relationships:
-%     \begin{itemize}
-%         \item an employee manages a department;
-%         \item a department may have several locations;
-%         \item a department controls a number of projects;
-%         \item an employee is assigned to one department;
-%         \item an employee may work on several projects which are not necessarily controlled by the same department;
-%         \item a department controls several projects;
-%         \item an employee is supervised by a supervisor, who is another employee;
-%         \item an employee has several dependents, each one corresponding to a specific relationship with the employee.
-%     \end{itemize}
-% \end{itemize}
-
-% Using this, we get the following relations:
-% \begin{itemize}
-%     \item Employee(Name, \underline{SSN}, BDate, Address, \dashuline{Salary}, \dashuline{Supervisor},  \dashuline{Department}),
-%     \item Department(Name, \underline{Number}, \dashuline{Manager}, ManagerStartDate),
-%     \item Dept\_Location(\underline{Department}, \underline{Location}),
-%     \item Project(Name, \underline{Number}, Location, \dashuline{Department}),
-%     \item Works\_In(\underline{Employee}, \underline{Project}, Hours),
-%     \item Dependent(\underline{Employee}, \underline{Name}, BDate, Relationship).
-% \end{itemize}
-% The relations Employee, Department, Project and Dependent come from the identified entities. We have the relations Dept\_Location and Works\_In to represent relationships. The underlined attributes are primary keys and the dotted attributes are foreign keys.
-
 \subsection{Relational constraints}
 Relational constraints are conditions that must hold on all instances for each relation. There are 3 fundamental constraints:
 \begin{itemize}
@@ -198,18 +164,6 @@ In an instance $r(R)$, the value of the PK within any tuple cannot be \texttt{NU
 For a relationship from the referencing relation $R_1$ to the referenced relation $R_2$, there has to exist an attribute (or a set of attributes), called the Foreign Key (FK), in $R_1$ that either has the same value with the PK in $R_2$ or is \texttt{NULL}. That is,
 \[t_1[FK] \text{ references } t_2[PK] \implies t_2[PK] = t_1[FK] \text{ or } t_1[FK] = \texttt{NULL}.\]
 So, the value of the foreign key, if not null, must be an existing primary key. Note that this is one-directional. It is still possible for us to have a primary key whose value is never a foreign key. This is denoted by a directed arc from $R1.FK$ to $R2.PK$.
-
-Now, let's consider an example. Previously, we had a relation between readers and books. In terms of records, we had:
-\begin{itemize}
-    \item \texttt{Reader(Name, Age, Book Title, \underline{ID})},
-    \item \texttt{Book(Title, Subject, Number of Pages, \underline{ISBN})}.
-\end{itemize}
-The PK of the reader record is the ID, and the PK of book is ISBN. We had said that they were related by the Book title attribute. However, since Book title is not unique, it should be related by the ISBN attribute. Moreover, this relationship is going from Book to Reader- a person cannot read a book with ISBN that doesn't exist. So, the records should actually be the following:
-\begin{itemize}
-    \item \texttt{Reader(Name, Age, ISBN, \underline{ID})},
-    \item \texttt{Book(Title, Subject, Number of Pages, \underline{ISBN})}.
-\end{itemize}
-If the value of ISBN is \texttt{null} in some tuple within a Reader instance, then we can interpret that as the person not having borrowed a book.
 
 \newpage
 
@@ -290,7 +244,7 @@ Assume that we have 3 instances of \texttt{R}, given below:
         \hline
     \end{tabular}
 \end{table}
-Then, we will have 3 instances of \texttt{Q} and \texttt{P}, given by
+\noindent Then, we will have 3 instances of \texttt{Q} and \texttt{P}, given by
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|}
@@ -373,21 +327,6 @@ We will now look at some properties of FDs:
     \item If $X \to Y$ and $Y \to Z$, then $X \to Z$. This is called transitivity.
 \end{itemize}
 
-We will illustrate these properties by finding the candidate key in the relation
-\[R(B, O, I, S, Q, D),\]
-with FDs:
-\begin{itemize}
-    \item FD1: $S \to D$
-    \item FD2: $I \to B$
-    \item FD3: $\{I, S\} \to Q$
-    \item FD4: $B \to O$.
-\end{itemize}
-We claim that we have the FD $\{I, S\} \to R$. We know that $I \to B$ and $B \to O$. So, transitivity tells us that $I \to O$. Therefore, $I \to \{B, O\}$. Moreover, $S \to D$, so $\{I, S\} \to \{B, O, D\}$. Since we also have $\{I, S\} \to Q$, we find that $\{I, S\} \to \{B, O, Q, D\}$.
-
-So, we have shown that $\{I, S\}$ determines all the attributes in the relation. This means that $\{I, S\}$ is a candidate key. We were able to do this in a very abstract manner, not knowing what the relation or the attributes were.
-
-Note that $\{I, B\}$ cannot be a candidate key. We know that $I \to B$ and $B \to O$, so $I \to O$. So, $\{I, B\} \to \{I, B, O\}$. We cannot add any further attribute into the set using the FDs given above- $D$, $Q$ and $S$ are not dependent on $\{I, B\}$. So, $\{I, B\}$ cannot be a candidate key.
-
 \newpage
 
 \section{Normalisation Theory}
@@ -416,42 +355,12 @@ the attributes \texttt{SSN} and \texttt{PNumber} are prime attributes, while \te
 \subsection{1NF}
 In the first normal form, the domain $D_i$ of each attribute $A_i$ in a relation $R$ refers only to atomic (simple, indivisible) values. So, 1NF disallows nested and multi-valued attributes. We expect there to be redundant and repeated values.
 
-We illustrate the conversion to 1NF with an example. Consider the Department relation below.
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-        \hline
-        \texttt{DName} & \texttt{DNumber} & \texttt{DManager} & \texttt{DLocations} \\
-        \hline
-        Research & 5 & 333445555 & \{Beltaire, Sugarland, Houston\} \\
-        Administration & 4 & 987654321 & \{Stattford\} \\
-        Headquarters & 1 & 888866555 & \{Houston\} \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent This relation is not in 1NF since the \texttt{DLocations} attribute is multi-valued. We normalise it by introducing a tuple for each of the value present, i.e. the following record:
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-        \hline
-        \texttt{DName} & \texttt{DNumber} & \texttt{DManager} & \texttt{DLocations} \\
-        \hline
-        Research & 5 & 333445555 & Beltaire \\
-        Research & 5 & 333445555 & Sugarland \\
-        Research & 5 & 333445555 & Houston \\
-        Administration & 4 & 987654321 & Stattford \\
-        Headquarters & 1 & 888866555 & Houston \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent This relation has redundancy which will result in some anomalies, but we can normalise it to 2NF and further to optimise it.
-
 \subsection{2NF}
 In 2NF, we will break the record into multiple records to reduce redundancy. For this, we define full and partial FD. A full FD $X \to Y$ means that if we remove a prime attribute $A$ from the primary key $X$, then $X \setminus \{A\}$ does not functionally determine $Y$ anymore. That is,
 \[X \setminus \{A\} \not\to Y.\]
 Otherwise, we say that the FD $X \to Y$ is partial. For example, in the relation 
 \begin{Verbatim}[commandchars=+\[\]]
-EMP\_PROJ(+underline[SSN], +underline[PNumber], Hours, EName, PName, PLocation),
+EMP_PROJ(+underline[SSN], +underline[PNumber], Hours, EName, PName, PLocation),
 \end{Verbatim}
 $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{Hours}$ is a full FD. This is because neither $\texttt{SSN} \to \texttt{Hours}$ or $\texttt{PNumber} \to \texttt{Hours}$ is true. But, $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{EName}$ is a partial FD since $\texttt{SSN} \to \texttt{EName}$ is true.
 
@@ -461,21 +370,6 @@ We say that a relation $R$ is in 2NF if it is in 1NF and every non-prime attribu
     \item for each partial FD, we create a new relation such that all non-prime attributes in there are fully functionally dependent on the new primary key, i.e. the prime attribute in the original relation causing partial FDs.
 \end{itemize}
 Then, the new relation(s) will be in 2NF.
-
-For example, consider the \texttt{EMP\_PROJ} relation. We know that:
-\begin{itemize}
-    \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{Hours}$ is a full FD;
-    \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{EName}$ is a partial FD with $\texttt{SSN} \to \texttt{EName}$ a full FD;
-    \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{PName}$ is a partial FD with $\texttt{PNumber} \to \texttt{PName}$ a full FD;
-    \item $\{\texttt{SSN}, \texttt{PNumber}\} \to \texttt{PLocation}$ is a partial FD with $\texttt{PNumber} \to \texttt{PLocation}$ a full FD;
-\end{itemize}
-So, we will create 3 relations:
-\begin{Verbatim}[commandchars=+\[\]]
-R1(+underline[SSN], +underline[PNumber], Hours)
-R2(+underline[SSN], EName)
-R3(+underline[PNumber], PName, PLocation)
-\end{Verbatim}
-Now, each of the three relations are in 2NF- each non-prime attribute fully depends on the primary key. Note that there is a natural meaning to the relations as well- \texttt{R2} contains the employee details, \texttt{R3} contains the project details and \texttt{R1} is the relationship between the employee and the project.
 
 \subsection{3NF}
 Consider the record below.
@@ -502,54 +396,6 @@ If $X \to Z$ and $Z \to Y$, then $X \to Y$ by the transitivity property of FD. I
 we have FD1: \texttt{CourseID} $\to$ \texttt{Lecturer} and FD2: \texttt{Lecturer} $\to$ \texttt{School}. Moreover, we have FD3: \texttt{CourseID} $\to$ \texttt{School} via \texttt{Lecturer}, which is a non-prime attribute.
 
 We say that a record $R$ is in 3NF if it is in 2NF and if there is no non-prime attribute which is transitively dependent on the primary key. So, all non-prime attributes are directly dependent on the PK.
-
-For example, in the record
-\begin{Verbatim}[commandchars=+\[\]]
-EMP_DEPT(+underline[SSN], EName, BYear, Address, DNumber, DName, DMgr_SSN),
-\end{Verbatim}
-\begin{itemize}
-    \item the FD \texttt{SSN} $\to$ \texttt{DMgr\_SSN} is a transitive dependency via the non-prime attribute \texttt{DNumber};
-    \item the FD \texttt{SSN} $\to$ \texttt{DName} is a transitive dependency via the non-prime attribute \texttt{DNumber};
-    \item the FD \texttt{SSN} $\to$ \texttt{EName} is a direct dependency since there is no non-prime attribute that determines \texttt{EName};
-    \item the FD \texttt{SSN} $\to$ \texttt{BYear} is a direct dependency since there is no non-prime attribute that determines \texttt{BYear};
-    \item the FD \texttt{SSN} $\to$ \texttt{Address} is a direct dependency since there is no non-prime attribute that determines \texttt{Address}.
-\end{itemize}
-We transform a record in 2NF to a record in 3NF by splitting it into the non-prime transitive attribute and the other attributes. So, we split this record into the 2 records:
-\begin{Verbatim}[commandchars=+\[\]]
-R1(+underline[SSN], EName, BYear, Address, DNumber)
-R2(+underline[DNumber], DName, DMgr_SSN).
-\end{Verbatim}
-By storing \texttt{DNumber} in \texttt{R1}, we can join the two records correctly. It is a foreign key.
-
-The schema above is now the following:
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-        \hline
-        \texttt{\underline{SSN}} & \texttt{EName} & \texttt{BYear} & \texttt{Address} & \texttt{DNumber} \\
-        \hline
-        1 & Chris & 1970 & A1 & 3 \\
-        2 & Stella & 1988 & A2 & 3 \\
-        3 & Philip & 2001 & A3 & 3 \\
-        4 & John & 1966 & A4 & 3 \\
-        5 & Chris & 1955 & A5 & 3 \\
-        6 & Anna & 1999 & A6 & 4 \\
-        7 & Thalia & 2006 & A7 & 4 \\
-        \hline
-    \end{tabular}
-\end{table}
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-        \hline
-        \texttt{\underline{DNumber}} & \texttt{DName} & \texttt{DMgr\_SSN} \\
-        \hline
-        3 & SoCS & 12 \\
-        4 & Maths & 44 \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent The two relations are in 3NF.
 
 \subsection{Generalised 3NF}
 In 3NF, if $X \to Z$ and $Z \to Y$ and $X$ is a primary key, we only consider this to be a problem if $Z$ is a non-prime attribute. However, this still allows for some redundancy. For example, consider the following relation
@@ -581,60 +427,5 @@ We need to decompose this record into 2 records. We need to ensure that we do no
     \item $R_2$ with attributes: $X \cup A$.
 \end{itemize}
 If either $R_1$ or $R_2$ is still not in BCNF, we repeat the process.
-
-We illustrate this process with an example. Consider the following instance of the \texttt{TEACH} relation.
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        \texttt{\underline{Student}} & \texttt{\underline{Course}} & \texttt{Instructor} \\
-        \hline
-        Naranyan & Database & Mark \\
-        Smith & Database & Navathe \\
-        Smith & Operating Systems & Ammar \\
-        Smith & Theory & Schulman \\
-        Wallace & Database & Mark \\
-        Wallace & Operating Systems & Ahamad \\
-        Zelaya & Database & Navathe \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent The violating attribute here is \texttt{Instructor} $\to$ \texttt{Course}, so $X = \{\texttt{Instructor}\}$ and $A = \{\texttt{Course}\}$. By the BCNF theorem, we know that we should create the relations:
-\begin{Verbatim}[commandchars=+\[\]]
-R1(+underline[Student], +underline[Instructor])
-R2(+underline[Instructor], Course).
-\end{Verbatim}
-This gives us the following records:
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|}
-        \hline
-        \texttt{\underline{Student}} & \texttt{\underline{Instructor}} \\
-        \hline
-        Naranyan & Mark \\
-        Smith & Navathe \\
-        Smith & Ammar \\
-        Smith & Schulman \\
-        Wallace & Mark \\
-        Wallace & Ahamad \\
-        Zelaya & Navathe \\
-        \hline
-    \end{tabular}
-\end{table}
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|c|c|}
-        \hline
-        \texttt{Course} & \texttt{\underline{Instructor}} \\
-        \hline
-        Database & Mark \\
-        Database & Navathe \\
-        Operating Systems & Ammar \\
-        Theory & Schulman \\
-        Operating Systems & Ahamad \\
-        \hline
-    \end{tabular}
-\end{table}
-\noindent Joining these two records will give us back the original record.
 
 \end{document}
