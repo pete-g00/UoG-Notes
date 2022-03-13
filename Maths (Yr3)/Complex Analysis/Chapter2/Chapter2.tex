@@ -1,0 +1,481 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{indentfirst}
+\usepackage{bm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{3H CA}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\pgfplotsset{compat=newest}
+\setcounter{chapter}{1}
+
+\begin{document}
+\chapter{Complex integration}
+\section{Introduction to complex integration}
+We can define integration in the complex plane in a similar way to line integration in $\mathbb{R}^2$. We integrate over paths. We start by defining paths.
+\begin{definition}
+Let $\Omega \subseteq \mathbb{C}$ be open, and let $\gamma: [a, b] \to \mathbb{C}$ be a function. We say that $\gamma$ is a \emph{path} if $\gamma$ is continuously differentiable.
+\end{definition}
+\noindent We can define integration by breaking an integral into real and imaginary part. That is, if $\gamma: [a, b] \to \Omega$ is a path and $f: \Omega \to \mathbb{C}$ is a function, then we define
+\begin{align*}
+    \int_\gamma f(z) \ dz &= \int_\gamma (u(x, y) + iv(x, y)) \ (dx + idy) \\
+    &= \int_\gamma (u(x, y) \ dx - v(x, y) \ dy) + i \int_\gamma (v(x, y) \ dx + u(x, y) \ dy).
+\end{align*}
+This is called the complex contour integral.
+
+The integrals themselves are defined by Riemann sums. For a path $\gamma: [a, b] \to \Omega$, we can partition $[a, b]$ into small intervals
+\[[a_0, a_1], [a_1, a_2], \dots, [a_{n-1}, a_n],\]
+where $a_0 < a_1 < \dots < a_n$. The corresponding Riemann sum is
+\[\sum_{r=1}^n f(\gamma(t_r)) \cdot (\gamma(a_r) - \gamma(a_{r-1}))\]
+for some $t_r \in (a_{r-1}, a_r)$. In the real case, we have chosen: left and right values or suprema and infima as a possible $t_r$. 
+
+We will now define contour integral.
+\begin{definition}
+Let $f: \Omega \to \mathbb{C}$ be continuous and $\gamma: [0, 1] \to \Omega$ be a path in $\Omega$. Then, the contour integral of $f$ along $\gamma$ is the limit
+\[\int_\gamma f(z) \ dz = \lim_{n \to \infty} \sum_{r=1}^n f(\gamma(t_r)) (\gamma(\tfrac{r}{n}) - \gamma(\tfrac{r-1}{n}))\]
+for some $t_r \in (\tfrac{r-1}{n}, \tfrac{r}{n})$.
+\end{definition}
+\noindent Because $f$ is continuous, the limit does not depend on the choice of $t_r$. 
+
+Travelling in the other direction would make the integral negative.
+\begin{proposition}
+Let $\gamma: [0, 1] \to \Omega$ be a path and let $f: \Omega \to \mathbb{C}$ be a function. Define the function $\overline{\gamma}: [0, 1] \to \Omega$ by $\overline{\gamma}(t) = \gamma(1-t)$. Then,
+\[\int_{\overline{\gamma}} f(z) \ dz = -\int_\gamma f(z) \ dz.\]
+\end{proposition}
+
+We can also bound integrals.
+\begin{proposition}
+Let $\gamma: [0, 1] \to \Omega$ be a path of finite length, i.e.
+\[\int_0^1 |\gamma'(t)| \ dt \leq L,\]
+for some $L \in \mathbb{R}$, and let $f: \Omega \to \mathbb{C}$ be bounded on $\gamma([0, 1]) \subseteq \Omega$, i.e.
+\[|f(z)| \leq M\]
+for all $z \in \gamma([0, 1])$. Then,
+\[\left|\int_\gamma f(z) \ dz\right| \leq ML.\]
+\end{proposition}
+\begin{proof}
+We have
+\begin{align*}
+    \left|\sum_{r=1}^n f(\gamma(t_r)) (\gamma(a_r) - \gamma(a_{r-1}))\right| &\leq \sum_{r=1}^n |f(t_r)| |\gamma(a_r) - \gamma(a_{r-1})| \\
+    &\leq M \sum_{r=1}^n |\gamma(a_r) - \gamma(a_{r-1})| \leq ML.
+\end{align*}
+\end{proof}
+
+We now define a curve.
+\begin{definition}
+Let $\gamma: [0, 1] \to \Omega$ be a function. Then, we say that $\gamma$ is a \emph{curve} if $\gamma$ is continuously differentiable except for finitely many point.
+\end{definition}
+\noindent We will refer to curves as paths as well. 
+
+For continuous functions, there is a much simpler way to characterise their integrals.
+\begin{proposition}
+Let $\gamma: [0, 1] \to \Omega$ be a curve of finite length. Then, for any continuous function $f: \Omega \to \mathbb{C}$, we find that
+\[\int_\gamma f(z) \ dz = \int_0^1 f(\gamma(t)) \gamma'(t) \ dt.\]
+\end{proposition}
+\noindent The variable $t \in \mathbb{R}$, but the integrand by itself need not be real. We illustrate how to use this with an example.
+\begin{example}
+Let $\gamma: [\alpha, \beta] \to \mathbb{C}$ be the path given by $\gamma(\theta) = c + re^{i \theta}$, for $c \in \mathbb{C}$ and $r > 0$. Then, the length of $\gamma$ is given by
+\[\int_\alpha^\beta |\gamma'(\theta)| \ d\theta = r(\beta - \alpha).\]
+\end{example}
+\begin{proof}
+We have $\gamma'(\theta) = ire^{i \theta}$. Then, the length of $\gamma$ is:
+\begin{align*}
+    \int_\alpha^\beta |\gamma'(\theta)| \ d\theta &= \int_\alpha^\beta |ir e^{i \theta}| \ d\theta \\
+    &= \int_\alpha^\beta r \ d\theta =  r(\beta - \alpha).
+\end{align*}
+\end{proof}
+Next, we compute an integral.
+\begin{example}
+Let $\gamma: [\alpha, \beta] \to \mathbb{C}$ be the path given by
+\[\gamma(t) = e^{it},\]
+and let $n \in \mathbb{Z}$. Then,
+\[\int_\gamma z^n \ dz = \begin{cases}
+i(\beta - \alpha) & n = -1 \\
+\frac{e^{i\beta(n+1)} - e^{i\alpha(n+1)}}{n+1} & \text{otherwise}.
+\end{cases}\]
+\end{example}
+\begin{proof}
+Let $f: \mathbb{C} \to \mathbb{C}$ be given by $f(z) = z^n$. We have $\gamma'(t) = ie^{it}$. First, if $n = -1$, then
+\begin{align*}
+    \int_\gamma z^n \ dz &= \int_\alpha^\beta f(\gamma(t)) \gamma'(t) \ dt \\
+    &= \int_\alpha^\beta (e^{it})^{-1} \cdot ie^{it} \ dt \\
+    &= \int_\alpha^\beta i \ dt \\
+    &= i(\beta - \alpha).
+\end{align*}
+Instead, if $n \neq 1$, then
+\begin{align*}
+    \int_\gamma z^n \ dz &= \int_\alpha^\beta f(\gamma(t)) \gamma'(t) \ dt \\
+    &= \int_\alpha^\beta (e^{it})^n \cdot ie^{it} \ dt \\
+    &= \int_\alpha^\beta ie^{it(n+1)} \ dt \\
+    &= \left[\frac{ie^{it(n+1)}}{i(n+1)}\right]_\alpha^\beta \\
+    &= \frac{e^{i\beta(n+1)} - e^{i\alpha(n+1)}}{n+1}.
+\end{align*}
+\end{proof}
+\noindent In particular, if $\alpha = 0$ and $\beta = 2\pi$, then
+\[\int_\gamma z^{-1} \ dz = 2\pi i,\]
+and for $n \neq 1$,
+\[\int_\gamma z^n \ dz = \frac{1 - 1}{n+1} = 0.\]
+
+The following is the complex version of the fundamental theorem of calculus.
+\begin{proposition}
+Let $\Omega \subseteq \mathbb{C}$ be open, and let $f: \Omega \to \mathbb{C}$ be continuous. If there exists a holomorphic function $F: \Omega \to \mathbb{C}$ such that $F' = f$, then for any path $\gamma: [0, 1] \to \Omega$, we have
+\[\int_\gamma f(z) \ dz = F(\gamma(1)) - F(\gamma(0)).\]
+\end{proposition}
+\begin{proof}
+Using the complex chain rule, we know that
+\[\frac{d}{dt}F(\gamma(t)) = F'(\gamma(t)) \gamma'(t).\]
+Therefore,
+\begin{align*}
+    \int_\gamma f(z) \ dz &= \int_0^1 f(\gamma(t)) \gamma'(t) \\
+    &= \int_0^1 \frac{d}{dt} F(\gamma(t)) \ dt \\
+    &= F(\gamma(1)) - F(\gamma(0))
+\end{align*}
+using the real version of the fundamental theorem of calculus.
+\end{proof}
+
+This gives us the following consequence.
+\begin{corollary}
+Let $\gamma: [0, 1] \to \Omega$ be a closed path (i.e. $\gamma(0) = \gamma(1)$), and let $f: \Omega \to \mathbb{C}$ be continuous with antiderivative $F$. Then,
+\[\int_\gamma f(z) \ dz = 0.\]
+\end{corollary}
+We know that for a polynomial, we can integrate it termwise. In particular, if
+\[f(z) = \sum_{n=0}^{\alpha} a_n z^n,\]
+then
+\[\int f(z) \ dz = k + \sum_{n=0}^\alpha \frac{a_n}{n+1} z^{n+1}.\]
+So, for a closed path, the integral is 0. We can use this to show that $z \mapsto \frac{1}{z}$ does not have an anti-derivative.
+\begin{example}
+The holomorphic function $f: \mathbb{C}^\times \to \mathbb{C}$ given by $f(z) = \frac{1}{z}$ does not have an anti-derivative.
+\end{example}
+\begin{proof}
+Let $\gamma: [0, 1] \to \mathbb{C}^\times$ be a path given by $\gamma(t) = e^{2\pi it}$. We know that
+\[\int_\gamma f(z) \ dz = i(2\pi - 0) = 2\pi i.\]
+We know that $\gamma(0) = 1 = \gamma(1)$. So, the result above tells us that $f$ does not have an anti-derivative.
+\end{proof}
+
+\newpage
+
+\section{Cauchy's Theorem and its applications}
+Previously, we saw that if a function has an antiderivative, then its integral over any closed path is 0. In this section, we will generalise this to holomorphic functions. Moreover, we will look at some applications of this theorem.
+
+Before generalising, we define a simple path.
+\begin{definition}
+Let $\gamma: [a, b] \to \mathbb{C}$ be a path. Then, $\gamma$ is \emph{simple} if the restriction of $\gamma$ to $(a, b)$ is injective.
+\end{definition}
+\noindent Intuitively, this means that the path doesn't cross itself except perhaps at the end. For a simple closed path, we can uniquely label any point $z \in \mathbb{C}$ to either be inside $\gamma$ or outside $\gamma$. Below is Cauchy's Theorem- the generalisation to holomorphic functions. 
+% TODO: Add diagrams?
+\begin{theorem}[Cauchy's Theorem]
+Let $f: \Omega \to \mathbb{C}$ be a holomorphic function, and let $\gamma: [a, b] \to \Omega$ be a simple closed path such that all points inside $\gamma$ are in $\Omega$. Then,
+\[\oint_\gamma f(z) \ dz = 0.\]
+\end{theorem}
+We prove Cauchy's Theorem in two steps. First, we only consider contours $\gamma$ which are images of rectangles.
+\begin{lemma}
+Let $f: \Omega \to \mathbb{C}$ be holomorphic. Let $R = [0, 1] \times [a, b]$ be a rectangle in $\mathbb{R}^2$ with boundary $\partial R$ and $\gamma: \partial R \to \Omega$ be a path such that $\gamma = \Gamma|_{\partial R}$ for some continuous function $\Gamma: R \to \Omega$. Then,
+\[\oint_\gamma f(z) \ dz = 0.\]
+\end{lemma}
+\begin{proof}
+Let
+\[I(R) = \left|\oint_{\gamma(R)} f(z) \ dz\right|.\]
+Define the sequence $(R_i)_{i=1}^\infty$ where $R_1$ is a quarter of $R$, and $R_i$ is a quarter of $R_{i+1}$. Since the interiors of the rectangle have area $I(R_1)$ and the boundaries of the same sized rectangle cancel each other, we find that
+\[I(R) \leq 4I(R_1) \leq 4^2 I(R_2) \leq \dots.\]
+% TODO: Must have diagram here
+So, for all $n \in \mathbb{Z}_{\geq 1}$, $I(R) \leq 4^n I(R_n)$. Moreover, we get a sequence of points $(s_n)_{n=1}^{\infty}$ and $(t_n)_{n=1}^\infty$ in $\mathbb{R}$ that lie at the intersection of the rectangles. Then, by construction, the values converge in $\mathbb{R}$ to $s$ and $t$ respectively. Set $w = \Gamma(s, t)$. Since $\Gamma$ is continuous, the sequence $w_n = \Gamma(s_n, t_n)$ converges to $w$. Moreover, $f$ is differentiable at $w \in \Gamma(R) \subseteq \Omega$, so
+\[f(z) = f(w) + f'(w)(z - w) + q(z) (z - w)\]
+for $z \in \Omega \setminus \{w\}$, where 
+\[q(z) = \frac{f(z) - f(w)}{z - w} - f'(w).\]
+If we set $q(w) = 0$ along with the definition above, $q: \Omega \to \mathbb{C}$ is continuous. This is because
+\[\lim_{z \to w} q(z) = \lim_{z \to w} \left[\frac{f(z) - f(w)}{z - w} - f'(w)\right] = \lim_{z \to w} [f'(w) - f'(w)] = 0.\]
+In that case, for $n \in \mathbb{Z}_{\geq 1}$,
+\begin{align*}
+    I(R_n) &= \oint_{\gamma(R_n)} f(z) \ dz \\
+    &= \oint_{\gamma(R_n)} f(w) + f'(w) (z - w) + q(z) (z - w) \ dz \\
+    &= \oint_{\gamma(R_n)} q(z) (z - w) \ dz
+\end{align*}
+since the functions $z \mapsto f(w)$ and $z \mapsto f'(w) (z - w)$ have anti-derivatives and $\gamma(R_n)$ is a closed path.
+
+\noindent The side lengths of $R_n$ are given by $2^{-n} R$. Moreover, we can choose $\Gamma: R \to \Omega$ such that lengths in $R$ get scaled by a finite amount when mapped to $\Omega$ under $\Gamma$. Therefore, there exist constants $K, L > 0$ such that the length of $\Gamma(R_n)$ is given by
+\[\Gamma|_{\partial R_n} \leq 2^{-n} K,\]
+and
+\[|z - w| \leq 2^{-n}L\]
+for all $z \in \gamma(R_n) = \Gamma|_{\partial R_n}$.
+Moreover, since $q(z) \to 0$ as $z \to w$, it must be bounded. So, for all $n \in \mathbb{Z}_{\geq 1}$, there exists an $M_n > 0$ such that $|q(z)| \leq M_n$ for all $z \in \gamma(R_n)$. In that case,
+\begin{align*}
+    0 \leq I(R) &\leq 4^n I(R_n) \\
+    &\leq 4^n \oint |q(z) (z - w)| \ dz \\
+    &\leq 4^n \cdot 2^{-n}K \cdot 2^{-n} L \cdot M_n \\
+    &= KL M_n.
+\end{align*}
+Since $q(z) \to 0$ as $z \to w$, we can choose $M_n \to 0$. Therefore, 
+\[I(R) = \left|\oint_\gamma f(z) \ dz\right| = 0.\]
+This implies that
+\[\oint_\gamma f(z) \ dz = 0.\]
+\end{proof}
+
+Now, we will use this result to show that Cauchy's Theorem holds for all simple closed paths. For this, we define homotopy.
+\begin{definition}
+Let $\gamma, \delta: [a, b] \to \Omega$ are called \emph{homotopic} if there exists a continuous function $\Gamma: [0, 1] \times [a, b] \to \Omega$, called a \emph{homotopy} from $\gamma$ to $\delta$, such that
+\begin{itemize}
+    \item $\Gamma(s, a) = \gamma(a) = \delta(a)$ and $\Gamma(s, b) = \gamma(b) = \delta(b)$ for all $s \in [0, 1]$, and
+    \item $\Gamma(0, t) = \gamma(t)$ and $\Gamma(1, t) = \delta(t)$ for all $t \in [a, b]$.
+\end{itemize}
+\end{definition}
+For a point $w \in \Omega$, the trivial path $\delta: [a, b] \to \Omega$ is the path where $\delta(t) = w$ for all $t \in [a, b]$. If a path $\gamma: [a, b] \to \Omega$ is homotopic to $\delta$ (for some $w \in \Omega$), then we say that it is null-homotopic.
+
+Next, we show that the contour integral over closed homotopic paths is equal.
+\begin{lemma}
+Let $f: \Omega \to \mathbb{C}$ be holomorphic and let $\gamma, \delta$ be two closed holomorphic paths in $\Omega$. Then,
+\[\oint_\gamma f(z) \ dz = \oint_\delta f(z) \ dz.\]
+\end{lemma}
+\begin{proof}
+Let $\Gamma: [0, 1] \times [a, b] \to \Omega$ be a homotopy from $\gamma$ to $\delta$ in $\Omega$ such that $\gamma(R) = \Gamma|_{\partial R}$ has finite length. Then,
+\[\oint_\gamma f(z) \ dz - \oint_\delta f(z) \ dz =  \oint_{\Gamma|_{\partial R}} f(z) \ dz = 0.\]
+% TODO: Illustrate with an image
+\end{proof}
+Using this lemma, we can show that if a path is null-homotopic, it satisfies the Cauchy's Theorem.
+\begin{proposition}
+Let $f: \Omega \to \mathbb{C}$ be holomorphic and $\gamma$ be a null-homotopic path in $\Omega$. Then,
+\[\oint_\gamma f(z) \ dz = 0.\]
+\end{proposition}
+\begin{proof}
+Let $\delta: [a, b] \to \mathbb{C}$ be the path given by $\delta(t) = \gamma(a) = \gamma(b)$. Then,
+\[\oint_\gamma f(z) \ dz = \oint_\delta f(z) \ dz = \int_a^b f(\delta(t)) \delta'(t) \ dt = 0.\]
+\end{proof}
+\noindent In Cauchy's Theorem, we require a path $\gamma$ to be simple. This property is enough for a path to be null-homotopic in $\Omega$ since it can be shrunk into a point inside $\Omega$ without obstructions.
+
+Using Cauchy's Theorem, we can provide Cauchy's Integral Formula.
+\begin{proposition}[Cauchy's Integral Formula]
+Let $f: \Omega \to \mathbb{C}$ be a holomorphic function, and let $\gamma: [0, 1] \to \Omega$ be a simple closed path traced anticlockwise. Then,
+\[f(z) = \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta\]
+for all $z \in \Omega$ that lie in $\gamma$.
+\end{proposition}
+\begin{proof}
+Let $z \in \Omega$. Since $\Omega$ is open, there exists an open disc $D$ of radius $r$ around $z$ that is contained in $\Omega$. Then, let $\varepsilon \in (0, r)$ and $\delta_\varepsilon$ be a circle of radius $\varepsilon$ with center at $z$. Then, $\gamma$ is homotopic to $\delta$ in $\Omega \setminus \{z\}$. In that case,
+\[\oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta.\]
+Then,
+\[\left|\oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta - \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta\right| = \left|\oint_{\delta_\varepsilon} \frac{f(\zeta) - f(z)}{\zeta - z} \ d\zeta\right| < 2\pi \varepsilon (|f'(z)| + 1).\]
+The length of the path is $2\pi \varepsilon$, since $\varepsilon$ is the radius of the circle. Moreover, since
+\[\frac{f(\zeta) - f(z)}{\zeta - z} \to f'(z),\]
+we can bound the integrand by $|f'(z)| + 1$ for some $\varepsilon \in (0, r)$. As $\varepsilon \to 0$, we find that
+\[\oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta = f(z) \oint_{\delta_\varepsilon} \frac{d\zeta}{\zeta - z} = 2\pi i f(z).\]
+So,
+\[f(z) = \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta\]
+\end{proof}
+
+We can generalise this even further and compute the derivatives by integrating.
+\begin{proposition}
+Let $f: \Omega \to \mathbb{C}$ be a holomorphic function, and let $\gamma: [0, 1] \to \Omega$ be a simple closed path traced anticlockwise. Then, $f$ is infinitely differentiable on $\Omega$, with
+\[f^{(n)}(z) = \frac{n!}{2\pi i} \oint_\gamma \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta\]
+for $z \in \Omega$ that lies in $\gamma$ and $n \in \mathbb{Z}_{\geq 0}$.
+\end{proposition}
+\begin{proof}
+We prove this by induction. We know that if $n = 0$, then the statement is the Cauchy's Integral Formula. So, now assume that $f$ is $n$-differentiable on $\Omega$ with
+\[f^{(n)}(z) = \frac{n!}{2\pi i} \oint_\gamma \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta\]
+for $z \in \Omega$. Then,
+\begin{align*}
+    f^{(n+1)}(z) &= \frac{d}{dz} f^{(n)}(z) \\
+    &= \frac{n!}{2\pi i} \oint_\gamma \frac{d}{dz} \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta \\
+    &= \frac{n!}{2\pi i} \oint_\gamma \frac{(n+1) f(\zeta)}{(\zeta - z)^{n+2}} \ d\zeta \\
+    &= \frac{(n+1)!}{2\pi i} \oint_\gamma \frac{f(\zeta)}{(\zeta - z)^{n+2}} \ d\zeta.
+\end{align*}
+So, the statement follows from induction.
+\end{proof}
+
+Next, we show that holomorphic functions are locally analytic.
+\begin{proposition}
+Let $f: \Omega \to \mathbb{C}$ be a holomorphic function. Then, for all $c \in \Omega$, there exists an open disc $D_c \subseteq \Omega$ with center $c$ such that
+\[f(z) = \sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n\]
+for all $z \in D_c$.
+\end{proposition}
+\begin{proof}
+Let $c \in \Omega$. Since $\Omega$ is open, there exists an open disc $D_C$ centered at $c$ such that $D_c \subseteq \Omega$. Now, let $z \in D_C$, and let $\gamma$ be a closed circle with center $c$ containing $z$. Then,
+\[\sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n = \frac{1}{2\pi i} \sum_{n=0}^\infty \oint_\gamma \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n-1}} \ d\zeta.\]
+Moreover, the power series
+\[\sum_{n=0}^\infty \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n+1}} = \frac{f(\zeta)}{\zeta - z}\]
+since
+\[\frac{|z - c|}{|\zeta - c|} < 1.\sidefootnote{The value $\zeta$ lies at the boundary of $D_c$, whereas the value $z$ lies within $D_c$.}\]
+This implies that
+\begin{align*}
+    \sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n &= \frac{1}{2\pi i} \oint_\gamma \sum_{n=0}^\infty \frac{f(\zeta)}{(\zeta - c)^{n-1}} \  d\zeta \cdot (z - c)^n \\
+    &= \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = f(z).
+\end{align*}
+\end{proof}
+
+We can use Cauchy's integral formula to prove Lioville's Theorem.
+\begin{theorem}[Lioville's Theorem]
+Let $f: \mathbb{C} \to \mathbb{C}$ be a holomorphic function that is not a constant. Then, $f$ is not bounded.
+\end{theorem}
+\begin{proof}
+We prove this by contrapositive. So, assume that $f$ is bounded. In that case, there exists an $M > 0$ such that for all $z \in \mathbb{C}$, $|f(z)| \leq M$. We show that $f$ is a constant. Let $z \in \mathbb{C}$ and $r > 0$. Define the path $\gamma: [0, 2\pi] \to \mathbb{C}$ by $\gamma(t) = z + re^{it}$. By Cauchy's Integral Formula, we find that
+\[f'(z) = \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{(z - \zeta)^2} \ d\zeta.\]
+We know that $|f(\zeta)| \leq M$ for all $\zeta \in \gamma$. Moreover, for all $\zeta \in \gamma$, $|z - \zeta| = r$. In that case,
+\[\left|\oint_\gamma \frac{f(\zeta)}{(z - \zeta)^2}\right| \leq 2\pi r \cdot \frac{M}{r^2} = \frac{2M \pi}{r}.\]
+So, we find that
+\[|f'(z)| = \frac{1}{2\pi} \left|\oint_\gamma \frac{f(\zeta)}{(z - \zeta)^2} \ d\zeta\right| \leq \frac{M}{r}\]
+for all $r > 0$. This implies that $f'(z) = 0$. So, $f$ is a constant.
+\end{proof}
+\noindent Using this theorem, we can prove the Fundamental Theorem of Algebra.
+\begin{theorem}[Fundamental Theorem of Algebra]
+Let $p: \mathbb{C} \to \mathbb{C}$ be a polynomial in $\mathbb{C}$ of degree at least 1. Then, $p$ has a root in $\mathbb{C}$.
+\end{theorem}
+\begin{proof}
+Assume, for a contradiction, that $p$ has no root in $\mathbb{C}$. In that case, for all $z \in \mathbb{C}$, $p(z) \neq 0$. This implies that the reciprocal function $f: \mathbb{C} \to \mathbb{C}$ given by $f(z) = \frac{1}{p(z)}$ is holomorphic. Moreover, since $p$ is of degree at least 1, $p$ is not bounded. So, $f(z) \to 0$ as $|z| \to \infty$. So, $|f(z)| \leq K$ for all $|z| > L$. Now, define the path $\gamma:[0, 2\pi] \to \mathbb{C}$ by $\gamma(t) = z + Re^{it}$, for $R > |z| + L$. By construction, we find that $|\gamma(t)| > L$ for all $t \in [0, 2\pi]$. In that case, Cauchy's Integral Formula tells us that
+\[|f'(z)| = \frac{1}{2\pi} \left|\oint_\gamma \frac{f(\zeta)}{(\zeta - z)^2} \ d\zeta\right| \leq \frac{1}{2\pi} \cdot 2\pi r \cdot \frac{K}{r^2} = \frac{K}{R}\]
+for all $R > |z| + L$. Therefore, $f'(z) = 0$. This means that $f$ is a constant, in which case $p$ too is a constant. This is a contradiction. So, $p$ must have a root in $\mathbb{C}$.
+\end{proof}
+\noindent Using this theorem, we can show that a polynomial of degree $n$ has $n$ roots in $\mathbb{C}$. Let $p: \mathbb{C} \to \mathbb{C}$ be a polynomial in $\mathbb{C}$ of degree $n \geq 1$. The fundamental theorem of algebra tells us that $p(z) = (z - a)q(z)$, where the degree of $q$ is $n - 1$. If $n - 1 = 0$, then $q$ is a constant, and we have fully factorised $p$. Otherwise, we can start again and find another root for $p$. Continuing $n$ times, we find all the $n$ roots of $p$.
+\newpage
+
+\section{Laurent Series}
+Let $\Omega \subseteq \mathbb{C}$ be open and $f: \Omega \to \mathbb{C}$ holomorphic. We know that for any $c \in \Omega$, we can find a disc $D_c \subseteq \Omega$ centered at $c$ such that for any $z \in D_c$,
+\[f(z) = \sum_{n=0}^\infty a_n (z - c)^n,\]
+where
+\[a_n = \frac{f^{(n)}(c)}{n!} = \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{(\zeta - c)^{n+1}} \ d\zeta,\]
+where $\gamma \subseteq D_c$ is a circle centered at $c$ and traced anticlockwise.
+
+We can generalise this theorem when $f$ is only holomorphic on $\Omega \setminus \{c\}$ and has a singularity at $z = c$. In such a case, we say that $f$ has an isolated singularity at $c$. The corresponding disc $D_c \subseteq \Omega$ is centered at $c$ still, and $f$ is holomorphic on $D_c \setminus \{c\}$.
+\begin{theorem}[Laurent Series]
+Let $f: \Omega \setminus \{c\} \to \mathbb{C}$ be holomorphic with $\Omega \subseteq \mathbb{C}$ open and $c \in \Omega$. Then, there exists an open disc $D$ with center at $c$ and $\gamma \subseteq D$ such that
+\[f(z) = \sum_{n=-\infty}^{\infty} a_n (z - c)^n,\]
+with
+\[a_n = \frac{1}{2n\pi} \oint_\gamma \frac{f(\zeta)}{(\zeta - c)^{n+1}} \ d\zeta\]
+for all $z \in D \setminus \{c\}$. The expansion of $f$ is called its Laurent series at $c$.
+\end{theorem}
+\begin{proof}
+Let
+\[S^+ = \sum_{n=0}^\infty a_n (z - c)^n, \qquad S^- \sum_{n=-\infty}^{-1} a_n (z - c)^n.\]
+We show that $f(z) = S^+ + S^-$. Let $\gamma^+$ be a circle with center $c$, where $z$ lies inside $\gamma^+$. We know that
+\[\frac{1}{2\pi i} \oint_{\gamma^+} \sum_{n=0}^\infty f(\zeta) \frac{(z- c)^n}{(\zeta - c)^{n+1}} \ d\zeta\]
+converges absolutely since
+\[\left|\frac{z - c}{\zeta - c}\right| < 1.\]
+Therefore,
+\begin{align*}
+    \frac{1}{2\pi i} \oint_{\gamma^+} \sum_{n=0}^\infty f(\zeta) \frac{(z - c)^n}{(\zeta - c)^{n+1}} &= \sum_{n=0}^\infty \frac{1}{2\pi i} \oint_{\gamma^+} f(\zeta) \frac{(z - c)^n}{(\zeta - c)^{n+1}} \\
+    &= \sum_{n=0}^\infty a_n (z - c)^n = S^+.
+\end{align*}
+We now choose a circle $\gamma^-$ with center $c$ and $z$ outside $\gamma^-$. Then,
+\[\left|\frac{\zeta - c}{z - c}\right| < 1,\]
+and so
+\begin{align*}
+    \frac{1}{2\pi i} \oint_{\gamma^-} \sum_{n=0}^\infty f(\zeta) \frac{(\zeta - c)^n}{(\zeta - c)^{n+1}} &= \sum_{n=0}^\infty \frac{1}{2\pi i} \oint_{\gamma^-} f(\zeta) \frac{(\zeta - c)^n}{(z - c)^{n+1}} \ d\zeta \\
+    &= \sum_{n=0}^\infty a_{-n-1}(z - c)^{-n-1} = S^-.
+\end{align*}
+Using the two circles, we define $\delta_\varepsilon$, as shown below.
+% TODO: ADD DIAGRAM
+The contour $\delta_\varepsilon$ is homotopic to $\gamma^- \cup \gamma^+$ and a connecting line $\lambda$ between the circles $\gamma^-$ and $\gamma^+$. The contribution of the contour integral over $\lambda$ is zero as we integrate twice but with opposite direction of travel. Hence,
+\[S^+ + S^- = \oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta.\]
+Since $\delta_\varepsilon$ is homotopic to the anticlockwise circle centered at $z$ on $\Omega \setminus \{c\}$, Cauchy's integral formula tells us that $S^+ + S^- = f(z)$.
+\end{proof}
+
+Using Laurent series, we can characterise the type of isolated singularities.
+\begin{definition}
+Let $\Omega \subseteq \mathbb{C}$ be open and $c \in \Omega$, and let $f: \Omega \setminus \{c\} \to \mathbb{C}$ be holomorphic. Then, we call the isolated singularity $c$ of $f$:
+\begin{itemize}
+    \item a removable singularity if $a_n = 0$ for all $n \leq -1$ in the Laurent expansion.
+    \item a finite pole of order $N$ if $a_n = 0$ for all $n \leq -N$ in the Laurent expansion.
+    \item an essential singularity if for all $N \in \mathbb{Z}_{\leq 0}$, there exists an $n \in \mathbb{Z}$ with $n \leq N$ and $a_n \neq 0$ in the Laurent expansion.
+\end{itemize}
+\end{definition}
+\noindent If $c$ is a removable singularity, then the Laurent series is an ordinary power series. Moreover, the function $g: \Omega \to \mathbb{C}$
+\[g(z) = \begin{cases}
+f(z) & z \neq c \\
+a_0 & z = c
+\end{cases}\]
+is holomorphic. Instead, if $c$ is a finite pole of order $N$, then the function
+\[f(z) = \sum_{n=-N}^\infty a_n (z - c)^n = \frac{g(z)}{(z - c)^N},\]
+for some holomorphic function $g: \Omega \to \mathbb{C}$.
+
+We will now look at the different types of singularities.
+\begin{example}
+The function $f: \mathbb{C} \setminus \{0\} \to \mathbb{C}$ given by
+\[f(z) = \frac{\sin z}{z}\]
+has a removable singularity at $z = 0$.
+\end{example}
+\begin{proof}
+We find that
+\begin{align*}
+    f(z) &= \frac{\sin z}{z} \\
+    &= \frac{1}{z} \left(z - \frac{1}{3!}z^3 + \frac{1}{5!} z^5 - \dots\right) \\
+    &= 1 - \frac{1}{3!} z^2 + \frac{1}{5!} z^4 - \dots
+\end{align*}
+Therefore, $f$ is analytic over $\mathbb{C}$. This implies that $f$ is holomorphic on $\mathbb{C}$ if we set $f(0) = 1$. So, $f$ has a removable singularity at $z = 0$.
+\end{proof}
+\noindent In this case, we have $f(z) \to 1$ as $z \to 0$. So, $|f(z)|$ is bounded on some neighbourhood of $0$.
+\begin{example}
+The function $g: \mathbb{C} \setminus \{-5, 3\} \to \mathbb{C}$ given by
+\[g(z) = \frac{z + 2}{(z - 3)(z + 5)^2}\]
+has a pole of order 1 (simple pole) at $z = 3$ and a pole of order 2 (double pole) at $z = -5$.
+\end{example}
+% \begin{proof}
+
+% \end{proof}
+\noindent In this case, we have $|g(z)| \to \infty$ as $z \to 3$ or $z \to -5$. So, $|g(z)|$ is not bounded on any neighbourhood of $3$ or $-5$.
+\begin{example}
+The function $h: \mathbb{C} \setminus \{0\} \to \mathbb{C}$
+\[h(z) = e^{1/z} = 1  + \frac{1}{z} + \frac{1}{2!} \frac{1}{z^2} + \dots\]
+has an isolated essential singularity at $z = 0$.
+\end{example}
+\noindent In this case, if $z \to 0$ via the positive real values, then $|h(z)| \to \infty$. Instead, if $z \to 0$ through negative real values, then $h(z) \to 0$. So, $h$ is not bounded on any neighbourhood of $0$, but $|h(0)| \not\to \infty$.
+
+We can use the boundedness of neighbourhoods to characterise singularities.
+\begin{proposition}
+Let $\Omega \subseteq \mathbb{C}$ be open, $c \in \Omega$ and $f: \Omega \setminus \{c\} \to \mathbb{C}$ be holomorphic. Then,
+\begin{itemize}
+    \item $f$ has a removable singularity at $c$ if and only if $f$ is bounded on some disc $D \subseteq \Omega$ centered at $c$.
+    \item $f$ has a pole of finite order at $c$ if and only if $|f(z)| \to \infty$ as $z \to c$.
+    \item $f$ has an essential singularity at $c$ if and only if $f$ is unbounded on any neighbourhood of $c$ and $|f(z)| \not\to \infty$ as $z \to c$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume first that $f$ has a removable singularity at $c$. Then, $f$ is bounded on a disc centered at $c$. Instead, if $f$ is bounded on a disc $D$ centered at $c$, then $|f(z)| \leq M$ for all $z \in D$. In that case, for $\gamma \subseteq D$ a circle centered at $c$ of radius $r > 0$, we find that for all $n \leq -1$,
+    \begin{align*}
+        |a_n| &\leq \frac{1}{2\pi} \left|\oint_\gamma \frac{f(\zeta)}{(\zeta - c)^{n+1}} \ d\zeta \right| \\
+        &\leq \frac{1}{2\pi} \cdot \frac{M}{r^{n+1}} \cdot 2\pi r = Mr^{-n}.
+    \end{align*}
+    So, as $r \to 0$, $|a_n| \to 0$. So, $c$ is a removable singularity.
+    
+    \item Assume now that $f$ has a pole at $c$. Then, $|f(z)| \to \infty$ as $z \to c$. Instead, assume that $|f(z)| \to \infty$ as $z \to \infty$. Then, there must be a disc $D$ centered at $c$ with $|f(z)| > 1$ for all $z \in D$. Then, the function $\frac{1}{f}: D \setminus \{c\} \to \mathbb{C}$ is bounded on $D \setminus \{c\}$. This implies that $\frac{1}{f}$ has a removable singularity at $c$. Therefore, $\frac{1}{f(z)} \to 0$ as $z \to c$. So, the Taylor series of $\frac{1}{f}$ must be of the form
+    \[\frac{1}{f(z)} = (z - c)^N (a_N + a_{N+1} (z - c) + \dots),\]
+    with $a_N \neq 0$ and $N \geq 1$. Therefore, 
+    \[\frac{1}{f(z)} = (z - c)^N g(z),\]
+    with $g: D \to \mathbb{C}$ holomorphic, and $g(c) \neq 0$. Hence, there is another disc $D'$ around $c$ on which $g(z) \neq 0$. Therefore,
+    \[f(z) = (z - c)^{-N} \frac{1}{g(z)},\]
+    where $\frac{1}{g}$ is holomorphic on $D'$. So, $f$ has a pole of order $N$ at $c$.
+    
+    \item If $f$ has an essential singularity at $c$, then $f$ is unbounded on any neighbourhood of $c$ and $|f(z)| \not\to \infty$. Moreover, if $f$ is unbounded and $|f(z)| \to \infty$, then $f$ must have a finite pole. So, if $f$ is unbounded and $|f(z)| \not\to \infty$, then $f$ must have an essential singularity at $c$.
+\end{itemize}
+\end{proof}
+
+
+
+
+\end{document}
