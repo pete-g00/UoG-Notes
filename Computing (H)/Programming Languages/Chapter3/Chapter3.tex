@@ -1472,4 +1472,626 @@ public class Address {
     }
 }
 \end{lstlisting}
+\newpage
+
+\section{Runtime organisation}
+% TODO: First slide
+
+The representation of each primitive type may be language defined or implementation defined. Typically, this is a fixed amount of bits. Some primitive types include \texttt{BOOL}, \texttt{CHAR}, \texttt{INT} and \texttt{FLOAT}.
+
+We represent an array by juxtaposing its components. The following is a representation of an array of type $\{0, 1, 2 \dots\} \to T$.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 3.5);
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (1.5, 0.5) {\texttt{T[0]}};
+
+        \draw[dotted] (0, 2) -- (1, 2);
+        \node at (1.5, 1.5) {\texttt{T[1]}};
+        
+        \draw[dotted] (0, 3) -- (1, 3);
+        \node at (1.5, 2.5) {\texttt{T[2]}};
+    \end{tikzpicture}
+\end{figure}
+\noindent The offset of \texttt{T[i]} from the base. If each element is of 4 bits, then \texttt{T[0]} is at offset 0; \texttt{T[1]} is at offset 4; etc.
+
+Each component takes the same size. The offset of array component $i$ (relative to the array's base address) is linearly related to $i$, i.e.
+\[\text{offset} = \text{size of component} \times i.\]
+Since $i$ is not known to the compiler, the offset of component $i$ gets calculated at runtime.
+
+We represent a tuple by juxtaposing its components in a similar way. For example, the representation of tuples of type $T_1 \times T_2 \times \dots T_n$ is given below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 4);
+
+        \draw[dotted] (0, 2) -- (1, 2);
+        \node at (1.5, 1) {\texttt{T1}};
+
+        \draw[dotted] (0, 3) -- (1, 3);
+        \node at (1.5, 2.5) {\texttt{T2}};
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (1.5, 3.25) {\texttt{T3}};
+    \end{tikzpicture}
+\end{figure}
+\noindent The components need not be of the same type and can have different sizes, as shown above. The compiler can easily compute the offset. For example, the offset of component 1 is 0, and the offset of component 2 is the size of \texttt{T1}, and so on. 
+
+An object is a tagged tuple. So, we represent an object by juxtaposing its components (i.e. instance variables) with a class tag. Assume that we have a class $C$ with instance variables of types $T_1, \dots, T_n$. The following is the representation of an object of class $C$.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.5);
+
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {$C$};
+
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (1.5, 1) {\texttt{T1}};
+
+        \draw[dotted] (0, 2) -- (1, 2);
+        \node at (1.5, 1.75) {\texttt{T2}};
+    \end{tikzpicture}
+\end{figure}
+\noindent We have the class tag at the bottom, followed by the instance variable components. The compiler knows the size of each component, so the memory can be allocated at compile-time.
+
+Next, consider we have a class $C'$ that is a subclass of $C$, with additional instance variables $T_1', \dots, T_m'$. The following is the representation of an object of class $C'$.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 3.5);
+
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {$C'$};
+
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (1.5, 1) {\texttt{T1}};
+
+        \draw[dotted] (0, 2) -- (1, 2);
+        \node at (1.5, 1.75) {\texttt{T2}};
+
+        \draw[dotted] (0, 3) -- (1, 3);
+        \node at (1.6, 2.5) {\texttt{T1'}};
+    \end{tikzpicture}
+\end{figure}
+\noindent We use the class tag $C'$ instead of $C$ here. This allows for dynamic dispatch.
+
+\subsection{Storage organisation}
+Each variable occupies storage space throughout its lifetime. That storage space must be allocated at the start of the lifetime and deallocated at the end of the lifetime. We assume that the PL is statically typed, and that all variables of the same type occupy the same amount of storage space.
+
+A global variable's lifetime is the program's entire runtime. So, the compiler allocates fixed storage space for them. A local variable's lifetime is an activation of the block in which the variable is declared. The lifetime of local variables are nested. So, the compiler allocates storage space on a stack.
+
+At any given time, the stack contains one or more activation frames. An active procedure is one that has been called but not yet returned. The frame at the base of the stack contains the global variables. For each active procedure $P$, there is a frame containing $P$'s local variables. A frame for procedure $P$ is pushed onto the stack when $P$ is called, and popped off the stack when $P$ returns.
+
+The compiler fixes the size and the layout of each frame. The offset of each global and local variable (relative to the base of the frame) is known to the compiler.
+
+% The following figure shows the SVM data store when the main program has called $P$, and $P$ has called $Q$. The stack pointer \texttt{sp} points to the first free cell above the top of the stack. The frame pointer \texttt{fp} points to the first cell of the topmost frame.
+% TODO: SVM has been done above as well
+
+A heap variable's lifetime starts when the heap variable is created. It ends when it is destroyed or becomes unreachable. The lifetimes of heap variables follow no pattern. Heap variables occupy a storage region called the heap. 
+
+At any given time, the heap contains all currently-live heap variables, interspersed with free space. When a new heap variable is created, some free space is allocated to it. When a heap variable is destroyed, its allocated space reverts to being free.
+
+A PL's runtime system typically includes the heap manager. It keeps track of free space within the heap. It is usually done by a free-list. This is a linked list of free areas of various sizes. The heap manager provides a routine to create and destroy a heap variable.
+
+We illustrate this with an example. Assume that we start with the following state of local and heap variables.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1) rectangle (1, 2.25);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 0.75);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent The green section within the heap is all the free space we have. We now allocate the variable \texttt{c}. It gets added to both the heap and the stack since we have a pointer to \texttt{c} in code.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+        
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 0.75);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent Now, we change \texttt{a.next} from \texttt{b} to \texttt{c}.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+        
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent We now manually deallocate \texttt{b}.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 0.5) rectangle (1, 1);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent Now, we have free space at the place where \texttt{b} was being stored.
+
+If a PL has no deallocator, the heap manager must be able to find and destroy any unreachable heap variables automatically. This is done by a garbage collector. A garbage collector must visit all the reachable heap variables. This is time consuming. 
+
+A mark-sweep garbage collector marks all reachable heap variables, then deallocates all unmarked heap variables. The algorithm below marks all heap variables reachable from pointer $p$.
+\begin{itemize}
+    \item Let heap variable $v$ be the referent of $p$.
+    \item If $v$ is unmarked:
+    \begin{itemize}
+        \item Mark $v$.
+        \item For each pointer $q$ in $v$:
+        \begin{itemize}
+            \item Mark all heap variables reachable from $q$.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+This is a depth-first traversal. The following is the algorithm to collect garbage.
+\begin{itemize}
+    \item For each pointer $p$ in a global/local variable, mark all heap variables reachable from $p$.
+    \item For each heap variable $v$:
+    \begin{itemize}
+        \item If $v$ is unmarked, destroy $v$.
+        \item Else if $v$ is marked, unmark $v$.
+    \end{itemize}
+\end{itemize}
+
+We illustrate this algorithm with an example. Assume that we start with the following state of local and heap variables.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+        
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent We first mark all heap variables reachable from \texttt{c}.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        \draw[fill=red, opacity=0.3] (0, 3.5) rectangle (1, 4);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+        
+        \draw[fill=red, opacity=0.3] (0, 1.5) rectangle (1, 1);
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent Next, we mark all heap variables reachable from \texttt{a}.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        \draw[fill=red, opacity=0.3] (0, 3) rectangle (1, 4);
+        
+        \draw[fill=red, opacity=0.3] (0, 0) rectangle (1, 0.5);
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        \node at (0.5, 0.75) {\texttt{b}};
+        
+        \draw[fill=red, opacity=0.3] (0, 1.5) rectangle (1, 1);
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+\noindent Since we only have pointers to \texttt{a} and \texttt{c} available as local variables, the marking phase is over. Now, we deallocate any unmarked variables and unmark the others.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 1.5) rectangle (1, 2.25);
+        \draw[fill=green, opacity=0.3] (0, 0.5) rectangle (1, 1);
+        
+        \draw[dotted] (0, 0.5) -- (1, 0.5);
+        \node at (0.5, 0.25) {\texttt{a}};
+
+        \draw[dotted] (0, 1) -- (1, 1);
+        
+        \draw[dotted] (0, 1.5) -- (1, 1.5);
+        \node at (0.5, 1.25) {\texttt{c}};
+
+        \draw (1, 0.25) edge[->, bend right] (1, 1.25);
+
+        \draw[fill=blue!30, opacity=0.3] (0, 3) rectangle (1, 4.5);
+
+        \draw[dotted] (0, 3.5) -- (1, 3.5);
+        \node at (0.5, 3.25) {\texttt{a}*};
+        
+        \draw[dotted] (0, 4) -- (1, 4);
+        \node at (0.5, 3.75) {\texttt{c}*};
+
+        \node at (-1, 1.125) {\texttt{heap}};
+        \node at (-1, 3.75) {\texttt{stack}};
+    \end{tikzpicture}
+\end{figure}
+
+The time complexity of mark-sweep garbage collection is $O(n_r + n_h)$, where $n_r$ is the number of reachable heap variables and $n_h$ the number of heap variables. Moreover, the heap tends to become fragmented. There might be many small areas, but none big enough to allocate a new large heap variable. We could mitigate this by coalescing adjacent free areas in the heap. A better solution, however, is to use a copying or generational garbage collector.
+
+A copying garable collector maintains two separate heap spaces. Initially, space 1 contains all heap variables and space 2 is spare. Whenever the garable collector reaches a marked heap variable $v$, it copies $v$ from space 1 to space 2. At the end of garbage collection, spaces 1 and 2 are swapped. This way, heap variables can be consolidated when copied into space 2. However, all pointers to a copied heap variable must be found and redirected from space 1 to space 2.
+
+A generational garbage collector maintains two (or more) separate heap spaces. One space (the old generation) contains only long-lived heap variables. The other space (the young generation) contains shorter-lived heap variables. The old generation is garbage-collected infrequently, while the young generation is garbage-collected frequently. Heap variables that live long enough may be promoted from the young generation to the old generation. We can use different strategies for garbage collection depending on the generation. This technique allows for a more focused garbage collection, and is used by many PLs. 
+
+\newpage
+
+\section{Native code generation}
+Code selection is difficult for real machines because CISC (complex instruction set computer) machines have very complicated instructions with multiple addressing modes. Even RISC (reduced instruction set computer) machines have fairly complicated instructions.
+
+Register allocation for real machines is an issue. Registers should be used as much as possible. RISC machines typically have only general-purpose registers. CISC machines typically have a variety of special-purpose registers (e.g. int registers, float registers and address registers).
+
+Registers are fast. So, we aim to use registers as much as possible for local variables and intermediate results of expressions. The issue is that the number of registers is limited. Different variables can be allocated the same register if their lifetimes do not overlap. Hwere, a variable is deemed to be live only if it might be inspected later.
+
+A basic block (BB) is a stright-line sequence of instructions. There are no jumps expect at the end of the BB. Moreover, there are no jumps to anywhere expect the start of a BB. Within a BB, we break up complicated expressions using temporary variables such that each assignment instruction contains at most one operator. 
+
+For example, if we have the operation \texttt{a = (b + c) * (d - e)}, then we can store \texttt{b + c} and \texttt{d - e} in temporary variables, and then compute the result. The sequence of 3 instructions- computing the sum, the difference and the final product is a BB.
+The actual BB code is the following.
+\begin{lstlisting}
+t1 <- b + c
+t2 <- d - e
+a <- t1 x t2
+\end{lstlisting}
+
+Consider the following C function.
+\begin{lstlisting}[language=C]
+int tri(int a, int b, int c) {
+    int s = (a + b + c)/2;
+    return s * (s - a) * (s - b) * (s - c);
+}
+\end{lstlisting}
+The function is a single BB, as shown below.
+\begin{lstlisting}
+t1 <- a + b
+t2 <- t1 + c
+s <- t2 / 2
+t3 <- s - a
+t4 <- s x t3
+t5 <- s - b
+t6 <- t4 x t5
+t7 <- s - c
+t8 <- t6 x t7
+return t8
+\end{lstlisting}
+
+Within the BB, we determine where each variable is alive and then allocate registers.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \foreach \code[count=\i] in {
+            t1 <- a + b,
+            t2 <- t1 + c,
+            s <- t2 / 2,
+            t3 <- s - a,
+            t4 <- s x t3,
+            t5 <- s - b,
+            t6 <- t4 x t5,
+            t7 <- s - c,
+            t8 <- t6 x t7,
+            return t8} 
+        {
+            \node at (-2, -0.5*\i) {\texttt{\code}};
+            \draw (-3.5, -0.5*\i-0.25) rectangle (-0.5, -0.5*\i+0.25);
+            \draw (0, -0.5*\i-0.25) rectangle (6, -0.5*\i+0.25);
+        }
+
+        \foreach \x[count=\i] in {a, b, c, s, t1, t2, t3, t4, t5, t6, t7, t8} {
+            \node at (\i*0.5-0.25, 0) {\texttt{\x}};
+        }
+        
+        \draw[->, ultra thick, green] (0.25, -0.25) -- (0.25, -2.25);
+        \draw[->, ultra thick, green] (0.75, -0.25) -- (0.75, -2.25);
+        \draw[->, ultra thick, green] (1.25, -0.25) -- (1.25, -4.25);
+        \draw[->, ultra thick, green] (1.75, -1.75) -- (1.75, -4.25);
+        \draw[->, ultra thick, green] (2.25, -0.75) -- (2.25, -1.25);
+        \draw[->, ultra thick, green] (2.75, -1.25) -- (2.75, -1.75);
+        \draw[->, ultra thick, green] (3.25, -2.25) -- (3.25, -2.75);
+        \draw[->, ultra thick, green] (3.75, -2.75) -- (3.75, -3.75);
+        \draw[->, ultra thick, green] (4.25, -3.25) -- (4.25, -3.75);
+        \draw[->, ultra thick, green] (4.75, -3.75) -- (4.75, -4.75);
+        \draw[->, ultra thick, green] (5.25, -4.25) -- (5.25, -4.75);
+        \draw[->, ultra thick, green] (5.75, -4.75) -- (5.75, -5.25);
+        
+        \foreach \x[count=\i] in {r1, r2, r3, r4, r4, r4, r1, r1, r2, r1, r2, r1} {
+            \node at (\i*0.5-0.25, -5.5) {\texttt{\x}};
+        }
+    \end{tikzpicture}
+\end{figure}
+
+A control-flow graph is a directed graph in which:
+\begin{itemize}
+    \item each vertex is a BB;
+    \item each edge is a jump from the end of one BB to the start of another BB;
+    \item one vertex is designated as the entry point; and
+    \item one vertex is designated as the exit point.
+\end{itemize}
+Consider the following C program:
+\begin{lstlisting}[language=C]
+int pow(int b, int n) {
+    int p = 1;
+    int q = b;
+    int m = n;
+    while (m > 0) {
+        if (m & 1) {
+            p = p * q;
+        }
+        m = m / 2;
+        q = q * q;
+    }
+    return p;
+}
+\end{lstlisting}
+Its control-flow graph is given below.
+
+Each section is a BB. We consider which variables are alive at BB.
+\begin{itemize}
+    \item $b$ and $n$ are alive only in BB1;
+    \item $p$ is alive everywhere;
+    \item $m$ and $q$ are alive everywhere except in BB6;
+    \item $t1$ is alive only in BB2; and
+    \item $t2$ is alive only in BB3.
+\end{itemize}
+
+For each BB $b$, we define the following 4 sets of variables in a control-flow graph:
+\begin{itemize}
+    \item in[b] is the set of variables that are alive at the start of $b$;
+    \item out[b] is the set of variables that are alive at the end of $b$;
+    \item use[b] is the set of variables $v$ such that $b$ inspects $v$ (before any update to $v$);
+    \item def[b] is the set of variables $v$ such that $b$ updates $v$ (before any inspection of $v$).
+\end{itemize}
+We have
+\[in[b] = use[b] \cup (out[b] - def[b]),\]
+and
+\[out[b] = in[b'] \cup in[b''] \cup \dots,\]
+where $b'$, $b''$ are the successors of $b$ in the flow graph.
+
+Theseq equations give rise to the liveness analysis algorithm. We compute in[b] and out[b] for all BBs in a control flow graph.
+\begin{itemize}
+    \item For each $b$:
+    \begin{itemize}
+        \item Set $in[b] = out[b] = \{\}$.
+    \end{itemize}
+    \item Repeat until the sets $in[b]$ and $out[b]$ stop changing.
+    \begin{itemize}
+        \item For each $b$:
+        \begin{enumerate}
+            \item Set $in[b] = use[b] \cup (out[b] - def[b])$.
+            \item Set $out[b] = in[b'] \cup in[b''] \cup \dots$, where $b'$, $b''$, $\dots$ are the successors of $b$.
+        \end{enumerate}
+    \end{itemize}
+\end{itemize}
+The live variables in block $b$ are $in[b] \cup def[b]$.
+
+We illustrate this with an example. We have 
+\begin{align*}
+    use[BB1] &= \{b, n\} & def[BB1] &= \{p, q, m\} \\
+    use[BB2] &= \{m\} & def[BB2] &= \{t1\} \\
+    use[BB3] &= \{m\} & def[BB3] &= \{t2\} \\
+    use[BB4] &= \{p, q\} & def[BB4] &= \{\} \\
+    use[BB5] &= \{m, q\} & def[BB5] &= \{\} \\
+    use[BB6] &= \{p\} & def[BB6] &= \{\}
+\end{align*}
+Next, we compute in and out.
+\begin{align*}
+    in[BB1] &= \{b, n\} \cup (out[BB1] - \{p, q, m\}) & out[BB1] &= in[BB2] \\
+    in[BB2] &= \{m\} \cup (out[BB2] - \{t1\}) & out[BB2] &= in[BB6] \cup in[BB3] \\
+    in[BB3] &= \{m\} \cup (out[BB3] - \{t2\}) & out[BB3] &= in[BB5] \cup in[BB4] \\
+    in[BB4] &= \{p, q\} \cup out[BB4] & out[BB4] &= in[BB5] \\
+    in[BB5] &= \{m, q\} \cup out[BB5] & out[BB5] &= in[BB2] \\
+    in[BB6] &= \{p\} \cup out[BB6] & out[BB6] &= \{\}
+\end{align*}
+Substituting the out variables, we get the folllowing in variables for each BB:
+\begin{align*}
+    in[BB1] &= \{b, n\} \cup (in[BB2] - \{p, q, m\}) \\
+    in[BB2] &= \{m\} \cup ((in[BB6] \cup in[BB3]) - \{t1\}) \\
+    in[BB3] &= \{m\} \cup ((in[BB5] \cup in[BB4]) - \{t2\}) \\
+    in[BB4] &= \{p, q\} \cup in[BB5] \\
+    in[BB5] &= \{m, q\} \cup in[BB2] \\
+    in[BB6] &= \{p\}.
+\end{align*}
+Starting with $in[b] = \{\}$, we try to converge to a fixed point.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        in[BB1] & in[BB2] & in[BB3] & in[BB4] & in[BB5] & in[BB6] \\
+        \hline
+        $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ & $\{\}$ \\
+        $\{b, n\}$ & $\{m\}$ & $\{m\}$ & $\{p, q\}$ & $\{m, q\}$ & $\{p\}$ \\ 
+        $\{b, n\}$ & $\{m, p\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{p\}$ \\ 
+        $\{b, n\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{p\}$ \\  
+        $\{b, n\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{m, p, q\}$ & $\{p\}$ \\ 
+        \hline
+    \end{tabular}
+\end{table}
+\noindent This process terminates after 5 iterations because the set of all variables has stopped changing.
+
+\subsection{Intermediate Representation}
+Native code generation is simplified by using a low-level intermediate representation (IR) of the source program. The IR should be able to represent the sematics of both the source code and the target machine instructions. The IR should ideally be independent of the target machine.
+
+Consider the C assignment \texttt{a[i] = v}. Assume that \texttt{a} has type \texttt{int*} and \texttt{v} has type \texttt{int}. Moreover, each \texttt{int} occupies 4 bytes. Variable \texttt{a} is located at offset $a$ within the topmost activation frame. The variable \texttt{i} is located in register r9. The variable \texttt{v} is located at the offset \texttt{v} within the topmost activation frame. Then, the address of \texttt{a[i]} is
+\[\text{base address of } \texttt{a} + 4 \times \texttt{i}.\]
+The following is the IR tree for the given code.
+% TODO: Add figure
+
+The IR trees are given below.
+% TODO: ??
+
+Now, we consider an example. Jouette is a hypothetical RISC machine. It has 32 general-purpose registers from r0 to r31. The register r0 is always zero. The following is its instruction set.
+% TODO: Add table
+
+The following are some syntax trees:
+% TODO: Them trees
+
+We translate the source code or AST into an IR tree. We cover the tree with IR instruction patterns. We emit code corresponding to these instruction patterns, performing register allocation along the way.
+
+The AST for \texttt{a[i] = v} is the following.
+\begin{lstlisting}
+LOAD    r1, a(fp)
+ADDI    r2, r0, 4
+MUL     r2, r9, r2
+ADD     r1, r1, r2
+LOAD    r2, v(fp)
+STORE   r2, 0 (r1)
+\end{lstlisting}
+% TODO: AST
+
+\begin{lstlisting}
+LOAD    r1, a(fp)
+ADDI    r2, r0, 4
+MUL     r2, r9, r2
+ADD     r1, r1, r2
+ADDI    r2, fp, v
+COPY    (r2), (r1)
+\end{lstlisting}
+% TODO: AST
+
+The code selection is the maximal much algorithm. To cover the IR tree $t$ using the patterns $ps$, we do the following:
+\begin{itemize}
+    \item find the largest pattern $p$ in $ps$ that covers the top of $t$.
+    \item find each uncovered subtree $s$ of $t$ (from left to right).
+    \begin{itemize}
+        \item cover $s$ using $ps$.
+        \item emit the instruction corresponding to $p$.
+    \end{itemize}
+\end{itemize}
+The time complexity is $O(|t|)$. The emitted code is optimal in that no two adjacent patterns could be replaced by a single pattern. Moreover, the number of instructions is minimal.
+
+
+
+    
 \end{document}
