@@ -66,6 +66,9 @@ where $i^2 = -1$. This can be viewed as a 2D plane, e.g.
             \node at (0.5, 0.9) {$r$};
             \node at (1.4, 1.65) {$z = x + iy$};
             \node at (1.4, -1.75) {$\overline{z} = x - iy$};
+
+            \draw[fill=blue] (1, 1.5) circle (2pt);
+            \draw[fill=blue] (1, -1.5) circle (2pt);
         \end{axis}
     \end{tikzpicture}
     \caption{The complex plane}
@@ -79,7 +82,9 @@ Moreover, the argument of $z$ is
 \tan^{-1}(y/x) + 2k\pi & x > 0 \\
 \tan^{-1}(y/x) + (2k+1)\pi & x < 0 
 \end{cases},\]
-for $k \in \mathbb{Z}$. It corresponds to the angle $\theta$. Moreover, every value of $\arg (z)$ is $\theta + 2k \pi$, for some $k \in \mathbb{Z}$. In Euler's notation, we denote $z = re^{i \theta}$. By de Moivre's Theorem, we know that
+for $k \in \mathbb{Z}$. It corresponds to the angle $\theta$. Moreover, every value of $\arg (z)$ is $\theta + 2k \pi$, for some $k \in \mathbb{Z}$. 
+
+In Euler's notation, we denote $z = re^{i \theta}$. By de Moivre's Theorem, we know that
 \[z^n = r^n e^{in \theta} = r^n (\cos (n \theta) + i \sin (n \theta)),\]
 and if $z \neq 0$, then its multiplicative inverse is given by
 \[z^{-1} = \frac{1}{z} \frac{\overline{z}}{\overline{z}} = \frac{x - iy}{x^2 + y^2}.\]
@@ -156,7 +161,7 @@ We have
 (-1)^{n/2} & n \text{ even} \\
 0 & n \text{ odd}
 \end{cases}.\]
-Since the subsequence $\operatorname{Re}(z_{2n}) = (-1)^n$ does not converge, the sequence $\operatorname{Re}(z_n)$ does not converge. By the result above, we find that $z_n$ does not converge.
+Since the subsequence $\operatorname{Re}(z_{2n}) = (-1)^n$ does not converge, the sequence $\operatorname{Re}(z_n)$ does not converge. By the result above, we find that $(z_n)$ does not converge.
 \end{proof}
 \noindent Next, we show that $(\frac{i}{n})$ converges to 0.
 \begin{example}
@@ -325,7 +330,9 @@ Let $\Omega \subseteq \mathbb{C}$. We say that $\Omega$ is \emph{open} if for ev
 \end{definition}
 \noindent In other words, for every $z_0 \in \Omega$, the open disc around $z_0$ of radius $\varepsilon$ satisfies
 \[\{z \in \mathbb{C} \mid |z - z_0| < \varepsilon\} \subseteq \Omega.\]
-Intuitively, this means that no point in $\Omega$ is a boundary point. That is, for any point, there is some $\varepsilon$-neighbourhood around it that is still within $\Omega$. Consider the closed unit ball in $\mathbb{C}$ centered at the origin.
+Intuitively, this means that no point in $\Omega$ is a boundary point. That is, for any point, there is some $\varepsilon$-neighbourhood around it that is still within $\Omega$. 
+
+Consider the closed unit ball in $\mathbb{C}$ centered at the origin.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -334,6 +341,7 @@ Intuitively, this means that no point in $\Omega$ is a boundary point. That is, 
             ymin=-1.5, ymax=1.5,
             xmin=-1.5, xmax=1.5,
             xlabel=$\operatorname{Re}(z)$, ylabel=$\operatorname{Im}(z)$,
+            axis equal,
         ]
             \draw[blue] (axis cs: 0, 0) circle (1);
             \fill[blue!30, opacity=0.3] (axis cs: 0, 0) circle (1);
@@ -346,7 +354,7 @@ Intuitively, this means that no point in $\Omega$ is a boundary point. That is, 
         \end{axis}
     \end{tikzpicture}
 \end{figure}
-\noindent In the figure above, the value $z_0 \in \mathbb{C}$ is not a boundary point of the set since we have an open ball around it that is fully contained in the set. However, $z_1 \in \mathbb{C}$ is a boundary point since any open ball around it will not be fully contained in the set. So, this set is not open since $z_1$ is a boundary point.
+\noindent In the figure above, the value $z_0 \in \mathbb{C}$ is not a boundary point of the set since we have an open ball around it that is fully contained in the set. However, $z_1 \in \mathbb{C}$ is a boundary point since any open ball around it will not be fully contained in the set. So, this set is not open.
 
 As we expect, open discs are open.
 \begin{proposition}
@@ -809,7 +817,7 @@ This gives us a bijection $\exp: U \to V$. The inverse function is $\log: V \to 
 
 Now, we will find all the complex logarithms for some $z \in \mathbb{C}$.
 \begin{example}
-The complex logarithms of $z = -1 + \sqrt{3}$ is given by
+The complex logarithms of $z = -1 + i\sqrt{3}$ is given by
 \[\log z = \log 2 + \frac{2\pi}{3}i + 2k\pi i,\]
 for some $k \in \mathbb{Z}$.
 \end{example}
@@ -863,7 +871,7 @@ Therefore,
 \[f'(z) = \frac{\partial u}{\partial x} + i \frac{\partial v}{\partial x} = -i \frac{\partial u}{\partial x} + \frac{\partial v}{\partial x}.\]
 Equating the real and the imaginary parts, we find that
 \[\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y}, \qquad \frac{\partial v}{\partial x} = -\frac{\partial u}{\partial y}.\]
-These are the Cauchy-Riemann equations. Geometrically, this means that a differentiable function in $\mathbb{C}$ preserves angles any two lines in the complex plane.
+These are the Cauchy-Riemann equations. Geometrically, this means that a differentiable function in $\mathbb{C}$ preserves $90^{\circ}$ angles any two lines in the complex plane\sidefootnote{Actually, all angles are preserved, and we will see that later!}.
 
 We have shown that if a complex function $f: \Omega \to \mathbb{C}$ is holomorphic, then the vector function $f: \overline{\Omega} \to \mathbb{C}$ must satisfy the Cauchy-Riemann equations. It also turns out that if a vector function $f: \overline{\Omega} \to \mathbb{C}$ satisfies the Cauchy-Riemann equations (and the partial derivatives are continuous), then the complex function $f: \Omega \to \mathbb{C}$ is holomorphic.
 
@@ -912,7 +920,7 @@ It turns out that each complex-differentiable function defines two harmonic func
 \begin{proposition}
 Let $f: \mathbb{C} \to \mathbb{C}$ be a holomorphic function. Denote
 \[f(x + iy) = u(x, y) + iv(x, y),\]
-where $u$ and $v$ have continuous $2$-nd order partial derivatives. Then, $u$ and $v$ are harmonic.
+where $u$ and $v$ have continuous 2nd order partial derivatives. Then, $u$ and $v$ are harmonic.
 \end{proposition}
 \begin{proof}
 We find that
@@ -934,8 +942,26 @@ We say that $u$ and $v$ are \emph{harmonic conjugates} of each other.
 \begin{proposition}
 Let $\Omega \subseteq \mathbb{C}$ be open and path connected, and let $u: \Omega \to \mathbb{R}$ be harmonic such that $u$ has continuous second order derivatives. Then, $u$ has a harmonic conjugate.
 \end{proposition}
-\noindent A set $V$ is path connected if for any two values $x_1, x_2 \in V$, there is a path from $x_1$ to $x_2$.
-% Illustrate
+\noindent A set $V$ is path connected if for any two values $x_1, x_2 \in V$, there is a path from $x_1$ to $x_2$. For example, the following is path-connected.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis lines=center,
+            axis equal,
+            xmax=3.5, xmin=0,
+            ymax=3.5, ymin=0,
+        ]
+
+            \draw[dotted, fill=blue!30, opacity=0.3] (2, 2) circle (1);
+            \draw[fill=blue] (1.5, 2) circle (2pt);
+            \draw[fill=blue] (2.5, 1.5) circle (2pt);
+
+            \draw[thick, dotted] (1.5, 2) edge[bend left] (2.5, 1.5);
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent As we can see, there is a path between the two points. Clearly, any two points in the set can be connected by a path. So, it is path-connected.
 
 We will now find the harmonic conjugate for a vector function.
 \begin{example}
