@@ -647,6 +647,120 @@ We will use this result to compute some integrals.
     So, $z^2 f(z)$ is bounded for large values of $|z|$. This implies that the integral converges, with
     \[\int_{-\infty}^\infty \frac{1}{(x^2 + 1)(x^2 + 4)} \ dx = \frac{\pi}{6}.\]
 \end{proof}
+\newpage
 
+\section{Conformal Maps}
+We saw previously that a holomorphic function preserves $90^{\circ}$ angles over the map. Now, we show that if $f: \Omega \to \mathbb{C}$ is holomorphic with $f' \neq 0$ on $\Omega$, then the angle between any two curves $\gamma_1, \gamma_2 \subseteq \Omega$ that intersect is preserved. We call such maps conformal.
+\begin{definition}
+    Let $\Omega \subseteq \mathbb{C}$ be open and let $\gamma_1, \gamma_2 : [0, 1] \to \Omega$ be two paths which intersect at $z = \gamma_1(t_1) = \gamma_2(t_2)$ with $t_1, t_2 \in [0, 1]$. If $\gamma_1'(t_1), \gamma_2'(t_2) \neq 0$, then 
+    \[\theta = \operatorname{arg}\left(\frac{\gamma_1'(t_1)}{\gamma_2'(t_2)}\right)\]
+    is the \emph{angle} between the tangent vectors. We say that a holomorphic function $f: \Omega \to \mathbb{C}$ is \emph{conformal} at $z$ if the tangent vectors of $f \circ \gamma_1$, $f \circ \gamma_2$ at $w = f(z)$ also have the angle $\theta$ between them.
+\end{definition}
+
+We now show that any holomorphic function with a non-zero derivative is conformal.
+\begin{proposition}
+    If $f: \Omega \to \mathbb{C}$ is differentiable at $z \in \Omega$ and $f'(z) \neq 0$, then $f$ is conformal at $z$.
+\end{proposition}
+\begin{proof}
+    By the chain rule, we find that
+    \[\frac{(f \circ \gamma_1)'(t_1)}{(f \circ \gamma_2)t_2} = \frac{f'(\gamma_1(t_1)) \gamma_1'(t_1)}{f'(\gamma_2(t_2)) \gamma_2'(t_2)} = \frac{\gamma_1'(t_1)}{\gamma_2'(t_2)}\]
+    since $f'(\gamma_2(t_1)) = f'(\gamma_2(t_2))$. So, the angle between $f \circ \gamma_1$ and $f \circ \gamma_2$ is the same as the angle between $\gamma_1$ and $\gamma_2$.
+\end{proof}
+
+Now, we will only consider path connected functions. These are sets such that for any two points $z, w \in U$, there is a path from $z$ to $w$.
+\begin{definition}
+    Let $U, V \subseteq \mathbb{C}$ be open sets that are path connected. A holomorphic function $f: U \to V$ is \emph{biholomorphic} if it is bijective and its inverse $f^{-1}: V \to U$ is holomorphic.
+\end{definition}
+A biholomorphic function is conformal.
+\begin{proposition}
+    Let $f: U \to V$ be a biholomorphic function. Then, $f$ is conformal.
+\end{proposition}
+\begin{proof}
+    We find that
+    \begin{align*}
+        1 &= (f^{-1} \circ f)' (z) \\
+        &= f^{-1} (f'(z)) (f^{-1})'(z).
+    \end{align*}
+    This implies that $f'(z) \neq 0$ for all $z \in U$. This implies that $f$ is conformal by the result above.
+\end{proof}
+
+Next, we will define conformal equivalence.
+\begin{proposition}
+    Let $U, V \subseteq \mathbb{C}$ be path-connected open sets. We say that $U$ and $V$ are \emph{conformally equivalent} if there exists a biholomorphic map $f: U \to V$.
+\end{proposition}
+\noindent This is an equivalence relation.
+% \begin{proposition}
+%     % 
+% \end{proposition}
+% \begin{proof}
+    
+% \end{proof}
+
+\begin{theorem}
+    Let $\Omega, \mathcal{O} \subseteq \mathbb{C}$ be open and path-connected. If $f: \Omega \to \mathcal{O}$ is biholomorphic, then $u: \mathcal{O} \to \mathbb{R}$ is harmonic if and only if $u \circ f: \Omega \to \mathbb{R}$ is harmonic.
+\end{theorem}
+\begin{proof}
+    \hspace*{0pt}
+    \begin{itemize}
+        \item First, assume that $u: \mathcal{O} \to \mathbb{R}$ is harmonic. Then, we can solve the Cauchy-Riemann equations to find a harmonic conjugate $v$ of $u$, since $\mathcal{O}$ is path-connected. So, there exists a holomorphic function $g: \mathcal{O} \to \mathbb{C}$ such that $g = u + iv$. By the chain rule, we know that the composition $g \circ f: \Omega \to \mathbb{C}$ is holomorphic. So, the real part
+        \[\operatorname{Re}(g \circ f) = u \circ f\]
+        is harmonic.
+    
+        \item Now, assume that $u \circ f: \Omega \to \mathbb{R}$ is harmonic. Since $\Omega$ is path connected, there exists a holomorphic function $h: \Omega \to \mathbb{C}$ such that $\operatorname{Re} h = u \circ f$. We know that $f^{-1}: \mathcal{O} \to \Omega$ is holomorphic, so their composition $h \circ f^{-1}: \mathcal{O} \to \mathbb{C}$ is holomorphic. So, the real part
+        \[\operatorname{Re}(h \circ f^{-1}) = (u \circ f) \circ f^{-1} = u\]
+        is harmonic.        
+    \end{itemize}
+\end{proof}
+
+\begin{example}
+    Let
+    \[H = \{z \in \mathbb{C} \mid \operatorname{Im}(z) > 0\}, \qquad D = \{z \in \mathbb{C} \mid |z| < 1\}.\]
+    Then, there is a conformal map $f: H \to D$ given by
+    \[f(z) = \frac{z - i}{z + i},\]
+    with inverse $g: D \to H$ given by
+    \[g(w) = \frac{i(1 + w)}{1 - w}.\]
+\end{example}
+\begin{proof}
+    Since $-i \not\in H$, the map $f$ is defined on $H$. Moreover, for all $z = x + iy \in H$,
+    \begin{align*}
+        f(z) \overline{f(z)} &= \frac{z - i}{z + i} \frac{\overline{z} + i}{\overline{z} - i} \\
+        &= \frac{z\overline{z} + i (z - \overline{z}) + 1}{z\overline{z} - i(z - \overline{z}) + 1} \\
+        &= \frac{x^2 + y^2 + 2y + 1}{x^2 + y^2 - 2y + 1} \\
+        &= \frac{x^2 + (y + 1)^2}{x^2 + (y - 1)^2}.
+    \end{align*}
+    Since $y > 0$, we find that $-2y < 2y$. So,
+    \[(y - 1)^2 < (y + 1)^2,\]
+    meaning that
+    \[|f(z)|^2 = \frac{x^2 + (y + 1)^2}{x^2 + (y - 1)^2} < 1.\]
+    This implies that $f(z) \in H$. So, $f$ is well-defined.
+
+    Moreover, since $1 \not\in D$, the map $f^{-1}$ is defined on $D$. Moreover, for all $w = x + iy \in H$,
+    \begin{align*}
+        g(w) &= \frac{i(1 + w)}{1 - w} \\
+        &= \frac{i(1 + w)}{1 - w} \frac{1 - \overline{w}}{1 - \overline{w}} \\
+        &= \frac{i(1 + w - \overline{w} - w\overline{w})}{1 - w - \overline{w} + w\overline{w}} \\
+        &= \frac{i(1 + 2yi - x^2 - y^2)}{1 - 2x + x^2 + y^2} \\
+        &= \frac{i - 2y - (x^2 + y^2)}{(x - 1)^2 + y^2}.
+    \end{align*}
+    In that case,
+    \[\operatorname{Im} (g(w)) = \frac{1 - (x^2 + y^2)}{(x- 1)^2 + y^2}.\]
+    Since $|z|^2 = x^2 + y^2 < 1$, we find that $g(w) \in H$. So, $g$ is well-defined.
+    
+    Finally, we find that for all $z \in H$,
+    \begin{align*}
+        g(f(z)) &= g \left(\frac{z - i}{z + i}\right) \\
+        &= \frac{i \left(1 + \frac{z - i}{z + i}\right)}{1 - \frac{z - i}{z + i}} \\
+        &= \frac{i(z + i + z - i)}{z + i - (z - i)} \\
+        &= \frac{i(2z)}{2i} = z.
+    \end{align*}
+    Moreover, for all $w \in D$,
+    \begin{align*}
+        f(g(w)) &= f \left(\frac{i(1 + w)}{1 - w}\right) \\
+        &= \frac{\frac{i(1 + w)}{1 - w} - i}{\frac{i(1 + w)}{1 - w} + i} \\
+        &= \frac{i(1 + w - (1 - w))}{i(1 + w + 1 - w)} \\
+        &= \frac{i(2w)}{2i} = w.
+    \end{align*}
+    This implies that $f^{-1} = g$. Since both $f$ and $f^{-1}$ are holomorphic, we find that $f$ is a conformal map.
+\end{proof}
 
 \end{document}
