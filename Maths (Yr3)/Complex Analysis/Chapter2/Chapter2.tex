@@ -83,16 +83,18 @@ for all $z \in \gamma([0, 1])$. Then,
 \[\left|\int_\gamma f(z) \ dz\right| \leq ML.\]
 \end{proposition}
 \begin{proof}
-We have
+For all $n \in \mathbb{Z}_{\geq 1}$, we have
 \begin{align*}
     \left|\sum_{r=1}^n f(\gamma(t_r)) (\gamma(a_r) - \gamma(a_{r-1}))\right| &\leq \sum_{r=1}^n |f(t_r)| |\gamma(a_r) - \gamma(a_{r-1})| \\
     &\leq M \sum_{r=1}^n |\gamma(a_r) - \gamma(a_{r-1})| \leq ML.
 \end{align*}
+By the order property of limits, this implies that
+\[\left|\int_\gamma f(z) \ dz\right| \leq ML.\]
 \end{proof}
 
 We now define a curve.
 \begin{definition}
-Let $\gamma: [0, 1] \to \Omega$ be a function. Then, we say that $\gamma$ is a \emph{curve} if $\gamma$ is continuously differentiable except for finitely many point.
+Let $\gamma: [0, 1] \to \Omega$ be a function. Then, we say that $\gamma$ is a \emph{curve} if $\gamma$ is continuously differentiable except for finitely many points.
 \end{definition}
 \noindent We will refer to curves as paths as well. 
 
@@ -124,21 +126,17 @@ i(\beta - \alpha) & n = -1 \\
 \end{cases}\]
 \end{example}
 \begin{proof}
-Let $f: \mathbb{C} \to \mathbb{C}$ be given by $f(z) = z^n$. We have $\gamma'(t) = ie^{it}$. First, if $n = -1$, then
-\begin{align*}
-    \int_\gamma z^n \ dz &= \int_\alpha^\beta f(\gamma(t)) \gamma'(t) \ dt \\
-    &= \int_\alpha^\beta (e^{it})^{-1} \cdot ie^{it} \ dt \\
-    &= \int_\alpha^\beta i \ dt \\
-    &= i(\beta - \alpha).
-\end{align*}
-Instead, if $n \neq 1$, then
+Let $f: \mathbb{C} \to \mathbb{C}$ be given by $f(z) = z^n$. We have $\gamma'(t) = ie^{it}$. 
+In that case,
 \begin{align*}
     \int_\gamma z^n \ dz &= \int_\alpha^\beta f(\gamma(t)) \gamma'(t) \ dt \\
     &= \int_\alpha^\beta (e^{it})^n \cdot ie^{it} \ dt \\
-    &= \int_\alpha^\beta ie^{it(n+1)} \ dt \\
-    &= \left[\frac{ie^{it(n+1)}}{i(n+1)}\right]_\alpha^\beta \\
-    &= \frac{e^{i\beta(n+1)} - e^{i\alpha(n+1)}}{n+1}.
+    &= \int_\alpha^\beta ie^{it(n+1)} \ dt.
 \end{align*}
+Now, if $n = -1$, then
+\[\int_\gamma z^{-1} \ dz = \int_\alpha^\beta i \ dt = i(\beta - \alpha).\]
+Instead, if $n \neq 1$, then
+\[\int_\gamma z^n \ dz = \int_\alpha^\beta ie^{it(n+1)} \ dt = \left[\frac{ie^{it(n+1)}}{i(n+1)}\right]_\alpha^\beta = \frac{e^{i\beta(n+1)} - e^{i\alpha(n+1)}}{n+1}.\]
 \end{proof}
 \noindent In particular, if $\alpha = 0$ and $\beta = 2\pi$, then
 \[\int_\gamma z^{-1} \ dz = 2\pi i,\]
@@ -183,15 +181,50 @@ We know that $\gamma(0) = 1 = \gamma(1)$. So, the result above tells us that $f$
 
 \newpage
 
-\section{Cauchy's Theorem and its applications}
+\section{Cauchy's Theorem}
 Previously, we saw that if a function has an antiderivative, then its integral over any closed path is 0. In this section, we will generalise this to holomorphic functions. Moreover, we will look at some applications of this theorem.
 
 Before generalising, we define a simple path.
 \begin{definition}
 Let $\gamma: [a, b] \to \mathbb{C}$ be a path. Then, $\gamma$ is \emph{simple} if the restriction of $\gamma$ to $(a, b)$ is injective.
 \end{definition}
-\noindent Intuitively, this means that the path doesn't cross itself except perhaps at the end. For a simple closed path, we can uniquely label any point $z \in \mathbb{C}$ to either be inside $\gamma$ or outside $\gamma$. Below is Cauchy's Theorem- the generalisation to holomorphic functions. 
-% TODO: Add diagrams?
+\noindent Intuitively, this means that the path doesn't cross itself except perhaps at the end. For a simple closed path, we can uniquely label any point $z \in \mathbb{C}$ to either be inside $\gamma$ or outside $\gamma$. For example, consider the following path below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            axis lines=center,
+            xmin=0, xmax=2.5,
+            ymin=0, ymax=2.5
+        ]
+            \draw[fill=blue!30, opacity=0.3] (1, 1) -- (2, 1)
+                -- (1, 2)
+                -- (2, 2)
+                -- (1.3, 1.2)
+                -- (1.7, 1.2)
+                -- (1.15, 1.7)
+                -- cycle;
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent This is not a simple path since it crosses over itself multiple times. However, the following path is simple.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            axis lines=center,
+            xmin=0, xmax=2.5,
+            ymin=0, ymax=2.5
+        ]
+            \draw[fill=blue!30, opacity=0.3] (1, 1) rectangle (2, 2);
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent Clearly, the path doesn't cross over itself, except at the edges.
+
+Below is Cauchy's Theorem- the generalisation to holomorphic functions. 
 \begin{theorem}[Cauchy's Theorem]
 Let $f: \Omega \to \mathbb{C}$ be a holomorphic function, and let $\gamma: [a, b] \to \Omega$ be a simple closed path such that all points inside $\gamma$ are in $\Omega$. Then,
 \[\oint_\gamma f(z) \ dz = 0.\]
@@ -204,15 +237,57 @@ Let $f: \Omega \to \mathbb{C}$ be holomorphic. Let $R = [0, 1] \times [a, b]$ be
 \begin{proof}
 Let
 \[I(R) = \left|\oint_{\gamma(R)} f(z) \ dz\right|.\]
-Define the sequence $(R_i)_{i=1}^\infty$ where $R_1$ is a quarter of $R$, and $R_i$ is a quarter of $R_{i+1}$. Since the interiors of the rectangle have area $I(R_1)$ and the boundaries of the same sized rectangle cancel each other, we find that
-\[I(R) \leq 4I(R_1) \leq 4^2 I(R_2) \leq \dots.\]
-% TODO: Must have diagram here
-So, for all $n \in \mathbb{Z}_{\geq 1}$, $I(R) \leq 4^n I(R_n)$. Moreover, we get a sequence of points $(s_n)_{n=1}^{\infty}$ and $(t_n)_{n=1}^\infty$ in $\mathbb{R}$ that lie at the intersection of the rectangles. Then, by construction, the values converge in $\mathbb{R}$ to $s$ and $t$ respectively. Set $w = \Gamma(s, t)$. Since $\Gamma$ is continuous, the sequence $w_n = \Gamma(s_n, t_n)$ converges to $w$. Moreover, $f$ is differentiable at $w \in \Gamma(R) \subseteq \Omega$, so
+Define the sequence $(R_i)_{i=1}^\infty$ where $R_1$ is a quarter of $R$, and $R_i$ is a quarter of $R_{i+1}$. We illustrate $R$ (red), $R_1$ (blue) and $R_2$ (green) in the figure below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            xmin=0, xmax=1.5,
+            ymin=0, ymax=1.5,
+            axis lines=center,
+            ytick={0.5, 1},
+            yticklabels={$a$, $b$},
+        ]
+            \draw[fill=red, opacity=0.3] (0, 0.5) -- (1, 0.5)
+                -- (1, 0.75)
+                -- (0.5, 0.75)
+                -- (0.5, 1)
+                -- (0, 1)
+                -- cycle;
+
+            \draw[fill=blue, opacity=0.3] (0.75, 0.875) -- (0.75, 0.75)
+                -- (1, 0.75)
+                -- (1, 1)
+                -- (0.5, 1)
+                -- (0.5, 0.875)
+                -- cycle;
+            \draw (0, 0.5) rectangle (1, 1);
+            \draw (0, 0.75) -- (1, 0.75); 
+            \draw (0.5, 0.5) -- (0.5, 1);
+
+            \draw (0.5, 0.875) -- (1, 0.875); 
+            \draw (0.75, 0.75) -- (0.75, 1);
+
+            \draw[fill=green, opacity=0.3] (0.75, 0.875) rectangle (0.5, 0.75);
+
+            \draw[fill] (0.5, 0.75) circle (2pt);
+            \draw[fill] (0.75, 0.875) circle (2pt);
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent Note that the choices of $R_1$ and $R_2$ is not unique.
+
+The rectangle has area $I(R_i)$ for some $i \in \mathbb{Z}_{\geq 1}$. Moreover, the opposite edges on the boundary are of the same size and have opposite orientations with respect to the path $\gamma$. In that case, we find that
+\[I(R) \leq 4I(R_1) \leq 4^2 I(R_2) \leq \dots\]
+by the integral version of the triangle inequality.
+
+So, for all $n \in \mathbb{Z}_{\geq 1}$, $I(R) \leq 4^n I(R_n)$. Moreover, we get a sequence of points $(s_n)_{n=1}^{\infty}$ and $(t_n)_{n=1}^\infty$ in $\mathbb{R}$ that lie at the intersection of the rectangles (as shown in the figure above). Then, by construction, the values converge in $\mathbb{R}$ to $s$ and $t$ respectively. Set $w = \Gamma(s, t)$. Since $\Gamma$ is continuous, the sequence $w_n = \Gamma(s_n, t_n)$ converges to $w$. Moreover, $f$ is differentiable at $w \in \Gamma(R) \subseteq \Omega$, so
 \[f(z) = f(w) + f'(w)(z - w) + q(z) (z - w)\]
 for $z \in \Omega \setminus \{w\}$, where 
 \[q(z) = \frac{f(z) - f(w)}{z - w} - f'(w).\]
 If we set $q(w) = 0$ along with the definition above, $q: \Omega \to \mathbb{C}$ is continuous. This is because
-\[\lim_{z \to w} q(z) = \lim_{z \to w} \left[\frac{f(z) - f(w)}{z - w} - f'(w)\right] = \lim_{z \to w} [f'(w) - f'(w)] = 0.\]
+\[\lim_{z \to w} q(z) = \lim_{z \to w} \left[\frac{f(z) - f(w)}{z - w} - f'(w)\right] = f'(w) - f'(w) = 0.\]
 In that case, for $n \in \mathbb{Z}_{\geq 1}$,
 \begin{align*}
     I(R_n) &= \oint_{\gamma(R_n)} f(z) \ dz \\
@@ -247,7 +322,30 @@ Let $\gamma, \delta: [a, b] \to \Omega$ are called \emph{homotopic} if there exi
     \item $\Gamma(0, t) = \gamma(t)$ and $\Gamma(1, t) = \delta(t)$ for all $t \in [a, b]$.
 \end{itemize}
 \end{definition}
-For a point $w \in \Omega$, the trivial path $\delta: [a, b] \to \Omega$ is the path where $\delta(t) = w$ for all $t \in [a, b]$. If a path $\gamma: [a, b] \to \Omega$ is homotopic to $\delta$ (for some $w \in \Omega$), then we say that it is null-homotopic.
+\noindent The following is an example of two paths $\gamma$ and $\delta$ that are homotopic.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            axis lines=center,
+            xmin=0, xmax=0.75,
+            ymin=0, ymax=0.8,
+        ]
+            \draw[blue] (0.5, 0.2) -- (0.5, 0.7);
+            \draw[red] (0.5, 0.7) arc (90:270:0.25);
+            \node at (0.55, 0.45) {$\delta$};
+            \node at (0.2, 0.45) {$\gamma$};
+
+            \draw[thick, dotted] (0.5, 0.2) to[bend left=15] (0.5, 0.7);
+            \draw[thick, dotted] (0.5, 0.2) to[bend left=45] (0.5, 0.7);
+            \draw[thick, dotted] (0.5, 0.2) to[bend left=90] (0.5, 0.7);
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent The dotted lines represent the deformations that we can take going from $\gamma$ to $\delta$. Informally, for two paths to be homotopic, it means that we can continuously deform one into another, as shown above.
+
+For a point $w \in \Omega$, the trivial path $\delta: [a, b] \to \Omega$ is the path where $\delta(t) = w$ for all $t \in [a, b]$. If a path $\gamma: [a, b] \to \Omega$ is homotopic to $\delta$ (for some $w \in \Omega$), then we say that it is \emph{null-homotopic}.
 
 Next, we show that the contour integral over closed homotopic paths is equal.
 \begin{lemma}
@@ -277,14 +375,45 @@ Let $f: \Omega \to \mathbb{C}$ be a holomorphic function, and let $\gamma: [0, 1
 for all $z \in \Omega$ that lie in $\gamma$.
 \end{proposition}
 \begin{proof}
-Let $z \in \Omega$. Since $\Omega$ is open, there exists an open disc $D$ of radius $r$ around $z$ that is contained in $\Omega$. Then, let $\varepsilon \in (0, r)$ and $\delta_\varepsilon$ be a circle of radius $\varepsilon$ with center at $z$. Then, $\gamma$ is homotopic to $\delta$ in $\Omega \setminus \{z\}$. In that case,
+Let $z \in \Omega$. Since $\Omega$ is open, there exists an open disc $D$ of radius $r$ around $z$ that is contained in $\Omega$. Then, let $\varepsilon \in (0, r)$ and $\delta_\varepsilon$ be a circle of radius $\varepsilon$ with center at $z$. This is illustrated below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            axis lines=center,
+            xmin=0, xmax=2,
+            ymin=0, ymax=2,
+            xticklabels={}, yticklabels={},
+        ]
+            \draw plot [smooth cycle] coordinates {(0.5, 1) (1, 0.5) (1.5, 0.5) (1.5, 1.5) (0.7, 1.5) (1.25, 1)};
+
+            \filldraw (1.25, 0.75) circle (1pt);
+            \node at (1.3, 0.75) {$z$};
+            \draw[red] (1.25, 0.75) circle (0.15);
+            
+            \node at (1, 0.4) {$\gamma$};
+            \node at (1, 0.7) {$\delta_\varepsilon$};
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent Clearly, $\gamma$ is homotopic to $\delta$ in $\Omega \setminus \{z\}$. In that case,
 \[\oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta.\]
-Then,
+So,
 \[\left|\oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta - \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta\right| = \left|\oint_{\delta_\varepsilon} \frac{f(\zeta) - f(z)}{\zeta - z} \ d\zeta\right| < 2\pi \varepsilon (|f'(z)| + 1).\]
 The length of the path is $2\pi \varepsilon$, since $\varepsilon$ is the radius of the circle. Moreover, since
 \[\frac{f(\zeta) - f(z)}{\zeta - z} \to f'(z),\]
-we can bound the integrand by $|f'(z)| + 1$ for some $\varepsilon \in (0, r)$. As $\varepsilon \to 0$, we find that
-\[\oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta = f(z) \oint_{\delta_\varepsilon} \frac{d\zeta}{\zeta - z} = 2\pi i f(z).\]
+we can bound the integrand by $|f'(z)| + 1$ for all $\varepsilon \leq \varepsilon'$, where $\varepsilon' \in (0, r)$. As $\varepsilon \to 0$, we find that
+\[\left|\oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta - \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta\right| \to 0.\]
+Moreover, we find that
+\begin{align*}
+    \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta &= f(z) \oint_{\delta_\varepsilon} \frac{d\zeta}{\zeta - z} \\
+    &= f(z) \int_0^{2\pi} \frac{1}{z + \varepsilon e^{it} - z} \cdot i \varepsilon e^{it} \ dt \\
+    &= f(z) \int_0^{2\pi} \frac{i \varepsilon e^{it}}{\varepsilon e^{it}} \ dt \\
+    &= 2\pi i f(z).
+\end{align*}
+In that case,
+\[\oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(\zeta)}{\zeta - z} \ d\zeta = \oint_{\delta_\varepsilon} \frac{f(z)}{\zeta - z} \ d\zeta = 2\pi i f(z).\]
 So,
 \[f(z) = \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta\]
 \end{proof}
@@ -307,8 +436,9 @@ for $z \in \Omega$. Then,
 \end{align*}
 So, the statement follows from induction.
 \end{proof}
+\noindent This theorem tells us that a function that can be differentiable once can be infinitely differentiated. This is not true in real analysis.
 
-Next, we show that holomorphic functions are locally analytic.
+Using this result, we can show that holomorphic functions are locally analytic.
 \begin{proposition}
 Let $f: \Omega \to \mathbb{C}$ be a holomorphic function. Then, for all $c \in \Omega$, there exists an open disc $D_c \subseteq \Omega$ with center $c$ such that
 \[f(z) = \sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n\]
@@ -316,16 +446,17 @@ for all $z \in D_c$.
 \end{proposition}
 \begin{proof}
 Let $c \in \Omega$. Since $\Omega$ is open, there exists an open disc $D_C$ centered at $c$ such that $D_c \subseteq \Omega$. Now, let $z \in D_C$, and let $\gamma$ be a closed circle with center $c$ containing $z$. Then,
-\[\sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n = \frac{1}{2\pi i} \sum_{n=0}^\infty \oint_\gamma \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n-1}} \ d\zeta.\]
-Moreover, the power series
-\[\sum_{n=0}^\infty \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n+1}} = \frac{f(\zeta)}{\zeta - z}\]
+\[\sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n = \frac{1}{2\pi i} \sum_{n=0}^\infty \oint_\gamma \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n-1}} \ d\zeta\]
+using Cauchy's integral formula for derivatives. Moreover, the power series
+\[\sum_{n=0}^\infty \frac{f(\zeta) (z - c)^n}{(\zeta - c)^{n+1}} = \frac{f(\zeta)}{\zeta - c} \sum_{n=0}^\infty \frac{(z - c)^n}{(\zeta - c)^n} = \frac{f(\zeta)}{\zeta - z}\]
 since
-\[\frac{|z - c|}{|\zeta - c|} < 1.\sidefootnote{The value $\zeta$ lies at the boundary of $D_c$, whereas the value $z$ lies within $D_c$.}\]
+\[\frac{|z - c|}{|\zeta - c|} < 1.\sidefootnote{The value $\zeta$ lies at the boundary of $D_c$, whereas the value $z$ lies inside $D_c$.}\]
 This implies that
 \begin{align*}
     \sum_{n=0}^\infty \frac{f^{(n)}(c)}{n!} (z - c)^n &= \frac{1}{2\pi i} \oint_\gamma \sum_{n=0}^\infty \frac{f(\zeta)}{(\zeta - c)^{n-1}} \  d\zeta \cdot (z - c)^n \\
-    &= \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = f(z).
+    &= \frac{1}{2\pi i} \oint_\gamma \frac{f(\zeta)}{\zeta - z} \ d\zeta = f(z)
 \end{align*}
+using Cauchy's formula.
 \end{proof}
 
 We can use Cauchy's integral formula to prove Lioville's Theorem.
@@ -346,7 +477,27 @@ for all $r > 0$. This implies that $f'(z) = 0$. So, $f$ is a constant.
 Let $p: \mathbb{C} \to \mathbb{C}$ be a polynomial in $\mathbb{C}$ of degree at least 1. Then, $p$ has a root in $\mathbb{C}$.
 \end{theorem}
 \begin{proof}
-Assume, for a contradiction, that $p$ has no root in $\mathbb{C}$. In that case, for all $z \in \mathbb{C}$, $p(z) \neq 0$. This implies that the reciprocal function $f: \mathbb{C} \to \mathbb{C}$ given by $f(z) = \frac{1}{p(z)}$ is holomorphic. Moreover, since $p$ is of degree at least 1, $p$ is not bounded. So, $f(z) \to 0$ as $|z| \to \infty$. So, $|f(z)| \leq K$ for all $|z| > L$. Now, define the path $\gamma:[0, 2\pi] \to \mathbb{C}$ by $\gamma(t) = z + Re^{it}$, for $R > |z| + L$. By construction, we find that $|\gamma(t)| > L$ for all $t \in [0, 2\pi]$. In that case, Cauchy's Integral Formula tells us that
+Assume, for a contradiction, that $p$ has no root in $\mathbb{C}$. In that case, for all $z \in \mathbb{C}$, $p(z) \neq 0$. This implies that the reciprocal function $f: \mathbb{C} \to \mathbb{C}$ given by $f(z) = \frac{1}{p(z)}$ is holomorphic. Moreover, since $p$ is of degree at least 1, $p$ is not bounded. So, $f(z) \to 0$ as $|z| \to \infty$. This implies that $|f(z)| \leq K$ for all $|z| > L$. Now, define the path $\gamma:[0, 2\pi] \to \mathbb{C}$ by $\gamma(t) = z + Re^{it}$, for $R > |z| + L$. This is illustrated below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            axis equal,
+            axis lines=center,
+            xmin=-2.5, xmax=5,
+            ymin=-3, ymax=5,
+            xticklabels={$-L$, $L$}, xtick={-2, 2},
+            yticklabels={$-L$, $L$}, ytick={-2, 2},
+        ]
+            \filldraw (1, 1) circle (2pt);
+            \node at (1.3, 1) {$z$};
+
+            \draw (1, 1) circle (2 + 1.41);
+            \draw[fill=blue!30, opacity=0.3] (0, 0) circle (2);
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\noindent By construction, we find that $|\gamma(t)| > L$ for all $t \in [0, 2\pi]$. In that case, Cauchy's Integral Formula tells us that
 \[|f'(z)| = \frac{1}{2\pi} \left|\oint_\gamma \frac{f(\zeta)}{(\zeta - z)^2} \ d\zeta\right| \leq \frac{1}{2\pi} \cdot 2\pi r \cdot \frac{K}{r^2} = \frac{K}{R}\]
 for all $R > |z| + L$. Therefore, $f'(z) = 0$. This means that $f$ is a constant, in which case $p$ too is a constant. This is a contradiction. So, $p$ must have a root in $\mathbb{C}$.
 \end{proof}
@@ -362,7 +513,7 @@ where $\gamma \subseteq D_c$ is a circle centered at $c$ and traced anticlockwis
 
 We can generalise this theorem when $f$ is only holomorphic on $\Omega \setminus \{c\}$ and has a singularity at $z = c$. In such a case, we say that $f$ has an isolated singularity at $c$. The corresponding disc $D_c \subseteq \Omega$ is centered at $c$ still, and $f$ is holomorphic on $D_c \setminus \{c\}$.
 \begin{theorem}[Laurent Series]
-Let $f: \Omega \setminus \{c\} \to \mathbb{C}$ be holomorphic with $\Omega \subseteq \mathbb{C}$ open and $c \in \Omega$. Then, there exists an open disc $D$ with center at $c$ and $\gamma \subseteq D$ such that
+Let $f: \Omega \setminus \{c\} \to \mathbb{C}$ be holomorphic with $\Omega \subseteq \mathbb{C}$ open and $c \in \Omega$. Then, there exists an open disc $D$ centered at $c$ and $\gamma \subseteq D$ such that
 \[f(z) = \sum_{n=-\infty}^{\infty} a_n (z - c)^n,\]
 with
 \[a_n = \frac{1}{2n\pi} \oint_\gamma \frac{f(\zeta)}{(\zeta - c)^{n+1}} \ d\zeta\]
@@ -433,9 +584,6 @@ The function $g: \mathbb{C} \setminus \{-5, 3\} \to \mathbb{C}$ given by
 \[g(z) = \frac{z + 2}{(z - 3)(z + 5)^2}\]
 has a pole of order 1 (simple pole) at $z = 3$ and a pole of order 2 (double pole) at $z = -5$.
 \end{example}
-% \begin{proof}
-
-% \end{proof}
 \noindent In this case, we have $|g(z)| \to \infty$ as $z \to 3$ or $z \to -5$. So, $|g(z)|$ is not bounded on any neighbourhood of $3$ or $-5$.
 \begin{example}
 The function $h: \mathbb{C} \setminus \{0\} \to \mathbb{C}$
@@ -463,7 +611,7 @@ Let $\Omega \subseteq \mathbb{C}$ be open, $c \in \Omega$ and $f: \Omega \setmin
     \end{align*}
     So, as $r \to 0$, $|a_n| \to 0$. So, $c$ is a removable singularity.
     
-    \item Assume now that $f$ has a pole at $c$. Then, $|f(z)| \to \infty$ as $z \to c$. Instead, assume that $|f(z)| \to \infty$ as $z \to \infty$. Then, there must be a disc $D$ centered at $c$ with $|f(z)| > 1$ for all $z \in D$. Then, the function $\frac{1}{f}: D \setminus \{c\} \to \mathbb{C}$ is bounded on $D \setminus \{c\}$. This implies that $\frac{1}{f}$ has a removable singularity at $c$. Therefore, $\frac{1}{f(z)} \to 0$ as $z \to c$. So, the Taylor series of $\frac{1}{f}$ must be of the form
+    \item Assume now that $f$ has a pole at $c$. Then, $|f(z)| \to \infty$ as $z \to c$. Instead, assume that $|f(z)| \to \infty$ as $z \to c$. Therefore, there must be a disc $D$ centered at $c$ with $|f(z)| > 1$ for all $z \in D$. So, the function $\frac{1}{f}: D \setminus \{c\} \to \mathbb{C}$ is bounded on $D \setminus \{c\}$. This implies that $\frac{1}{f}$ has a removable singularity at $c$. Therefore, $\frac{1}{f(z)} \to 0$ as $z \to c$. So, the Taylor series of $\frac{1}{f}$ must be of the form
     \[\frac{1}{f(z)} = (z - c)^N (a_N + a_{N+1} (z - c) + \dots),\]
     with $a_N \neq 0$ and $N \geq 1$. Therefore, 
     \[\frac{1}{f(z)} = (z - c)^N g(z),\]
@@ -496,11 +644,52 @@ We will generalise Cauchy's Theorem for functions with isolated singularities.
 \end{theorem}
 \begin{proof}
     The path $\gamma$ is homotopic to the path $\delta_\varepsilon$ shown below.
-    % TODO: Draw the path
-    In that case,
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                axis equal,
+                axis lines=center,
+                xmin=0, xmax=2,
+                ymin=0, ymax=1,
+            ]
+
+                \begin{scope}
+                    \clip (0, 0) rectangle (0.65, 1);
+                    \draw (0.5, 0.5) circle (0.2);
+                    \filldraw (0.5, 0.5) circle (2pt);
+                \end{scope}
+
+                \draw (0.65, 0.63) -- (0.85, 0.63);
+                \draw (0.65, 0.37) -- (0.85, 0.37);
+
+                \begin{scope}
+                    \clip (0.85, 0) rectangle (1.15, 1);
+                    \draw (1, 0.5) circle (0.2);
+                    \filldraw (1, 0.5) circle (2pt);
+                \end{scope}
+                
+                \draw (1.15, 0.63) -- (1.35, 0.63);
+                \draw (1.15, 0.37) -- (1.35, 0.37);
+
+                \begin{scope}
+                    \clip (1.35, 0) rectangle (2, 1);
+                    \draw (1.5, 0.5) circle (0.2);
+                    \filldraw (1.5, 0.5) circle (2pt);
+                \end{scope}
+
+                \draw (0.75, 0.37) -- (0.75, 0.63);
+                \node at (0.8, 0.5) {$\varepsilon$};
+
+                \draw[fill=blue!30, opacity=0.3] plot[smooth cycle] coordinates {(0.3, 0.2) (1.7, 0.2) (1.7, 0.8) (0.2, 0.8)};
+                \node at (1.7, 0.9) {$\gamma$};
+                \node at (0.6, 0.75) {$\delta_\varepsilon$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{figure}
+    \noindent As $\varepsilon \to 0$, we get circles centered at the isolated points. This implies that
     \[\oint_\gamma f(z) \ dz = \oint_{\delta_\varepsilon} f(z) \ dz \to 2\pi i \sum_{n=1}^k \operatorname{res}(f, c_n)\]
-    as $\varepsilon \to 0$.
-    % They become residues around each of the, and follows by definition at 2.4.1
+    as $\varepsilon \to 0$ by Cauhy's integral formula.
 \end{proof}
 
 Now, we will look at computing residues.
@@ -522,7 +711,9 @@ Now, we will look at computing residues.
 \end{proof}
 \noindent This allows us to compute residues quite easily. An example is given below.
 \begin{example}
-    The function $f: \mathbb{C} \setminus \{1, e^{2\pi i/3}, e^{4\pi i/3}\} \to \mathbb{C}$ has 
+    The function $f: \mathbb{C} \setminus \{1, e^{2\pi i/3}, e^{4\pi i/3}\} \to \mathbb{C}$ given by
+    \[f(z) = \frac{1}{z^3 - 1}\]
+    has 
     \[\operatorname{res}(f, c) = \frac{1}{3c^2}\]
     for $c \in \{1, e^{2\pi i/3}, e^{4\pi i/3}\}$.
 \end{example}
@@ -617,15 +808,15 @@ We will use this result to compute some integrals.
                 ymax=3, ymin=0,
                 xticklabels={$-R$, $R$},
                 xtick={-2.5, 2.5},
-                yticklabels={$R$},
-                ytick={2.5},
+                yticklabels={$i$, $2i$, $R$},
+                ytick={2/3, 4/3, 2.5},
             ]
-                \begin{scope}
-                    \clip (-2.5,0) rectangle (2.5,2.5);
-                    \draw[red] (0,0) circle (2.5);
-                    \draw[blue] (-2.5,0) -- (2.5,0);
-                \end{scope}
-
+                \draw[red, thick] (2.5, 0) arc (0:180:2.5);
+                \draw[->, thick, red] (-1.95, 1.56) -- (-2, 1.5);
+                
+                \draw[blue, thick] (-2.5, 0) -- (2.5, 0);
+                \draw[->, thick, blue] (-1, 0) -- (-0.5, 0);
+                
                 \node at (2, 2) {$\gamma^+$};
                 \node at (0.3, -0.2) {$\gamma$};
 
