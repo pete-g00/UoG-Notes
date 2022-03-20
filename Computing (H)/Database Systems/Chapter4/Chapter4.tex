@@ -12,6 +12,7 @@
 \usepackage{pgfplots}
 \usepackage{indentfirst}
 \usepackage{pgfplots}
+\usepackage{listings}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -73,6 +74,35 @@
     }
 }
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{thestyle}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red!80}\bfseries,
+    ndkeywordstyle=\color{blue!80}\bfseries,
+    identifierstyle=\color{black},
+    commentstyle=\color{codegreen},
+    stringstyle=\color{codepurple},
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    % numberstyle=\tiny\color{codegray},
+    % numbers=left,
+    % numbersep=2pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,          
+    tabsize=2
+}
+
+\lstset{style=thestyle}
+\chapterstyle{thatcher}
+\setcounter{chapter}{2}
 
 \begin{document}
 \chapter{Query Optimisation}
@@ -103,11 +133,19 @@ This method is expensive as it is linear with respect to the number of blocks. M
 
 \subsection{Executing queries}
 We will be considering queries of the form
-\[\texttt{SELECT * FROM } \textit{relation} \texttt{ WHERE } \textit{selection-conditions}\]
+\begin{lstlisting}[language=SQL]
+SELECT  * 
+FROM    <relation>
+WHERE   <selection-conditions>
+\end{lstlisting}
 
 \subsubsection{Key query}
 First, assume that selection condition is just a key attribute. An example of such a query is
-\[\texttt{SELECT * FROM EMPLOYEE WHERE SSN = `123';}\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE
+WHERE   SSN = "123"'
+\end{lstlisting}
 \begin{itemize}
     \item If we use a linear search, then the expected cost is $b/2$ block accesses, where $b$ is the number of blocks. 
     \item Instead, we can also use a binary search. If the files are sorted with respect to the key attribute, the expected cost is $\log_2 b$ block accesses. Otherwise, we need to sort the files in $2b(1 + \log_M L)$ block accesses, and then find the tuple in $\log_2 b$ block accesses.
@@ -118,47 +156,57 @@ First, assume that selection condition is just a key attribute. An example of su
 
 \subsubsection{Range query}
 Next, assume that the selection condition is a range query with respect to a key attribute. An example of such a query is
-\[\texttt{SELECT * FROM DEPARTMENT WHERE DNumber >= 5;}\]
-If we have a primary index of level $t$ over the key, then it takes $t + O(b)$, where $b$ is the number of blocks in the worst case scenario. Since a primary index relation is sorted, we first find the value \texttt{DNumber = 5} and then keep going lower.
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    DEPARTMENT
+WHERE   DNumber >= 5;
+\end{lstlisting}
+If we have a primary index of level $t$ over the key, then it takes $t + O(b)$ block accesses, where $b$ is the number of blocks in the worst case scenario. Since a primary index relation is sorted, we first find the value \texttt{DNumber = 5} and then keep going lower.
 
 \subsubsection{Non-key query}
-Now, assume that we have a clustering index over an ordering, non-key field. An example of such a query is
-\[\texttt{SELECT * FROM EMPLOYEE WHERE DNO = 5};\]
+Now, assume that the selection condition is with respect to an ordering, non-key field. An example of such a query is
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    EMPLOYEE
+WHERE   DNO = 5;
+\end{lstlisting}
 \begin{itemize}
-    \item If the clustering index is of level $t$, then the expected cost is $t + O(b/n)$, where $b$ is the number of blocks and $n$ is the number of distinct values of the attribute. This is under the assumption that the attribute is uniformly distributed over the tuples.
-    \item If the file is not sorted with respect to the attribute and we have a secondary index (B+ Tree of level $t$), then we need $t + 1 + O(b)$ block accesses, where $b$ is the number of block pointers. Here, the B+ Leaf nodes point to a block of pointers to data blocks.
+    \item If the file is sorted with respect to the attribute and we have a clustering index is of level $t$, then the expected cost is $t + O(b/n)$, where $b$ is the number of blocks and $n$ is the number of distinct values of the attribute. This is under the assumption that the attribute is uniformly distributed over the tuples.
+    \item If the file is not sorted with respect to the attribute and we have a secondary index (B+ Tree of level $t$), then we need $t + 1 + O(b)$ block accesses, where $b$ is the number of block pointers. Here, the B+ Leaf nodes point to a block of pointers which further point to data blocks.
 \end{itemize}
 
 \subsubsection{Disjunctive query}
 Now, assume we have a disjunctive select statement, i.e. we have an \texttt{OR} present in the \texttt{WHERE} clause. An example is given below.
-\begin{verbatim}
-SELECT * FROM EMPLOYEE 
+\begin{lstlisting}[language=SQL]
+SELECT * 
+FROM EMPLOYEE 
 WHERE SALARY > 10000 OR NAME LIKE `%Chris%';
-\end{verbatim}
+\end{lstlisting}
 The result will be the union of tuples satisfying the two conditions. 
 
 If an access path exists (e.g. B+, hash, primary index) index for all the attributes, we use each of them to retrieve the set of records satisfying each condition. Then, we return the union of the sets to get the final result. Otherwise, we must use a linear search.
 
 \subsubsection{Conjunctive query}
 On the other hand, assume that we have an conjunctive select statement, i.e. we have an \texttt{AND} present in the \texttt{WHERE} clause. An example is given below.
-\begin{verbatim}
-SELECT * FROM EMPLOYEE 
+\begin{lstlisting}[language=SQL]
+SELECT * 
+FROM EMPLOYEE 
 WHERE SALARY > 10000 AND NAME LIKE `%Chris%';
-\end{verbatim}
+\end{lstlisting}
 The result will be the intersection of tuples satisfying the two conditions. 
 
 If an access path exists for any of the attribute, we can use that to construct an intermediate result. Then, we can use a linear search to validate the other conditions. If none of the attributes have an attribute path, we need to use linear search. If we have multiple access paths, we should choose the right index to generate the smallest intermediate result. We predict the selectivity (the number of tuples received) for each attribute to do this. This is query optimisation.
 
 \subsection{Join queries}
 Next, assume that we have a join query. Joining is the most resource-consuming operator. We will only be considering two-way equijoin. These queries are of the following form.
-\begin{verbatim}
+\begin{lstlisting}[language=SQL]
 SELECT  *
 FROM    R, S
 WHERE   R.A = S.B;
-\end{verbatim}
+\end{lstlisting}
 There are 5 ways for processing join queries- naive join, nested-loop join, index-based nested-loop join, merge-join and hash-join.
 \subsubsection{Naive join}
-In naive join, we compute the Cartesian product of \texttt{R} and \texttt{S}, and then only filter the ones that satisfy \texttt{R.A = S.B}. This method is inefficient because we get rid of most of the tuples from the Cartesian product most of the time.
+In naive join, we compute the Cartesian product of \texttt{R} and \texttt{S}, and then filter the ones that satisfy \texttt{R.A = S.B}. This method is inefficient because we get rid of most of the tuples from the Cartesian product most of the time.
 
 \subsection{Nested loop join}
 In nested-loop join, we have a nested loop algorithm over the two relations to only generate products if they satisfy the join condition. In terms of relations, the algorithm is the following.
@@ -168,21 +216,17 @@ for each tuple r in R:
         if r.A = s.B:
             add(r, s) to the result file;
 \end{verbatim}
-We say \texttt{R} is the outer relation and \texttt{S} is the inner relation. The choice of outer and inner relation affects the computation process. Since we only have access to blocks, the algorithm is the following in terms of blocks.
+We say \texttt{R} is the outer relation and \texttt{S} is the inner relation. The choice of outer and inner relation affects the computation process- it is more efficient to have the file with fewer blocks in the outer loop. Since we only have access to blocks, the algorithm is the following in terms of blocks.
 \begin{itemize}
     \item Load a set of blocks from the outer relation \texttt{R}.
     \item Load one block from inner relation \texttt{S}.
     \item Maintain an output buffer for the matching tuples $(r, s)$ using the algorithm above.
-    % Broken?
     \item Join the \texttt{S} block with each \texttt{R} block from the chunk.
     \item For each matching tuple $r$ in \texttt{R} and $s$ in \texttt{S}, add $(r, s)$ to the output buffer.
     \item If the output buffer is full, pause and write the current join result to the disk.
-    % Broken?
     \item Load the next \texttt{S} block.
-    % Broken?
     \item After going through all the \texttt{R} blocks, go to the next set of \texttt{R} blocks.
 \end{itemize}
-It is more efficient to have the file with fewer blocks in the outer loop.
 
 \subsubsection{Index-based nested-loop join}
 If we have an index on either \texttt{A} or \texttt{B}, we can make use of it in the join. Assume that we have an index $I$ on \texttt{S.B}. Then, the algorithm becomes:
@@ -193,6 +237,7 @@ for each tuple r in R:
     for each such tuple s, add (r, s) to the result file;
 \end{verbatim} 
 This process is much faster than nested-loop join. If we have two indices, we need to choose the right one to minimise the join processing cost.
+% TODO: Which one?
 
 \subsubsection{Merge-join}
 Now, assume that both \texttt{R} and \texttt{S} are physically ordered on their joining attribute \texttt{A} and \texttt{B}. Then, we can use the following approach to join them:
@@ -203,6 +248,7 @@ Now, assume that both \texttt{R} and \texttt{S} are physically ordered on their 
 \end{itemize}
 In this case, the blocks of each file are scanned only once. But, if \texttt{R} and \texttt{S} are not physically sorted, then we need to use the external sorting method.
 
+For example, assume that we have the following blocks.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -212,7 +258,7 @@ In this case, the blocks of each file are scanned only once. But, if \texttt{R} 
         \draw[->] (4, -0.25) -- (4.5, -0.25);
     \end{tikzpicture}
 \end{figure}
-
+\noindent Since the join query is based on a foreign key and a primary key, one of these blocks must have unique entries. In this case, it is the block on the left. We always go down the non-unique set of entries more frequently (if present) than the unique set of entries. At this point, there is a match between the two values in the blocks. We move down the non-unique block.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -222,7 +268,7 @@ In this case, the blocks of each file are scanned only once. But, if \texttt{R} 
         \draw[->] (4, -0.25) -- (4.5, -0.25);
     \end{tikzpicture}
 \end{figure}
-
+\noindent There is a mismatch here- the entry \texttt{2} on the left is bigger than the entry \texttt{1}. So, we move down the right block as well.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -232,7 +278,7 @@ In this case, the blocks of each file are scanned only once. But, if \texttt{R} 
         \draw[->] (4, -0.75) -- (4.5, -0.75);
     \end{tikzpicture}
 \end{figure}
-
+\noindent There is a match in this case as well. We move down the non-unique block again.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -242,6 +288,7 @@ In this case, the blocks of each file are scanned only once. But, if \texttt{R} 
         \draw[->] (4, -0.75) -- (4.5, -0.75);
     \end{tikzpicture}
 \end{figure}
+\noindent There is another match in this case. We continue this process to join the two blocks.
 
 \subsubsection{Hash join}
 Now, if \texttt{R} and \texttt{S} are partioning into $M$ buckets with the same hash function over the join attributes \texttt{A} and \texttt{B}, then we can use a hash-join algorithm. Assuming \texttt{R} is the smallest file and fits into main memory, i.e. $M$ buckets of \texttt{R} are in memory, we start by partioning.
@@ -259,81 +306,8 @@ for each tuple s in S:
         if s.B = r.A:
             add(r, s) to the result file;
 \end{verbatim}
-
-
-
-% Next, assume we have the query
-% \begin{verbatim}
-% SELECT *
-% FROM EMPLOYEE E, DEPARTMENT D
-% WHERE D.MGR_SSN = E.SSN;
-% \end{verbatim}
-% We have a B+ Tree on \texttt{Mgr\_SSN} with level $x_D = 2$, and a B+ Tree on \texttt{SSN} with level $x_E = 4$. Moreover, the record \texttt{E} has $r_E = 6 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and the record \texttt{D} has $r_D = 50$ tuples in $n_D = 10$ blocks. 
-
-% If we use index-based nested-loop on the B+ Tree for Department relation, we are searching the B+ tree to check whether a given \texttt{E.SSN} is also \texttt{D.Mgr\_SSN}. However, since not every employee is a manager, many of these searches fail. The probability of an employee being a manager is 
-% \[50/ 6 \ 000 = 0.83\%.\]
-% So, 99.16\% of searching using the B+ Tree is meaningless. During the process, we load each employee block, and for each tuple, we traverse the B+ Tree to find whether the SSN corresponds to a manager. This requires
-% \[n_E + r_E \cdot (x_D + 1) = 2 \ 000 + 6 \ 000 \cdot (2 + 1) = 20 \ 000,\]
-% block accesses. 
-
-% Instead, if we use the B+ tree for Employee relation, then we require
-% \[n_D + r_D \cdot (x_E + 1) = 10 + 50 \cdot 5 = 260\]
-% block accesses. The probability of a manager being an employee is 100\%, so this approach is much more efficient.
-
-% Next, we consider the sort-merge-join algorithm. We require the two relations to be sorted with respect to the joining attribute. We load each block from the two relations precisely once, so this requires $n_E + n_D = 2 \ 010$ block accesses. If both files are not sorted, we need to use external sorting algorithm to sort them. The external sorting process for the Employee relation requires
-% \[2n_E + 2n_E \log_2 (n_E/n_B)\]
-% block accesses- the value $n_E/n_B$ is the number of sub-files initially sorted, where $n_B$ is the number of available blocks in memory. We might have to sort the Department relation requires
-% \[2n_D + 2n_D \log_2 (n_D/n_B)\]
-% block accesses. In total, the sort-merge-join algorithm requires
-% \[(n_E + n_D) + (2n_E + 2n_E \log_2 (n_E/n_B)) + (2n_D + 2n_D \log)2 (n_D/n_B)) = 38 \ 690\]
-% block accesses if both the relations are not sorted. 
-
-% Finally, we consider the hash-join algorithm. We assume that the smaller relation Department fits in memory (i.e. $n_B > n_D + 2$). During the hashing phase, we hash the smaller relation into buckets. During the probing phase, we load a block from the bigger relation, hash it and check within the bucket if there is a match. If we find a match, we add it to the output block. If there are no overflown buckets, this requires $n_E + n_D$ block accesses. Typically, the smaller relation doesn't fit in memory, so we require $3(n_E + n_D)$ block accesses.
-
-% Next, assume we have the query
-% \begin{verbatim}
-% SELECT *
-% FROM EMPLOYEE E, DEPARTMENT D
-% WHERE E.SSN = D.MGR_SSN;
-% \end{verbatim}
-% Moreover, we have $n_E = 100$ Employee blocks, $r_D = 100$ Department tuples in $n_D = 10$ blocks. In memory, we can store $n_B = 12$ blocks. If we have a 2-level on \texttt{E.SSN}, then we can use nested-index join algorithm as follows:
-% \begin{verbatim}
-% for each Department d:
-%     use B+ Tree (e.SSN) to find Employee d.MGR_SSN
-%     output the tuple (d, e);
-% \end{verbatim}
-% So, we require
-% \[n_D + r_D (2 + 1) = 10 + 100 \cdot 3 = 310\]
-% block accesses. If we use a hash function on \texttt{D.MGR\_SSN}, into 10 buckets, then we can use hash-join algorithm as follows:
-% \begin{verbatim}
-% load all the Departments d
-% for each Employee e:
-%     use the hash function to find the bucket for Department d
-%     find the tuple d in the bucket
-%     output the tuple (d, e);
-% \end{verbatim}
-% So, we require
-% \[n_D + n_E = 10 + 100 = 110\]
-% block accesses.
-
-% Now, assume that we have the query
-% \begin{verbatim}
-% SELECT *
-% FROM EMPLOYEE E, EMPLOYEE S
-% WHERE E.SUPER_SSN = S.SSN:
-% \end{verbatim}
-% Assume we have $r_E = 10 \ 000$ tuples in $n_E = 2 \ 000$ blocks, and a 5-level B+ Tree on \texttt{SSN} and 2-level B+ Tree on \texttt{Super\_SSN}. The index-based nested-loop join algorithm for either B+ Tree is the following.
-% \begin{verbatim}
-% for each Employee e:
-%     if e.Super_SSN IS NOT NULL: # employee is not supervisor
-%         use B+ Tree to find Employee s.SSN
-%         output the tuple (e, s);
-% \end{verbatim}
-% Assume that 10\% of the employees are supervisors. Then, using a level-$t$ B+ Tree, we need to retrieve all the employee blocks, and then $t+1$ block accesses for 90\% of the non-supervisor employees. So, if we use the 5-level B+ Tree on \texttt{SSN}, then we require
-% \[n_E + 0.9 \cdot r_E (5 + 1) = 2000 + 0.9 \cdot 10000 \cdot (5 + 1) = 56 000\]
-% block accesses. Instead, if we use the 2-level B+ Tree on \texttt{SUPER\_SSN}, then we require
-% \[n_E + 0.9 \cdot r_E (2 + 1) = 2000 + 0.9 \cdot 10000 \cdot (2 + 1) = 29 000\]
-% block accesses. The B+ Tree on \texttt{SUPER\_SSN} requires fewer block accesses since it only indexes supervisors, while the B+ Tree on \texttt{SSN} indexes both supervisors and non-supervisors.
+% TODO: Illustrate
+In this case, we need to access each block precisely once. If \texttt{R} does not fit in memory, then we need $3(b_R + b_S)$ block accesses.
 
 \newpage
 
@@ -365,23 +339,18 @@ For each attribute, we further store the following:
     \item the probability distribution function $P(A = x)$, which indicates the frequency of each value $x$ of the attribute $A$ in the relation.
 \end{itemize}
 A good approximation of the distribution is a histogram.
-% TODO: Draw histogram
-% PDF of Salary 
-% TODO: Example P(Salary \leq 30 000) \approx 0.18
 
 Selection selectivity of an attribute $A$, denoted by $\textit{sl}(A)$, is the fraction of tuples that satisfy a given condition. Therefore, its value is between 0 and 1. If $\textit{sl}(A) = 0$, then none of the records satisfy this condition with respect to the attribute $A$. On the other hand, if $\textit{sl}(A) = 1$, then all the records satisfy the condition with respect to the attribute $A$. As a probability, the selection selectivity tells us how likely is it for a tuple to satisfy the given condition with respect to an attribute.
 
 The selection cardinality $s$ is the number of tuples we expect to satisfy a query with respect to a given attribute. In other words, the selection cardinality
 \[s = \textit{sl}(A) \cdot r,\]
-where $r$ is the number of tuples present. So, the value is between 0 and $r$. We predict this value without scanning any block. For example, if $r = 1 \ 000$ and $\textit{sl}(A) = 0.3$, then the selection cardinality $s = 300$. 
+where $r$ is the number of tuples present. So, the value is between 0 and $r$. We predict this value without scanning any block. For example, if $r = 1000$ and $\textit{sl}(A) = 0.3$, then the selection cardinality $s = 300$. 
 
 To predict selectivity, we can approximate the distribution of attribute values using a histogram. This allows us to maintain an accurate selectivity estimate. However, we must maintain this histogram whenever there is a change to the attribute for any of the tuples. In this case, we assume that
 \[\textit{sl}(A = x) \approx P(A = x).\]
 That is, the selection selectivity is approximately equal to the probability that the value of the attribute is that value.
 
-Another possible approximation is that all values are uniformly distributed. This means that we do not need to maintain a histogram- all the values are of equal probability, so we barely need to store one value.
-% TODO: Add histogram
-This means that we do not need to maintain a histogram. However, we provide a less accurate prediction for the selection selectivity. In this case, we assume that
+Another possible approximation is that all values are uniformly distributed. This means that we do not need to maintain a histogram- all the values are of equal probability, so we barely need to store one value. However, we provide a less accurate prediction for the selection selectivity. In this case, we assume that
 \[\textit{sl}(A = x) \approx \frac{1}{n},\]
 where $n$ is the number of distinct values of $A$. Note that the selectivity is a constant value independent of $x$. 
 
@@ -394,7 +363,11 @@ Now, if $A$ is a non-key attribute, with $n = NDV(A)$, the number of distinct va
 is not a good estimate. This is under the assumption that all the records are uniformly distributed across the $n$ distinct values. This is not true in general.
 
 Next, consider the following range selection selectivity.
-\[\texttt{SELECT * FROM RELATION WHERE A>= x}\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    <relation>
+WHERE   A >= x;
+\end{lstlisting}
 The domain range is defined to be $\max (A) - \min (A)$, and the query range in this case is $\max(A) - x$. If $x > \max(A)$, then $\textit{sl}(A \geq x) = 0$. Otherwise,
 \[\textit{sl}(A \geq x) = \frac{\max(A) - x}{\max(A) - \min(A)},\]
 under the uniformity assumption.
@@ -404,13 +377,20 @@ In particular, if we have $r = 1000$ employees, the attribute value ranges from 
 In that case, the selection cardinality is $909$ tuples.
 
 Now, consider the conjunctive selectivity, i.e. a query satisfying 2 conditions. An example is given below.
-\[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    <relation>
+WHERE   (A = x) AND (B = y);
+\end{lstlisting}
 If the two attributes $A$ and $B$ are statistically independent, then the selectivity of the conjunction query $q$ is
 \[\textit{sl}(q) = \textit{sl}(A = x) \cdot \textit{sl}(B = y).\]
 
-
 Now, we consider a disjunctive selectivity condition, i.e. a query satisfying one of 2 conditions. An example is given below.
-\[\texttt{SELECT * FROM RELATION WHERE (A = x) AND (B = y)}\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    <relation>
+WHERE   (A = x) OR (B = y);
+\end{lstlisting}
 Then, the selection selectivity of this query is
 \[\textit{sl}(Q) = \textit{sl}(A) + \textit{sl}(B) - \textit{sl}(A) \textit{sl}(B).\]
 Here as well, we assume that the two attributes $A$ and $B$ are statistically independent.
@@ -421,7 +401,11 @@ where $s$ is the selection cardinality and $f$ is the blocking factor. The graph
 % TODO: ADD GRAPH
 
 Now, we apply this formula to refine the selection cost. Assume that we have the query
-\[\texttt{SELECT * FROM RELATION WHERE A = x;}\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    <relation>
+WHERE   A = x;
+\end{lstlisting}
 We have $b$ blocks; the blocking factor is $f$; we have $r$ records; and the number of distinct values of the attribute $A$ is $n$. We propose different approaches and the expected number of block accesses in each case.
 \begin{itemize}
     \item Assuming that the tuples are sorted with respect to the attribute $A$, we can use a binary search algorithm. 
@@ -448,28 +432,73 @@ We have $b$ blocks; the blocking factor is $f$; we have $r$ records; and the num
         This is a function of the selection selectivity.
     \end{itemize}
 
-    \item Finally, assume that we are using a hash file structure.
-    \begin{itemize}
-        \item If $A$ is a key attribute, then the expected cost is just 1 block access (if there are no overflown buckets). This is independent of the selection selectivity.
-        \item 
-    \end{itemize}
+    \item Finally, assume that we are using a hash file structure. For any attribute $A$, then the expected cost is just 1 block access (if there are no overflown buckets). This is independent of the selection selectivity.
 \end{itemize}
 
 Next, assume that we have the query
-\[\texttt{SELECT * FROM RELATION WHERE A >= x};\]
+\begin{lstlisting}[language=SQL]
+SELECT  *
+FROM    <relation>
+WHERE   A >= x;
+\end{lstlisting}
 \begin{itemize}
-    \item Assume further that we have a level $t$ primary index and $A$ is a key attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is $s = r \cdot \textit{sl}(A \geq x)$. So, we further access $\operatorname{ceil}(s/f)$ blocks. In total, we have
+    \item Assume further that we have a level $t$ primary index and $A$ is a key attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is 
+    \[s = r \cdot \textit{sl}(A \geq x).\]
+    So, we further access $\operatorname{ceil}(s/f)$ blocks since the file is sorted with respect to this attribute. In total, we have
     \[t + \operatorname{ceil}(s/f) = t + \operatorname{ceil}(r \cdot \textit{sl}(A)/f)\]
     block accesses. This is a function of the selection selectivity.
+    \item Now, assume that we have a level $t$ B+ tree and $A$ is a key, non-ordering attribute. We traverse the tree in $t$ block access, finding the data block for $A = x$. Then, the range selection cardinality is
+    \[s = r \cdot \textit{sl}(A \geq x).\]
+    Since the file is not sorted with respect to this attribute, we further access $s$ blocks in the worst case. In total, we have
+    \[t + s = t + r \cdot \textit{sl}(A)\]
+    block accesses.
 \end{itemize}
 \newpage
 
 \section{Join selectivity}
 We measure join selectivity with respect to the cartesian product of the two relations. For example, consider the following tables.
-% TODO: Add Tables
-Their Cartesian product has $5 \cdot 3 = 15$ entries. However, the following is the joined table with respect to \texttt{DNO} and \texttt{DNumber}.
-% TODO: Add Table
-There are only 5 entries here, so the join cardinality is 5. Moreover, the join selectivity is $5/15 = 1/3$.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \texttt{SSN} & \texttt{Name} & \texttt{DNO} \\
+        \hline
+        1 & Chris & D1 \\
+        2 & Stella & D1 \\
+        3 & Phil & D2 \\
+        4 & Thalia & D3 \\
+        5 & John & D3 \\
+        \hline
+    \end{tabular}
+
+    \hspace{10pt}
+
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \texttt{DNumber} & \texttt{MGR\_SSN} & \texttt{DName} \\
+        \hline
+        D1 & 1 & HR \\
+        D2 & 3 & R\&D \\
+        D3 & 4 & SPR \\
+        \hline
+    \end{tabular}
+\end{table}
+\noindent Their Cartesian product has $5 \cdot 3 = 15$ entries. However, the following is the joined table with respect to \texttt{DNO} and \texttt{DNumber}.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \texttt{SSN} & \texttt{Name} & \texttt{DNO} & \texttt{MGR\_SSN} & \texttt{DName} \\
+        \hline
+        1 & Chris & D1 & 1 & HR \\
+        2 & Stella & D1 & 1 & HR \\
+        3 & Phil & D2 & 3 & R\&D \\
+        4 & Thalia & D3 & 4 & SPR \\
+        5 & John & D3 & 4 & SPR \\
+        \hline
+    \end{tabular}
+\end{table}
+\noindent There are only 5 entries here, so the join cardinality is 5. Moreover, the join selectivity is $5/15 = 1/3$.
 
 If we are joining two relations $R$ and $S$, then the join selectivity is given by
 \[\textit{js} = |R \bowtie S|/|R \times S|.\]

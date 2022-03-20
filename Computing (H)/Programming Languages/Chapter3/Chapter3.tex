@@ -125,28 +125,28 @@ Tokens are textual symbols that influence the source program's phrase structures
 
 Separators are pieces of text that do not influence the phrase structure, such as spaces and comments. An end-of-line is a separator in most PLs, but a token in Python.
 
-The following are tokens in Calc:
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-        \node[draw, label=-90:PUT] at (0, 0) {`\texttt{put}'};
-        \node[draw, label=-90:SET] at (2, 0) {`\texttt{set}'};
+% The following are tokens in Calc:
+% \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}
+%         \node[draw, label=-90:PUT] at (0, 0) {`\texttt{put}'};
+%         \node[draw, label=-90:SET] at (2, 0) {`\texttt{set}'};
         
-        \node[draw, label=-90:ASSN] at (-2, -1.25) {`\texttt{=}'};
-        \node[draw, label=-90:PLUS] at (0, -1.25) {`\texttt{+}'};
-        \node[draw, label=-90:MINUS] at (2, -1.25) {`\texttt{-}'};
-        \node[draw, label=-90:TIMES] at (4, -1.25) {`\texttt{*}'};
+%         \node[draw, label=-90:ASSN] at (-2, -1.25) {`\texttt{=}'};
+%         \node[draw, label=-90:PLUS] at (0, -1.25) {`\texttt{+}'};
+%         \node[draw, label=-90:MINUS] at (2, -1.25) {`\texttt{-}'};
+%         \node[draw, label=-90:TIMES] at (4, -1.25) {`\texttt{*}'};
         
-        \node[draw, label=-90:LPAR] at (0, -2.5) {`\texttt{(}'};
-        \node[draw, label=-90:RPAR] at (2, -2.5) {`\texttt{)}'};
+%         \node[draw, label=-90:LPAR] at (0, -2.5) {`\texttt{(}'};
+%         \node[draw, label=-90:RPAR] at (2, -2.5) {`\texttt{)}'};
         
-        \node[draw, label=-90:NUM] at (0, -3.75) {`\dots'};
-        \node[draw, label=-90:ID] at (2, -3.75) {`\dots'};
+%         \node[draw, label=-90:NUM] at (0, -3.75) {`\dots'};
+%         \node[draw, label=-90:ID] at (2, -3.75) {`\dots'};
         
-        \node[draw, label=-90:EOL] at (0, -5) {`\texttt{\textbackslash n}'};
-        \node[draw, label=-90:EOF] at (2, -5) {`$\epsilon$'};
-    \end{tikzpicture}
-\end{figure}
+%         \node[draw, label=-90:EOL] at (0, -5) {`\texttt{\textbackslash n}'};
+%         \node[draw, label=-90:EOF] at (2, -5) {`$\epsilon$'};
+%     \end{tikzpicture}
+% \end{figure}
 \noindent Now, assume we have the following Calc program:
 \begin{lstlisting}[language=Calc]
 set x = 7
@@ -195,7 +195,7 @@ A recursive-descent parser consists of:
 \end{itemize}
 We say that these methods consume the token stream from left to right. Moreover, in recursive-descent parser, these families of methods perform the following checks/parsing.
 \begin{itemize}
-    \item The method \texttt{match(t)} checks whether the next token tag \texttt{t}. If yes, it consumes the token. Otherwise, it reports a syntactic error.
+    \item The method \texttt{match(t)} checks whether the next token is the tag \texttt{t}. If yes, it consumes the token. Otherwise, it reports a syntactic error.
     \item For each non-terminal symbol \texttt{N}, the method \texttt{N()} checks whether the next few tokens constitute a phrase of class $N$. If yes, it consumes those tokens (and returns an AST representing the parsed phrase). Otherwise, it reports a syntactic error.
 \end{itemize}
 
@@ -327,7 +327,7 @@ This only works if no token can start both $RE_1$ and $RE_2$. In particular, it 
 
 Syntactic analysis has a variety of applications.
 \begin{itemize}
-    \item It is used in compilers, as we have been used to compile Calc.
+    \item It is used in compilers, as we have been using it to compile Calc.
     \item It is used in XML applications to convert them to tree form.
     \item It is used in web browsers to parse and render HTML documents.
     \item It is used in natural language applications to parse and translate NL documents.
@@ -409,7 +409,7 @@ public class CalcRun {
 
 When compiled and run, \texttt{CalcRun} performs syntactic analysis on the source program and reports any syntactic errors. It also constructs a syntax tree. The syntax tree can be viewed with the ANTLR \texttt{TestRig} tool. However, \texttt{CalcRun} does not execute the program. The program can be executed by traversing the syntax tree, left to right, depth first, and interpreting each command.
 
-We get the syntax tree automatically by ANTLR. But, to implement an interpreter or compile, we need to walk over the tree and analyse its structure. We will use ASTs to explain, but ANTLR makes use of the full syntax tree with all the tokens. ANTLR uses the Visitor pattern to define tree walkers. It is also possible to use the Listener pattern to do so.
+We get the syntax tree automatically by ANTLR. But, to implement an interpreter or to compile the program, we need to walk over the tree and analyse its structure. We will use ASTs to explain, but ANTLR makes use of the full syntax tree with all the tokens. ANTLR uses the Visitor pattern to define tree walkers. It is also possible to use the Listener pattern to do so.
 
 It is possible to configure ANTLR so that we visit the AST. Using a different command, ANTLR generates two further files:
 \begin{itemize}
@@ -434,7 +434,7 @@ class ExecVisitor extends CalcBaseVisitor<Integer> {
         // visit the relevant expression
         int value = visit(ctx.expr());
         System.out.println(value);
-        // no true value to return
+        // no value to return
         return 0;
     }
     
@@ -680,7 +680,9 @@ proc main ():
         };
     \end{tikzpicture}
 \end{figure}
-\noindent A red value represents a \texttt{BOOL}, while a blue value represents an \texttt{INT}. We want to keep a type table for each variable. For example, the identifier \texttt{n} is known to be an integer. When we assign \texttt{n = n/2}, this is valid since the division operation returns an integer. In contextual analysis, we check whether the variable exists (scope) and whether it matches the expected type. We also check that the division operator receives 2 integers, and the condition on a while statement is of type \texttt{BOOL}.
+\noindent A red value represents a \texttt{BOOL}, while a blue value represents an \texttt{INT}.
+
+We want to keep a type table for each variable. For example, the identifier \texttt{n} is known to be an integer. When we assign \texttt{n = n/2}, this is valid since the division operation returns an integer. During contextual analysis, we check whether the variable exists (scope) and whether it matches the expected type. We also check that the division operator receives 2 integers, and the condition on a while statement is of type \texttt{BOOL}.
 
 \subsection{Scope checking}
 Scope checking is the collection and dissemination of information about declared identifiers. The contextual analyser employs a type table. This contains the type of each declared variable, e.g.
@@ -689,8 +691,8 @@ Scope checking is the collection and dissemination of information about declared
     \begin{tabular}{c|c}
         \texttt{n} & \texttt{BOOL} \\
         \hline
-        \texttt{fac} & \texttt{INT} $\to$ \texttt{INT} \\
-        \texttt{main} & \texttt{VOID} $\to$ \texttt{VOID}
+        `\texttt{fac}' & `\texttt{INT}' $\to$ `\texttt{INT}' \\
+        `\texttt{main}' & `\texttt{VOID}' $\to$ `\texttt{VOID}'
     \end{tabular}
     \caption{A type table}
 \end{table}
@@ -698,11 +700,11 @@ Scope checking is the collection and dissemination of information about declared
 Whenever an identifier is declared, we put the identifier and its type into the type table. If the identifier is already in the type table (and in the same scope), we report a scope error. Whenever an identifier is used, we check that it is in the type table, and retrieve its type. If the identifier is not in the type table, we report a scope error.
 
 We illustrate the process with Fun scope checking. In Fun, a declaration of a variable identifier is of the form
-\[\textit{type id } \texttt{=} \textit{ expr}\]
+\[\textit{type id } \text{`}\texttt{=}\text{'} \textit{ expr}\]
 So, we put the identifier value into the type table, along with its type. If the identifier already exists, we return a scope error.
 
 Similarly, a use of a variable identifier in Fun is of the form
-\[\textit{id } \texttt{=} \textit{ expr}\]
+\[\textit{id } \text{`}\texttt{=}\text{'} \textit{ expr}\]
 In this case, we lookup the identifier in the type type and retrieve its type. If the identifier does not exist, we return a scope error.
 
 \subsection{Type checking}
@@ -716,7 +718,7 @@ We walk $\textit{expr}_1$ and check that its type is \texttt{INT}, and do the sa
 \[\textit{id } \text{`}\texttt{=}\text{'} \textit{ expr}\]
 We lookup the identifier and find its type. We then walk the expression and note its value. At the end, we require that the two types are equivalent. An if-command is of the form
 \[\text{`}\texttt{if}\text{' } \textit{expr com}\]
-We first walk expression, and check that its type is \texttt{BOOL}. We then walk the command to ensure that there are no type errors within the command.
+We first walk the expression, and check that its type is \texttt{BOOL}. We then walk the command to ensure that there are no type errors within the command.
 
 \subsection{Contextual Analysis in ANTLR}
 Contextual analysis is done by walking over the syntax tree. We created a base visitor class during syntactical analysis, so we create another class that extends this class. For contextual analysis, we require also \texttt{SymbolTable}. We use the class \texttt{Type} to representation the type of a value in Fun.
@@ -793,7 +795,7 @@ Type visitSeq(FunParser.SeqContext ctx) {
 We are just visiting all the children nodes in the tree and not type checking anything at this level.
 
 A variable declaration is given by
-\[\textit{type id} \texttt{ = } \textit{expr}.\]
+\[\textit{type id} \text{ `}\texttt{=}\text{' } \textit{expr}.\]
 So, the \texttt{visitVar} method is the following.
 \begin{lstlisting}[language=java]
 Type visitVar(FunParser.VarContext ctx) {
@@ -807,7 +809,7 @@ Type visitVar(FunParser.VarContext ctx) {
 We define the identifier to be of the given type. Then, we check that the type of the expression matches the type of the identifier given.
 
 Finally, a program is given by
-\[\textit{var\_decl}^* \textit{proc\_decl}^+ \]
+\[\textit{var\_decl}^* \textit{ proc\_decl}^+ \]
 So, the \texttt{visitProg} method is the following.
 \begin{lstlisting}[language=java]
 Type visitProg(FunParser.ProgContext ctx) {
@@ -933,7 +935,7 @@ For the Fun program above, the type table of the program at line 1 is the follow
     \end{tabular}
 \end{table}
 
-To implement the type table, we can use 2 hash tables- one for global variables and one for local. This is shown below.
+To implement the type table, we can use 2 maps- one for global variables and one for local. This is shown below.
 \begin{lstlisting}[language=java]
 public class SymbolTable<A> {
     private HashMap<String, A> globals, locals;
@@ -1115,7 +1117,7 @@ The code generator will walk the AST. For each construct (e.g. an expression or 
 For each construct in the source language, we devise a code template. This specifies what object code will be selected. The code template to evaluate an expression should include code to evaluate any sub-expressions, together with any other necessary instructions. The code template to execute a command should include code to evaluate any sub-expressions amd code to execute any sub-commands, together with any other necessary instructions.
 
 We will now look at some SVM code templates for different expressions. The addition operation is of the form
-\[\textit{expr}_1 \texttt{ + } \textit{expr}_2.\]
+\[\textit{expr}_1 \text{ `}\texttt{+}\text{' } \textit{expr}_2.\]
 The code template here is: 
 \begin{itemize}
     \item we evaluate $\textit{expr}_1$; 
@@ -1140,7 +1142,7 @@ Because of the stack nature of data store, this SVM code gets implemented in the
 The code template specifies what code should be selected. The action specifies what the code generator will actually do to generate the selected code. A template can have several actions, depending on the object code language. For example, the action would be different if we were not using SVM, but the template remains the same.
 
 The assignment command is of the form
-\[\textit{ID} \texttt{ = } \textit{expr}\]
+\[\textit{ID} \text{ `}\texttt{=}\text{' } \textit{expr}\]
 The code template here is:
 \begin{itemize}
     \item we evaluate \textit{expr}
@@ -1159,7 +1161,7 @@ STOREG 3
 \end{lstlisting}
 The code generator action for the assignment command is:
 \begin{itemize}
-    \item walk \texttt{expr} and generate the code;
+    \item walk \textit{expr} and generate the code;
     \item lookup the identifier and retrieve its address $d$;
     \item emit instruction \texttt{STOREG} $d$ (if global variable), or \texttt{STOREL} $d$ (if local variable).
 \end{itemize}
@@ -1169,7 +1171,7 @@ The code generator emits instructions one by one. When an instruction is emitted
 For a backward jump, the destination address is already known when the jump instruction is emitted. On the other hand, for a forward jump, the destination address is unknown when the jump instruction is emitted. In that case, we emit an incomplete jump address (with 0 in its address field) and note its address. When the destination address becomes known later, we patch that address into the jump instruction.
 
 We can see this in the if command. An if command is of the form
-\[\texttt{if } \textit{expr } \textit{com}\]
+\[\text{`}\texttt{if}\text{' } \textit{expr } \textit{com}\]
 The code template is:
 \begin{itemize}
     \item evaluate the \textit{expr}
