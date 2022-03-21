@@ -614,8 +614,7 @@ void g (int y) {
 void h (int z) {
     const int s = 3;
     print (f (z));
-} 
-    
+}
 \end{lstlisting}
 In a statically scoped language, the value of \texttt{s} at line \texttt{4} will always be the value of the global variable \texttt{2}. In a dynamically scoped language, the value of \texttt{s} depends on where we call it- at line \texttt{8}, we have \texttt{s = 2}, but at line \texttt{13}, we have \texttt{s = 3} because of the local variable defined at line \texttt{12}. So, there are multiple applied occurences for a single identifier in a dynamically scoped language.
 
@@ -665,10 +664,9 @@ int length(IntList * list) {
 \end{lstlisting}
 \newpage
 
-\section{Abstraction}
+\section{Procedural Abstraction}
 In programming, abstraction means the distinction between what a program unit does and how it performs the task. This supports a separation of concerns between the implementor (i.e. who codes the program unit) and the application programmer (i.e. who uses it). Program units include procedures, packages, classes and generic packages.
 
-\subsection{Procedural Abstraction}
 A proper procedure (or just procedure) embodies a command to be executed. A procedure call is a command. It causes the procedure's body to be executed. It results in the update of some variables.
 
 A function procedure (or just function) embodies an expression to be evaluated. A function call is an expression. It causes the function's body to be evaluated. It results in a value (which is returned by the function).
@@ -755,8 +753,9 @@ public static void main() {
 }
 \end{lstlisting}
 At line 1, the local variable \texttt{date} is a reference to the argument object. At line 7, the argument is the object to which \texttt{today} refers. Java supports copy-in parameter mechanism for primitive types. Also, Java supports the reference parameter mechanism for object types.
+\newpage
 
-\subsection{Data abstraction}
+\section{Data abstraction}
 A package (or module) is a named group of components declared for a common purpose. These components may be types, constants, variables, procedures, inner packages, etc. The meaning of a package is the set of bindings exported by the package. These are often called the packages's application program interface (API).
 
 An example is given below in Python.
@@ -907,8 +906,9 @@ In every object-oriented PL, a variable of type $C$ may refer to an object of an
 An object-oriented PL supports single inheritance if each class has at most one superclass. Single inheritance gives rise to a hierarchy of class. Single inheritance is supported by most object-oriented PLs. 
 
 Multiple inheritance allows each class to have any number of superclasses. It is supported by C++. Multiple inheritance gives rise to both conceptual and implementation problems. For example, if both the superclasses override a method, then which version should be used within the subclass. To mitigate this, we might require the subclass to override the method, or use a priority system with the superclasses.
+\newpage
 
-\subsection{Generic abstraction}
+\section{Generic abstraction}
 A program unit is generic if it is parameterised with respect to a type on which it depends. Many reusable program units (e.g. stack, list) are naturally generic. Generic program units include: generic packages, generic classes and generic procedures.
 
 In Java, a generic class GC is parameterised with respect to a type $T$ on which it depends.
