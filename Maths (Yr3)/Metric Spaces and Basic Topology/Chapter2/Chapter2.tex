@@ -1,0 +1,943 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{indentfirst}
+\usepackage{bm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{3H MSBT}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{1}
+\pgfplotsset{compat=newest}
+
+\begin{document}
+\chapter{Basic Topology}
+\section{Topological Spaces}
+We start with the definition of a topological space.
+\begin{definition}
+Let $X$ be a set. A topology on $X$ is a collection $\mathcal{T}$ of subsets of $X$, called \emph{open sets in $X$}, such that:
+\begin{enumerate}[label=\textbf{T\arabic*}.]
+    \item $X, \varnothing \in \mathcal{T}$, i.e. $X$ and $\varnothing$ are open in $X$;
+    
+    \item If $(U_i)_{i \in I}$ is a collection of open subsets of $X$, then their union
+    \[U = \bigcup_{i \in I} U_i\]
+    is open in $X$;
+    
+    \item If $U_1, U_2, \dots, U_n$ are open sets in $X$, then their intersection
+    \[I = \bigcap_{i = 1}^n U_i\]
+    is open in $X$.\sidefootnote{Using induction, we can replace this axiom with: if $U_1$ and $U_2$ are open in $X$, then $U_1 \cap U_2$ is open in $X$.}
+\end{enumerate}
+If $\mathcal{T}$ is a topology on $X$, then we say that $(X, \mathcal{T})$ is a \emph{topological space}.
+\end{definition}
+\noindent We have seen that these axioms are obeyed in a metric space. That is, if $(X, d)$ is a metric space, then
+\[\mathcal{T}_d = \{U \subseteq X \mid U \text{ open in } X\}\]
+is a topology on $X$. So, for every metric, there is a topology. However, it is not true that every topology is a metric. Moreover, two different metrics can give rise to the same topology.\sidefootnote{For instance, we saw that two strongly equivalent metrics have the same set of open sets. In general, two metrics give rise to the same topology if and only if they are topologically equivalent.} In particular, if we take $X = \mathbb{R}^2$, then the topologies
+\[\mathcal{T}_{d_1} = \mathcal{T}_{d_2} = \mathcal{T}_{d_\infty},\]
+however these do not equal $\mathcal{T}_{D}$, where $D$ is the railroad metric.
+
+Now, let $X$ be a set. Then the \emph{discrete topology} on $X$ is the one where every subset of $X$ is open, i.e. $\mathcal{T} = \mathbb{P}(X)$. This is a topology because:
+\begin{enumerate}[label=\textbf{T\arabic*}.]
+    \item The sets $X, \varnothing \in \mathcal{T}$;
+    \item If $(U_i)_{i \in I}$ is a collection of open subsets of $X$, then their union is still a subset of $X$, and so is in $\mathcal{T}$;
+    \item If $U_1, U_2, \dots, U_n$ are open sets in $X$, then their intersection is still a subset of $X$, and so is in $\mathcal{T}$.
+\end{enumerate}
+So, for every set, there exists a topology on $X$. Moreover, this corresponds to the topology induced by the discrete metric. To prove this, we just need to show that for every $x \in X$, $\{x\}$ is open. This is true since $B_X(x, 1) = \{x\} \subseteq \{x\}$. Since arbitrary unions of open sets is open, this implies that every subset of $X$ is open.
+
+In fact, if $X$ is any finite set and $d$ a metric on $X$, then the induced topology will be the discrete topology. We know that for a metric space $X$, a finite subset $C \subseteq X$ is closed in $X$. So, if $X$ is finite, then any subset $U \subseteq X$ is finite, and the complement $X \setminus U$ is finite, and therefore closed in $X$. This implies that $X \setminus U$ is closed, meaning that $U$ is open. So, every subset of $X$ is open, i.e. the topology $\mathcal{T} = \mathbb{P}(X)$.
+
+So, for a finite set, there is precisely one topology induced by some metric- the discrete topology. On the other hand, we have seen that there are at least 3 different topologies in $\mathbb{R}^2$ induced by some metric- $\mathcal{T}_{d_2}, \mathcal{T}_D$ and $\mathcal{T}_d$, where $d$ is the discrete metric.
+
+There is another topology defined on any set- the \emph{indiscrete topology}. If $X$ is a set, then the indiscrete topology on $X$ is $\mathcal{T} = \{X, \varnothing\}$. This is because:
+\begin{enumerate}[label=\textbf{T\arabic*}.]
+    \item The sets $X, \varnothing \in \mathcal{T}$;
+    
+    \item The union of any two sets in $\mathcal{T}$ is either $X$ or $\varnothing$, meaning that arbitrary union of open sets is open.
+    
+    \item The intersection of any two sets in $\mathcal{T}$ is either $X$ or $\varnothing$, meaning that finite intersection of open sets is open.
+\end{enumerate}
+Typically, this topology does not correspond to a metric. 
+
+Now, let $X$ be a set with 2 elements. We will try to classify all the topologies on $X$. Denote $X = \{a, b\}$. We have
+\[\mathbb{P}(X) = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}.\]
+A topology $\mathcal{T}$ satisfies $\mathcal{T} \subseteq \mathbb{P}(X)$, with $\varnothing , X \in \mathbb{P}(X)$. So, we have the following 4 possibilities:
+\begin{enumerate}
+    \item $\mathcal{T}_1 = \{\varnothing, \{a, b\}\}$;
+    \item $\mathcal{T}_2 = \{\varnothing, \{a\}, \{a, b\}\}$;
+    \item $\mathcal{T}_3 = \{\varnothing, \{b\}, \{a, b\}\}$;
+    \item $\mathcal{T}_4 = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}$.
+\end{enumerate}
+We know that $\mathcal{T}_1$ is the indiscrete topology and $\mathcal{T}_4$ is the discrete topology. So, these are both topologies on $X$. Moreover, the other two sets $\mathcal{T}_2$ and $\mathcal{T}_3$ are topologies since they satisfy the other two axioms. Moreover, only $\mathcal{T}_4$ can be induced by a metric on $X$. 
+\newpage
+
+\section{Homeomorphisms}
+Although the topologies $\mathcal{T}_2$ and $\mathcal{T}_3$ are not equal, they have the same elements up to relabelling- a function that maps $a$ to $b$ will transform the topology $\mathcal{T}_2$ to $\mathcal{T}_3$. These are called homeomorphisms.
+\begin{definition}
+Let $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T}_Y)$ be topological spaces, and let $f: X \to Y$ be a function. Then, $f$ is a \emph{homeomorphism} if  it is bijection, and for all $U \subseteq X$, $U$ is open in $X$ if and only if $f(U)$ is open in $Y$. If there exists a homeomorphism $f: X \to Y$, then we say that $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T}_Y)$ are \emph{homeomorphic}. We denote $X \cong Y$.
+\end{definition}
+\noindent As we expect, homeomorphisms form an equivalence relation.
+\begin{proposition}
+Define the relation $\sim$ on the set of topological spaces by
+\[(X, \mathcal{T}_X) \sim (Y, \mathcal{T}_Y) \iff X \cong Y.\]
+Then, $\sim$ is an equivalence relation.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Let $X$ be a topological space. We claim that the identity map $Id_X: X \to X$ is a homeomorphism. For $U \subseteq X$, we find that
+    \[Id_X(U) = \{Id_X(x) \mid x \in X\} = \{x \mid x \in X\} = X.\]
+    Therefore, $U$ is open in $X$ if and only if $Id_X(U)$ is open in $X$. This implies that $X \sim X$.
+    
+    \item Let $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T})$ be topological spaces such that $X \sim Y$. In that case, there exists a homeomorphism $f: X \to Y$. Therefore, for all $U \subseteq X$, $U$ is open in $X$ if and only if $f(U)$ is open in $Y$. We show that $f^{-1}: Y \to X$ is a homeomorphism. Denote $g = f^{-1}$. 
+    \begin{itemize}
+        \item Let $V \subseteq Y$ be open in $Y$. Since $f$ is a homeomorphism, there exists a $U \subseteq X$ open in $X$ such that $V = f(U)$. Now, we show that $U = g(V)$.
+        \begin{itemize}
+            \item Let $u \in U$. We know that $f(u) \in V$. Moreover, $g(f(u)) = u \in g(V)$.
+            
+            \item Let $u \in g(V)$. By definition, there exists a $v \in V$ such that $u = g(v)$. Since $V = f(U)$, we can find a $u' \in U$ such that $f(u') = v$. In that case, $u = g(v) = g(f(u')) = u' \in U$.
+        \end{itemize}
+        Therefore, if $V$ is open in $Y$, then $g(V)$ is open in $X$.
+        
+        \item Now, let $U \subseteq X$ be open in $X$. Since $f$ is a homeomorphism, we find that $f(U) = V$ is open in $Y$. Using the same argument as above, we find that $g(V) = U$. Therefore, if $U$ is open in $Y$, then there exists an open set $V \subseteq Y$ such that $g(V) = U$.
+    \end{itemize}
+    So, $f^{-1}$ is a homeomorphism- $Y \sim X$.
+    
+    \item Let $(X, \mathcal{T}_X), (Y, \mathcal{T}_Y), (Z, \mathcal{T}_Z)$ be topological spaces such that $X \sim Y$ and $Y \sim Z$. In that case, there exist homeomorphisms $f: X \to Y$ and $g: Y \to Z$. Since $f$ and $g$ are bijections, we know that their composition $g \circ f: X \to Z$ is a bijection. Moreover, if $U \subseteq X$ is open, then $f(U)$ is open in $Y$, which implies that $g(f(U))$ is open in $Z$. Similarly, if $W \subseteq X$ is open, then there exists a $V \subseteq Y$ that is open such that $W = g(V)$. In that case, we can find a $U \subseteq X$ such that $V = f(U)$. This implies that $W = g(f(U))$. Therefore, $U$ is open in $X$ if and only if $g(f(U))$ is open in $Z$. So, $g \circ f$ is a homeomorphism- $X \sim Z$.
+\end{itemize}
+This implies that $\sim$ is an equivalence relation.
+\end{proof}
+\newpage
+
+\section{Closed Sets}
+We will now generalise the concept of closed sets in a topological space.
+\begin{definition}
+Let $(X, \mathcal{T})$ be a topological space, and let $C \subseteq X$. Then, $C$ is \emph{closed in $X$} if its complement $X \setminus C$ is open in $X$.
+\end{definition}
+\noindent We can translate the axioms of topology into an equivalent set of axioms for the closed subsets of $X$.
+\begin{proposition}
+Let $(X, \mathcal{T})$ be a topological space. Then,
+\begin{itemize}
+    \item $X, \varnothing$ are closed in $X$;
+    \item if $(C_i)_{i\in I}$ is a collection of closed sets, then the intersection
+    \[\bigcap_{i \in I} C_i\]
+    is closed in $X$; and
+    \item if $C_1, C_2, \dots, C_n$ are closed in $X$, then the union
+    \[\bigcup_{i =1}^n C_i\]
+    is closed in $X$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Since $X$ is open, its complement $X \setminus X = \varnothing$ is closed. Moreover, since $\varnothing$ is open, its complement $X \setminus \varnothing = X$ is closed.
+    
+    \item We need to show that
+    \[X \setminus \bigcap_{i \in I} C_i\]
+    is open. By De Morgan's Law, we find that
+    \[X \setminus \bigcap_{i \in I} C_i = \bigcup_{i \in I} (X \setminus C_i).\]
+    We know that $C_i$ is closed for all $i \in I$. Therefore, $X \setminus C_i$ is open for all $i \in I$. This implies that the union
+    \[\bigcup_{i \in I} (X \setminus C_i)\]
+    is open. In that case,
+    \[\bigcap_{i \in I} C_i\]
+    is closed.
+    
+    \item We need to show that
+    \[X \setminus \bigcup_{i=1}^n C_i\]
+    is open. By De Morgan's Law, we find that
+    \[X \setminus \bigcup_{i=1}^n C_i = \bigcap_{i=1}^n (X \setminus C_i).\]
+    We know that $C_i$ is closed for all $i \in \{1, 2, \dots, n\}$. Therefore, $X \setminus C_i$ is open. This implies that the intersection
+    \[\bigcap_{i=1}^n (X \setminus C_i)\]
+    is open. In that case,
+    \[\bigcup_{i=1}^n C_i\]
+    is closed.
+\end{itemize}
+\end{proof}
+\noindent These form an equivalent set of axioms for topology- we can define topology in terms of closed sets instead of open sets using the three results above. For instance, let $X$ be a set and define $C \subseteq X$ to be closed if and only if $C = X, \varnothing$ or $C$ is finite. This gives rise to a topology, called the cofinite topology on $X$. In this case, $U \subseteq X$ is open if $U = X, \varnothing$, or the complement $X \setminus U$ is finite.
+\newpage
+
+\section{Continuity in topological spaces}
+Now, we will define continuity in topological spaces.
+\begin{definition}
+Let $X, Y$ be topological spaces, and let $f: X \to Y$ be a function. Then, $f$ is \emph{continuous} if for every open set $V$ in $Y$, its preimage $f^{-1}(V)$ in $X$ is open.
+\end{definition}
+\noindent We will use this definition to show that the identity map is continuous.
+\begin{lemma}
+Let $X$ be a topological space. Then, the identity map $id_X: X \to X$ is continuous.
+\end{lemma}
+\begin{proof}
+Let $U \subseteq X$ be open in $X$. In that case, its preimage is
+\[id_X^{-1}(U) = \{id_X(u) \mid u \in U\} = \{u \mid u \in U\} = U.\]
+Therefore, $id_X^{-1}(U)$ is open in $X$. This implies that $id_X$ is continuous.
+\end{proof}
+\noindent Next, we show that the composition of two continuous functions is continuous.
+\begin{lemma}
+Let $X, Y, Z$ be topological spaces and let $f: X \to Y$ and $g: Y \to Z$ be continuous functions. Then, the composition $g \circ f: X \to Z$ is continuous.
+\end{lemma}
+\begin{proof}
+Let $U \subseteq Z$ be open in $Z$. Since $g$ is continuous, we know that the preimage $g^{-1}(U)$ is open in $Y$. Moreover, since $f$ is continuous, we know that the preimage $f^{-1}(g^{-1}(U))$ is open in $X$. In that case,
+\begin{align*}
+    (g \circ f)^{-1}(U) &= \{x \in X \mid g(f(x)) \in U\} \\
+    &= \{x \in X \mid f(x) \in g^{-1}(U)\} \\
+    &= \{x \in X \mid x \in f^{-1}(g^{-1}(U))\} = f^{-1}(g^{-1}(U)).
+\end{align*}
+This implies that the preimage $(g \circ f)^{-1}(U)$ is open in $X$. Therefore, $g \circ f$ is continuous.
+\end{proof}
+
+We will now look at some examples of continuous functions. If $X$ is some topological space and $Y$ has the indiscrete topology. Then, every function $f: X \to Y$ is continuous. Since $Y$ has the indiscrete topology, an open set in $Y$ is either $Y$ or $\varnothing$. Moreover, we have $f^{-1}(Y) = X$ and $f^{-1}(\varnothing) = \varnothing$, and both of these sets are open in $X$. 
+
+Instead, if $X$ has the indiscrete topology and $Y$ has the discrete topology, then the only continuous functions $f: X \to Y$ are the constant functions, i.e. there exists a $y \in Y$ such that $f(x) = y$ for all $x \in X$. To see this, let $c \in Y$. Since $Y$ has the discrete topology, the set $\{c\}$ is open. Since $f$ is continuous, this means that
+\[f^{-1}(\{c\}) = f^{-1}(c)\]
+is open in $X$. Since $X$ has the indiscrete topology, and then either $f^{-1}(c) = X$ or $f^{-1}(c) = \varnothing$. Since $X$ is non-empty, we have $a \in f^{-1}(f(a))$, meaning that $f^{-1}(f(a)) = X$. Therefore, for all $x \in X$, $f(x) = f(a)$- $f$ is a constant function. As we can see, continuity depends on the topology we choose.
+
+Using continuity, we can characterise homeomorphisms.
+\begin{proposition}
+Let $X, Y$ be topological spaces. Then, $f: X \to Y$ is a homeomorphism if and only if:
+\begin{itemize}
+    \item $f$ is bijective;
+    \item $f$ is continuous; and
+    \item $f^{-1}$ is continuous.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $f: X \to Y$ is a homeomorphism. By definition, this implies that $f$ is bijective.
+    \begin{itemize}
+        \item We first show that $f$ is continuous. Let $V \subseteq Y$ be open. Since $f$ is a homeomorphism, we know that there exists $U \subseteq X$ open such that $f(U) = V$. In that case,
+        \begin{align*}
+            f^{-1}(V) &= \{x \in X \mid f(x) \in V\} \\
+            &= \{x \in X \mid f(x) \in f(U)\} \\
+            &= \{x \in X \mid x \in U\} = U.
+        \end{align*}
+        So, $f^{-1}(V)$ is open in $X$.
+        
+        \item Next, we show that $g = f^{-1}: Y \to X$ is continuous. Let $U \subseteq X$ be open. Since $f$ is a homeomorphism, we know that $V = f(U)$ is open in $Y$. In that case, 
+        \begin{align*}
+            g^{-1}(U) &= \{y \in Y \mid f^{-1}(y) \in U\} \\
+            &= \{f(x) \in Y \mid f(x) \in f(U)\} \\
+            &= \{f(x) \in Y \mid f(x) \in V\} = V.
+        \end{align*}
+        So, $g^{-1}(U)$ is open in $Y$.
+    \end{itemize}
+    
+    \item Now, assume that $f$ is bijective, with $f, f^{-1}$ continuous. 
+    \begin{itemize}
+        \item First, assume that $U \subseteq X$ is open. Since $g = f^{-1}$ is continuous, we find that $g^{-1}(U)$ is open in $Y$. By the previous result, we know that $g^{-1}(U) = f(U)$. Therefore, if $U$ is open in $X$, then $f(U)$ is open in $Y$.
+        
+        \item Next, assume that $V \subseteq Y$ is open. Since $f$ is continuous, we find that $U = f^{-1}(V)$ is open in $X$. By the previous result, we know that $V = f(U)$. Therefore, if $V$ is open in $Y$, there exists a $U$ open in $X$ such that $f(U) = Y$.
+    \end{itemize}
+\end{itemize}
+Therefore, $f$ is a homeomorphism if and only if $f$ is bijective, with $f$ and $f^{-1}$ continuous.
+\end{proof}
+\noindent Note that $f$ being bijective and continuous does not imply that $f^{-1}$ is continuous.
+
+We will now look at some examples of homeomorphisms. In $\mathbb{R}$, any two open intervals are homeomorphic (under the Euclidean topology). Let $f: (a, b) \to (c, d)$ be given by 
+\[f(x) = x \cdot \frac{d - c}{b - a} + \frac{ad - bc}{a - b}.\]
+We claim that $f$ is a homeomorphism. Since $f$ is a polynomial, it is continuous. Moreover, $f$ is bijective with inverse
+\[f^{-1}(x) = x \cdot \frac{b - a}{d - c} + \frac{ad - bc}{c - b}.\]
+This function is continuous as well, since it is a polynomial. Therefore, $f$ is a homeomorphism.
+
+Moreover, any open interval in $\mathbb{R}$ is homeomorphic to $\mathbb{R}$. Let $f: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$ be given by $f(x) = \tan (x)$. We know that $f$ is continuous in $\mathbb{R}$; it is bijective; and its inverse $f^{-1} = \tan^{-1} (x)$ is continuous in $\mathbb{R}$. Therefore, $f$ is a homeomorphism. Since composition of homeomorphisms is still a homeomorphism, and we know that any two open intervals are homeomorphic, we find that any open interval in $\mathbb{R}$ is homeomorphic to $\mathbb{R}$.
+
+Next, in $\mathbb{R}^2$, the closed square $U = [-3, 3] \times [-3, 3]$ is homeomorphic to the disc 
+\[D_3^2 = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 \leqslant 9\}.\]
+Define the function $f: U \to D_3^2$ given by 
+\[f(\bm{x}) = \begin{cases}
+\frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \bm{x} & \bm{x} \neq \bm{0} \\
+\bm{0} & \bm{x} = \bm{0}.
+\end{cases}\]
+We claim that $f$ is a homeomorphism.\sidefootnote{The formula comes from the fact that the closed ball around $\bm{0}$ of radius 3 is a square with respect to the $d_\infty$ metric, and a circle with respect to the $d_2$ metric.} First, we show that $f$ is well-defined, i.e. $f(\bm{x}) \in D_3^2$ for all $\bm{x}$. First, we note that for all $c \geqslant 0$, $\bm{x}, \bm{y} \in \mathbb{R}^2$,
+\begin{align*}
+    d_2(c\bm{x}, c\bm{y}) &= \sqrt{(cx_1 - cy_1)^2 + (cx_2 - cy_2)^2} \\
+    &= \sqrt{c^2[(x_1 - y_1)^2 + (x_2 - y_2)^2]} \\
+    &= c \sqrt{(x_1  - y_1)^2 + (x_2 - y_2)^2} \\
+    &= c d_2(\bm{x}, \bm{y}).
+\end{align*}
+In that case, if $\bm{x} \neq \bm{0}$, if $d_\infty(\bm{0}, \bm{x}) \leqslant 3$, then
+\[d_2(\bm{0}, f(\bm{x})) d_2 \left(\bm{0}, \frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \bm{x} \right) = \frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} d_2(\bm{0}, \bm{x}) = d_\infty(\bm{0}, \bm{x}) \leqslant 3,\]
+meaning that $f(\bm{x}) \in D_3^2$- the function is well-defined. Moreover, $f$ is bijective, with inverse
+\[f^{-1}(\bm{x}) = \begin{cases}
+\frac{d_2(\bm{0}, \bm{x})}{d_\infty(\bm{0}, \bm{x})} \bm{x} & \bm{x} \neq \bm{0} \\
+\bm{0} & \bm{x} = \bm{0}.
+\end{cases}\]
+This is because $f^{-1}(f(\bm{0})) = \bm{0}$ and $f(f^{-1}(\bm{0})) = \bm{0}$, and if $\bm{x} \neq \bm{0}$, then
+\[f^{-1}(f(\bm{x})) = f^{-1} \left(\frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \bm{x}\right) = \frac{d_2(\bm{0}, \bm{x})}{d_\infty(\bm{0}, \bm{x})} \cdot \frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \bm{x} = \bm{x},\]
+and
+\[f(f^{-1}(\bm{x})) = f\left(\frac{d_2(\bm{0}, \bm{x})}{d_\infty(\bm{0}, \bm{x})} \bm{x}\right) = \frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \cdot \frac{d_2(\bm{0}, \bm{x})}{d_\infty(\bm{0}, \bm{x})} \bm{x} = \bm{x}.\]
+So, $f$ is bijective. Furthermore, $f$ and $f^{-1}$ are continuous- we will not prove this.
+% TODO: Prove it, idk!
+\newpage
+
+\section{Subspace Topology}
+We now define the subspace topology.
+\begin{definition}
+Let $(X, \mathcal{T})$ be a topological space, and $A \subseteq X$ be a subset. Then, the \emph{subspace topology} $(A, \mathcal{T}_A)$ is given by
+\[\mathcal{T}_A = \{U \cap A \mid U \in \mathcal{T}\}.\]
+\end{definition}
+\noindent In metric spaces, we saw that all open sets in the subspace metric are of the form $U \cap A$, for some set $U$ that is open in $X$. So, this generalises that concept. As expected, the subspace topology forms a topological space in its own right. This is because:
+\begin{enumerate}[label=\textbf{T\arabic*}.]
+    \item Since $A = X \cap A$ and $\varnothing = \varnothing \cap A$, the sets are open in $A$;
+    \item If $(U_i)_{i \in I}$ is open in $A$, then $(V_i)_{i \in I}$ is open in $X$, with $V_i = U_i \cap A$. In that case,
+    \[\left(\bigcup_{i \in I} V_i \right) \cap A = \bigcup_{i \in I} (V_i \cap A) = \bigcup_{i \in I} U_i.\]
+    So, the union is open in $A$.
+    \item If $U_1, U_2, \dots, U_n$ are open in $A$, then $V_1, V_2, \dots, V_n$ are open in $X$, with $V_i = U_i \cap A$. In that case,
+    \[\left(\bigcap_{i = 1}^n V_i \right) \cap A = \bigcap_{i=1}^n (V_i \cap A) = \bigcap_{i=1}^n U_i.\]
+    So, the intersection is open in $A$.
+\end{enumerate}
+
+We now look at an example. Let $X = \mathbb{R}$, with the Euclidean topology, and let $A = \mathbb{Z}$. Then, the subspace topology is the same as the discrete topology on $\mathbb{Z}$. To prove this, we need to show that every subset of $\mathbb{Z}$ is open in the subspace topology. Since arbitrary union of open sets is open, it suffices to show that every singleton $\{n\} \subseteq \mathbb{Z}$ is open in $\mathbb{Z}$. For $n \in \mathbb{Z}$, the set $(n - \frac{1}{2}, n + \frac{1}{2})$ is open in $\mathbb{R}$, with 
+\[(n - \tfrac{1}{2}, n + \tfrac{1}{2}) \cap \mathbb{Z} = \{n\}.\]
+Therefore, every singleton $\{n\}$ is open in $\mathbb{Z}$, meaning that every subset of $\mathbb{Z}$ is open. On the other hand, if $A = \mathbb{Q}$, then the subspace topology is not the discrete topology, e.g. $\{1\}$ is not open in $\mathbb{Q}$ since the complement $\mathbb{Q} \setminus \{1\}$ is not closed- its closure is $\mathbb{Q}$.
+
+Next, let $X = \{1, 2, 3, 4\}$ with topology
+\[\mathcal{T} = \{\varnothing, X, \{1, 2\}, \{1, 2, 3\}, \{1, 3\}, \{1\}\}.\]
+This is a topology because:
+\begin{enumerate}[label=\textbf{T\arabic*}.]
+    \item $X, \varnothing$ are open sets;
+    \item The union of two open sets is one of the following: $\varnothing, X, \{1, 2\}, \{1, 2, 3\}$, $\{1, 3\}, \{1\}$, and all of these sets are in open;
+    \item The intersection of two open sets is one of the following: $\varnothing, X, \{1, 2\}$, $\{1, 2, 3\}, \{1, 3\}, \{1\}$, and all of these sets are in open.
+\end{enumerate}
+Now, let $A = \{2, 3, 4\}$. Then, the subspace topology on $A$ is
+\[\mathcal{T}_A = \{\varnothing, A, \{2\}, \{2, 3\}, \{3\}\}.\]
+
+We now show that the inclusion map under the subspace topology is continuous.
+\begin{lemma}
+Let $X$ be a topological space, $A \subseteq X$ and let $\iota: A \to X$ be the inclusion map. Then, $\iota$ is continuous.
+\end{lemma}
+\begin{proof}
+Let $U \subseteq X$ be open in $X$. In that case,
+\begin{align*}
+    \iota^{-1}(U) &= \{x \in A \mid f(x) \in U\} \\
+    &= \{x \in A \mid x \in U\} \\
+    &= U \cap A.
+\end{align*}
+Since $A$ has the subspace topology, we know that $U \cap A$ is open in $A$. Therefore, $\iota$ is continuous.
+\end{proof}
+\noindent Using this result, we can show that the restriction of a continuous function is continuous.
+\begin{proposition}
+Let $X, Y$ be topological spaces, $A \subseteq X$ and let $f: X \to Y$ be a continuous function. Then, the restriction of $f$ to $A$, $f|_A: A \to Y$ is continuous.
+\end{proposition}
+\begin{proof}
+We note that $f|_A = f \circ \iota$, where $\iota: A \to X$ is the inclusion function. Since the two functions $f$ and $\iota$ are continuous, their composition $f|_A$ is also continuous.
+\end{proof}
+
+We can construct more topological spaces using the subspace topology. For example, 
+\[S^2 = \{(x, y, z) \in \mathbb{R}^2 \mid x^2 + y^2 + z^2 = 1\}\]
+is a topological space, with the subspace topology from $\mathbb{R}^3$. Next, let $M_2(\mathbb{R})$ be the set of $2 \times 2$ matrices with real entries. The matrix multiplication map $m: M_2(\mathbb{R}) \times M_2(\mathbb{R}) \to M_2(\mathbb{R})$ can be unravelled as a map from $\mathbb{R}^4 \times \mathbb{R}^4 = \mathbb{R}^8$ to $\mathbb{R}^4$. In this view, the matrix multiplication map is continuous since the map can be seen as a polynomial function. Moreover, the determinant function is continuous, with $\det^{-1}(\mathbb{R} \setminus \{0\}) = \operatorname{GL}_2(\mathbb{R})$. Since $\mathbb{R} \setminus \{0\}$ is open, $\operatorname{GL}_2(\mathbb{R})$ is an open subset of $M_2(\mathbb{R})$.
+\newpage
+
+\section{Connected and path-connected spaces}
+We define connected and disconnected spaces.
+\begin{definition}
+Let $X$ be a topological space. Then, $X$ is \emph{disconnected} if there exist non-empty open subsets $U, V \subseteq X$ such that $X = U \cup V$ and $U \cap V = \varnothing$. A topological space is \emph{connected} if it is not disconnected.
+\end{definition}
+\noindent This concept generalises our intuition of connectedness. For example, if $X = (-2, 1) \cup (3, 4]$ (with subspace topology from $\mathbb{R}$), then $X$ is disconnected- take $U = (-2, 1)$ and $V = (3, 4]$. Then, $U$ and $V$ are open in $X$,\sidefootnote{For instance, $U = (-2, 1) \cap X$ and $V + (3,5) \cap X$.} with $U \cap V = \varnothing$ and $X = U \cup V$. Next, let $X = \mathbb{R} \setminus \{x\}$, for some $x \in \mathbb{R}$. This is disconnected since $X = (-\infty, x) \cup (x, \infty)$ and the two sets are open and disjoint. Now, let $X = \mathbb{Q}$ with the subspace topology from $\mathbb{R}$. Then, $X$ is disconnected- we have $X = (-\infty, \sqrt{2})_{\mathbb{Q}} \cup (\sqrt{2}, \infty)_{\mathbb{Q}}$, and the two sets are open and disjoint.\sidefootnote{Instead of partitioning by $\sqrt{2}$, we can use any irrational number. This makes $\mathbb{Q}$ \emph{totally disconnected}.} 
+
+In a topological space $X$, both $X$ and $\varnothing$ are open and closed. In fact, $X$ is connected if and only if these are the only sets that are both open and closed.
+\begin{lemma}
+Let $X$ be a topological space. Then, $X$ is connected if and only if $X$ and $\varnothing$ are the only sets that are both open and closed.
+\end{lemma}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item If $X$ is disconnected, then $X = U \cup V$ for non-empty open sets $U$ and $V$. In that case, $V = X \setminus U$ and $U = X \setminus V$, meaning that both $U$ and $V$ are closed as well. 
+    
+    \item Instead, if $Z$ is a non-empty proper set that is both open and closed, then we find that $W = X \setminus Z$ is also open and closed. So, $X = Z \cup W$, where $Z \cap W = \empty$ and $Z, W$ are both open- $X$ is disconnected.
+\end{itemize}
+Therefore, $X$ is disconnected if and only if there exists a non-empty proper set $Z$ that is both open and closed. In that case, $X$ is connected if and only if $X$ and $\varnothing$ are the only sets that are both open and closed.
+\end{proof}
+\noindent For example, consider the set $X = \mathbb{Z}$. If $X$ has the subset topology from $\mathbb{R}$, then we know that the topology is the discrete topology. In that case, every subset is open (and closed). This implies that $\mathbb{Z}$ has many sets that are both open and closed. For instance, $\mathbb{Z}_{\geqslant 0}$ is a non-empty proper set that is both open and closed- $\mathbb{Z}$ is disconnected. Instead, if we consider $\mathbb{Z}$ with the cofinite topology, then $\mathbb{Z}$ is connected. Assume that $\mathbb{Z}$ is disconnected. In that case, there exist non-empty, proper, open and disjoint subsets $U$ and $V$ of $\mathbb{Z}$ such that $\mathbb{Z} = U \cup V$. Since the topology is cofinite and the subsets are non-empty, we find that $\mathbb{Z} \setminus U$ and $\mathbb{Z} \setminus V$ are finite. In that case, their intersection
+\[(\mathbb{Z} \setminus U) \cup (\mathbb{Z} \setminus V) = \mathbb{Z} \setminus (U \cap V)\]
+is finite. However, since $U \cap V = \varnothing$, we find that $\mathbb{Z} \setminus (U \cap V) = \mathbb{Z}$. This is a contradiction, so $\mathbb{Z}$ is connected under the cofinite topology.
+
+Next, let $X = \{a, b\}$. We saw that there were 4 topologies on $X$:
+\begin{enumerate}
+    \item $\mathcal{T}_1 = \{X, \varnothing\}$;
+    \item $\mathcal{T}_2 = \{X, \varnothing, \{a\}\}$;
+    \item $\mathcal{T}_3 = \{X, \varnothing, \{b\}\}$;
+    \item $\mathcal{T}_4 = \{X, \varnothing, \{a\}, \{b\}\}$.
+\end{enumerate}
+By the lemma above, $\mathcal{T}_1$ is connected- the only sets that are both open and closed are $X$ and $\varnothing$. Similarly, $\mathcal{T}_2$ and $\mathcal{T}_3$ are connected. However, $\mathcal{T}_4$ is disconnected since $X = \{a\} \cup \{b\}$. Now, let $X = \{1, 2, 3, 4\}$, with topology
+\[\mathcal{T} = \{X, \varnothing, \{1, 2\}, \{3, 4\}\}.\]
+Then, $X$ is disconnected since $\{1, 2\}$ is both open and closed. So, in a finite set, it is possible for a topology to be disconnected even if it is not the discrete topology.
+
+It is quite difficult to show that a set is connected. We illustrate this by showing that $X = (a, b)$ is connected (with the subspace topology). Assume that $X$ is disconnected. In that case, there exist non-empty open subsets $U, V \subseteq X$ such that $X = U \cup V$ and $U \cap V = \varnothing$. Since $U$ and $V$ are non-empty, we can find a $u \in U$ and a $v \in V$. Since $U$ and $V$ are disjoint, we know that $u \neq v$. In that case, either $u < v$ or $u > v$. Without loss of generality, assume that $u < v$. Define
+\[S = \{x \in U \mid x < v\}.\]
+We know that $u \in S$, so $S$ is not empty. Moreover, $v$ is an upper bound for $S$. By the completeness axiom, this implies that $l = \sup(S)$ exists. Since $a < u \leqslant l \leqslant v < b$, we have $l \in (a, b)$. So, either $l \in U$ or $l \in V$. 
+\begin{itemize}
+    \item First, assume that $l \in U$. Since $U$ is open, there exists an $\varepsilon > 0$ such that 
+    \[B_{(a, b)}(l, \varepsilon) = (l - \varepsilon, l + \varepsilon) \subseteq U.\]
+    Since $v \not\in V$ and $l \in U$, we find that $l < v$. Set $\delta = v - l > 0$. If $\delta < \varepsilon$, then we have $v \in (l, l+\varepsilon) \subseteq U$. Therefore, $\delta \geqslant \varepsilon$, meaning that $v \geqslant l + \varepsilon$. This implies that $l + \frac{\varepsilon}{2} \in U$ satisfies $l + \frac{\varepsilon}{2} < v$. However, $\sup (S) = l$, so this is a contradiction.
+    
+    \item Next, assume that $l \in V$. Since $V$ is open, there exists an $\eta > 0$ such that
+    \[B_{(a, b)}(l, \eta) = (l - \eta, l + \eta) \subseteq V.\]
+    Since $\sup (S) = l$, there exists an $x \in U$ such that $l - \eta < x \leqslant l$. In that case, $x \in U$ satisfies $x \in (l - \eta, l] \subseteq V$, meaning that $x \in U \cap V$. However, $U$ and $V$ are disjoint, so this is a contradiction.
+\end{itemize}
+Therefore, the interval $(a, b)$ is connected.
+
+Similarly, we show that $[a, b)$ is connected. Let $V_1, V_2$ of $[a, b)$ be proper open sets such that $V_1 \cup V_2 = [0, 1)$ and $V_1 \cap V_2 = \varnothing$. Since $(a, b) \subseteq [a, b)$, we find that $U_1 = V_1 \cap (a, b)$ and $U_2 = V_2 \cap (a, b)$ are open in $(a, b)$. Since $(a, b)$ is not connected, with $U_1 \cup U_2 = (a, b)$ and $U_1 \cap U_2 = \varnothing$, we find that $U_1 = \varnothing$ or $U_2 = \varnothing$. Without loss of generality, assume that $U_2 = \varnothing$, and so $U_1 = (0, 1)$. So, either $V_2 = \{a\}$ or $V_2 = \varnothing$. Since the set $\{a\}$ is not open in $[a, b)$, so we must have $V_2 = \varnothing$. This implies that $[a, b)$ is connected. In general, we can show that the intervals $[a, b)$ and $[a, b]$ are connected.
+
+
+It turns out that a continuous function keeps a connected topological space connected.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces, and let $f: X \to Y$ be a continuous function. If $X$ is connected, then the image $\operatorname{Im}(f)$ is connected (under the subspace topology).
+\end{proposition}
+\begin{proof}
+Assume that the image $\operatorname{Im}(f)$ is not connected. We show that $X$ is disconnected. We know that there exist two non-empty proper open subsets $V_1, V_2$ of $\operatorname{Im}(f)$ such that $V_1 \cup V_2 = \operatorname{Im}(f)$ and $V_1 \cap V_2 = \varnothing$. Since $V_1$ and $V_2$ are open in $\operatorname{Im}(f)$, there exist open subsets $U_1$ and $U_2$ of $Y$ such that $V_1 = U_1 \cap Y$ and $V_2 = U_2 \cap Y$. Since $f$ is continuous, the preimages $W_1 = f^{-1}(U_1)$ and $W_2 = f^{-1}(U_2)$ are open in $X$. We find that
+\begin{align*}
+    W_1 \cup W_2 &= \{x \in X \mid f(x) \in U_1\} \cup \{x \in X \mid f(x) \in U_2\} \\
+    &= \{x \in X \mid f(x) \in U_1 \cup U_2\} \\
+    &= \{x \in X \mid f(x) \in V_1 \cup V_2\} \\
+    &= \{x \in X \mid f(x) \in \operatorname{Im}(f)\} = X.
+\end{align*}
+Moreover,
+\begin{align*}
+    W_1 \cap W_2 &= \{x \in X \mid f(x) \in U_1\} \cap \{x \in X \mid f(x) \in U_2\} \\
+    &= \{x \in X \mid f(x) \in U_1 \cap U_2\} \\
+    &= \{x \in X \mid f(x) \in V_1 \cap V_2\} \\
+    &= \{x \in X \mid f(x) \in \varnothing\} = \varnothing.
+\end{align*}
+Furthermore, $W_1$ and $W_2$ are non-empty since $U_1$ and $U_2$ are non-empty. This implies that $X$ is disconnected. Taking the contrapositive, we find that if $X$ is connected, then the image $\operatorname{Im}(f)$ is connected.
+\end{proof}
+\noindent We can generalise this result to homeomorphisms.
+\begin{corollary}
+Let $X$ and $Y$ be topological spaces such that $X \cong Y$. In that case, $X$ is connected if and only if $Y$ is connected.
+\end{corollary}
+\begin{proof}
+Let $f: X \to Y$ be the homeomorphism map. Since $X$ is connected, $f(X) = Y$ is connected since $f$ is continuous. Moreover, since $f^{-1}$ is continuous, if $Y$ is connected, then $X = f^{-1}(Y)$ is connected.
+\end{proof}
+Using this result, we can show that the unit circle
+\[S^1 = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 \leqslant 1\}\]
+is connected. Let $f: [0, 2\pi) \to \mathbb{R}^2$ be given by $f(t) = (\cos (t), \sin (t))$. Since $t \mapsto \cos t$ and $t \mapsto \sin t$ are continuous in $\mathbb{R}$, $f$ is continuous in $\mathbb{R}$. Moreover, we know that $[0, 2\pi)$ is connected, so the image
+\[f([0, 2\pi)) = S^1\]
+is connected.
+
+Next, we define path-connectedness.
+\begin{definition}
+Let $X$ be a topological space, and let $x, y \in X$. We say that $x$ and $y$ are \emph{connected by a path} if there exists a continuous function $\gamma: [0, 1] \to X$ such that $\gamma(0) = x$ and $\gamma(1) = y$. We say that $X$ is \emph{path-connected} if for every $x, y \in X$, $x$ and $y$ are connected by a path.
+\end{definition}
+\noindent The function $\gamma$ parametrises the path going from $x$ to $y$. Continuity is the property that the line represents a path.
+
+We will look at some examples of path-connectedness.
+\begin{itemize}
+    \item First, we show that $\mathbb{R}^n$ is path-connected. Let $\bm{x}, \bm{y} \in \mathbb{R}^n$. Define the function $\gamma: [0, 1] \to \mathbb{R}^n$ by
+    \[\gamma(\alpha) = \alpha \bm{y} + (1 - \alpha) \bm{x}.\]
+    Since $\gamma$ is a polynomial, we know that $f$ is continuous. Moreover, $\gamma(0) = \bm{x}$ and $\gamma(1) = \bm{y}$. Therefore, $\gamma$ is a path from $\bm{x}$ to $\bm{y}$.
+    
+    \item Next, we show that the unit circle $S^1 \subseteq \mathbb{R}^2$ is path-connected. Let $\bm{x}, \bm{y} \in S^1$. We know that there exist $\theta, \phi \in [0, 2\pi)$ such that $\bm{x} = (\cos \theta, \sin \theta)$ and $\bm{y} = (\cos \phi, \sin \phi)$. So, define the function $\gamma: [0, 1] \to S^1$ by
+    \[\gamma(\alpha) = (\cos [\alpha \phi + (1 - \alpha) \theta], \sin [\alpha \phi + (1 - \alpha) \theta]).\]
+    The function $\gamma$ is well-defined, since $\cos^2 x + \sin^2 x = 1$ for all $x \in \mathbb{R}$. Moreover, $\gamma(0) = (\cos \theta, \sin \theta) = \bm{x}$ and $\gamma(1) = (\cos \phi, \sin \phi) = \bm{y}$. Since the sine, cosine functions and a composition of continuous functions is continuous, we find that $\gamma$ is continuous. Therefore, $\gamma$ is a path from $\bm{x}$ to $\bm{y}$.
+    
+    \item Next, we show that $S^1 \setminus \{\bm{z}\}$ is path-connected, where $\bm{z} \in S^1$ is fixed. Let $\psi \in [0, 2\pi)$ such that $\bm{z} = (\cos \psi, \sin \psi)$. Now, let $\bm{x}, \bm{y} \in S^1 \setminus \{\bm{z}\}$. Let $\theta, \phi \in [0, 2\pi)$ such that $\bm{x} = (\cos \theta, \sin \theta)$ and $\bm{y} = (\cos \phi, \sin \phi)$. Without loss of generality, assume that $\theta \leqslant \phi$. If $\psi < \theta$ or $\psi > \phi$, the function $\gamma$ defined above is a path in $S^1 \setminus \{\bm{z}\}$. Instead, if $\theta < \psi < \phi$, then $\phi < \theta' = 2\pi + \theta < 2\pi + \psi$. So, define the function $\gamma: [0, 1] \to S^1 \setminus \{\bm{z}\}$ by
+    \[\gamma(\alpha) = (\cos [\alpha \phi + (1 - \alpha) \theta'], \sin [\alpha \phi + (1 - \alpha) \theta']).\]
+    Then, $\gamma$ is a well-defined continuous function such that $\gamma(0) = \bm{x}$ and $\gamma(1) = \bm{y}$- it is a path from $\bm{x}$ to $\bm{y}$.
+    
+    % TODO: complex plane - finitely many points is path connected
+\end{itemize}
+
+It turns out that path connected implies connected.
+\begin{proposition}
+Let $X$ be a topological space. If $X$ is path-connected, then $X$ is connected.
+\end{proposition}
+\begin{proof}
+Assume that $X$ is not connected. In that case, there exist non-empty proper open subsets $U$ and $V$ of $X$ such that $X = U \cup V$ and $U \cap V = \varnothing$. Since $U$ and $V$ are non-empty, there exist $u \in U$ and $v \in V$. Since $X$ is path-connected, there exists a path $\gamma: [0, 1] \to X$ such that $\gamma(0) = u$ and $\gamma(1) = v$. Let $U' = \gamma^{-1}(U)$ and $V' = \gamma^{-1}(V)$. Since $\gamma$ is continuous, both $U'$ and $V'$ are open in $[0, 1]$. Since $U \cap V = \varnothing$, we find that $U' \cap V' = \varnothing$. Also, 
+\[U' \cup V' = \gamma^{-1}(U) \cup \gamma^{-1}(V) = \gamma^{-1}(X) = [0, 1].\]
+This implies that $[0, 1]$ is disconnected. This is a contradiction. Therefore, $X$ is connected.
+\end{proof}
+\noindent Note that the converse is not true- there are spaces that are connected but not path-connected. For instance, consider the topologist's sine curve
+\[X = \{(0, y) \mid y \in \mathbb{R}\} \cup \{(x, \sin (\tfrac{1}{x})) \mid x \in \mathbb{R}_{> 0}\}.\]
+We claim (without proof) that $X$ is connected, but not path-connected.
+% TODO: Prove, idk?
+
+We can use (path-)connectedness to show that topological spaces are not homeomorphic. For example, we can show that the unit circle 
+\[S^1 = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 = 1\}\]
+is not homeomorphic to any interval in $\mathbb{R}$. Assume that $S^1$ is homeomorphic to some interval in $\mathbb{R}$. Without loss of generality, let the interval be $[0, 1)$. So, there exists a homeomorphism $f: [0, 1) \to S^1$. Let $x = \frac{1}{2} \in (0, 1)$. Then, we have a homeomorphism $f: [0, 1) \setminus \{\frac{1}{2}\} \to S^1 \setminus \{f(\frac{1}{2})\}$. However, we know that $[0, 1) \setminus \{\frac{1}{2}\}$ is disconnected (i.e. $[0, 1) \setminus \{\frac{1}{2}\} = [0, \frac{1}{2}) \cup (\frac{1}{2}, 1)$, where both of these sets are open), but $S^1 \setminus \{f(\frac{1}{2})\}$ is (path-)connected. Therefore, $f$ cannot be a homeomorphism. So, $S^1$ is not homeomorphic to any interval in $\mathbb{R}$.
+
+We use a similar argument to show that $\mathbb{R}$ and $\mathbb{R}^2$ are not homeomorphic. Assume that $f: \mathbb{R} \to \mathbb{R}^2$ is a homeomorphism. In that case, the restriction $f: \mathbb{R} \setminus \{0\} \to \mathbb{R}^2 \setminus \{f(0)\}$ is also a homeomorphism. However, we know that $\mathbb{R} \setminus \{0\}$ is disconnected\sidefootnote{There is no path from $-1$ to $1$.}, but $\mathbb{R}^2 \setminus \{f(0)\}$ is connected\sidefootnote{This uses the same idea as $S^1 \setminus \{\bm{z}\}$ being connected- if the straight line goes through $f(0)$, we can take a different curve.}. Therefore, $f$ cannot be a homeomorphism. So, $\mathbb{R}$ is not homeomorphic to $\mathbb{R}^2$.
+
+We now show that path-connectedness is preserved by a continuous function.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces, and $f: X \to Y$ be continuous. If $X$ is path-connected, then the image $\operatorname{Im}(f)$ is path-connected.
+\end{proposition}
+\begin{proof}
+Let $u, v \in \operatorname{Im}(f)$. By definition, there exist $x, y \in X$ such that $f(x) = u$ and $f(y) = v$. Since $X$ is path-connected, there exists a path $\gamma: [0, 1] \to X$ with $\gamma(0) = x$ and $\gamma(1) = y$. In that case, the composition $\tau = f \circ \gamma: [0, 1] \to \operatorname{Im}(f)$ is a function that satisfies $\tau(0) = f(x) = u$ and $\tau(1) = f(y) = v$. Since $f$ and $\gamma$ are continuous, we find that their composition $\tau$ is also continuous. So, $\tau$ is a path from $u$ to $v$. This implies that $\operatorname{Im}(f)$ is path-connected.
+\end{proof}
+
+We will use this result to show that the ellipse
+\[E = \{(x, y) \in \mathbb{R}^2 \mid (\tfrac{x}{2})^2 + y^2 = 1\}\]
+is path-connected. Define the function $f: [0, 2\pi) \to \mathbb{R}^2$ by $f(t) = (2 \cos t, \sin t)$. This is a continuous function. Moreover, since $[0, 2\pi)$ is path-connected, we find that the image $\operatorname{Im}(f) = E$ is path-connected.
+\newpage
+
+\section{Hausdorff Spaces}
+We will use Hausdorff spaces to understand sequences in topological spaces. A sequence in a topological space is the same as a sequence in a metric space- a collection $(x_n)_{n=1}^{\infty}$ of points. Next, we define limits.
+\begin{definition}
+Let $X$ be a topological space, let $a \in X$ and let $(x_n)_{n=1}^{\infty}$ be a sequence in $X$. Then, $x_n \to a$ if for every open set $U$ in $X$ containing $a$, there exists an $N \in \mathbb{Z}_{\geqslant 0}$ such that for $n \geqslant N$, $x_n \in U$.
+\end{definition}
+We have replaced the concept of an $\varepsilon$-neighbourhood with open balls. This is a generalisation of metric spaces. In fact, a sequence in metric spaces converges to the same value. Take a sequence $(x_n)_{n=1}^{\infty}$ in some metric space $(X, d)$ with $x_n \to a$. Let $U \subseteq X$ be an open set containing $a$. Since $U$ is open, there exists an $\varepsilon > 0$ such that $B_X(a, \varepsilon) \subseteq U$. Moreover, since $x_n \to a$, there exists an $N \in \mathbb{Z}_{\geqslant 1}$, for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N$, then $d(x_n, a) < \varepsilon$. In that case, $x_n \in B_X(a, \varepsilon)$, meaning that $x_n \in U$. Therefore, $x_n \to a$ in the induced topological space as well.
+
+We will illustrate convergence with an example. Let $X = \{0, 1\}$ with the indiscrete topology $\mathcal{T} = \{X, \varnothing\}$. Consider the sequence $(x_n)_{n=1}^{\infty}$ in $X$ by
+\[x_n = \begin{cases}
+0 & n \text{ is even} \\
+1 & n \text{ is odd}.
+\end{cases}\]
+Then, $(x_n)$ is a convergent sequence, with $x_n \to 0$. This is because the only open set containing $0$ is $X$, and for all $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant 1$, then $x_n \in X$. In fact, $x_n \to 1$ as well, for the same reason. Therefore, limits are not unique in topological spaces.
+
+We define Hausdorff spaces to be those topological spaces where limits are unique.
+\begin{definition}
+Let $X$ be a topological space. Then, $X$ is \emph{Hausdorff} if for every $x, y$ in $X$ with $x \neq y$, there exist open sets $U$ and $V$ of $X$ such that $x \in U$, $y \in V$ and $U \cap V = \varnothing$.
+\end{definition}
+\noindent This ensures uniqueness of limits because for any two values, we can find disjoint open sets around them, so any sequence that converges to one of them has to eventually `stop' being the other value.
+\begin{proposition}
+Let $X$ be a Hausdorff topological space, let $(x_n)_{n=1}^{\infty}$ be a sequence in $X$, and let $x, y \in X$ such that $x_n \to x$ and $x_n \to y$. Then, $x = y$.
+\end{proposition}
+\begin{proof}
+Let $U$ and $V$ be open sets in $X$ such that $x \in U$ and $y \in V$. Since $x_n \to x$, and $U$ is open, we can find an $N_1 \in \mathbb{Z}_{\geqslant 1}$ such that for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N_1$, then $x_n \in U$. Similarly, since $x_n \to y$, and $V$ is open, we can find an $N_2 \in \mathbb{Z}_{\geqslant 1}$ such that for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N_2$, then $x_n \in V$. Now, let $N = \max(N_1, N_2)$. We find that $x_N \in U \cap V$. Since $X$ is Hausdorff, this implies that $x = y$.
+\end{proof}
+
+\noindent Moreover, if $(X, d)$ is a metric space, then $X$ is Hausdorff. To see this, let $x, y \in X$ with $x \neq y$. In that case, we know that $\varepsilon = d(x, y) > 0$. So, define $U = B_X(x, \frac{\varepsilon}{2})$ and $V = B_X(y, \frac{\varepsilon}{2})$. We know that $x \in U$ and $y \in V$. Moreover, if $z \in U \cap V$, then $d(x, z) < \frac{\varepsilon}{2}$ and $d(y, z) < \frac{\varepsilon}{2}$. In that case,
+\[d(x, y) \leqslant d(x, z) + d(z, y) < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.\]
+This is a contradiction, meaning that $U \cap V = \varnothing$. So, $X$ is Hausdorff.
+
+Also, if $X$ is a set with $|X| \geqslant 2$, then the indiscrete topology on $X$ is not Hausdorff. Since $|X| \geqslant 2$, we can find $x, y \in X$ with $x \neq y$. In the indiscrete topology, the only open sets containing $x$ is $X$, which also contains $y$. Therefore, there does not exist open sets $U$ and $V$ of $X$ such that $x \in U, y \in V$ and $U \cap V = \varnothing$. Therefore, $X$ is not Hausdorff.
+
+Now, we look at the 4 topologies on $X = \{a, b\}$ again:
+\begin{enumerate}
+    \item $\mathcal{T}_1 = \{\varnothing, \{a, b\}\}$;
+    \item $\mathcal{T}_2 = \{\varnothing, \{a\}, \{a, b\}\}$;
+    \item $\mathcal{T}_3 = \{\varnothing, \{b\}, \{a, b\}\}$;
+    \item $\mathcal{T}_4 = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}$.
+\end{enumerate}
+Then, only $\mathcal{T}_4$ is Hausdorff. The example above shows that $\mathcal{T}_1$ is not Hausdorff. In $\mathcal{T}_2$, the only open set containing $b$ is $X$, which also contains $a$. So, $\mathcal{T}_2$ is not Hausdorff. Similarly, $\mathcal{T}_3$ is not Hausdorff. Moreover, $\mathcal{T}_4$ is Hausdorff since $\{a\}$ and $\{b\}$ are open.
+
+Next, we look at some topologies on $\mathbb{R}$ and see whether they are Hausdorff. Under the Euclidean topology, $\mathbb{R}$ is Hausdorff since this is induced by a metric. On the other hand, under the cofinite topology, $\mathbb{R}$ is not Hausdorff. In fact, for two open non-empty sets $U, V$, the intersection $U \cap V$ is not empty. In the cofinite topology, an open set $U$ is either $\varnothing, X$ or $X \setminus U$ is finite. So, we know that $\mathbb{R} \setminus U$ and $\mathbb{R} \setminus V$ are finite. Since $\mathbb{R}$ is infinite, there exists an $x \in \mathbb{R}$ such that $x \not\in \mathbb{R} \setminus U$ and $x \not\in \mathbb{R} \setminus V$. In that case, we have $x \in U \cap V$, i.e. $U \cap V$ is not empty.
+
+Next, let $X = \{1, 2, 3, 4\}$ and define the topologies on $X$:
+\begin{enumerate}
+    \item $\mathcal{T}_1 = \{X, \varnothing, \{1\}, \{1, 2\}, \{3, 4\}, \{1, 3, 4\}\}$;
+    \item $\mathcal{T}_2 = \mathbb{P}(X)$.
+\end{enumerate}
+Then, $\mathcal{T}_1$ is not Hausdorff and $\mathcal{T}_2$ is Hausdorff. In $\mathcal{T}_1$, an open set containing $3$ is either $\{3, 4\}$, $\{1, 3, 4\}$ and $X$, and therefore contains $4$. In $\mathcal{T}_2$, the set $\{x\}$ is open for all $x \in X$, and so $\mathcal{T}_2$ is Hausdorff.\sidefootnote{In fact, the discrete topology is always Hausdorff for this reason.}
+
+Next, we show that Hausdorff space is preserved by homeomorphisms.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces such that $X \cong Y$. Then, $X$ is Hausdorff if and only if $Y$ is Hausdorff.
+\end{proposition}
+\begin{proof}
+Assume that $X$ is Hausdorff. Let $f: X \to Y$ be a homeomorphism. Let $y_1, y_2 \in Y$ with $y_1 \neq y_2$. Since $f$ is surjective, there exist $x_1, x_2 \in X$ such that $f(x_1) = y_1$ and $f(x_2) = y_2$. Since $y_1 \neq y_2$, $x_1 \neq x_2$. Since $X$ is Hausdorff, there exist open sets $U, V$ in $X$ with $x_1 \in U$, $x_2 \in V$ and $U \cap V = \varnothing$. Since $f$ is a homeomorphism, we know that $f(U)$ and $f(V)$ are open in $Y$. Moreover, $y_1 = f(x_1) \in f(U)$ and $y_2 = f(x_2) \in f(V)$. Finally, since $f$ is a bijection,
+\[f(U) \cap f(V) = f(U \cap V) = f(\varnothing) = \varnothing.\]
+This implies that $Y$ is Hausdorff. Since homeomorphisms are symmetric, $X$ is Hausdorff if and only if $Y$ is Hausdorff.
+\end{proof}
+\noindent Although homeomorphisms preserve Hausdorff spaces, surjective continuous functions from a Hausdorff space $X$ to another topological space $Y$ does not imply that $Y$ is Hausdorff space.\sidefootnote{How does this not contradict the proof above?} We will consider 3 examples of this:
+\begin{itemize}
+    \item Consider the identity map $f: \mathbb{R} \to \mathbb{R}$, where we map from the Euclidean topology to the cofinite topology. This is continuous- if $V \subseteq Y$ is open, then $\mathbb{R} \setminus V$ is closed (under the cofinite topology), i.e. the set is finite. This set is closed under the Euclidean topology as well, so $V \subseteq X$ is open as well. Therefore, $f$ is continuous. However, we know that $\mathbb{R}$ with the Euclidean topology is Hausdorff (it is induced by a metric), but $\mathbb{R}$ we saw above that $\mathbb{R}$ with the cofinite topology is not Hausdorff.
+    
+    \item Next, let $X$ be a Hausdorff topological space and $Y$ be some set with more than 2 elements under the indiscrete topology. We know that every function $f: X \to Y$ is continuous. So, fix a surjective function $f: X \to Y$. Then, although $f$ is continuous, $X$ is Hausdorff, $Y$ is not Hausdorff.
+    
+    \item Finally, let $X = \mathbb{R}$ (under the Euclidean topology) and $Y = \{1, 2, 3\}$ with topology
+    \[\mathcal{T}_Y = \{\varnothing, Y, \{1, 2\}, \{2\}\}.\]
+    Then, $Y$ is not Hausdorff- every open set containing 1 contains 2. Now, define the function $f: X \to Y$ by
+    \[f(x) = \begin{cases}
+    2 & x > 0 \\
+    1 & -1 < x \leqslant 0 \\
+    3 & x \leqslant -1.
+    \end{cases}\]
+    By construction, $f$ is surjective. Moreover,
+    \begin{align*}
+        f^{-1}(\varnothing) &= \varnothing,&  f^{-1}(Y) &= \mathbb{R}, \\
+        f^{-1}(\{1, 2\}) &= (-1, \infty),& f^{-1}(\{2\}) &= (0, \infty),
+    \end{align*}
+    meaning that $f$ is continuous. So, $f$ is a surjective continuous function from a Hausdorff space $X$ to a space $Y$ that is not Hausdorff.
+\end{itemize}
+Next, we show that the subspace of a Hausdorff space is Hausdorff.
+\begin{lemma}
+Let $X$ be a Hausdorff topological space and $A \subseteq X$. Then, $A$ is Hausdorff under the subspace topology.
+\end{lemma}
+\begin{proof}
+Let $a, b \in A$ with $a \neq b$. Since $X$ is Hausdorff, there exist open sets $U$ and $V$ of $X$ such that $a \in U$, $b \in V$ and $U \cap V = \varnothing$. We know that $U' = U \cap A$ and $V' = V \cap A$ are open in $A$, with $a \in U'$ and $b \in V'$. Moreover, $U' \cap V' \subseteq U \cap A = \varnothing$, meaning that $U' \cap V' = \varnothing$. This implies that $A$ is Hausdorff.
+\end{proof}
+\newpage
+
+\section{Compact Spaces}
+In this section, we study compactness. We start by defining open covers.
+\begin{definition}
+Let $X$ be a topological space. A \emph{cover} of $X$ is a collection $(U_i)_{i \in I}$ of subsets of $X$ such that:
+\[X = \bigcup_{i \in I} U_i.\]
+In particular, an \emph{open cover} of $X$ is a collection of open sets $(U_i)_{i \in I}$ that covers $X$. We say that the cover is \emph{finite} if the indexing set is finite.
+\end{definition}
+\noindent We will now look at some examples of open cover.
+\begin{enumerate}
+    \item An open cover of $\mathbb{R}$ is the collection of open intervals $(-n^2, n^2)$, for $n \in \mathbb{Z}_{\geqslant 1}$. 
+    
+    \item Another open cover of $\mathbb{R}$ is the collection of open intervals $(-n+14, n+16)$, for $n \in \mathbb{Z}_{\geqslant 1}$.
+    
+    \item For some topological space, then $X$ is a finite open cover of $X$.
+    
+    \item If $X$ is a metric space and $a \in X$, then the collection of open balls $B_X(a, r)$ for $r \in \mathbb{R}_{> 0}$ is an open cover- for any $x \in X$ with $x \neq a$, $x \in B_X(a, 2d(x, y))$, so the union of all the open balls is $X$.
+    
+    \item If $X$ is a metric space, and we have some $r > 0$, then the collection of open balls $B_X(a, r)$ for $a \in X$ is an open cover- for any $x \in X$, $x \in B_X(a, r)$. Moreover, the cover is finite if and only if $X$ is finite.
+    
+    \item An open cover of $(0, 1)$ is the collection of open intervals $(2^{-n}, 1)$.
+    
+    \item An open cover of $[0, 1]$ is the collection $(U_n)_{n=1}^{\infty}$ defined by $U_1 = [0, \frac{2}{3})$ and $U_n = (\frac{1}{n}, 1]$ for $n \in \mathbb{Z}_{\geqslant 2}$.
+\end{enumerate}
+
+Next, we define finite subcovers.
+\begin{definition}
+Let $X$ be a topological space and let $(U_i)_{i \in I}$ be an open cover of $X$. Then, $(U_j)_{j \in J}$, for $J \subseteq I$ is a \emph{subcover} if
+\[\bigcup_{j \in J} U_j = X.\]
+The collection $(U_j)_{j \in J}$ is a \emph{finite subcover} if $J$ is finite. We say that $(U_i)_{i \in I}$ admits a finite subcover.
+\end{definition}
+We will look at the examples of open covers above and see if it has a finite subcover.
+\begin{enumerate}
+    \item For a finite subcover, we would need a finite subset $J \subseteq \mathbb{Z}_{\geqslant 1}$ such that
+    \[\bigcup_{j \in J} (-j^2, j^2) = \mathbb{R}.\]
+    This is not possible- if we take $N \in \mathbb{Z}_{\geqslant 1}$ such that $N > \max(J)$, then
+    \[\bigcup_{j \in J} (-j^2, j^2) \subseteq (-N^2, N^2) \subsetneq \mathbb{R}.\]
+    Therefore, this cover does not admit a finite subcover.
+    
+    \item In this case as well, the open cover does not admit a finite subcover. It is for the same reason as above.
+    
+    \item This is already a finite open cover, so it is a finite subcover of itself.
+    
+    \item The open balls $B_X(a, r)$ for $r \in \mathbb{R}_{> 0}$ can admit a finite subcover if there is a maximum distance within the metric space. For instance, if $X = \mathbb{R}$, then it will not admit a finite subcover. Instead, if $X = [0, 1]$, then it will admit a finite subcover. In fact, $X = B_X(a, 2)$ for all $a \in [0, 2]$.
+    
+    \item Similarly, open balls $B_X(a, r)$ for $a \in X$ can admit a finite subcover if the metric has a maximum distance.
+    
+    \item If $J \subseteq \mathbb{Z}_{\geqslant 1}$ defines a finite subcover of $(0, 1)$, then we can find an $N \in \mathbb{Z}_{\geqslant 1}$ such that $N > \max(J)$. In that case,
+    \[\bigcup_{j \in J} (2^{-j}, 1) \subseteq (2^{-N}, 1) \subsetneq (0, 1).\]
+    So, this open cover does not admit a finite subcover.
+    
+    \item We have $X = [0, \frac{2}{3}) \cup (\frac{1}{2}, 1] = U_1 \cup U_2$, so $U_1$ and $U_2$ form a finite subcover of $[0, 1]$.
+\end{enumerate}
+
+Finally, we define compactness.
+\begin{definition}
+Let $X$ be a topological space. We say that $X$ is \emph{compact} if every open cover of $X$ admits a finite subcover.
+\end{definition}
+\noindent So, $\mathbb{R}$ and $(0, 1)$ are not compact- (1), (2) and (6) define open covers that do not admit a finite subcover. Although in (7) we showed an open cover of $[0, 1]$ admits a finite subcover, we have not shown that $[0, 1]$ is compact- we need to show that every open cover of $[0, 1]$ admits a finite subcover.
+
+\begin{proposition}
+Let $X, Y$ be topological spaces, and let $f: X \to Y$ be a continuous function, and assume that $X$ is compact. Then, the image $\operatorname{Im}(f)$ is compact.
+\end{proposition}
+\begin{proof}
+Let $(U_i)_{i \in I}$ be an open cover of $\operatorname{Im}(f)$. Since $U_i \subseteq \operatorname{Im}(f)$ is open, there exists a $U_i' \subseteq Y$ that is open such that $U_i = U_i' \cap \operatorname{Im}(f)$. Moreover, since $f$ is continuous, $V_i = f^{-1}(U_i')$ is open in $X$. We claim that $(V_i)_{i \in I}$ is an open cover of $X$. We know that $V_i$ is open in $X$, with
+\[\bigcup_{i \in I} V_i \supseteq \bigcup_{i \in I} f^{-1}(U_i') = f^{-1}(\bigcup_{i \in I} U_i') = f^{-1}(\operatorname{Im}(f)) = X.\]
+Therefore, $(V_i)_{i \in I}$ is an open cover of $X$. Since $X$ is compact, there exists a finite subset $J \subseteq I$ such that $(V_j)_{j \in J}$ is a finite subcover of $X$. In that case,
+\begin{align*}
+    \operatorname{Im}(f) &= f(\bigcup_{j \in J} V_j) = \bigcup_{j \in J} f(V_j) = \bigcup_{j \in J} (U_i' \cap \operatorname{Im}(f)) = \bigcup_{j \in J} U_j.
+\end{align*}
+Therefore, $(U_i)_{i \in I}$ admits a finite subcover. This implies that the image $\operatorname{Im}(f)$ is compact.
+\end{proof}
+
+\subsection{Compactness in metric spaces}
+Now, we will try to understand compactness in a metric space. We start by defining boundedness in metric spaces.
+\begin{definition}
+Let $(X, d)$ be a metric space. Then, $X$ is \emph{bounded} if there exists an $a \in X$ and a $r > 0$ such that $X = \overline{B_X}(a, r)$.
+\end{definition}
+\noindent In other words, $d(a, x) \leqslant r$ for all $x \in X$. A stronger concept is total boundedness.
+\begin{definition}
+Let $(X, d)$ be a metric space. Then, $X$ is \emph{totally bounded} if for all $\varepsilon > 0$, the open cover of $B_X(x, \varepsilon)$ for $x \in X$ admits a finite subcover.
+\end{definition}
+\noindent As we'd expect, a compact metric space is totally bounded, and a totally bounded metric space is bounded.
+\begin{lemma}
+Let $(X, d)$ be a metric space. Then,
+\begin{itemize}
+    \item if $X$ is compact, then $X$ is totally bounded;
+    \item if $X$ is totally bounded, then $X$ is bounded.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item If $X$ is compact, then every open cover admits a finite subcover. Therefore, for all $\varepsilon > 0$, the open cover of $B_X(x, \varepsilon)$ for $x \in X$ admits a finite subcover. So, $X$ is totally bounded.
+    
+    \item Now, assume that $X$ is totally bounded. Let $\varepsilon > 0$. Since $X$ is totally bounded, the open cover of $B_X(x, \varepsilon)$ for $x \in X$ admits a finite subcover. In that case, there exist $x_1, x_2, \dots, x_n \in X$ such that
+    \[\bigcup_{i=1}^n B_X(x_i, \varepsilon) = X.\]
+    Set 
+    \[\delta = \max_{i=2}^n d(x_1, x_i) > 0.\]
+    Then, if $x \in X$, $x \in B_X(x_i, \varepsilon)$ for some $i \in \{1, 2, \dots, n\}$. So,
+    \[d(x_1, x) \leqslant d(x_1, x_i) + d(x_i, x) < \varepsilon + \delta.\]
+    This implies that $x \in B_X(x, \delta + \varepsilon) \subseteq \overline{B_X}(x, \delta + \varepsilon)$. Therefore, $X$ is bounded.
+\end{itemize}
+\end{proof}
+
+Next, we show that a compact subset of a Hausdorff topological space is closed.
+\begin{proposition}
+Let $X$ be a Hausdorff topological space and let $A \subseteq X$ be a compact subset. Then, $A$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+Let $A \subseteq X$ be compact. If $A = \varnothing$ or $A = X$, then $A$ is closed in $X$. So, assume that $A$ is non-empty and proper. We show that $X \setminus A$ is closed. So, let $y \in X \setminus A$. Since $X$ is Hausdorff, for each $x \in A$, there exist open sets $U_{xy}$ and $V_{xy}$ in $X$ with $x \in U_{xy}, y \in V_{xy}$ and $U_{xy} \cap V_{xy} = \varnothing$. We note that $U_{xy} \cap A$ is open in $A$. Moreover, the collection $U_{xy} \cap A$ for $x \in A$ forms an open cover of $A$ since $x \in U_{xy} \cap A$. Since $A$ is compact, there exist $x_1, x_2, \dots, x_n$ such that 
+\[\bigcup_{i=1}^n (U_{x_i y} \cap A) = A.\]
+Define
+\[V_y = \bigcap_{i=1}^k V_{x_i y}.\]
+Since $V_{x_i y}$ is open, the intersction $V_y$ is open. We note that 
+\[V_y \cap U_{x_i y} \subseteq V_{x_i y} \cap U_{x_i y} = \varnothing,\]
+so $V_y \cap U_{x_i y} = \varnothing$. Therefore,
+\[V_y \cap \left(\bigcup_{i=1}^n U_{x_i y}\right) = \varnothing.\]
+This implies that $V_y \cap A = \varnothing$. So, we have an open set $V_y$ of $A$ such that $y \in V_y$ $V_y \cap A = \varnothing$, meaning that $V_y \subseteq X \setminus A$. Hence, 
+\[X \setminus A = \bigcup_{y \in X \setminus A} V_y\]
+is a union of open sets, meaning that $X \setminus A$ is open in $X$. So, $A$ is closed in $X$.
+\end{proof}
+Using this result, we find that if $X$ is a metric space, then a compact subspace $A$ of $X$ is closed. So, a compact subset $A$ of a metric space $X$ is both closed and bounded.
+% TODO: Change cover to curly braces => probably better?
+Next, we show that a closed subset of a compact set is compact.
+\begin{proposition}
+Let $C$ be a compact topological space, and let $A \subseteq C$ be closed in $C$. Then, $A$ is compact.
+\end{proposition}
+\begin{proof}
+Let $(A_i)_{i \in I}$ be an open cover of $A$. Since $C \setminus A$ is open, we find that
+\[C = (C \setminus A) \cup \bigcup_{i \in I} A_i.\]
+This is an open cover of $C$. Since $C$ is compact, there exists a finite subset $I \subseteq J$ such that
+\[C = (C \setminus A) \cup \bigcup_{j \in J} A_j.\]
+We know that for all $a \in A$, $a \not\in C \setminus A$. Therefore, 
+\[a \in \bigcup_{j \in J} A_j \subseteq A.\]
+Therefore,
+\[A = \bigcup_{j \in J} A_j.\]
+This is a finite subcover of $(A_i)_{i \in I}$. So, $A$ is compact.
+\end{proof}
+
+It turns that in $\mathbb{R}^n$, a closed and bounded subset is compact.
+\begin{theorem}[Heine-Borel Theorem]
+Let $A \subseteq \mathbb{R}^n$. Then, $A$ is compact (under the subspace metric) if and only if $A$ is closed and bounded in $\mathbb{R}^n$.
+\end{theorem}
+\begin{proof}
+Since $\mathbb{R}^n$ is a metric space, we know that if $A$ is compact, then $A$ is closed and bounded. So, we show that if $A$ is closed and bounded, then $A$ is compact.
+\begin{itemize}
+    \item First, we show that the unit interval $[0, 1]$ in $\mathbb{R}$ is compact. Let $(U_i)_{i \in I}$ be an open cover of $[0, 1]$. Define the subset $B \subseteq [0, 1]$ by $x \in B$ if there exists a finite subset $J \subseteq I$ such that
+    \[[0, x] \subseteq \bigcup_{j \in J} U_j.\]
+    We know that $0 \in B$ since there exists some $i \in I$ such that $0 \in U_i$, so we can take $J = \{i\}$. Moreover, 1 is an upper bound for $B$. So, the completeness axiom tells us that the supremum $l = \sup (B)$ exists. 
+    
+    We know that there exists an $i \in I$ such that $l \in U_i$. Assume that $l \neq 1$. Since $U_i$ is open, there exists an $\varepsilon > 0$ such that $(l - \varepsilon, l + \varepsilon) = B_{[0, 1]}(l, \varepsilon) \subseteq U_i$. Since $l = \sup(B)$, there exists a $b \in B$ such that $l - \frac{\varepsilon}{2} < b \leqslant l$. In that case, we can find a finite subset $J \subseteq I$ such that
+    \[[0, l - \tfrac{\varepsilon}{2}] \subseteq [0, b] \subseteq \bigcup_{j \in J} U_j.\]
+    In that case,
+    \[[0, l + \tfrac{\varepsilon}{2}] \subseteq U_i \cup \bigcup_{j \in J} U_j.\]
+    Since $J' = J \cup \{i\}$ is finite, we find that $l + \frac{\varepsilon}{2} \in B$. This is a contradiction since $l = \sup (B)$. Therefore, we must have $l = 1$. 
+    
+    Since $U_i$ is open, there exists an $\varepsilon > 0$ such that $(1 - \varepsilon, 1] = B_{[0, 1]}(1, \varepsilon) \subseteq U_i$. Therefore,
+    \[[0, 1] = U_i \cup \bigcup_{j \in J} U_j.\]
+    We know that $J' = J \cup \{i\}$ is finite, so the open cover admits a finite subcover. Therefore, the interval $[0, 1]$ is compact.
+    
+    \item Next, we show that $[0, 1]^n$ is compact. We have shown that if $n = 1$, then this is true. Next, assume that $[0, 1]^n$ is compact. We show that $[0, 1]^{n+1}$ is compact.
+    % TODO: Induction
+    
+    \item Now, we deduce that $[-R, R]^n \subseteq \mathbb{R}^n$ is compact. Define the map $f: [0, 1]^n \to [-R, R]^n$ by
+    \[f(x_1, x_2, \dots, x_n) = (2Rx_1 - R, 2Rx_2 - R, \dots, 2Rx_n - R).\]
+    We show that $f$ is continuous. Let $V \subseteq [-R, R]^n$ be open. If $V = \varnothing$, then we know that $f^{-1}(V)$ is open in $[0, 1]^n$. So, assume that $V$ is non-empty. Let $\bm{u} \in f^{-1}(V)$. In that case, there exists a $\bm{v} \in V$ such that $f(\bm{u}) = \bm{v}$. Since $V$ is open, there exists an $\varepsilon > 0$ such that 
+    \[B_{\mathbb{R}}(\bm{v}, \varepsilon) = \{\bm{w} \in \mathbb{R}^n \mid d_{\infty}(\bm{w}, \bm{v}) < \varepsilon\} \subseteq V.\]
+    Now, denote
+    \[\bm{u} = (u_1, u_2, \dots, u_n), \qquad \bm{w} = (w_1, w_2, \dots, w_n).\]
+    Then, for $i \in \{1, 2, \dots, n\}$,
+    \[u_i - \varepsilon < 2Rw_i - R < u_i + \varepsilon \iff \frac{u_i + R}{2R} - \frac{\varepsilon}{2R} < w_i < \frac{u_i + R}{2R} + \frac{\varepsilon}{2R}.\]
+    Therefore,
+    \[B_{\mathbb{R}}(\bm{u}, \tfrac{\varepsilon}{2R}) = \{\bm{w} \in \mathbb{R}^n \mid d_{\infty}(\bm{w}, \bm{u}) < \tfrac{\varepsilon}{2R}\} \subseteq U.\]
+    This implies that $f$ is continuous. Since $f$ is surjective, we find that $[-R, R]^n$ is compact.
+    
+    \item Finally, we show $A \subseteq \mathbb{R}^n$ is a closed subset of $[-R, R]^n$, for some $R \in \mathbb{R}_{> 0}$. Since $A$ is bounded, we can find an $\bm{a} \in A$ and a $\varepsilon > 0$ such that $\overline{B}_{\mathbb{R}^n}(\bm{a}, \varepsilon) = A$. In that case, for all $\bm{x} \in A$,
+    \[d(\bm{x}, \bm{0}) \leqslant d(\bm{x}, \bm{a}) + d(\bm{a}, \bm{0}) < \varepsilon + \lVert \bm{a} \rVert.\]
+    So, set $R = \varepsilon + \lVert \bm{a} \rVert > 0$. In that case, for all $(x_1, x_2, \dots, x_n) \in A$, for all $i \in \{1, 2, \dots, n\}$,
+    \[|x_i| \leqslant \sqrt{x_1^2 + x_2^2 + \dots + x_n^2} < R.\]
+    Therefore, $(x_1, x_2, \dots, x_n) \in [-R, R]^n$. Since $A$ is closed in $\mathbb{R}^n$, the set $A \cap [-R, R]^n = A$ is closed in $[-R, R]^n$.
+\end{itemize}
+Since $[-R, R]^n$ is compact, and $A$ is a closed subset of $[-R, R]^n$, we find that $A$ is compact.
+\end{proof}
+
+This means that the followings sets are compact:
+\begin{itemize}
+    \item We have shown that the interval $[0, 2]$ is closed in $\mathbb{R}$. Moreover, for all $x \in [0, 2]$, $|x-0| \leqslant 2$, so the set is bounded. Therefore, Heine-Borel tells us that the interval is compact.
+    
+    \item We know that the unit circle 
+    \[S^1 = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 = 1\}\]
+    is closed- the function $f: S^1 \to \mathbb{R}$ given by $f(x, y) = x^2 + y^2$ is continuous, with preimage $f^{-1}(1) = S^1$. Moreover, for all $(x, y) \in S^1$, 
+    \[\lVert (x, y) - (1, 0) \rVert = \sqrt{(x-1)^2 + y^2} \leqslant \sqrt{2^2 + 1^2} = \sqrt{5}.\]
+    So, the set $S^1$ is bounded. Therefore, Heine Borel Theorem tells us that $S^1$ is compact. Moreover, it is the image of the function $g: [0, 2\pi] \to \mathbb{R}^2$ given by $g(t) = (\cos t, \sin t)$.
+    
+    \item The ellipsoid
+    \[E = \{(x, y, z) \in \mathbb{R}^3 \mid 3x^2 + 4y^2 + z^2 = 1\}\]
+    is compact. We need to show that $E$ is closed and bounded. The function $f: \mathbb{R}^3 \to \mathbb{R}$ given by $f(x) = 3x^2 + 4y^2 + z^2$ is a polynomial function, and so it is bounded. Since $\{1\}$ is closed in $\mathbb{R}$, we find that its preimage $f^{-1}(\{1\}) = E$ is closed in $\mathbb{R}^3$. Moreover, 
+    \[3x^2 + 4y^2 + z^2 = (2x^2 + 3y^2) + (x^2 + y^2 + z^2) \geqslant x^2 + y^2 + z^2.\]
+    So, if $3x^2 + 4y^2 + z^2 = 1$, then
+    \[d_2((x, y, z), \bm{0}) = \sqrt{x^2 + y^2 + z^2} \leqslant \sqrt{3x^2 + 4y^2 + z^2} = 1,\]
+    so $E \subseteq \overline{B}_{\mathbb{R}^3}(0, 1)$- $E$ is bounded. So, the Heine-Borel Theorem tells us that $E$ is compact.
+\end{itemize}
+
+Now, we show that the extreme value theorem can be generalised to compact spaces. We first prove a lemma.
+\begin{lemma}
+Let $Y$ be a non-empty compact subset of $\mathbb{R}$. Then, there exist $m, M \in Y$ such that $m \leqslant y \leqslant M$ for all $y \in Y$.
+\end{lemma}
+\begin{proof}
+Since $Y$ is compact, we know that $Y$ is closed and bounded. Since $Y$ is bounded (above), the completeness axiom tells us that $M = \sup(Y)$ exists. By the supremum property, we can find a sequence $(x_n)_{n=1}^{\infty}$ in $Y$ such that $y_n \to M$. This implies that $M \in \overline{Y}$. Since $Y$ is closed, we find that $\overline{Y} = Y$, and so $M \in Y$. Similarly, since $Y$ is bounded (below), we can find $m = \inf(Y)$. Using the same argument as above, we find that $m \in Y$.
+\end{proof}
+\noindent Using this result, we prove the extreme value theorem.
+\begin{theorem}[Extreme Value Theorem]
+Let $X$ be a compact space, and let $f: X \to \mathbb{R}$ be a continuous function. Then, there exist $p, q \in X$ such that for all $x \in X$, $f(p) \leqslant f(x) \leqslant f(q)$.
+\end{theorem}
+\begin{proof}
+Since $X$ is compact and $f$ is continuous, we find that $\operatorname{Im}(f) \subseteq \mathbb{R}$ is compact. In that case, there exist $m, M \in \operatorname{Im}(f)$ such that for all $y \in \operatorname{Im}(f)$, $m \leqslant y \leqslant M$. Since $m, M \in \operatorname{Im}(f)$, we can find $p, q \in X$ such that $f(p) = m$ and $f(q) = M$. Therefore, for all $x \in X$, $f(p) \leqslant f(x) \leqslant f(q)$.
+\end{proof}
+\noindent We illustrate this with an example. Let $f: S^1 \to \mathbb{R}$ be given by $f(x, y) = 2x^2$. Since $S^1$ is compact, there exist $\bm{p}, \bm{q} \in S^1$ such that $f(\bm{p}) \leqslant f(x, y) \leqslant f(\bm{q})$. In fact, $\bm{p} = (0, 1)$ and $\bm{q} = (1, 0)$.
+
+Next, consider the map $f: [0, 1) \to S^1$ by 
+\[f(t) = (\cos (2\pi t), \sin (2\pi t)).\]
+We know that $f$ is continuous, and bijective. However, we know that $[0, 1)$ is not homeomorphic to $S^1$- removing a point from $[0, 1)$ disconnects $[0, 1)$, but not $S^1$. Therefore, $f$ cannot be a homeomorphism. So, we must have that the inverse function $f^{-1}: S^1 \to [0, 1)$ is not continuous. In fact, define the sequence $(x_n, y_n)_{n=1}^{\infty}$ by
+\[(x_n, y_n) = \left(\sqrt{1 - \frac{1}{n^2}}, -\frac{1}{n} \right).\]
+Then, $(x_n, y_n) \to (1, 0)$, but
+\[f^{-1}((x_n, y_n)) = \frac{1}{2\pi} \left[ 2\pi - \sin^{-1} \left(-\frac{1}{n}\right) \right] = 1 + \frac{1}{2\pi} \sin^{-1} \left(\frac{1}{n}\right).\]
+So, the sequence does not converge in $[0, 1)$- the function $f^{-1}$ is not continuous. It turns out that if $f: X \to Y$ is a bijective continuous function from a compact space to a Hausdorff space, then the inverse $f^{-1}$ must be continuous.
+\begin{theorem}
+Let $X$ be a compact space and $Y$ be a Hausdorff space. If $f: X \to Y$ is a bijective, continuous map, then $f$ is a homeomorphism.
+\end{theorem}
+\begin{proof}
+We show that the inverse function $g = f^{-1}: Y \to X$ is continuous. Let $U \subseteq X$ be open. Since $f$ is bijective, we find that $g^{-1}(U) = f(U)$.
+
+\noindent Next, let $C = X \setminus U$. Since $U$ is open, we find that $C$ is closed in $X$. Since $X$ is compact, $C$ is compact. Moreover, $f(C)$ is compact. Since $f$ is a bijection, 
+\[f(C) = f(X \setminus U) = Y \setminus f(U).\]
+Since $Y$ is Hausdorff and $f(C)$ is compact, we find that $f(C)$ is closed in $Y$. Therefore, $f(U)$ is open. This implies that $g$ is continuous.
+\end{proof}
+\newpage
+
+\section{Product and Quotient Topologies}
+The product and quotient constructions provide us with new ways of making topological spaces. We start by defining the product topology.
+\begin{definition}
+Let $X, Y$ be topological spaces. A subset $U$ of $X \times Y$ is open if and only if for each $u \in U$, there exist open sets $A \subseteq X, B \subseteq Y$ such that $u \in A \times B \subseteq U$.
+\end{definition}
+\noindent So, if $A \subseteq X$ is open and $B \subseteq Y$ is open, then $A \times B$ is open in $X \times Y$- for all $(a, b) \in A \times B$, we have $a \in A \subseteq A$ and $b \subseteq B$. However, not every open set in $X \times Y$ is of the form $A \times B$. For example, in $\mathbb{R} \times \mathbb{R}$, the set
+\[B_{\mathbb{R}^2}(0, 1) = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 < 1\}\]
+is open. Let $(x, y) \in B_{\mathbb{R}^2}(0, 1)$. We know that $x^2 + y^2 < 1$, and so $-1 < x < 1$ and $-1 < y < 1$. Let
+\[\varepsilon_1 = \min(x+1, 1-x), \qquad \varepsilon_2 = \min(y+1, 1-y),\]
+and set $A = (x-\frac{\varepsilon_1}{2}, x+\frac{\varepsilon_1}{2})$ and $B = (y-\frac{\varepsilon_2}{2}, y+\frac{\varepsilon_2}{2})$. Then, $(x, y) \in A \times B$, and for $(a, b) \in A \times B$,
+\begin{align*}
+    a^2 + b^2 &\leqslant (x+\tfrac{\varepsilon_1}{2})^2 + (y+\tfrac{\varepsilon_2}{2})^2 \\
+    &= x^2 + y^2 + x \varepsilon_1 + y \varepsilon_2 + \frac{1}{4} (\varepsilon_1^2 + \varepsilon_2^2) \\
+    &< 1.
+\end{align*}
+% TODO: Correctly finish
+Therefore, $A \times B \subseteq B_{\mathbb{R}^2}(0, 1)$. This implies that $B_{\mathbb{R}^2}(0, 1)$ is open in $\mathbb{R} \times \mathbb{R}$ under the product topology.
+
+It turns out that a property that both $X$ and $Y$ have is inherited by $X \times Y$. For instance, if $X$ and $Y$ are connected, then $X \times Y$ is also connected.
+\begin{proposition}
+Let $X$ and $Y$ be non-empty connected topological spaces. Then, $X \times Y$ is connected under the product topology.
+\end{proposition}
+\begin{proof}
+Let $(U_i)_{i \in I}$ be an open cover in $X \times Y$. For $i \in I$, since $U_i$ is open in $X \times Y$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U_i$ for $u \in U_i$. Therefore,
+\[U_i = \bigcup_{u \in U_i} A_{u, i} \times B_{u, i}.\]
+In that case,
+\[\bigcup_{i \in I} \bigcup_{u \in U_i} A_{u, i} = X, \qquad \bigcup_{i \in I} \bigcup_{u \in U_i} B_{u, i} = Y.\]
+So, $(A_{u, i})_{i \in I, u \in U_i}$ and $(B_{u, i})_{i \in I, u \in U_i}$ are open covers of $X$ and $Y$ respectively. Since $X$ and $Y$ are connected, there exist finite covers
+\[\bigcup_{i=1}^n \bigcup_{a=1}^r A_{u_a, x_i} = X, \qquad \bigcup_{j=1}^m \bigcup_{b=1}^s B_{u_b, y_j} = Y.\]
+In that case,
+\[\bigcup_{i=1}^n U_{x_i} \cup \bigcup_{j=1}^m U_{y_j} \supseteq \bigcup_{i=1}^n \bigcup_{a=1}^r \bigcup_{j=1}^m \bigcup_{b=1}^s A_{u_a, x_i} \times B_{u_b, y_j} = X \times Y.\]
+So, we have found a finite subcover of $X \times Y$- $X \times Y$ is connected.
+% TODO: THis is wrong
+\end{proof}
+\noindent Next, we show that if $X$ and $Y$ are path-connected, then $X \times Y$ is also path-connected.
+\begin{proposition}
+Let $X$ and $Y$ be path-connected topological spaces. Then, $X \times Y$ is path-connected under the product topology.
+\end{proposition}
+\begin{proof}
+Let $(x_1, y_1), (x_2, y_2) \in X \times Y$. Since $X$ and $Y$ are path-connected, there exist continuous functions $\gamma_x: [0, 1] \to X$ and $\gamma_y: [0, 1] \to Y$ such that $\gamma_x(0) = x_1$, $\gamma_x(1) = x_2$, $\gamma_y(0) = y_1$ and $\gamma_y(1) = y_2$. Now, define the function $\gamma: [0, 1] \to X \times Y$ by $\gamma(t) = (\gamma_x(t), \gamma_y(t))$. Then, $\gamma(0) = (x_1, y_1)$ and $\gamma(1) = (x_2, y_2)$. Next, we show that $\gamma$ is continuous. First, for $A \subseteq X$ and $B \subseteq Y$,
+\begin{align*}
+    \gamma^{-1}(A \times B) &= \{t \in [0, 1] \mid \gamma(t) \in A \times B\} \\
+    &= \{t \in [0, 1] \mid \gamma_x(t) \in A, \gamma_y(t) \in B\} \\
+    &= \gamma_x^{-1}(A) \cap \gamma_y^{-1}(B).
+\end{align*}
+Now, let $U \subseteq X \times Y$ be open. In that case, for all $u \in U$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U$. In that case,
+\[U = \bigcup_{u \in U} A_u \times B_u.\]
+Therefore,
+\begin{align*}
+    \gamma^{-1} (U) &= \gamma^{-1} \left(\bigcup_{u \in U} A_u \times B_u\right) \\
+    &= \bigcup_{u \in U} \gamma^{-1} (A_u \times B_u) \\
+    &= \bigcup_{u \in U} \gamma_x^{-1}(A_u) \cap \gamma_y^{-1}(B_u).
+\end{align*}
+Since $\gamma_x$ and $\gamma_y$ are continuous, the preimages $\gamma_x^{-1}(A_u)$ and $\gamma_y^{-1}(B_u)$ are open in $[0, 1]$. So, their intersection is open in $[0, 1]$. Arbitrary unions of open sets is open, so $\gamma^{-1} (U)$ is open. This implies that $\gamma$ is continuous- it is a path going from $(x_1, y_1)$ to $(x_2, y_2)$. So, $X \times Y$ is path-connected.
+\end{proof}
+\noindent Finally, we show that if $X$ and $Y$ are Hausdorff, then $X \times Y$ is also Hausdorff.
+\begin{proposition}
+Let $X$ and $Y$ be Hausdorff topological spaces. Then, $X \times Y$ is Hausdorff under the product topology.
+\end{proposition}
+\begin{proof}
+Let $(x_1, y_1), (x_2, y_2) \in X \times Y$ with $(x_1, y_1) \neq (x_2, y_2)$. In that case, either $x_1 \neq x_2$ or $y_1 \neq y_2$. Without loss of generality, assume that $x_1 \neq x_2$. Since $X$ is Hausdorff, there exist open subsets $U_1, U_2 \subseteq X$ such that $x_1 \in U_1, x_2 \in U_2$ and $U_1 \cap U_2 = \varnothing$. Let $V_1 = U_1 \times Y$ and $V_2 = U_2 \times Y$. We know that $V_1$ and $V_2$ are open in $X \times Y$. We know that $(x_1, y_1) \in V_1$ and $(x_2, y_2) \in V_2$. 
+\begin{align*}
+    V_1 \cap V_2 &= \{(x, y) \in X \times Y \mid x \in U_1 \cap U_2\} \\
+    &= \{(x, y) \in X \times Y \mid x \in \varnothing\} = \varnothing.
+\end{align*}
+Therefore, $X \times Y$ is Hausdorff.
+\end{proof}
+
+In the product topology, the projection maps are continuous.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces, and let $p: X \times Y \to X$ be given by $p(x, y) = x$. Then, $p$ is continuous.
+\end{proposition}
+\begin{proof}
+Let $U$ be open in $X$. Then,
+\begin{align*}
+    p^{-1}(U) &= \{(x, y) \in X \times Y \mid p(x, y) \in U\} \\
+    &= \{(x, y) \in X \times Y \mid x \in U\} \\
+    &= U \times Y.
+\end{align*}
+Since $U$ is open in $X$ and $Y$ is open in $Y$, we find that the product $U \times Y$ is open in $X \times Y$. Therefore, $p$ is continuous.
+\end{proof}
+\noindent Similarly, the map $q: X \times Y \to Y$ given by $q(x, y) = y$ is continuous.
+
+Next, we look at quotient topology. 
+\begin{definition}
+Let $X$ be a topological space and $\sim$ be an equivalence relation on $X$, and $p: X \to X/\sim$ the quotient map, i.e. $p(x) = [x]$ for all $x \in X$. Then, define the quotient topology on $X/\sim$, where $U \subseteq X/\sim$ is open if and only if $p^{-1}(U)$ is open in $X$. 
+\end{definition}
+\noindent By construction, the quotient map $p$ is continuous. Moreover, a continuous function $f: X \to Y$ that obeys the equivalence condition is continuous.
+\begin{proposition}
+Let $X$ and $Y$ be topological spaces, $\sim$ be an equivalence relation on $X$, and let $f: X \to Y$ be a function such that for all $x, y \in X$, if $x \sim y$, then $f(x) = f(y)$. Then, the map $\overline{f}: X/\sim \to Y$ defined by $\overline{f}([x]) = f(x)$ is continuous if and only if $f$ is continuous.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item We first show that $\overline{f}$ is well-defined. Let $[x], [y] \in X/\sim$ such that $[x] = [y]$. In that case, $x \sim y$. By assumption, we know that $f(x) = f(y)$. Therefore,
+    \[\overline{f}([x]) = f(x) = \overline{f}(y) = f([y]).\]
+    So, $\overline{f}$ is well-defined.
+    
+    \item Now, assume that $f$ is continuous. Let $U \subseteq Y$ be open. Then, 
+    \begin{align*}
+        x \in f^{-1}(U) &\iff f(x) \in U \\
+        &\iff \overline{f}([x]) \in U \\
+        &\iff \overline{f}(p(x)) \in U \\
+        &\iff x \in p^{-1}(\overline{f}^{-1}(U)).
+    \end{align*}
+    Therefore, $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$. Since $f$ is continuous, we know that $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$ is open in $X$. So, $\overline{f}^{-1}(U)$ is open in $X/\sim$, by definition. Therefore, $\overline{f}$ is continuous.
+    
+    \item Next, assume that $\overline{f}$ is continuous. Let $U \subseteq Y$ be open. In that case, $\overline{f}^{-1}(U)$ is open in $X/\sim$. By definition, this implies that $p^{-1}(\overline{f}^{-1}(U)) = f^{-1}(U)$ is open in $X$. This implies that $f$ is continuous.
+\end{itemize}
+\end{proof}
+
+We will now look at some examples of quotient spaces. Let $X = [0, 1]$, with equivalence relation $\sim$, where
+\[x \sim y \iff x = y \text{ or } \{x, y\} = \{0, 1\}.\]
+Then, $[0, 1]/\sim \cong S^1$. We first show that $[0, 1]/\sim$ is compact. We note that $[0, 1]$ is compact, and the quotient $[0, 1]/\sim$ is the image of $[0, 1]$ under the quotient map $p: [0, 1] \to [0, 1]/\sim$. Therefore, $[0, 1]/\sim$ is compact. Moreover, $S^1$ is a Hausdorff space- it is a subspace of $\mathbb{R}^2$. Finally, there is a bijection $f: [0, 1]/\sim \to S^1$ by $f([t]) = (\cos 2\pi t, \sin 2\pi t)$. This is well defined since $f([0]) = (1, 0) = f([1])$. This map is continuous since $g: [0, 1] \to S^1$ given by $f(t) = (\cos 2\pi t, \sin 2\pi t)$ is continuous. Moreover, it is a bijection, with inverse
+\[f^{-1}(\cos 2\pi t, \sin 2\pi t) = [t].\]
+Therefore, $f: [0, 1]/\sim \to S^1$ is a continuous bijection from a compact space to a Hausdorff space- $f$ is a homeomorphism.
+
+\end{document}
