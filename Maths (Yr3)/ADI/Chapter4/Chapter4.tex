@@ -1,0 +1,792 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{ADI}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{3}
+
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\chapter{Riemann Integration}
+\section{Partitions and Riemann sums}
+In this section, we will define (Riemann) integration. Essentially, to compute the integral, we break an interval into infinitesimal blocks, and sum the area of each interval. So, we start by defining these blocks.
+\begin{definition}[Partition]
+Let $a, b \in \mathbb{R}$ with $a < b$. A \emph{partition} $P$ of $[a, b]$ is a finite subset of $[a, b]$ containing $a$ and $b$.
+\end{definition}
+\noindent Note that these blocks are finite. Nonetheless, we can always break a partition into smaller intervals.
+\begin{definition}[Refinement]
+Let $a, b \in \mathbb{R}$ with $a < b$, and let $P$ and $Q$ be partitions of $[a, b]$. We say that $Q$ is a \emph{refinement} of $P$ if $P \subseteq Q$.
+\end{definition}
+For a partition and a function, we have 2 sums- the upper sum and the lower sum.
+\begin{definition}[Lower and Upper Sums]
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, and let $P$ be a partition of $[a, b]$. Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < \dots < x_{n-1} < x_n = b$. For $i \in \{1, 2, \dots, n\}$, define
+\begin{align*}
+    M_i &= \sup \{f(x) \mid x \in [x_{i-1}, x_i]\} & m_i = \inf \{f(x) \mid x \in [x_{i-1}, x_i]\}.
+\end{align*}
+The \emph{upper sum} of $f$ with respect to the partition $P$ is given by
+\[U(f, P) = \sum_{i=1}^n M_i (x_i - x_{i-1}).\]
+The \emph{lower sum} of $f$ with respect to the partition $P$ is given by
+\[L(f, P) = \sum_{i=1}^n m_i (x_i - x_{i-1}).\]
+\end{definition}
+\noindent Note that a function must be bounded for the infimum and the supremum to exist. We illustrate computing lower and upper sums with an example.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by $f(x) = 9x^2 - 6x + 2$, and let $P = \{0, \frac{1}{4}, \frac{1}{2}, 1\}$. Then, $U(f, P) = \frac{173}{64}$ and $L(f, P) = \frac{47}{32}$.
+\end{example}
+\begin{proof}
+The function is plotted below.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[axis lines=center, ymin=-5, xlabel=$x$, ylabel=$f(x)$]
+            \addplot[
+            samples=100,
+            domain=-.5:1.5,
+            ]{9*x^2 - 6*x + 2};
+        \end{axis}
+        \node at (5, 5) {$y = f(x)$};
+    \end{tikzpicture}
+\end{figure}
+So, we find that
+\begin{align*}
+    m_1 &= \inf \{f(x) \mid x \in [0, \tfrac{1}{4}]\} = f(\tfrac{1}{4}) = \tfrac{17}{16}, \\
+    M_1 &= \sup \{f(x) \mid x \in [0, \tfrac{1}{4}]\} = f(0) = 2, \\
+    m_2 &= \inf \{f(x) \mid x \in [\tfrac{1}{4}, \tfrac{1}{2}]\} = f(\tfrac{1}{3}) = 1, \\
+    M_2 &= \sup \{f(x) \mid x \in [\tfrac{1}{4}, \tfrac{1}{2}]\} = f(\tfrac{1}{2}) = \tfrac{5}{4}, \\
+    m_3 &= \inf \{f(x) \mid x \in [\tfrac{1}{2}, \tfrac{3}{4}]\} = f(\tfrac{1}{2}) = \tfrac{5}{4}, \\
+    M_3 &= \sup \{f(x) \mid x \in [\tfrac{1}{2}, \tfrac{3}{4}]\} = f(\tfrac{3}{4}) = \tfrac{41}{16}, \\
+    m_4 &= \inf \{f(x) \mid x \in [\tfrac{3}{4}, 1]\} = f(\tfrac{3}{4}) = \tfrac{41}{16}, \\
+    M_4 &= \sup \{f(x) \mid x \in [\tfrac{3}{4}, 1]\} = f(1) = 5.
+\end{align*}
+Therefore,
+\begin{align*}
+    U(f, P) &= \frac{1}{4} (M_1 + M_2 + M_3 + M_4) = \frac{173}{64}, \\
+    L(f, P) &= \frac{1}{4} (m_1 + m_2 + m_3 + m_4) = \frac{47}{32}.
+\end{align*}
+\end{proof}
+\noindent The value of the upper and the lower sums are bounded by the bounds of the function. Also, the lower sum is lower than the upper sum, as expected.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, with upper bound $M$ and lower bound $m$, and let $P$ be a partition of $[a, b]$. Then,
+\[m(b - a) \leqslant  L(f, P) \leqslant U(f, P) \leqslant M(b - a).\]
+\end{proposition}
+\begin{proof}
+Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < x_n = b$. For $i \in \{1, 2, \dots, n\}$, we know that
+\begin{align*}
+    m &\leqslant \inf \{f(x) \mid x \in [x_{i-1}, x_i]\} = m_i \\
+    &\leqslant \sup \{f(x) \mid x \in [x_{i-1}, x_i]\} = M_i \\
+    &\leqslant M.
+\end{align*}
+In that case,
+\begin{align*}
+    m(b - a) &\leqslant \sum_{i=1}^n m(x_i - x_{i-1}) \\
+    &= \sum_{i=1}^n m_i (x_i - x_{i-1}) = L(f, P) \\
+    &\leqslant \sum_{i=1}^n M_i (x_i - x_{i-1}) = U(f, P) \\
+    &\leqslant \sum_{i=1}^n M(x_i - x_{i-1}) = M(b - a).
+\end{align*}
+\end{proof}
+\noindent Moreover, a refinement will give a better approximation of an integral. To show this, we first show that adding a new value into the partition moves makes the upper sum smaller, and the lower sum bigger.
+\begin{lemma}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, and let $P$ be a partition of $[a, b]$, and let $c \in [a, b] \setminus P$. Then,
+\[L(f, P) \leqslant L(f, Q) \leqslant U(f, Q) \leqslant U(f, P).\]
+where $Q = P \cup \{c\}$.
+\end{lemma}
+\begin{proof}
+Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+where $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < x_n = b$. Fix $i \in \{1, 2, \dots, n\}$ such that $x_{i-1} < c < x_i$. We have $[x_{i-1}, c] \subseteq [x_{i-1}, x_i]$, and so
+\begin{align*}
+    M_i = \sup \{f(x) \mid [x_{i-1}, x_i]\} \geqslant \sup \{f(x) \mid [x_{i-1}, c]\} = M_{c, 0} \\
+    m_i = \inf \{f(x) \mid [x_{i-1}, x_i]\} \leqslant \inf \{f(x) \mid [x_{i-1}, c]\} = m_{c, 0}.
+\end{align*}
+Similarly, we have $[c, x_i] \subseteq [x_{i-1}, x_i]$, and so
+\begin{align*}
+    M_i = \sup \{f(x) \mid [x_{i-1}, x_i]\} \geqslant \sup \{f(x) \mid [c, x_i]\} = M_{c, 1} \\
+    m_i = \inf \{f(x) \mid [x_{i-1}, x_i]\} \leqslant \inf \{f(x) \mid [c, x_i]\} = m_{c, 1}.
+\end{align*}
+% Therefore,
+% \begin{align*}
+%     m_i(x_i - x_{i-1}) &= m_i(x_i - c) + m_i(c - x_{i-1}) \\
+%     &\leqslant m_{c, 1}(x_i - c) + m_{c, 0}(c - x_{i-1}) \\
+%     &\leqslant M_{c, 1}(x_i - c) + M_{c, 0}(c - x_{i-1}) \\
+%     &\leqslant M_i(x_i - c) + M_i(c - x_{i-1}) \\
+%     &= M_i(x_i - x_{i-1}).
+% \end{align*}
+This implies that
+\begin{align*}
+    L(f, P) &= \sum_{j=1}^n m_j(x_j - x_{j-1}) \\
+    &= \sum_{j=1, j \neq i}^n m_j(x_j - x_{j-1}) + m_i (x_i - x_{i-1}) \\
+    &= \sum_{j=1, j \neq i}^n m_j(x_j - x_{j-1}) + m_i (x_i - c) + m_i(c - x_{i-1}) \\
+    &\leqslant \sum_{j=1, j \neq i}^n m_j(x_j - x_{j-1}) + m_{c, 1}(x_i - c) + m_{c, 0}(c - x_{i-1}) = L(f, Q) \\
+    &\leqslant \sum_{j=1, j \neq i}^n M_j(x_j - x_{j-1}) + M_{c, 1}(x_i - c) + M_{c, 0}(c - x_{i-1}) = U(f, Q) \\
+    &\leqslant \sum_{j=1, j \neq i}^n M_j(x_j - x_{j-1}) + M_i(x_i - c) + M_i(c - x_{i-1}) \\
+    &= \sum_{j=1, j \neq i}^n M_j(x_j - x_{j-1}) + M_i(x_i - x_{i-1}) \\
+    &= \sum_{j=1}^n M_j(x_j - x_{j-1}) = U(f, P).
+\end{align*}
+\end{proof}
+\noindent Using this result, we will show that refinement improves the value of the lower and the upper sum.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, and let $P, Q$ be partitions of $[a, b]$ such that $Q$ is a refinement of $P$. Then,
+\[L(f, P) \leqslant L(f, Q) \leqslant U(f, Q) \leqslant U(f, P).\]
+\end{proposition}
+\begin{proof}
+We prove this by induction. So, assume that $P$ and $Q$ are partitions of $[a, b]$ such that $Q$ is a refinement of $P$.
+\begin{itemize}
+    \item If $|Q| = |P|$, then we know that $P = Q$. In that case,
+    \[L(f, P) = L(f, Q) \leqslant U(f, Q) = U(f, P).\]
+    
+    \item Now, assume that for some $k \in \mathbb{Z}_{\geqslant 0}$, if $|Q| = |P| + k$, then
+    \[L(f, P) \leqslant L(f, Q) \leqslant U(f, Q) \leqslant U(f, P).\]
+    Then, assume that $|Q| = |P| + k+1$. Fix a $c \in Q \setminus P$. We know that $Q$ refines $Q \setminus \{c\}$. Since $|Q \setminus \{c\}| = |P| + k$, we know that
+    \[L(f, P) \leqslant L(f, Q \setminus \{c\}) \leqslant U(f, Q \setminus \{c\}) \leqslant U(f, P).\]
+    Since $Q = (Q \setminus \{c\}) \cup \{c\}$, we find that
+    \begin{align*}
+        L(f, P) &\leqslant L(f, Q \setminus \{c\}) \\
+        &\leqslant L(f, Q) \\
+        &\leqslant U(f, Q) \\
+        &\leqslant U(f, Q \setminus \{c\}) \\
+        &\leqslant U(f, P).
+    \end{align*}
+\end{itemize}
+By induction, this implies that if $Q$ is a refinement of $P$, then
+\[L(f, P) \leqslant L(f, Q) \leqslant U(f, Q) \leqslant U(f, P).\]
+\end{proof}
+\noindent Using this result, we can show that any lower sum is smaller than the upper sum.
+\begin{corollary}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, and let $P, Q$ be partitions of $[a, b]$. Then,
+\[L(f, P) \leqslant U(f, Q).\]
+\end{corollary}
+\begin{proof}
+Define the partition $R = P \cup Q$ of $[a, b]$. We know that $R$ is a refinement of both $P$ and $Q$. Therefore, 
+\[L(f, P) \leqslant L(f, R) \leqslant U(f, R) \leqslant U(f, Q).\]
+\end{proof}
+
+Now, we define lower and upper integrals.
+\begin{definition}[Lower and Upper Integrals]
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function. Then, the \emph{lower integral} of $f$ is given by
+\[\underline{\int_a^b} f(x) \ dx = \sup \{L(f, P) \mid P \text{ a partition of } [a, b]\}.\]
+The \emph{upper integral} of $f$ is given by
+\[\overline{\int_a^b} f(x) \ dx = \inf \{U(f, P) \mid P \text{ a partition of } [a, b]\}.\]
+\end{definition}
+\noindent The infimum and the supremum exist by the corollary above- every upper sum is bounded below by every lower sum, and every lower sum is bounded below by every upper sum. Ideally, we would like the two values to equal. However, using the definition, we can only conclude that the lower integral is smaller than the upper integral.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function. Then,
+\[\underline{\int_a^b} f(x) \ dx \leqslant \overline{\int_a^b} f(x) \ dx.\]
+\end{proposition}
+\begin{proof}
+We know that for partitions $P$ and $Q$ of $[a, b]$,
+\[L(f, P) \leqslant U(f, Q).\]
+This implies that $L(f, P)$ is a lower bound of the set
+\[\{U(f, Q) \mid Q \text{ a partition of } [a, b]\},\]
+Therefore, the infimum property tells us that
+\[L(f, P) \leqslant \overline{\int_a^b} f(x) \ dx.\]
+Moreover, the supremum property tells us that
+\[\underline{\int_a^b} f(x) \ dx \leqslant \overline{\int_a^b} f(x) \ dx.\]
+\end{proof}
+\noindent Nonetheless, we can define the functions whose lower and upper integral are equal.
+\begin{definition}[Riemann integration]
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function. Then, $f$ is \emph{Riemann integrable} on $[a, b]$ if 
+\[\underline{\int_a^b} f(x) \ dx = \overline{\int_a^b} f(x) \ dx.\]
+If $f$ is Riemann integrable on $[a, b]$, we denote the \emph{Riemann integral} of $f$ by
+\[\int_a^b f(x) \ dx = \underline{\int_a^b} f(x) \ dx.\]
+\end{definition}
+
+We now compute some integrals. We start by integrating a scalar.
+\begin{example}
+Let $k \in \mathbb{R}$, and define the constant function $f(x) = k$. Then, $f$ is Riemann integrable on $[a, b]$, with
+\[\int_a^b f(x) \ dx = k(b - a).\]
+\end{example}
+\begin{proof}
+Let $P$ be a partition of $[a, b]$. Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+where $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < b$. We know that for $i \in \{1, 2, \dots, n\}$,
+\[\{f(x) \mid x \in [x_{i-1}, x_i]\} = \{k\},\]
+and so $m_i = k$ and $M_i = k$. This implies that
+\[L(f, P) = \sum_{i=1}^n m_i(x_i - x_{i-1}) = \sum_{i=1}^n k(x_i - x_{i-1}) = k(b - a),\]
+and
+\[U(f, P) = \sum_{i=1}^n M_i(x_i - x_{i-1}) = \sum_{i=1}^n k(x_i - x_{i-1}) = k(b - a).\]
+Therefore,
+\begin{align*}
+    \{L(f, P) \mid P \text{ a partition of } [a, b]\} &= \{k(b - a)\} \\
+    &= \{U(f, P) \mid P \text{ a partition of } [a, b]\}.
+\end{align*}
+This implies that
+\[\underline{\int_a^b} f(x) \ dx = k(b - a) = \overline{\int_a^b} f(x) \ dx.\]
+So, $f$ is Riemann integrable on $[a, b]$, with
+\[\int_a^b f(x) \ dx = k(b - a).\]
+\end{proof}
+\noindent Now, we will look at a function is not Riemann integrable.
+\begin{example}
+Define the function $f: [a, b] \to \mathbb{R}$ by
+\[f(x) = \begin{cases}
+1 & x \in \mathbb{Q} \\
+0 & x \not\in \mathbb{Q}
+\end{cases}.\]
+Then, $f$ is not Riemann integrable on $[a, b]$.
+\end{example}
+\begin{proof}
+Let $P$ be a partition of $[a, b]$. Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < b$. For $i \in \{1, 2, \dots, n\}$, we know that there exist $x, y \in [x_{i-1}, x_i]$ such that $x \in \mathbb{Q}$ and $y \not\in \mathbb{Q}$. Therefore, 
+\[\inf \{f(x) \mid x \in [x_{i-1}, x_I]\} = 0, \qquad \sup \{f(x) \mid x \in [x_{i-1}, x_i]\} = 1.\]
+This implies that for all partitions $P$ of $[a, b]$,
+\[U(f, P) - L(f, P) \geqslant 1.\]
+So, the Riemann $\varepsilon$-condition tells us that $f$ is not Riemann integrable on $[a, b]$.
+\end{proof}
+\noindent We will now provide a characterisation of Riemann integration- this will make it easier to show functions are Riemann integrable.
+\begin{proposition}[Riemann $\varepsilon$-condition]
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function. Then, $f$ is Riemann integrable on $[a, b]$ if and only if for every $\varepsilon > 0$, there exists a partition $P_\varepsilon$ of $[a, b]$ such that $U(f, P_\varepsilon) - L(f, P_\varepsilon) < \varepsilon$.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that $f$ is Riemann integrable on $[a, b]$. Let $\varepsilon > 0$. Since
+    \[\overline{\int_a^b} f(x) \ dx = \inf \{U(f, P) \mid P \text{ partition of } [a, b]\},\]
+    we can find a partition $P_1$ of $[a, b]$ such that 
+    \[\overline{\int_a^b} f(x) \ dx \leqslant U(f, P_1) < \overline{\int_a^b} f(x) \ dx + \frac{\varepsilon}{2}.\]
+    Similarly, since
+    \[\underline{\int_a^b} f(x) \ dx = \sup \{L(f, P) \mid P \text{ partition of } [a, b]\},\]
+    we can find a partition $P_2$ of $[a, b]$ such that
+    \[\underline{\int_a^b} f(x) \ dx - \frac{\varepsilon}{2} < L(f, P_2) \leqslant \underline{\int_a^b} f(x) \ dx.\]
+    So, set $P_\varepsilon = P_1 \cup P_2$. In that case,
+    \begin{align*}
+        U(f, P_\varepsilon) - L(f, P_\varepsilon) &\leqslant U(f, P_1) - L(f, P_2) \\
+        &< \overline{\int_a^b} f(x) \ dx + \frac{\varepsilon}{2} - \underline{\int_a^b} f(x) \ dx + \frac{\varepsilon}{2} \\
+        &= \varepsilon.
+    \end{align*}
+    
+    \item Assume that for every $\varepsilon > 0$, there exists a partition $P_\varepsilon$ of $[a, b]$ such that $U(f, P_\varepsilon) - L(f, P_\varepsilon) < \varepsilon$. Let $\varepsilon > 0$. We know that we can find a partition $P_\varepsilon$ of $[a, b]$ such that
+    \[U(f, P_\varepsilon) - L(f, P_\varepsilon) < \varepsilon.\]
+    We know that
+    \[\overline{\int_a^b} f(x) \ dx \leqslant U(f, P_\varepsilon) \qquad \text{and} \qquad \underline{\int_a^b} f(x) \ dx \geqslant L(f, P_\varepsilon).\]
+    Therefore,
+    \[0 \leqslant \overline{\int_a^b} f(x) \ dx - \underline{\int_a^b} f(x) \ dx \leqslant U(f, P_\varepsilon) - L(f, P_\varepsilon) < \varepsilon.\]
+    This is true for every $\varepsilon > 0$, which implies that
+    \[\overline{\int_a^b} f(x) \ dx = \underline{\int_a^b} f(x) \ dx.\]
+\end{itemize}
+\end{proof}
+\noindent We illustrate how we can use this characterisation to show Riemann integrability.
+\begin{example}
+Define the function $f: [0, 2] \to \mathbb{R}$ by
+\[f(x) = \begin{cases}
+1 & x \leqslant 1 \\
+2 & x > 0
+\end{cases}.\]
+Then, $f$ is Riemann integrable on $[0, 2]$.
+\end{example}
+\begin{proof}
+Let $\varepsilon > 0$. Set $\delta = \min(1, \varepsilon)$, and define the partition $P_\varepsilon$ of $[0, 2]$ by
+\[P_\varepsilon = \{0, 1 - \tfrac{\delta}{4}, 1 + \tfrac{\delta}{4}, 2\}.\sidefootnote{We need all the elements within the partition to be between 0 and 2, so we cannot have $\varepsilon$ here- the value $1 + \frac{\delta}{4}$ could be much bigger than 2.}\]
+Then,
+\begin{align*}
+    U(f, P_\varepsilon) - L(f, P_\varepsilon) &= [(1 - \tfrac{\delta}{4}) \cdot 1 + \tfrac{\delta}{2} \cdot 2 + (1 - \tfrac{\delta}{4}) \cdot 2] \\
+    &- [(1 - \tfrac{\delta}{4}) \cdot 1 + \tfrac{\delta}{2} \cdot 1 + (1 - \tfrac{\delta}{4}) \cdot 2] \\
+    &= \tfrac{\delta}{2} \leqslant \tfrac{\varepsilon}{2} < \varepsilon.
+\end{align*}
+\end{proof}
+Although we can show that the function is integrable, we did not compute the integral itself. To do this easily, we define sequential characterisation of Riemann integration.
+\begin{proposition}[Sequential Characterisation of Riemann Integration]
+Let $f: [a, b] \to \mathbb{R}$ be a bounded function, and let $I \in \mathbb{R}$. Then, $f$ is Riemann integrable on $[a, b]$ with
+\[\int_a^b f(x) \ dx = I\]
+if and only if there exists a sequence of partitions $(P_n)_{n=1}^{\infty}$ of $[a, b]$ such that
+\[L(f, P_n) \to I \qquad \text{and} \qquad U(f, P_n) \to I.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that 
+    \[\int_a^b f(x) \ dx = I.\]
+    Since $I = \underline{\int_a^b} f(x) \ dx$, we can define the sequence of partitions $(L_n)_{n=1}^\infty$ of $[a, b]$ such that
+    \[I - \frac{1}{n} < L(f, L_n) \leqslant I.\]
+    Moreover, since $I = \overline{\int_a^b} f(x) \ dx$, we can define the sequence of partitions $(U_n)_{n=1}^\infty$ of $[a, b]$ such that
+    \[I \leqslant U(f, U_n) < I + \frac{1}{n}.\]
+    Now, define the sequence of partitions $(P_n)_{n=1}^\infty$ by $P_n = L_n \cup U_n$. In that case,
+    \[I - \frac{1}{n} < L(f, L_n) \leqslant L(f, P_n) \leqslant I \leqslant U(f, P_n) \leqslant U(f, U_n) < I + \frac{1}{n}.\]
+    By the sandwich theorem, this implies that
+    \[L(f, P_n) \to I \qquad \text{and} \qquad U(f, P_n) \to I.\]
+    
+    \item Now, assume that there exists a sequence of partitions $(P_n)_{n=1}^\infty$ such that
+    \[L(f, P_n) \to I \qquad \text{and} \qquad U(f, P_n) \to I.\]
+    We know that for all $n \in \mathbb{Z}_{\geqslant 1}$, 
+    \[L(f, P_n) \leqslant I \leqslant U(f, P_n).\]
+    This implies that
+    \begin{align*}
+        I &= \sup \{L(f, P_n) \mid n \in \mathbb{Z}_{\geqslant 1}\} \\
+        &\leqslant \sup \{L(f, P) \mid P \text{ partition of } [a, b]\} \\
+        &\leqslant \inf \{U(f, P) \mid P \text{ partition of } [a, b]\} \\
+        &\leqslant \inf \{U(f, P_n) \mid n \in \mathbb{Z}_{\geqslant 1}\} = I.
+    \end{align*}
+    Therefore,
+    \[\underline{\int_a^b} f(x) \ dx = I = \overline{\int_a^b} f(x) \ dx.\]
+    This implies that $f$ is Riemann integrable on $[a, b]$, with
+    \[\int_a^b f(x) \ dx = I.\]
+\end{itemize}
+\end{proof}
+\noindent Using this, we compute the integral.
+\begin{example}
+Define the function $f: [0, 2] \to \mathbb{R}$ by
+\[f(x) = \begin{cases}
+1 & x \leqslant 1 \\
+2 & x > 0
+\end{cases}.\]
+Then, the integral
+\[\int_0^2 f(x) \ dx = 3.\]
+\end{example}
+\begin{proof}
+Define the sequence of partitions $(P_n)_{n=2}^{\infty}$ of $[0, 2]$ by
+\[P_n = \{0, 1 - \tfrac{1}{n}, 1 + \tfrac{1}{n}, 2\}.\]
+We find that
+\[U(f, P_n) = (1 - \tfrac{1}{n}) \cdot 1 + \tfrac{2}{n} \cdot 2 + (1 - \tfrac{1}{n}) \cdot 2 = 3 + \tfrac{1}{n} \to 3,\]
+and
+\[U(f, P_n) = (1 - \tfrac{1}{n}) \cdot 1 + \tfrac{2}{n} \cdot 1 + (1 - \tfrac{1}{n}) \cdot 2 = 3 - \tfrac{1}{n} \to 3.\]
+Therefore, $f$ is Riemman integrable on $[0, 2]$, with
+\[\int_0^2 f(x) \ dx = 3.\]
+\end{proof}
+\noindent We now look at another example using the sequential characterisation.
+\begin{example}
+Define the function $f: [0, 1] \to \mathbb{R}$ by $f(x) = x^2$. Then, the integral
+\[\int_0^1 f(x) \ dx = \frac{1}{3}.\]
+\end{example}
+\begin{proof}
+Define the sequence of partitions $(P_n)_{n=1}^{\infty}$ of $[0, 1]$ by
+\[P_n = \{0, \tfrac{1}{n}, \tfrac{2}{n}, \dots, \tfrac{n-1}{n}, 1\}.\]
+Since $f$ is strictly increasing on $[0, 1]$, we find that
+\begin{align*}
+    U(f, P_n) &= \sum_{i=1}^n M_i (x_i - x_{i-1}) & L(f, P_n) &= \sum_{i=1}^n m_i (x_i - x_{i-1}) \\
+    &= \sum_{i=1}^n \frac{i^2}{n^2} \cdot \frac{1}{n} & &= \sum_{i=1}^n \frac{(i-1)^2}{n^2} \cdot \frac{1}{n} \\
+    &= \frac{1}{n^3} \sum_{i=1}^n i^2 & &= \frac{1}{n^3} \sum_{i=1}^{n-1} i^2 \\
+    &= \frac{1}{n^3} \cdot \frac{n(n+1)(2n+1)}{6} & &= \frac{1}{n^3} \cdot \frac{(n-1)n(2n-1)}{6} \\
+    &= \frac{n(n+1)(2n+1)}{6n^3} \to \frac{1}{3}, & &= \frac{n(n-1)(2n-1)}{6n^3} \to \frac{1}{3}.
+\end{align*}
+Therefore, $f$ is Riemann integrable on $[0, 1]$, with
+\[\int_0^1 f(x) \ dx = \frac{1}{3}.\]
+\end{proof}
+
+We now prove some basic properties of Riemann integrals. First, we show that $\int_a^b \lambda f = \lambda \int_a^b f$.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be Riemann integrable, and let $\lambda \in \mathbb{R}$. Then, $\lambda f$ is Riemann integrable on $[a, b]$, with
+\[\int_a^b \lambda f(x) \ dx = \lambda \int_a^b f(x) \ dx.\]
+\end{proposition}
+\begin{proof}
+Since $f$ is Riemann integrable on $[a, b]$, there exists a sequence of partitions $(P_n)_{n=1}^{\infty}$ such that
+\[L(f, P_n) \to \int_a^b f(x) \ dx \qquad \text{and} \qquad U(f, P_n) \to \int_a^b f(x) \ dx.\]
+Now, denote
+\[P_n = \{a, x_1, x_2, \dots, x_{k-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{k-1} < x_k = b$. In that case,
+\begin{align*}
+    U(\lambda f, P_n) &= \sum_{i=1}^k M_{i, \lambda f} (x_i - x_{i-1}) & L(\lambda f, P_n) &= \sum_{i=1}^k m_{i, \lambda f} (x_i - x_{i-1}) \\
+    &= \sum_{i=1}^k \lambda M_{i, f} (x_i - x_{i-1}) & &= \sum_{i=1}^k \lambda m_{i, f} (x_i - x_{i-1}) \\
+    &= \lambda \sum_{i=1}^k M_{i, f} (x_i - x_{i-1}) & &= \lambda \sum_{i=1}^k m_{i, f} (x_i - x_{i-1}) \\
+    &= \lambda U(f, P_n), & &= \lambda L(f, P_n).
+\end{align*}
+Therefore,
+\[L(\lambda f, P_n) \to \lambda \int_a^b f(x) \ dx \qquad \text{and} \qquad U(\lambda f, P_n) \to \lambda \int_a^b f(x) \ dx.\]
+So,
+\[\int_a^b \lambda f(x) \ dx = \lambda \int_a^b f(x) \ dx.\]
+\end{proof}
+\noindent Next, we show that $\int_a^b f + g = \int_a^b f + \int_a^b g$.
+\begin{proposition}
+Let $f, g: [a, b] \to \mathbb{R}$ be Riemann integrable. Then, $f + g$ is Riemann integrable on $[a, b]$, with
+\[\int_a^b (f(x) + g(x)) \ dx = \int_a^b f(x) \ dx + \int_a^b g(x) \ dx.\]
+\end{proposition}
+\begin{proof}
+Since $f$ and $g$ are Riemann integrable on $[a, b]$, we can find partitions $(Q_n)_{n=1}^\infty$ and $(R_n)_{n=1}^\infty$ such that
+\begin{align*}
+    L(f, Q_n) \to \int_a^b f(x) \ dx \qquad &\text{and} \qquad U(f, Q_n) \to \int_a^b f(x) \ dx \\
+    L(g, R_n) \to \int_a^b g(x) \ dx \qquad &\text{and} \qquad U(g, R_n) \to \int_a^b g(x) \ dx.
+\end{align*}
+Now, define the sequence of partitions $(P_n)_{n=1}^\infty$ of $[a, b]$ by $P_n = Q_n \cup R_n$. In that case,
+\begin{align*}
+    L(f, Q_n) + L(g, R_n) &\leqslant L(f, P_n) + L(g, P_n) \\
+    &= L(f + g, P_n) \\
+    &\leqslant U(f + g, P_n) \\
+    &= U(f, P_n) + U(g, P_n) \\
+    &\leqslant U(f, Q_n) + U(g, R_n).
+\end{align*}
+By the algebraic properties of limits, we know that
+\[L(f, Q_n) + L(g, R_n) \to \int_a^b f(x) \ dx + \int_a^b g(x) \ dx\]
+and
+\[U(f, Q_n) + U(g, R_n) \to \int_a^b f(x) \ dx + \int_a^b g(x) \ dx.\]
+So, the sandwich theorem tells us that
+\[L(f + g, R_n)\to \int_a^b f(x) \ dx + \int_a^b g(x) \ dx\]
+and
+\[U(f + g, R_n)\to \int_a^b f(x) \ dx + \int_a^b g(x) \ dx.\]
+Therefore, $f + g$ is Riemann integrable, with
+\[\int_a^b f(x) + g(x) \ dx = \int_a^b f(x) \ dx + \int_a^b g(x) \ dx.\]
+\end{proof}
+\noindent Now, we show that $\int_a^b f = \int_a^c f + \int_c^b f$.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be Riemann integrable, and let $c \in (a, b)$. Then, $f$ is Riemann integrable on $[a, c]$ and $[b, c]$, with
+\[\int_a^c f(x) \ dx + \int_c^b f(x) \ dx = \int_a^b f(x) \ dx.\]
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since $f$ is Riemann integrable on $[a, b]$, there exists a partition $P_\varepsilon$ of $[a, b]$ such that
+\[U(f, P) - L(f, P) < \varepsilon.\]
+Denote 
+\[P_\varepsilon = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < x_n = b$. Let $i \in \{1, \dots, n\}$ with $x_{i-1} < c \leqslant x_i$. For $i \in \{1, \dots, n\}$, we know that $m_i \leqslant M_i$, and so $M_i - m_i \geqslant 0$. Now, define the partitions
+\[Q_\varepsilon = (P_\varepsilon \cap [a, c]) \cup \{c\}, \qquad R_\varepsilon = (P_\varepsilon \cap [c, b]) \cup \{c\}.\]
+Denote
+\begin{align*}
+    M_{x_{i-1}, c} &= \sup \{f(x) \mid x \in [x_{i-1}, c]\} & m_{x_{i-1}, c} &= \inf \{f(x) \mid x \in [x_{i-1}, c]\} \\
+    M_{c, x_i} &= \sup \{f(x) \mid x \in [c, x_i]\} & m_{c, x_i} &= \inf \{f(x) \mid x \in [c, x_i]\}.
+\end{align*}
+Since $[x_{i-1}, c] \subseteq [x_{i-1}, x_i]$ and $[c, x_i] \subseteq [x_{i-1}, x_i]$, we find that $M_{x_{i-1}, c} \leqslant M_i$ and $m_{x_{i-1}, c} \geqslant m_i$, and $M_{c, x_i} \leqslant M_i$ and $m_{c, x_i} \geqslant m_i$. In that case,
+\begin{align*}
+    U(f, Q_\varepsilon) - L(f, Q_\varepsilon) &= \sum_{j=1}^{i-1} (M_j - m_j) + M_{x_{i-1}, c} - m_{x_{i-1}, c} \\
+    &\leqslant \sum_{j=1}^i (M_j - m_j) \\
+    &\leqslant \sum_{j=1}^n (M_j - m_j) < \varepsilon,
+\end{align*}
+and
+\begin{align*}
+    U(f, Q_\varepsilon) - L(f, Q_\varepsilon) &= \sum_{j=1}^{i-1} (M_j - m_j) + M_{c, x_i} - m_{c, x_i} \\
+    &\leqslant \sum_{j=i}^n (M_j - m_j) \\
+    &\leqslant \sum_{j=i}^n (M_j - m_j) < \varepsilon.
+\end{align*}
+Therefore, $f$ is Riemann integrable on $[a, b]$ and $[b, c]$.
+
+\noindent Now, assume that
+\[\int_a^c f(x) \ dx = I_1, \qquad \int_c^b f(x) \ dx = I_2.\]
+We know that we can find sequences of partitions $(Q_n)_{n=1}^{\infty}$ of $[a, c]$ and $(R_n)_{n=1}^{\infty}$ of $[c, b]$ such that
+\[U(f, Q_n) \to I_1, \qquad L(f, Q_n) \to I_1, \qquad U(f, R_n) \to I_2, \qquad L(f, R_n) \to I_2.\]
+Now, define the sequence of partitions $(P_n)_{n=1}^{\infty}$ of $[a, b]$ by $P_n = Q_n \cup R_n$. We know that
+\begin{align*}
+    U(f, P_n) &= U(f, Q_n) + U(f, R_n) \to I_1 + I_2, \\
+    L(f, P_n) &= L(f, Q_n) + L(f, R_n) \to I_1 + I_2.
+\end{align*}
+Therefore,
+\[\int_a^b f(x) \ dx = I_1 + I_2 = \int_a^c f(x) \ dx + \int_c^b f(x) \ dx.\]
+\end{proof}
+\noindent Next, we show that integrals obey order.
+\begin{proposition}
+Let $f, g: [a, b] \to \mathbb{R}$ be Riemann integrable, with $f(x) \leqslant g(x)$ for all $x \in [a, b]$. Then,
+\[\int_a^b f(x) \ dx \leqslant \int_a^b g(x) \ dx.\]
+\end{proposition}
+\begin{proof}
+Define the function $h: [a, b] \to \mathbb{R}$ by $h(x) = g(x) - f(x)$. We know that for all $x \in \mathbb{R}$, $h(x) \geqslant 0$. Now, let $P$ be a partition of $[a, b]$. Denote 
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < x_n = b$. For $i \in \{1, 2, \dots, n\}$, we find that
+\[M_i = \sup \{f(x) \mid x \in [x_{i-1}, x_i]\} \geqslant 0,\]
+since $f(x) \geqslant 0$ for all $x \in [x_{i-1}, x_i]$. Therefore, the upper sum
+\[U(f, P) = \sum_{i=1}^n M_i (x_i - x_{i-1}) \geqslant 0.\]
+Therefore, for a partition $P$, $U(f, P) \geqslant 0$.
+
+\noindent Now, since $f$ and $g$ are Riemann integrable on $[a, b]$, we find that $h$ is Riemann integrable on $[a, b]$. Therefore, there exists a sequence of partitions $(P_n)_{n=1}^{\infty}$ such that
+\[U(f, P_n) \to \int_a^b h(x) \ dx.\]
+We know that $U(f, P_n) \geqslant 0$ for all $n \in \mathbb{Z}_{\geqslant 1}$. Therefore, the order property of limits tells us that
+\[\int_a^b h(x) \geqslant 0.\]
+In that case,
+\[\int_a^b f(x) \leqslant \int_a^b g(x).\]
+\end{proof}
+% \int_0^1 x dx = 1/2; \int_0^1 -x+2 dx = 1/2 (although strictly bigger possible)
+\noindent Now, we show that the absolute value of an integrable function is also integrable. We start with a lemma.
+\begin{lemma}
+Let $f: [a, b] \to \mathbb{R}$ be Riemann integrable. Define the function $f^+: [a, b] \to \mathbb{R}$ by $f^+(x) = \max(f(x), 0)$. Then, $f^+$ is Riemann integrable.
+\end{lemma}
+\begin{proof}
+Let $P$ be a partition of $[a, b]$. Denote
+\[P = \{a, x_1, x_2, \dots, x_{n-1}, b\},\]
+with $a = x_0 < x_1 < x_2 < \dots < x_{n-1} < x_n = b$. Let $i \in \{1, 2, \dots, n\}$, define
+\begin{align*}
+    M_i &= \sup \{f(x) \mid x \in [x_{i-1}, x_i]\}, & m_i &= \inf \{f(x) \mid x \in [x_{i-1}, x_i]\}, \\
+    M_i^+ &= \sup \{f^+(x) \mid x \in [x_{i-1}, x_i]\}, & m_i^+ &= \inf \{f^+(x) \mid x \in [x_{i-1}, x_i]\} .
+\end{align*}
+\begin{itemize}
+    \item Now, if $f(x) \leqslant 0$ for all $x \in [x_{i-1}, x_i]$, then $M_i^+ = m_i^+ = 0$. In that case,
+    \[M_i^+ - m_i^+ = 0 \leqslant M_i - m_i.\]
+    
+    \item Instead, if $f(x) \geqslant 0$ for all $x \in [x_{i-1}, x_i]$, then $M_i^+ = M_i$ and $m_i^+ = m_i$. In that case,
+    \[M_i^+ - m_i^+ = M_i - m_i.\]
+    
+    \item Otherwise, there exist $x, y \in [x_{i-1}, x_i]$ such that $f(x) > 0$ and $f(y) < 0$. Therefore, $m_i \leqslant 0 = m_i^+$ and $M_i = M_i^+$. In that case,
+    \[M_i^+ - m_i^+ = M_i^+ = M_i \leqslant M_i - m_i.\]
+\end{itemize}
+Therefore, 
+\[M_i^+ - m_i^+ \leqslant M_i - m_i,\]
+meaning that
+\[0 \leqslant U(f^+, P) - L(f^+, P) \leqslant U(f, P) - L(f, P).\]
+Now, let $\varepsilon > 0$. Since $f$ is Riemann integrable on $[a, b]$, there exists a partition $P_\varepsilon$ of $[a, b]$ such that $U(f, P) - L(f, P) < \varepsilon$. In that case,
+\[U(f^+, P) - L(f^+, P) \leqslant U(f, P) - L(f, P) < \varepsilon.\]
+So, the Riemann $\varepsilon$-condition tells us that $f^+$ is Riemann integrable on $[a, b]$.
+\end{proof}
+\noindent Now, we show that the absolute value function is integrable.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be Riemann integrable. Then, $|f|$ is Riemann integrable, with
+\[\left|\int_a^b f(x) \ dx\right| \leqslant \int_a^b |f(x)| \ dx.\]
+\end{proposition}
+\begin{proof}
+Define the functions $f^+, f^-: [a, b] \to \mathbb{R}$ by $f^+(x) = \max(f(x), 0)$ and $f^-(x) = \max(-f(x), 0) = (-f)^+(x)$. For $x \in [a, b]$, if $f(x) \geqslant 0$, then
+\[f^+(x) + f^-(x) = f(x) + 0 = |f(x)|.\]
+Instead, if $f(x) < 0$, then
+\[f^+(x) + f^-(x) = 0 - f(x) = |f(x)|.\]
+Therefore, for all $x \in [a, b]$, $|f(x)| = f^+(x) + f^-(x)$. Since the two functions $f^+$ and $f^-$ are integrable on $[a, b]$, we find that $|f|$ is integrable on $[a, b]$. 
+
+\noindent Now, we show that $f(x) = f^+(x) - f^-(x)$ for all $x \in [a, b]$. If $f(x) \geqslant 0$, then
+\[f^+(x) - f^-(x) = f(x) - 0 = f(x).\]
+Instead, if $f(x) < 0$, then
+\[f^+(x) - f^-(x) = -(-f(x)) = f(x).\]
+Therefore, $f(x) = f^+(x) - f^-(x)$. In that case,
+\begin{align*}
+    \left|\int_a^b f(x) \ dx\right| &= \left|\int_a^b f^+(x) \ dx - \int_a^b f^-(x) \ dx\right| \\
+    &\leqslant \left|\int_a^b f^+(x) \ dx\right| + \left|\int_a^b f^-(x) \ dx\right| \\
+    &= \int_a^b f^+(x) \ dx + \int_a^b f^-(x) = \int_a^b |f(x)| \ dx.
+\end{align*}
+% Now, since $f$ is Riemann integrable on $[a, b]$, there exists a sequence of partitions $(P_n)_{n=1}^{\infty}$ of $[a, b]$ such that
+% \[U(f, P_n) \to \int_a^b f(x) \ dx.\]
+% Similarly, since $|f|$ is Riemann integrable on $[a, b]$, there exists a sequence of partitions $(Q_n)_{n=1}^{\infty}$ of $[a, b]$ such that
+% \[U(|f|, Q_N) \to \int_a^b |f(x)| \ dx.\]
+% Now, define the sequence of partitions $(R_n)_{n=1}^{\infty}$ of $[a, b]$ by $R_n = P_n \cup Q_n$. We know that for all $n \in \mathbb{Z}_{\geqslant 1}$,
+% \begin{align*}
+%     \int_a^b f(x) \ dx &\leqslant U(f, R_n) \leqslant U(f, P_n), \\ 
+%     \int_a^b |f(x)| \ dx &\leqslant U(|f|, R_n) \leqslant U(|f|, Q_n).
+% \end{align*}
+% So, the Sandwich Theorem tells us that
+% \[U(f, R_n) \to \int_a^b f(x) \ dx, \qquad U(|f|, R_n) \to \int_a^b |f(x)| \ dx.\]
+% Next, we show that for all $n \in \mathbb{Z}_{\geqslant 1}$, $|U(f, R_n)| \leqslant U(|f|, R_n)$. Denote the partition
+% \[R_n = \{a, x_1, x_2, \dots, x_k\},\]
+% where $a = x_0 < x_1 < x_2 < \dots < x_k = b$. For all $i \in \{1, 2, \dots, k\}$, define
+% \[M_i = \sup \{f(x) \mid x \in [x_{i-1}, x_i]\}, \qquad \sup \{|f(x)| \mid x \in [x_{i-1}, x_i]\} = \overline{M_i}.\]
+% If there exists an $x \in [x_{i-1}, x_i]$ such that $f(x) \geqslant 0$, then $|M_i| = M_i \leqslant \overline{M_i}.$ Instead, if for all $x \in [x_{i-1}, x_i]$, $f(x) < 0$, then
+% \begin{align*}
+%     |M_i| &= |\sup \{f(x) \mid x \in [x_{i-1}, x_i]\}| \\
+%     &= -\sup \{f(x) \mid x \in [x_{i-1}, x_i]\} \\
+%     &\leqslant -\inf \{f(x) \mid x \in [x_{i-1}, x_i]\} \\
+%     &= \sup \{|f(x)| \mid x \in [x_{i-1}, x_i]\} = \overline{M_i}.
+% \end{align*}
+% Therefore, $|M_i| \leqslant \overline{M_i}$. This implies that 
+% \[|U(f, R_n)| = \sum_{i=1}^k |M_i| (x_i - x_{i-1}) \leqslant \sum_{i=1}^k \overline{M_i} (x_i - x_{i-1}) = U(|f|, R_n).\]
+% So, the order properties of limits tells us that
+% \[\left|\int_a^b f(x) \ dx\right| \leqslant \int_a^b |f(x)| \ dx.\]
+\end{proof}
+
+We will finish by proving some classes of functions are Riemann integrable. First, bounded monotonic functions are Riemann integrable.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be a bounded monotonic function. Then, $f$ is Riemann integrable on $[a, b]$.
+\end{proposition}
+\begin{proof}
+Without loss of generality, assume that $f$ is monotonically increasing. Let $\varepsilon > 0$. Choose an $n \in \mathbb{Z}_{\geqslant 1}$ such that $n > \frac{(b-a)(f(b) - f(a))}{\varepsilon}$. Define the partition
+\[P_\varepsilon = \{a, a + \tfrac{b-a}{n}, a + \tfrac{2(b-a)}{n}, \dots, a + \tfrac{(n-1)(b-a)}{n}, b\}\]
+of $[a, b]$. For $i \in \{1, 2, \dots, n\}$, we find that
+\begin{align*}
+    M_i &= \sup \{f(x) \mid x \in [a + \tfrac{(i-1)(b-a)}{n}, a + \tfrac{i(b-a)}{n}]\} = f(\tfrac{i(b-a)}{n}), \\
+    m_i &= \inf \{f(x) \mid x \in [a + \tfrac{(i-1)(b-a)}{n}, a + \tfrac{i(b-a)}{n}]\} = f(\tfrac{(i-1)(b-a)}{n})
+\end{align*}
+since $f$ is increasing. In that case,
+\begin{align*}
+    U(f, P_\varepsilon) - L(f, P_\varepsilon) &= \sum_{i=1}^n \frac{b-a}{n} (M_i - m_i) \\
+    &= \frac{b-a}{n} \sum_{i=1}^n f \left(\frac{i(b-a)}{n}\right) - f \left(\frac{(i-1)(b-a)}{n}\right) \\
+    &= \frac{b-a}{n} (f(b) - f(a)) < \varepsilon.
+\end{align*}
+So, the Riemann $\varepsilon$-condition tells us that $f$ is Riemann integrable on $[a, b]$.
+\end{proof}
+\noindent Moreover, any continuous function is Riemann integrable.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{R}$ be a continuous function. Then, $f$ is Riemann integrable.
+\end{proposition}
+\begin{proof}
+Since $f$ is continuous on $[a, b]$, we know that $f$ is bounded on $[a, b]$. Let $\varepsilon > 0$. Since $f$ is continuous on $[a, b]$, $f$ is uniformly continuous on $[a, b]$. In that case, there exists a $\delta > 0$ such that for all $x, y \in [a, b]$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \frac{\varepsilon}{b - a}$. Now, fix an $n \in \mathbb{Z}_{\geqslant 1}$ such that $n > \frac{b - a}{\delta}$. Define the partition
+\[P = \left\{a, a + \tfrac{b - a}{n}, a + \tfrac{2(b - a)}{n}, \dots, a + \tfrac{(n - 1)(b - a)}{n}, b\right\}\]
+of $[a, b]$. Since $f$ is continuous, we find that for all $i \in \{1, 2, \dots, n\}$, the extreme value theorem tells us that there exist $u_i, v_i \in [a + \frac{(i-1)(b - a)}{n}, a + \frac{i(b-a)}{b}]$ such that 
+\begin{align*}
+    M_i &= \sup \left\{f(x) \mid x \in [a + \tfrac{(i-1)(b-a)}{n}, a + \tfrac{i(b-a)}{n}]\right\} = f(u_i), \\
+    m_i &= \sup \left\{f(x) \mid x \in [a + \tfrac{(i-1)(b-a)}{n}, a + \tfrac{i(b-a)}{n}]\right\} = f(v_i).
+\end{align*}
+Moreover, 
+\[|u_i - v_i| \leqslant x_i - x_{i-1} = \frac{b - a}{n} < \delta,\]
+and so $0 \leqslant M_i - m_i = f(u_i) - f(v_i) < \frac{\varepsilon}{b - a}$. In that case,
+\begin{align*}
+    U(f, P_\varepsilon) - L(f, P_\varepsilon) &= \sum_{i=1}^n (M_i - m_i)(x_i - x_{i-1}) \\
+    &< \sum_{i=1}^n \frac{\varepsilon}{b - a} (x_i - x_{i-1}) \\
+    &= \frac{\varepsilon}{b - a}(b - a) = \varepsilon.
+\end{align*}
+So, the Riemann $\varepsilon$-condition tells us that $f$ is Riemann integrable on $[a, b]$.
+\end{proof}
+We finish by defining all orders in the integral.
+\begin{definition}
+Let $f: [a, b] \to \mathbb{R}$ be Riemann integrable on $[a, b]$. Then, define
+\[\int_a^a f(x) \ dx = 0, \qquad \int_b^a f(x) \ dx= -\int_a^b f(x) \ dx.\]
+\end{definition}
+
+\newpage
+
+\section{Fundamental Theorem of Calculus}
+In this section, we will prove the Fundamental Theorem of Calculus. We start by showing that the integral function is continuous.
+\begin{lemma}
+Let $f: [a, b] \to \mathbb{R}$ be an integrable function, and let $F: [a, b] \to \mathbb{R}$ be given by
+\[F(x) = \int_a^x f(t) \ dt.\]
+Then, $F$ is continuous on $[a, b]$.
+\end{lemma}
+\begin{proof}
+Since $f$ is integrable, we know that $f$ is bounded. So, there exists a $M > 0$ such that for all $x \in (a, b)$, $|f(x)| < M$. Now, let $x \in [a, b]$. We know that
+\[-M|x - c| = -\left|\int_c^x M \ dt\right| \leqslant \int_c^x f(t) \ dt \leqslant \left|\int_c^x M \ dt \right| = M|x - c|.\]
+Therefore,
+\[|F(x) - F(c)| = \left|\int_c^x f(t) \ dt \right| < M|x - c|.\]
+This implies that $F$ is (unifomly) continuous on $[a, b]$.
+\end{proof}
+\noindent Now, we prove the Fundamental Theorem of Calculus, part I.
+\begin{proposition}[Fundamental Theorem of Calculus, I]
+Let $f: [a, b] \to \mathbb{R}$ be a continuous function, and let $F: [a, b] \to \mathbb{R}$ be given by
+\[F(x) = \int_a^x f(t) \ dt.\]
+Then, $F$ is differentiable on $(a, b)$ with $F'(c) = f(c)$ for all $c \in (a, b)$.
+\end{proposition}
+\begin{proof}
+Let $c \in (a, b)$, and let $\varepsilon > 0$. Since $f$ is continuous at $x$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - f(c)| < \frac{\varepsilon}{2}$. Now, for all $t \in (x, c)$ or $t \in (c, x)$, $|x - t| < |x - c|$. So, if $0 < |x - c| < \delta$, then $|f(x) - f(t)| < \frac{\varepsilon}{2}$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+\begin{align*}
+    \left|\frac{F(x) - F(c)}{x - c} - f(c)\right| &= \frac{1}{|x - c|} \left|\int_c^x f(t) \ dt - \int_c^x f(c) \ dt \right| \\
+    &= \frac{1}{|x - c|} \left|\int_c^x f(t) - f(c) \ dt\right| \\
+    &\leqslant \frac{1}{|x - c|} \left|\int_c^x \left|f(t) - f(c)\right|\right| \ dt \\
+    &\leqslant \frac{1}{|x - c|} \left|\int_c^x \frac{\varepsilon}{2} \ dt\right| \\
+    &= \frac{1}{|x - c|} \cdot \frac{\varepsilon}{2} \cdot |x - c| \\
+    &= \frac{\varepsilon}{2} < \varepsilon.
+\end{align*}
+Therefore,
+\[F'(c) = \lim_{x \to c} \frac{F(x) - F(c)}{x - c} = f(c).\]
+\end{proof}
+\noindent Next, we prove the Fundamental Theorem of Calculus, part II.
+\begin{corollary}[Fundamental Theorem of Calculus, II]
+Let $f: [a, b] \to \mathbb{R}$ be a continuous function, and let $F: [a, b] \to \mathbb{R}$ be a continuous function such that $F'(x) = f(x)$ for all $x \in [a, b]$. Then,
+\[\int_a^b f(x) \ dx = F(b) - F(a).\]
+\end{corollary}
+\begin{proof}
+Define the function $G: [a, b] \to \mathbb{R}$ by 
+\[G(x) = \int_a^x f(t) \ dt.\]
+By the Fundamental Theorem of Calculus (I), we know that $G'(x) = f(x)$ for all $x \in [a, b]$. In that case, for all $x \in (a, b)$,
+\[F'(x) - G'(x) = f(x) - f(x) = 0.\]
+So, we can find a $c \in \mathbb{R}$ such that $F(x) - G(x) = c$. In that case,
+\begin{align*}
+    F(b) - F(a) &= (G(b) + c) - (G(a) + c) \\
+    &= G(b) - G(a) \\
+    &= \int_a^b f(t) \ dt - \int_a^a f(t) \ dt \\
+    &= \int_a^b f(t) \ dt.
+\end{align*}
+\end{proof}
+
+As a corollary of the Fundamental Theorem of Calculus, we can show that the function $e^x$ is unique.
+\begin{corollary}
+Let $f, g: \mathbb{R} \to \mathbb{R}$ be such that $f(x) = g(x)$, for some $x \in \mathbb{R}$, and $f'(t) = f(t), g'(t) = g(t)$ for all $t \in \mathbb{R}$. Then, $f(t) = g(t)$ for all $t \in \mathbb{R}$.
+\end{corollary}
+\begin{proof}
+Let $r > 0$. We show that $f(t) = g(t)$ for all $t \in (x-r, x+r)$. Without loss of generality, assume that $r \leqslant 1$.\sidefootnote{For instance, we can show that for all $t \in (x-1, x+1)$, the values $f(t) = g(t)$, and then consider the problem: $f(x+\frac{1}{2}) = f(x+\frac{1}{2})$ and $f' = f, g' = g$, and so on.} Now, let $b \in (0, r)$- we show that $f(t) = g(t)$ for all $t \in [x-b, x+b]$. By the Extreme Value Theorem, there exists a $u \in [x-b, x+b]$ such that for all $t \in [x-b, x+b]$, $|f(u) - g(u)| \geqslant |f(t) - g(t)|$. In that case,
+\begin{align*}
+    |f(u) - g(u)| &= |f(u) - f(x) + g(x) - g(u)| \\
+    &= \left|\int_x^u f(t) \ dt - \int_x^u g(t) \ dt\right| \\
+    &\leqslant \left|\int_x^u |f(t) - g(t)| \ dt\right| \\
+    &\leqslant \left|\int_x^u |f(u) - g(u)| \ dt\right| \\
+    &= |x-u| |f(u) - g(u)|.
+\end{align*}
+So, if $|f(u) - g(u)| \neq 0$, then $|x-u| \geqslant 1$. However, we have $|x-u| \leqslant b < r \leqslant 1$. This is a contradiction. So, we must have $|f(u) - g(u)| = 0$. Therefore, for all $t \in [x-b, x+b]$, $0 \leqslant |f(t) - g(t)| \leqslant 0$, meaning that $f(t) = g(t)$. This implies that $f(t) = g(t)$ for all $t \in (x-r, x+r)$. So, $f(t) = g(t)$ for all $t \in \mathbb{R}$.
+\end{proof}
+\noindent Similar, we can show that the function $e^{ix}$ is unique. We start by defining complex integrals.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function. Then, the integral
+\[\int_a^b f(t) \ dt = \int_a^b \operatorname{Re}(f)(t) \ dt + i \int_a^b\operatorname{Im}(f)(t) \ dt.\]
+\end{definition}
+\noindent We now show that $e^{ix}$ is unique.
+\begin{corollary}
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be such that $f(x) = g(x)$, for some $x \in \mathbb{R}$, and $f'(t) = if(t), g'(t) = ig(t)$ for all $t \in \mathbb{R}$. Then, $f(t) = g(t)$ for all $t \in \mathbb{R}$.
+\end{corollary}
+\begin{proof}
+We find that for all $t \in \mathbb{R}$,
+\begin{align*}
+    \operatorname{Re}'(f)(t) &= \frac{1}{2}(f'(t) + \overline{f}'(t)) & \operatorname{Im}'(f)(t) &= \frac{1}{2i}(f'(t) - \overline{f}'(t))\\
+    &= \frac{1}{2}(if(t) - i\overline{f}(t)) & &= \frac{1}{2i}(if(t) + i\overline{f}(t)) \\
+    &= \frac{i}{2} \cdot 2i \operatorname{Im}(f)(t) & &= \frac{1}{2} \cdot 2 \operatorname{Re}(f)(t) \\
+    &= -\operatorname{Im}(f)(t). & &= \operatorname{Re}(f)(t).
+\end{align*}
+In that case,
+\begin{align*}
+    a + i \int_x^t f(y) \ dy &= a + i \int_x^t \operatorname{Re}(f)(y) \ dy - \int_x^t \operatorname{Im}(f)(y) \ dt \\
+    &= a + i(\operatorname{Im}(f(t)) - \operatorname{Im}(f(x))) + (\operatorname{Re}(f(t)) - \operatorname{Re}(f(x))) \\
+    &= (a - \operatorname{Re}(f(x)) -i \operatorname{Im}(f(x))) + (\operatorname{Re}(f(t)) + i\operatorname{Im}(f(t))) \\
+    &= f(t).
+\end{align*}
+Moreover,
+\begin{align*}
+    \left|\int_x^t f(y) \ dy\right|^2 &= \left|\int_x^t \operatorname{Re}(f(y)) \ dy + i \int_x^t \operatorname{Im}(f(y)) \ dy\right|^2 \\
+    &= \left|\int_x^t \operatorname{Re}(f(y)) \ dy\right|^2 + \left|\int_x^t \operatorname{Im}(f(y)) \ dt\right|^2 \\
+    &\leqslant \left|\int_x^t |\operatorname{Re}(f(y))| \ dy\right|^2 + \left|\int_x^t |\operatorname{Im}(f(y))| \ dy\right|^2 \\
+    &\leqslant \left|\int_x^t |f(y)| \ dy\right|^2 + \left|\int_x^t |f(y)| \ dy\right|^2 \\
+    &= 2\left|\int_x^t |f(y)| \ dy\right|^2.
+\end{align*}
+Similarly, 
+\[\left|\int_x^t g(y) \ dy\right|^2 \leqslant  2\left|\int_x^t |g(y)| \ dy\right|^2.\]
+
+\noindent Now, let $r > 0$. We show that $f(t) = g(t)$ for all $t \in (x-r, x+r)$. Without loss of generality, assume that $r \leqslant \frac{1}{\sqrt{2}}$. Now, let $b \in (0, r)$- we show that $f(t) = g(t)$ for all $t \in [x-b, x+b]$. By the Extreme Value Theorem, there exists a $u \in [x-b, x+b]$ such that for all $t \in [x-b, x+b]$, $|f(u) - g(u)| \geqslant |f(t) - g(t)|$. In that case,
+\begin{align*}
+    |f(u) - g(u)| &= \left|a + i \int_x^u f(t) \ dt - a - i - \int_x^u g(t) \ dt\right| \\
+    &= \left|\int_x^u f(t) - g(t) \ dt\right| \\
+    &\leqslant \sqrt{2} \left|\int_x^u |f(t) - g(t)| \ dt\right| \\
+    &\leqslant \sqrt{2} \left|\int_x^u |f(u) - g(u)| \ dt\right| \\
+    &= \sqrt{2}|x - u||f(u) - g(u)|.
+\end{align*}
+So, if $|f(u) - g(u)| \neq 0$, then $|x - u| \geqslant \frac{1}{\sqrt{2}}$. However, we have $|x-u| \leqslant b < r \leqslant \frac{1}{\sqrt{2}}$. This is a contradiction. So, we must have $|f(u) - g(u)| = 0$. Therefore, for all $t \in [x-b, x+b]$, $0 \leqslant |f(t) - g(t)| \leqslant 0$, meaning that $f(t) = g(t)$. This implies that $f(t) = g(t)$ for all $t \in (x-r, x+r)$. So, $f(t) = g(t)$ for all $t \in \mathbb{R}$.
+\end{proof}
+\noindent There are other corollaries of the Fundamental Theorem of Calculus, such as $u$-substitution or the reverse chain rule.
+\begin{proposition}[Reverse Chain Rule]
+Let $f: [a, b] \to \mathbb{R}$ and let $u: [c, d] \to [a, b]$ such that $u'$ is continuous. Then,
+\[\int_c^d (f \circ u)(t) \cdot u'(t) \ dt = \int_{u(c)}^{u(d)} f(t) \ dt.\]
+\end{proposition}
+\begin{proof}
+Define the function
+\[F(x) = \int_{u(c)}^{x} f(t) \ dt.\]
+By the Fundamental Theorem of Calculus (I), we know that $F'(x) = f(x)$ for $x \in [u(c), u(d)]$. Moreover, by the Fundamental Theorem of Calculus (II), we find that
+\[\left(\int_c^d (f \circ u)(t) \ dt\right)' = F(u(d)) - F(u(c)) = \int_{u(c)}^{u(d)} f(t) \ dt.\]
+By the chain rule, we find that
+\[\left(\int_c^d (f \circ u)(t) \ dt\right)' = \int_c^d (F' \circ u)(t)  u'(t) \ dt = \int_c^d (f \circ u)(t) u'(t) \ dt.\]
+\end{proof}
+\noindent Finally, we prove the reverse product rule, i.e. integration by parts.
+\begin{proposition}[Integration by Parts]
+Let $f, g: [a, b] \to \mathbb{R}$ be such that $f'$ and $g'$ are continuous. Then,
+\[\int_a^b f(t) g'(t) \ dt = fg(b) - fg(a) - \int_a^b f'(t) g(t) \ dt. \]
+\end{proposition}
+\begin{proof}
+We know that $(fg)'(t) = f'(t)g(t) + f(t)g'(t)$ for all $t \in [a, b]$. In that case,
+\begin{align*}
+    \int_a^b (fg)'(t) \ dt &= \int_a^b f'(t)g(t) + f(t)g'(t) \ dt \\
+    \left[fg(t)\right]_a^b &= \int_a^b f'(t)g(t) \ dt + \int_a^b f(t)g'(t) \ dt \\
+    fg(b) - fg(a) &= \int_a^b f'(t)g(t) \ dt + \int_a^b f(t)g'(t) \ dt.
+\end{align*}
+In that case,
+\[\int_a^b f(t) g'(t) \ dt = fg(b) - fg(a) - \int_a^b f'(t) g(t) \ dt.\]
+\end{proof}
+
+\end{document}

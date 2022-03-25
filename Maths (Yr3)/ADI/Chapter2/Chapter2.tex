@@ -1,0 +1,1195 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{ADI}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{1}
+
+\begin{document}
+
+\chapter{Differentiation}
+
+\section{Definition of Differentiation}
+We start by defining derivatives.
+\begin{definition}[Derivative]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function and let $c \in \mathbb{R}$. We define the \emph{derivative of $f$ at $c$} to be the limit
+\[\lim_{x \to c} \frac{f(x) - f(c)}{x - c}.\]
+If the limit exists, we say that $f$ is \emph{differentiable at $c$}, and denote the value of the limit by $f'(c)$. If $f$ is differentiable at all $c \in \mathbb{R}$, we say that $f$ is \emph{differentiable}.
+\end{definition}
+\noindent This limit can also be written in the form
+\[\lim_{h \to 0} \frac{f(c + h) - f(c)}{h},\]
+where we have made a change of variable in the limit: $h = x - c$. We start by showing that the function $x^n$ is differentiable with derivative $nx^{n-1}$.
+\begin{example}
+Let $n \in \mathbb{Z}_{\geqslant 1}$, and let $f: \mathbb{R} \to \mathbb{R}$ be given by $f(x) = x^n$. Then, $f$ is differentiable, with $f'(c) = nc^{n-1}$ for all $c \in \mathbb{R}$.
+\end{example}
+\begin{proof}
+We find that
+\begin{align*}
+    f'(c) &= \lim_{x \to c} \frac{f(x) - f(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{x^n - c^n}{x - c} \\
+    &= \lim_{x \to c} \frac{(x - c)(x^{n-1} + x^{n-2}c + \dots + x c^{n-2} + c^{n-1})}{x - c} \\
+    &= \lim_{x \to c} x^{n-1} + x^{n-2}c + \dots + xc^{n-2} + c^{n-1} \\
+    &= \underbrace{c^{n-1} + c^{n-1} + \dots + c^{n-1}}_{n \text{ times}} = nc^{n-1}.
+\end{align*}
+\end{proof}
+\noindent Next, we show that the absolute value function is differentiable at every non-zero value, but not differentiable at 0.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by $f(x) = |x|$. Then, for $c \neq 0$, $f$ is differentiable at $c$, with
+\[f'(c) = \begin{cases}
+1 & c > 0 \\
+-1 & c < 0
+\end{cases}.\]
+Moreover, $f$ is not differentiable at $0$.
+\end{example}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $c > 0$. Define the function $f_1: (0, \infty)$ by $f_1(x) = x$. We know that for $x \in \mathbb{R}$, if $|x - c| < \frac{c}{2}$, then $x > 0$ and so $f(x) = f_1(x)$. This implies that
+    \[f'(c) = \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lim_{x \to c} \frac{f_1(x) - f_1(c)}{x - c} = \lim_{x \to c} \frac{x - c}{x - c} = 1.\]
+    
+    \item Next, assume that $c < 0$. Define the function $f_2: (-\infty, 0)$ by $f_2(x) = -x$. We know that for $x \in \mathbb{R}$, if $|x - c| < \frac{|c|}{2}$, then $x < 0$ and so $f(x) = f_2(x)$. This implies that
+    \[f'(c) = \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lim_{x \to c} \frac{f_2(x) - f_2(c)}{x - c} = \lim_{x \to c} \frac{c - x}{x - c} = -1.\]
+    
+    \item Finally, assume that $c = 0$. We know for $x < 0$, $f(x) = -x$, so the limit
+    \[\lim_{x \to 0^-} \frac{f(x) - f(0)}{x} = \lim_{x \to 0^-} \frac{-x}{x} = -1.\]
+    Moreover, for $x > 0$, $f(x) = x$, so the limit
+    \[\lim_{x \to 0^+} \frac{f(x) - f(0)}{x} = \lim_{x \to 0^+} \frac{x}{x} = 1.\]
+    Therefore, the limit
+    \[f'(0) = \lim_{x \to 0} \frac{f(x) - f(0)}{x}\]
+    cannot exist. So, $f$ is not differentiable at $0$.
+\end{itemize}
+Therefore, $f$ is differentiable at $x \in \mathbb{R}$ if and only if $x \neq 0$, with
+\[f'(c) = \begin{cases}
+1 & c > 0 \\
+-1 & c < 0
+\end{cases}.\]
+\end{proof}
+
+Now, we look at few properties of derivatives. First, differentiability implies continuity.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ such that $f$ is differentiable at $c$. Then, $f$ is continuous at $c$.
+\end{proposition}
+\begin{proof}
+Since $f$ is differentiable at $c$, we know that the limit
+\[f'(c) = \lim_{x \to c} \frac{f(x) - f(c)}{x - c}\]
+exists. In that case,
+\begin{align*}
+    \lim_{x \to c} f(x) - f(c) &= \lim_{x \to c} \frac{f(x) - f(c)}{x - c} (x - c) \\
+    &= \lim_{x \to c} \frac{f(x) - f(c)}{x - c} \cdot \lim_{x \to c} x - c \\
+    &= f'(c) \cdot \lim_{x \to c} x - c \\
+    &= f'(c) \cdot 0 = 0.
+\end{align*}
+Therefore, $\lim_{x \to c} f(x) = f(c)$. This implies that $f$ is continuous at $c$.
+\end{proof}
+\noindent Now, we show that a multiple of a differentiable function is differentiable.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $\lambda \in \mathbb{C}, c \in \mathbb{R}$ such that $f$ is differentiable at $c$. Then, $\lambda f$ is differentiable at $c$, with $(\lambda f)'(c) = \lambda f'(c)$.
+\end{proposition}
+\begin{proof}
+We find that
+\begin{align*}
+    (\lambda f)'(c) &= \lim_{x \to c} \frac{(\lambda f)(x) - (\lambda f)(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{\lambda (f(x) - f(c))}{x - c} \\
+    &= \lambda \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lambda f'(c).
+\end{align*}
+\end{proof}
+\noindent Next, we show that the sum of two differentiable functions is differentiable.
+\begin{proposition}
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be functions and let $c \in \mathbb{R}$ such that $f$ and $g$ are differentiable at $c$. Then, $f + g$ is differentiable at $c$, with $(f + g)'(c) = f'(c) + g'(c)$.
+\end{proposition}
+\begin{proof}
+We have
+\begin{align*}
+    (f + g)'(c) &= \lim_{x \to c} \frac{(f + g)(x) - (f + g)(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{f(x) + g(x) - f(c) - g(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{f(x) - f(c)}{x - c} + \lim_{x \to c} \frac{g(x) - g(c)}{x - c} \\
+    &= f'(c) + g'(c).
+\end{align*}
+\end{proof}
+\noindent Finally, we show that the conjugate of differentiable function is differentiable.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ such that $f$ is differentiable at $c$. Then, $\overline{f}$ is differentiable at $c$, with $\overline{f}'(c) = \overline{f'(c)}$.
+\end{proposition}
+\begin{proof}
+We have
+\[\overline{f}'(c) = \lim_{x \to c} \frac{\overline{f}(x) - \overline{f}(c)}{x - c} = \lim_{x \to c} \frac{\overline{f(x) - f(c)}}{\overline{x - c}} = \overline{f'(c)}.\]
+\end{proof}
+\noindent This property allows us to show that the real part and the imaginary part of a function must be differentiable as well.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{C}$, and let $c \in \mathbb{R}$ such that $f$ is differentiable at $c$. Then, the functions $\operatorname{Re}(f)$ and $\operatorname{Im}(f)$ are differentiable at $c$, with $\operatorname{Re}(f)'(c) = \operatorname{Re}(f'(c))$ and $\operatorname{Im}(f)'(c) = \operatorname{Im}(f'(c))$.
+\end{corollary}
+\begin{proof}
+We know that
+\[\operatorname{Re}(f)(x) = \frac{f(x) + \overline{f}(x)}{2}, \qquad \operatorname{Im}(f)(x) = \frac{f(x) - \overline{f}(x)}{2}.\]
+Therefore,
+\[\operatorname{Re}(f)'(c) = \frac{f'(c) + \overline{f}'(c)}{2} = \frac{f'(c) + \overline{f'(c)}}{2} = \operatorname{Re}(f'(c)),\]
+and 
+\[\operatorname{Im}(f)'(c) = \frac{f'(c) - \overline{f}'(c)}{2i} = \frac{f'(c) - \overline{f'(c)}}{2i} = \operatorname{Im}(f'(c)).\]
+\end{proof}
+
+We will now prove the product rule.
+\begin{proposition}[Product Rule]
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be functions and let $c \in \mathbb{R}$ such that $f$ and $g$ are differentiable at $c$. Then, $fg$ is differentiable at $c$, with $(fg)'(c) = f'(c) g(c) + f(c) g'(c)$.
+\end{proposition}
+\begin{proof}
+We have
+\begin{align*}
+    (fg)'(c) &= \lim_{x \to c} \frac{(fg)(x) - (fg)(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{f(x) g(x) - f(c) g(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{f(x) g(x) - f(c) g(x) + f(c) g(x) - f(c) g(c)}{x - c} \\
+    &= \lim_{x \to c} \frac{g(x) [f(x) - f(c)]}{x - c} + \lim_{x \to c} \frac{f(c) [g(x) - g(c)]}{x - c} \\
+    &= \lim_{x \to c} g(x) \cdot \lim_{x \to c} \frac{f(x) - f(c)}{x - c} + f(c) \cdot \lim_{x \to c} \frac{g(x) - g(c)}{x - c} \\
+    &= g(c) f'(c) + f(c) g'(c).
+\end{align*}
+\end{proof}
+\noindent Next, we look at quotient rule. First, we show that the $\frac{1}{f}$ is differentiable.
+\begin{lemma}
+Let $f: \mathbb{R} \to \mathbb{C}$ such that $f$ is differentiable at $c$, with $f(c) \neq 0$. In that case, $\frac{1}{f}$ is differentiable at $c$, with
+\[\left(\frac{1}{f}\right)'(c) = -\frac{f'(c)}{f(c)^2}.\]
+\end{lemma}
+\begin{proof}
+Since $f$ is continuous at $c$ with $f(c) \neq 0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $|f(x) - f(c)| < \frac{|f(c)|}{2}$, and so $f(x) \neq 0$. Therefore, the expression $\frac{1}{f(x)}$ is well-defined. In that case,
+\begin{align*}
+    \left(\frac{1}{f}\right)'(c) &= \lim_{x \to c} \frac{\frac{1}{f(x)} - \frac{1}{f(c)}}{x - c} \\
+    &= \lim_{x \to c} \frac{f(c) - f(x)}{f(x) \cdot f(c) \cdot (x - c)} \\
+    &= -\lim_{x \to c} \frac{1}{f(x) \cdot f(c)} \cdot \lim_{x \to c} \frac{f(x) - f(c)}{x - c} \\
+    &= -\frac{1}{f(c)^2} \cdot f'(c) = -\frac{f'(c)}{f(c)^2}.
+\end{align*}
+\end{proof}
+\noindent Using this result, we prove the quotient rule.
+\begin{proposition}[Quotient Rule]
+Let $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \to \mathbb{C}$, and let $c \in \mathbb{R}$ such that both $f$ and $g$ are differentiable at $c$, with $g'(c) \neq 0$. In that case, $\frac{f}{g}$ is differentiable at $c$, with
+\[\left(\frac{f}{g}\right)'(c) = \frac{f'(c) g(c) - f(c) g'(c)}{g(c)^2}.\]
+\end{proposition}
+\begin{proof}
+We know that
+\begin{align*}
+    \frac{f(c)}{g(c)} = f(c) \cdot \frac{1}{g(c)}.
+\end{align*}
+So, the product rule tells us that
+\begin{align*}
+    \left(\frac{f}{g}\right)'(c) &= f'(c) \cdot \frac{1}{g(c)} + f(c) \cdot \left(\frac{1}{g}\right)'(c) \\
+    &= \frac{f'(c)}{g(c)} - \frac{f(c) g'(c)}{g(c)^2} \\
+    &= \frac{f'(c) g(c) - f(c) g'(c)}{g(c)^2}.
+\end{align*}
+\end{proof}
+
+Next, we look at the chain rule.
+\begin{proposition}[Chain Rule]
+Let $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \to \mathbb{R}$, and let $c \in \mathbb{R}$ such that $g$ is differentiable at $c$ and $f$ is differentiable at $g(c)$. In that case, $f \circ g$ is differentiable at $c$, with
+\[(f \circ g)'(c) = f'(g(c)) \cdot g'(c).\]
+\end{proposition}
+\begin{proof}
+Define the function $h: \mathbb{R} \to \mathbb{C}$ by
+\[h(x) = \begin{cases}
+\frac{f(g(x)) - f(g(c))}{g(x) - g(c)} & g(x) \neq g(c) \\
+f'(g(c)) & g(x) = g(c).
+\end{cases}\]
+For $x \in \mathbb{R}$ with $x \neq c$, if $g(x) \neq g(c)$, we find that
+\[\frac{f(g(x)) - f(g(c))}{x - c} = \frac{f(g(x)) - f(g(c))}{g(x) - g(c)} \cdot \frac{g(x) - g(c)}{x - c} = h(x) \cdot \frac{g(x) - g(c)}{x - c}.\]
+Instead, if $g(x) = g(c)$, then
+\[\frac{f(g(x)) - f(g(c))}{x - c} = 0 = f'(g(c)) \cdot \frac{g(x) - g(c)}{x - c} = h(x) \cdot \frac{g(x) - g(c)}{x - c}.\]
+Therefore, for $x \in \mathbb{R}$ with $x \neq c$,
+\[\frac{f(g(x)) - f(g(c))}{x - c} = h(x) \cdot \frac{g(x) - g(c)}{x - c}.\]
+Since $f$ is differentiable at $g(c)$, we know that
+\[\lim_{x \to c} \frac{f(g(x)) - f(g(c))}{g(x) - g(c)} = \lim_{x \to g(c)} \frac{f(x) - f(g(c))}{x - g(c)} = f'(g(c)),\]
+and so the limit $\lim_{x \to c} h(x) = f'(g(c))$. In that case,
+\begin{align*}
+    (f \circ g)'(c) &= \lim_{x \to c} \frac{f(g(x)) - f(g(c))}{x - c} \\
+    &= \lim_{x \to c} h(x) \cdot \frac{g(x) - g(c)}{x - c} \\
+    &= \lim_{x \to c} h(x) \cdot \lim_{x \to c} \frac{g(x) - g(c)}{x - c} \\
+    &= f'(g(c)) \cdot g'(c).
+\end{align*}
+\end{proof}
+\noindent The intuitive idea in the proof of the chain rule is
+\begin{align*}
+    (f \circ g)'(c) &= \lim_{x \to c} \frac{f(g(x)) - f(g(c))}{x - c} \\
+    &= \lim_{x \to c} \frac{f(g(x)) - f(g(c))}{g(x) - g(c)} \cdot \frac{g(x) - g(c)}{x - c} = f'(g(c)) \cdot g'(c).
+\end{align*}
+The issue here is the denominator being $g(x) - g(c)$. Since we are taking limits, it is not an issue just when $g(x) = g(c)$. However, if for all $x \in \mathbb{R}$, $g(x) = g(c)$ (i.e. $g$ is a constant), then taking the limit will be an issue. For this reason, we define the function $h$ in the proof that avoids dividing by 0. When $g(x) = g(c)$, we already make it equal to the limit $f'(g(c))$, so $h$ behaves like $\frac{f(g(x)) - f(g(c))}{x - c}$ all the time.
+
+We finish by proving the Inverse Function Theorem.
+\begin{theorem}[Inverse Function Theorem]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a bijection, and let $c \in \mathbb{R}$ such that $f$ is differentiable at $c$ with $f'(c) \neq 0$. Then, the inverse function $f^{-1}$ is differentiable at $d = f(c)$, with
+\[(f^{-1})'(d) = \frac{1}{f'(c)} = \frac{1}{f'(f^{-1}(d))}.\]
+\end{theorem}
+\begin{proof}
+Define the function $g: \mathbb{R} \to \mathbb{R}$ be the function
+\[g(x) = \begin{cases}
+\frac{x - c}{f(x) - f(c)} & x \neq c \\
+\frac{1}{f'(c)} & x = c.
+\end{cases}\]
+We know that the limit
+\[\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c),\]
+so for $x \in \mathbb{R}$ with $x \neq c$,
+\[\lim_{x \to c} \frac{x - c}{f(x) - f(c)} = \frac{1}{f'(c)}.\]
+Therefore, the limit
+\[\lim_{x \to c} g(x) = \frac{1}{f'(c)}.\]
+This implies that the limit
+\begin{align*}
+    (f^{-1})'(d) &= \lim_{x \to d} \frac{f^{-1}(x) - f^{-1}(d)}{x - d} \\
+    &= \lim_{x \to c} \frac{x - c}{f(x) - f(c)} \\
+    &= \lim_{x \to c} g(x) = \frac{1}{f'(c)}.
+\end{align*}
+\end{proof}
+\noindent Like in the chain rule, we define the function $g$ to deal with division by 0. We finish with an example using the Inverse Function Theorem.
+\begin{example}
+Let $n \in \mathbb{Z}_{\geqslant 1}$ and define the function $f: (0, \infty) \to (0, \infty)$ by $f(x) = x^{1/n}$. Then, $f$ is differentiable, with $f'(x) = \frac{1}{n} x^{1/n-1}$.
+\end{example}
+\begin{proof}
+We know that $f$ is bijective, with $f^{-1}(x) = x^n$ and $(f^{-1})'(x) = nx^{n-1}$. Let $x \in (0, \infty)$. In that case, the Inverse Function Theorem tells us that
+\begin{align*}
+    f'(x) &= \frac{1}{(f^{-1})'(f(x))} \\
+    &= \frac{1}{(f^{-1})'(x^{1/n})} \\
+    &= \frac{1}{n (x^{1/n})^{n-1}} \\
+    &= \frac{1}{n (x^{1-1/n})} \\
+    &= \frac{1}{n} x^{1/n-1}.
+\end{align*}
+\end{proof}
+
+\newpage
+
+\section{The Mean Value Theorem}
+In this section, we will prove the Mean Value Theorem and look at some results that follow from it. We start by defining local maxima and minima.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function, and let $c \in \mathbb{R}$. Then, $f$ attains a local minimum at $c$ if there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $f(c) \leqslant f(x)$. Similarly, $f$ attains a local minimum at $c$ if there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $f(c) \geqslant f(x)$. If $f$ attains a local minimum or maximum at $c$, we say that $f$ attains a local extremum at $c$.
+\end{definition}
+\noindent We now show that if a function is differentiable at a local extremum, then the derivative has to be 0.
+\begin{lemma}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$, and let $c \in (a, b)$ such that $f$ attains a local extremum at $c$. Then, $f'(c) = 0$.
+\end{lemma}
+\begin{proof}
+Without loss of generality, assume that $f$ attains a local maximum at $c$. In that case, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $f(x) \leqslant f(c)$. In that case,
+\[\lim_{x \to c^-} \frac{f(x) - f(c)}{x - c} \geqslant 0, \qquad \text{and} \qquad \lim_{x \to c^+} \frac{f(x) - f(c)}{x - c} \leqslant 0.\]
+Since the limit
+\[f'(c) = \lim_{x \to c} \frac{f(x) - f(c)}{x - c}\]
+exists, we find that $f'(c) = 0$.
+\end{proof}
+\noindent Using this result, we prove Rolle's Theorem.
+\begin{theorem}[Rolle's Theorem]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$, with $f(a) = f(b)$. Then, there exists a $c \in (a, b)$ such that $f'(c) = 0$.
+\end{theorem}
+\begin{proof}
+Since $f$ is continuous on $[a, b]$, the Extreme Value Theorem tells us that there exist $u, v \in [a, b]$ such that for all $x \in [a, b]$, $f(u) \leqslant f(x) \leqslant f(v)$.
+\begin{itemize}
+    \item If both $u, v \in \{a, b\}$, then $f(u) = f(v)$. In that case, $f$ is a constant. So, take $c = \frac{b-a}{2} \in (a, b)$. Since $f$ is a constant, we know that $f'(c) = 0$.
+    
+    \item Otherwise, $u \not\in \{a, b\}$ or $v \not\in \{a, b\}$. Take $c \in \{u, v\}$ such that $c \not\in \{a, b\}$. In that case, $f$ is differentiable at $c$, which is a local minimum. Therefore, $c \in (a, b)$ satisfies $f'(c) = 0$.
+\end{itemize}
+Therefore, there exists a $c \in (a, b)$ such that $f'(c) = 0$.
+\end{proof}
+\noindent Finally, we prove the Mean Value Theorem.
+\begin{theorem}[Mean Value Theorem]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$. Then, there exists a $c \in (a, b)$ such that
+\[f'(c) = \frac{f(b) - f(a)}{b - a}.\]
+\end{theorem}
+\begin{proof}
+Define the function $g: [a, b] \to \mathbb{R}$ by
+\[g(x) = f(x) - \frac{f(b) - f(a)}{b - a}(x - a).\]
+We have
+\begin{align*}
+    g(a) - g(b) &= f(a) - \frac{f(b) - f(a)}{b - a} (a - a) - f(b) + \frac{f(b) - f(a)}{b - a}(b - a) \\
+    &= f(a) - f(b) + f(b) - f(a) = 0,
+\end{align*}
+so $g(a) = g(b)$. In that case, Rolle's Theorem tells us that there exists a $c \in (a, b)$ such that $g'(c) = 0$. Therefore,
+\[f'(c) = \frac{f(b) - f(a)}{b - a}.\]
+\end{proof}
+
+We will now look at many of the corollaries of the Mean Value Theorem. We start by showing that the derivative always being zero implies the function is a constant.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$ such that for all $x \in (a, b)$, $f'(x) = 0$. Then, $f$ is constant on $[a, b]$.
+\end{corollary}
+\begin{proof}
+Let $x \in (a, b]$. Since $f$ is continuous on $[a, x]$ and differentiable on $(a, x)$, the Mean Value Theorem tells us that there exists a $c \in (a, x)$ such that
+\[f'(c) = \frac{f(x) - f(a)}{x - a}.\]
+We know that $f'(c) = 0$. Therefore, $f(x) = f(a)$. So, for all $x \in [a, b]$, $f(x) = f(a)$. This implies that $f$ is constant on $[a, b]$.
+\end{proof}
+\noindent We now show that if the derivative is strictly positive, then the function is strictly increasing.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$ such that for all $x \in (a, b)$, $f'(x) > 0$. Then, $f$ is strictly increasing on $[a, b]$.
+\end{corollary}
+\begin{proof}
+Let $x, y \in [a, b]$ such that $x < y$. Since $f$ is continuous on $[x, y]$ and differentiable on $(x, y)$, the Mean Value Theorem tells us that there exists a $c \in (x, y)$ such that
+\[f'(c) = \frac{f(y) - f(x)}{y - x}.\]
+We know that $f'(c) > 0$. Moreover, since $y - x > 0$, we find that $f(y) - f(x) > 0$. Therefore, $f(x) < f(y)$. This implies that $f$ is strictly increasing on $[a, b]$.
+\end{proof}
+\noindent We now show that if the derivative is positive, then the function is increasing.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$ such that for all $x \in (a, b)$, $f'(x) \geqslant 0$. Then, $f$ is increasing on $[a, b]$.
+\end{corollary}
+\begin{proof}
+Let $x, y \in [a, b]$ such that $x < y$. Since $f$ is continuous on $[x, y]$ and differentiable on $(x, y)$, the Mean Value Theorem tells us that there exists a $c \in (x, y)$ such that
+\[f'(c) = \frac{f(y) - f(x)}{y - x}.\]
+We know that $f'(c) \geqslant 0$. Moreover, since $y - x > 0$, we find that $f(y) - f(x) \geqslant 0$. Therefore, $f(x) \leqslant f(y)$. This implies that $f$ is increasing on $[a, b]$.
+\end{proof}
+\noindent We now show that if the derivative is strictly negative, then the function is strictly decreasing.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$ such that for all $x \in (a, b)$, $f'(x) < 0$. Then, $f$ is strictly decreasing on $[a, b]$.
+\end{corollary}
+\begin{proof}
+Let $x, y \in [a, b]$ such that $x < y$. Since $f$ is continuous on $[x, y]$ and differentiable on $(x, y)$, the Mean Value Theorem tells us that there exists a $c \in (x, y)$ such that
+\[f'(c) = \frac{f(y) - f(x)}{y - x}.\]
+We know that $f'(c) < 0$. Moreover, since $y - x > 0$, we find that $f(y) - f(x) < 0$. Therefore, $f(x) > f(y)$. This implies that $f$ is strictly decreasing on $[a, b]$.
+\end{proof}
+\noindent We now show that if the derivative is negative, then the function is decreasing.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$ and differentiable on $(a, b)$ such that for all $x \in (a, b)$, $f'(x) \leqslant 0$. Then, $f$ is decreasing on $[a, b]$.
+\end{corollary}
+\begin{proof}
+Let $x, y \in [a, b]$ such that $x < y$. Since $f$ is continuous on $[x, y]$ and differentiable on $(x, y)$, the Mean Value Theorem tells us that there exists a $c \in (x, y)$ such that
+\[f'(c) = \frac{f(y) - f(x)}{y - x}.\]
+We know that $f'(c) \leqslant 0$. Moreover, since $y - x > 0$, we find that $f(y) - f(x) \leqslant 0$. Therefore, $f(x) \geqslant f(y)$. This implies that $f$ is decreasing on $[a, b]$.
+\end{proof}
+\noindent Finally, we show that if the derivative of a function is bounded, then it is uniformly continuous.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a differentiable function that is bounded on $\mathbb{R}$. Then, there exists a $K > 0$ such that for all $x, y \in \mathbb{R}$,
+\[|f(x) - f(y)| \leqslant K|x - y|.\]
+In particular, $f$ is uniformly continuous.
+\end{corollary}
+\begin{proof}
+Since $f$ is bounded, there exists a $K > 0$ such that for all $x \in \mathbb{R}$, $|f(x)| < K$. Now, let $x, y \in \mathbb{R}$. If $x = y$, we know that
+\[|f(x) - f(y)| = K|x - y|.\]
+Instead, assume that $x \neq y$. In that case, the Mean Value Theorem tells us that there exists a $c \in (x, y)$ or $c \in (y, x)$ such that
+\[|f'(c)| = \frac{|f(x) - f(y)|}{|x - y|} < K.\]
+Therefore,
+\[|f(x) - f(y)| < K|x - y|.\]
+So, for all $x, y \in \mathbb{R}$, $|f(x) - f(y)| \leqslant K|x - y|$.
+\end{proof}
+
+We finish by integrating the derivative of the absolute value function.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be the function such that
+\[f'(x) = \begin{cases}
+1 & x > 0 \\
+-1 & x < 0.
+\end{cases}\]
+Then, there exists a $c \in \mathbb{R}$ such that $f(x) = |x| + c$.
+\end{example}
+\begin{proof}
+Let $f(0) = c$, for some $c \in \mathbb{R}$. Now, let $x > 0$. The Mean Value Theorem tells us that there exists a $d \in (0, x)$ such that
+\[f'(d) = \frac{f(x) - f(0)}{x} = \frac{f(x) - c}{x}.\]
+Since $d > 0$, we find that $f'(d) = 1$. In that case, $x = f(x) - c$, and so $f(x) = x + c$. Next, let $x < 0$. Here, the Mean Value Theorem tells us that there exists a $d \in (x, 0)$ such that
+\[f'(d) = \frac{f(0) - f(x)}{-x} = \frac{c - f(x)}{-x}.\]
+Since $d < 0$, we find that $f'(d) = -1$. In that case, $-x = c - f(x)$, and so $f(x) = -x + c$. This implies that $f(x) = |x| + c$ for all $x \in \mathbb{R}$.
+\end{proof}
+\noindent To integrate more complicated functions, we need to define integration rigorously. We will do that later!
+
+\newpage
+
+\section{The sine and the cosine function}
+We will now define the sine and the cosine function. We will state a theorem (without proof) that defines the function $e^{ix}$, which we will use to define these functions.
+\begin{theorem}
+Let $z \in \mathbb{C}$ with $|z| = 1$. Then, there exists a unique differentiable function $f: \mathbb{R} \to \mathbb{C}$ such that $f'(t) = if(t)$ for all $t \in \mathbb{R}$ and $f(0) = z$.
+\end{theorem}
+\noindent This function is $ze^{it}$, so we define this notation.
+\begin{definition}
+Define the function $e^{i\bullet}: \mathbb{R} \to \mathbb{C}$ by the unique differentiable function such that $e^{i \bullet}(0) = 1$ and $(e^{i \bullet})'(t) = i e^{i \bullet}(t)$ for all $t \in \mathbb{R}$. We denote $e^{i \bullet} (x) = e^{ix}$.
+\end{definition}
+
+We now prove important properties of the exponential function. We start with $e^{i(x + y)} = e^{ix} e^{iy}$.
+\begin{proposition}
+Let $x, y \in \mathbb{R}$. Then,
+\[e^{i(x + y)} = e^{ix} e^{iy}.\]
+\end{proposition}
+\begin{proof}
+Let $x \in \mathbb{R}$ Define the functions $f, g: \mathbb{R} \to \mathbb{C}$ given by $f(y) = e^{i(x+y)}$ and $g(y) = e^{ix} e^{iy}$. We find that
+\[f(0) = e^{i(x + 0)} = e^{ix} = e^{ix} \cdot e^{i \cdot 0} = g(0).\]
+Moreover, for $y \in \mathbb{R}$,
+\[f'(y) = i (e^{ix} e^{iy}) = if(y), \qquad g'(y) = ie^{i(x+y)} = ig(y).\]
+Since there is a unique function satisfying these conditions, we find that $f(y) = g(y)$ for all $y \in \mathbb{R}$. So, $e^{i(x+y)} = e^{ix} e^{iy}$.
+\end{proof}
+\noindent These properties make use of the uniqueness property of the function. Next, we show that the conjugate of $e^{ix}$ is $e^{-ix}$, using a similar strategy.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[\overline{e^{ix}} = e^{-ix}.\]
+\end{proposition}
+\begin{proof}
+Define the functions $f, g: \mathbb{R} \to \mathbb{C}$ given by $f(x) = \overline{e^{ix}}$ and $g(x) = e^{-ix}$. We find that
+\[f(0) = \overline{e^{i \cdot 0}} = 1 = 1 = e^{i \cdot (-0)} = g(0).\]
+Moreover, for $x \in \mathbb{R}$,
+\[f'(x) = \overline{i e^{ix}} = -ie^{ix} = -i f(x), \qquad g'(x) = -e^{-ix} = -i g(x).\]
+Since there is a unique function satisfying these conditions, we find that $f(x) = g(x)$ for all $x \in \mathbb{R}$. So, $\overline{e^{ix}} = e^{-ix}$.
+\end{proof}
+\noindent Using this result, we can say that the modulus of $e^{ix}$ is always 1.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, $|e^{ix}| = 1$.
+\end{proposition}
+\begin{proof}
+We find that
+\[e^{ix} \overline{e^{ix}} = e^{ix} e^{-ix} = e^{i(x - x)} = e^{i \cdot 0} = 1.\]
+Therefore, $|e^{ix}| = 1$.
+\end{proof}
+
+We are now ready to define the sine and the cosine function.
+\begin{definition}
+Define the functions $\cos, \sin: \mathbb{R} \to \mathbb{R}$ by
+\[\sin (x) = \operatorname{Im}(e^{ix}) = \frac{e^{ix} - e^{-ix}}{2i}, \qquad \cos (x) = \operatorname{Re}(e^{ix}) = \frac{e^{-ix} + e^{ix}}{2}.\]
+\end{definition}
+\noindent By construction, we find that
+\[e^{ix} = \cos (x) + i \sin (x).\]
+Now, we will prove the familiar properties of the sine and the cosine function.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[\sin^2 (x) + \cos^2 (x) = 1.\]
+In particular, $-1 \leqslant \sin (x) \leqslant 1$ and $-1 \leqslant \cos (x) \leqslant 1$.
+\end{proposition}
+\begin{proof}
+We find that
+\[1 = |e^{ix}| = \operatorname{Re}(e^{ix})^2 + \operatorname{Im}(e^{ix})^2 = \sin^2 (x) + \cos^2 (x).\]
+\end{proof}
+\noindent Next, we prove the double angle formula for the sine function.
+\begin{proposition}
+Let $x, y \in \mathbb{R}$. Then,
+\[\sin(x + y) = \sin(x) \cos(y) + \cos(x) \sin(y).\]
+\end{proposition}
+\begin{proof}
+We have
+\begin{align*}
+    \sin (x+y) &= \frac{e^{i(x+y)} - e^{-i(x+y)}}{2i} \\
+    &= \frac{2e^{ix} e^{iy} - 2e^{-ix} e^{-iy}}{4i} \\
+    &= \frac{(e^{ix} - e^{-ix})(e^{iy} + e^{-iy}) + (e^{ix} + e^{-ix})(e^{iy} - e^{-iy})}{4i} \\
+    &= \frac{e^{ix} - e^{-ix}}{2i} \cdot \frac{e^{iy} + e^{-iy}}{2} + \frac{e^{ix} + e^{-ix}}{2i} \cdot \frac{e^{iy} - e^{-iy}}{2} \\
+    &= \sin (x) \cos (y) + \cos (x) \sin (y).
+\end{align*}
+\end{proof}
+\noindent Now, we prove the double angle formula for the cosine function.
+\begin{proposition}
+Let $x, y \in \mathbb{R}$. Then,
+\[\cos(x + y) = \cos(x) \cos(y) - \sin(x) \sin(y).\]
+\end{proposition}
+\begin{proof}
+We have
+\begin{align*}
+    \cos (x+y) &= \frac{e^{i(x+y)} + e^{-i(x+y)}}{2} \\
+    &= \frac{2e^{i(x+y)} + 2e^{-i(x+y)}}{4} \\
+    &= \frac{(e^{ix} + e^{-ix})(e^{iy} + e^{-iy}) + (e^{ix} - e^{-ix})(e^{iy} - e^{-iy})}{4} \\
+    &= \frac{e^{ix} + e^{-ix}}{2} \cdot \frac{e^{iy} + e^{-iy}}{2} - \frac{e^{ix} - e^{-ix}}{2i} \cdot \frac{e^{iy} - e^{-iy}}{2i} \\
+    &= \cos (x) \cos (y) - \sin (x) \sin(y).
+\end{align*}
+\end{proof}
+\noindent Next, we show that the sine function is odd and the cosine function is even.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, $\cos (-x) = \cos (x)$ and $\sin (-x) = \sin (x)$.
+\end{proposition}
+\begin{proof}
+We find that
+\[\cos (-x) = \frac{e^{ix} + e^{-ix}}{2} = \cos (x),\]
+and
+\[\sin (-x) = \frac{e^{-ix} - e^{ix}}{2i} = -\sin (x).\]
+\end{proof}
+\noindent We finish by proving the derivatives of sine and cosine.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, the sine and the cosine functions are differentiable at $x$, with $\sin'(x) = \cos(x)$ and $\cos'(x) = -\sin(x)$.
+\end{proposition}
+\begin{proof}
+We have
+\[\sin'(x) = \frac{(e^{ix})' - (e^{-ix})'}{2i} = \frac{ie^{ix} + ie^{-ix}}{2i} = \frac{e^{ix} + e^{-ix}}{2} = \cos (x),\]
+and
+\[\cos'(x) = \frac{(e^{ix})' + (e^{-ix})'}{2} = \frac{ie^{ix} -ie^{-ix}}{2} = \frac{-e^{ix} + e^{-ix}}{2} = -\sin (x).\]
+\end{proof}
+
+We will now define $\pi$- it is double of the first positive root of the cosine function. First, we need to show that the cosine function has a positive root.
+\begin{proposition}
+There exists an $x \in \mathbb{R}_{> 0}$ such that $\cos (x) = 0$.
+\end{proposition}
+\begin{proof}
+Assume that for all $x \in \mathbb{R}_{> 0}$, $\cos (x) \neq 0$. Since $\cos (0) = 1$, the intermediate value theorem tells us that for all $x \in [0, \infty)$, $\cos (x) > 0$. Since $\sin'(x) = \cos (x)$, this implies that the sine function is strictly increasing on $[0, \infty)$. Now, define the function $f: [0, \infty) \to \mathbb{R}$ by 
+\[f(x) = \cos (1) - \cos (x + 1) + \sin (1) \cdot (1 - x).\]
+We have
+\[f'(x) = \sin (x + 1) - \sin (1) > 0\]
+for all $x \in (0, \infty)$ since the sine function is strictly increasing. This implies that $f$ is strictly increasing on $(0, \infty)$. We have 
+\[f(0) = \cos (1) - \cos (1) + \sin (1) \cdot 1 = \sin (1) > \sin (0) = 0,\]
+so $f(x) > 0$ for all $x \in (0, \infty)$. Now, fix an $x \in (0, \infty)$ such that $x > 1 + \frac{2}{\sin (1)}$. We find that
+\begin{align*}
+    2 &= \sin (1) \cdot \left(1 + \frac{2}{\sin (1)}  - 1 \right) \\
+    &< \sin (1) \cdot (x - 1) \\
+    &= \cos (1) - \cos (x + 1) - f(x) \\
+    &< \cos (1) - \cos (x + 1) \leqslant 2
+\end{align*}
+since $-1 \leqslant \cos (y) \leqslant 1$ for all $y \in \mathbb{R}$. This is a contradiction. Therefore, there must exist an $x \in \mathbb{R}_{> 0}$ such that $\cos (x) = 0$.
+\end{proof}
+\noindent Now, we show that, for any continuous function, the infimum of the positive roots is the first positive root.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a continuous function such that $f(0) > 0$, and that the set
+\[S = \{x \in \mathbb{R}_{> 0} \mid f(x) = 0\}\]
+is not empty. Then, $\inf (S) \neq 0$ and $f(\inf S) = 0$.
+\end{proposition}
+\begin{proof}
+Let $f(0) = \varepsilon > 0$. Since $f$ is continuous, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x| < \delta$, then $|f(x) - f(0)| < \frac{\varepsilon}{2}$. In that case, for all $x \in (0, \frac{\delta}{2}]$, $f(x) \neq 0$. So, $\frac{\delta}{2}$ is a lower bound for $S$. Therefore, $\inf (S) \geqslant \frac{\delta}{2} > 0$.
+
+\noindent Now, we know that there exists a sequence $(s_n)_{n=1}^{\infty}$ in $S$ such that $s_n \to \inf (S)$. Since $f$ is a continuous function, this implies that $f(s_n) \to f(\inf (S))$. By construction, $f(s_n) = 0$ for all $n \in \mathbb{Z}_{\geqslant 1}$. Therefore, $f(\inf S) = 0$.
+\end{proof}
+\noindent Using these two results, we define $\pi$.
+\begin{definition}
+Define
+\[\pi = 2 \inf \{x \in \mathbb{R}_{> 0} \mid \cos (x) = 0\}.\]
+\end{definition}
+
+We will now use $\pi$ to show that the cosine and the sine functions are periodic. We start by showing that $\sin (\frac{\pi}{2}) = 1$.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, $\sin(\frac{\pi}{2}) = 1$.
+\end{proposition}
+\begin{proof}
+Since $\cos (\frac{\pi}{2}) = 0$, and
+\[\sin(\tfrac{\pi}{2})^2 + \cos(\tfrac{\pi}{2})^2 = 1,\]
+either $\sin (\frac{\pi}{2}) = 1$ or $\sin (\frac{\pi}{2}) = -1$. We know that $\cos (0) = 1$ and $\cos (x) \leqslant 1$ for all $x \in \mathbb{R}$. Since the cosine function is continuous, we find that $0 \leqslant \cos(x) \leqslant 1$ for all $x \in [0, \frac{\pi}{2}]$. Therefore, the sine function is increasing on $[0, \frac{\pi}{2}]$. Since $\sin (0) = 0$, we find that $\sin (\frac{\pi}{2}) = 1$.
+\end{proof}
+\noindent Next, we show that $\cos (x + \frac{\pi}{2}) = -\sin (x)$ and $\sin (x + \frac{\pi}{2}) = \cos (x)$.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, 
+\begin{itemize}
+    \item $\cos(x + \frac{\pi}{2}) = -\sin (x)$;
+    \item $\sin(x + \frac{\pi}{2}) = \cos (x)$;
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item We have
+    \begin{align*}
+        \cos (x + \tfrac{\pi}{2}) &= \cos (x) \cos (\tfrac{\pi}{2}) - \sin (x) \sin (\tfrac{\pi}{2}) \\
+        &= \cos(x) \cdot 0 - \sin(x) \cdot 1 \\
+        &= -\sin (x).
+    \end{align*}
+    
+    \item We have
+    \begin{align*}
+        \sin (x + \tfrac{\pi}{2}) &= \sin (x) \cos (\tfrac{\pi}{2}) + \cos (x) \sin (\tfrac{\pi}{2}) \\
+        &= \sin (x) \cdot 0 + \cos (x) \cdot 1 \\
+        &= \cos (x).
+    \end{align*}
+\end{itemize}
+\end{proof}
+\noindent Finally, we show the periodicity of the cosine and the sine function.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, 
+\begin{itemize}
+    \item $\cos(x + 2\pi) = \cos (x)$;
+    \item $\sin(x + 2\pi) = \sin(x)$. 
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item We have
+    \begin{align*}
+        \cos (x + 2\pi) &= -\sin (x + \tfrac{3\pi}{2}) \\
+        &= -\cos (x + \pi) \\
+        &= \sin (x + \tfrac{\pi}{2}) \\
+        &= \cos (x).
+    \end{align*}
+    
+    \item We have
+    \begin{align*}
+        \sin (x + 2\pi) &= \cos (x + \tfrac{3\pi}{2}) \\
+        &= -\sin (x + \pi) \\
+        &= -\cos (x + \tfrac{\pi}{2}) \\
+        &= \sin (x).
+    \end{align*}
+\end{itemize}
+\end{proof}
+\noindent Using this result, we can show that $e^{i \bullet}$ is also periodic:
+\begin{align*}
+    e^{i(x + 2\pi)} &= \cos(x + 2\pi) + i \sin(x + 2\pi) \\
+    &= \cos(x) + i \sin(x) = e^{ix}.
+\end{align*}
+
+Now, we show that the function $e^{i \bullet}: [0, 2\pi) \to S^1$ is a bijection. First, we show that $e^{ix}$ is only $1$ and $-1$ once between $[0, 2\pi)$.
+\begin{lemma}
+Let $x \in (0, 2\pi)$ such that $e^{ix} \in \mathbb{R}$. Then, $e^{ix} = -1$.
+\end{lemma}
+\begin{proof}
+Let $t = \frac{x}{4}$. We know that
+\begin{align*}
+    e^{i \cdot 4t} &= (e^{it})^4 \\
+    &= (\cos t + i \sin t)^4 \\
+    &= (\cos^4 t - 6\cos^2 t \sin^2 t + \sin^4 t) + 4 \cos t \sin t (\cos^2 t - \sin^2 t)i.
+\end{align*}
+Since $e^{ix} \in \mathbb{R}$, we find that $\cos^2 t = \sin^2 t$. Since $\cos^2 t + \sin^2 t = 1$, we need $\cos^2 t = \sin^2 t = \frac{1}{2}$. In that case,
+\[e^{ix} = e^{i \cdot 4t} = \frac{1}{4} - 6 \cdot \frac{1}{2} \cdot \frac{1}{2} + \frac{1}{4} = -1.\]
+\end{proof}
+\noindent Using this result, we show injectivity of $e^{i \bullet}$ on $[0, 2\pi)$.
+\begin{proposition}
+For $x, y \in [0, 2\pi)$, $e^{ix} = e^{iy}$ if and only if $x = y$.
+\end{proposition}
+\begin{proof}
+If $x = y$, then $e^{ix} = e^{iy}$. Instead, assume that $x \neq y$. Without loss of generality, assume that $x < y$. In that case, $0 < x - y < 2\pi$. So, $e^{i(x - y)} \neq 1$. Therefore,
+\[e^{ix} = e^{i(y + x - y)} = e^{iy} e^{i(x-y)} \neq e^{iy}.\]
+This implies that $e^{ix} = e^{iy}$ if and only if $x = y$.
+\end{proof}
+\noindent Next, we give a stronger bound on the sine function.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then, $|\sin (x)| \leqslant |x|$.
+\end{proposition}
+\begin{proof}
+We know that $\sin (0) = 0$. Moreover, for $x > \frac{\pi}{2} > 1$, we find that $|\sin (x)| \leqslant 1 < x$. Now, assume that $x \in (0, \frac{\pi}{2})$. In that case, the Mean Value Theorem tells us that there exists a $c \in (0, \frac{\pi}{2})$ such that
+\[\cos(c) = \frac{\sin (x) - \sin (0)}{x - 0} = \frac{\sin (x)}{x}.\]
+Since $c \in (0, \frac{\pi}{2})$, we find that $\cos (c) \geqslant 0$. This implies that $\sin (x) \geqslant x$. Since $|\sin (-x)| = |\sin (x)|$, we find that for all $x \in \mathbb{R}$, $|\sin (x)| \leqslant |x|$.
+\end{proof}
+\noindent Finally, we show surjectivity of $e^{i \bullet}$ on $[0, 2\pi)$ to $S^1$.
+\begin{proposition}
+For $z \in \mathbb{C}$ with $|z| = 1$, there exists a $t \in [0, 2\pi)$ such that $e^{it} = z$.
+\end{proposition}
+\begin{proof}
+Let $z = x + iy$, for $x, y \in \mathbb{R}$. Since $|z| = 1$, we know that $x^2 + y^2 = 1$. We know that $\cos(0) = 1$ and $\cos(\frac{\pi}{2}) = 0$, so the intermediate value theorem tells us that there exists an $s \in [0, \frac{\pi}{2})$ such that $\cos (s) = |x|$. In that case, $\sin (s) = |y|$. We know that
+\[\cos (s + \pi) = -|x|, \qquad \sin (s + \pi) = -|y|,\]
+so there exists a $t \in [0, 2\pi)$ such that $e^{it} = x + iy = z$.
+\end{proof}
+
+We finish this section by defining more trigonometric functions. We start with the tangent function.
+\begin{definition}
+Define the function
+\[\tan: \mathbb{R} \setminus \{\tfrac{\pi}{2} + \pi n \mid n \in \mathbb{Z}\} \to \mathbb{R}\]
+by $\tan(x) = \frac{\sin(x)}{\cos(x)}$.
+\end{definition}
+\noindent Now, we show that the tangent function is odd.
+\begin{proposition}
+Let $x \in \mathbb{R} \setminus \{\tfrac{\pi}{2} + \pi n \mid n \in \mathbb{Z}\}$. Then, $\tan (-x) = -\tan (x)$.
+\end{proposition}
+\begin{proof}
+We find that
+\[\tan (-x) = \frac{\sin (-x)}{\cos (-x)} = \frac{-\sin (x)}{\cos (x)} = -\tan (x).\]
+\end{proof}
+\noindent Next, we find the derivative of the tangent function and show it is strictly increasing.
+\begin{proposition}
+Let $x \in \mathbb{R} \setminus \{\frac{\pi}{2} + \pi n \mid n \in \mathbb{Z}\}$. Then, $\tan'(x) = \frac{1}{\cos^2 (x)}$. Moreover, the tan function is strictly increasing at $x$.
+\end{proposition}
+\begin{proof}
+We find that
+\begin{align*}
+    \tan'(x) &= \left(\frac{\sin (x)}{\cos (x)}\right)' \\
+    &= \frac{\sin'(x) \cos (x) - \sin (x) \cos'(x)}{\cos^2 (x)} \\
+    &= \frac{\cos^2 (x) + \sin^2 (x)}{\cos^2 (x)} = \frac{1}{\cos^2 (x)} > 0.
+\end{align*}
+Therefore, the tan function is strictly increasing at $x$.
+\end{proof}
+\noindent Now, we show that $\sin: (-\frac{\pi}{2}, \frac{\pi}{2}) \to (-1, 1)$ is bijective.
+\begin{proposition}
+The function $\sin: (-\frac{\pi}{2}, \frac{\pi}{2}) \to (-1, 1)$ is bijective.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item We show that for all $x \in (-\frac{\pi}{2}, \frac{\pi}{2})$, $\cos(x) > 0$. We already know that if $x \in [0, \frac{\pi}{2})$, then $\cos (x) > 0$. Therefore, $\sin(x) > \sin(0) = 0$ for all $x \in (0, \frac{\pi}{2})$. Moreover, for $x \in (-\frac{\pi}{2}, 0)$,
+    \[\cos (x) = \sin(x + \tfrac{\pi}{2}) > 0\]
+    since $x + \frac{\pi}{2} \in (0, \frac{\pi}{2})$. This implies that for all $x \in (-\frac{\pi}{2}, \frac{\pi}{2})$, $\sin'(x) = \cos (x) > 0$. Therefore, the sine function is strictly increasing. This implies that the sine function is injective.
+    
+    \item Next, let $x \in (-1, 1)$. If $x = 0$, we know that $\sin(0) = x$. If $x > 0$, then $\sin(0) < x < \sin(\frac{\pi}{2})$. So, the intermediate value theorem tells us that there exists a $c \in (0, \frac{\pi}{2})$ such that $\sin(c) = x$. Now, assume that $x < 0$. We find that
+    \[\sin(-\tfrac{\pi}{2}) = -\sin(\pi - \tfrac{\pi}{2}) = -\sin(\tfrac{\pi}{2}) = -1.\]
+    So, we have $\sin(-\frac{\pi}{2}) < x < \sin(0)$. So, the intermediate value theorem tells us that there exists a $c \in (-\frac{\pi}{2}, 0)$ such that $\sin(c) = x$. Therefore, the sine function is surjective onto $(-1, 1)$.
+\end{itemize}
+Therefore, the sine function $\sin: (-\frac{\pi}{2}, \frac{\pi}{2}) \to (-1, 1)$ is bijective.
+\end{proof}
+\noindent Using this result, we define the arcsine function.
+\begin{definition}
+Define the arcsine function $\sin^{-1}: (-1, 1) \to (-\frac{\pi}{2}, \frac{\pi}{2})$ by the inverse function of $\sin: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$.
+\end{definition}
+\noindent Next, we find the derivative of this function.
+\begin{proposition}
+Let $x \in (-1, 1)$. Then,
+\[(\sin^{-1})'(x) = \frac{1}{\sqrt{1 - x^2}}.\]
+\end{proposition}
+\begin{proof}
+By the Inverse Function Theorem, we find that
+\[(\sin^{-1})'(x) = \frac{1}{\sin'(\sin^{-1}(x))} = \frac{1}{\cos(\sin^{-1}(x))}.\]
+We know that $\cos(x) > 0$ for all $x \in (\frac{\pi}{2}, -\frac{\pi}{2})$, and $\sin^2 (x) + \cos^2 (x) = 1$. In that case,
+\begin{align*}
+    (\sin^{-1})'(x) &= \frac{1}{\cos(\sin^{-1}(x))} \\
+    &= \frac{1}{\sqrt{1 - \sin^2(\sin^{-1}(x))}} \\
+    &= \frac{1}{\sqrt{1 - x^2}}.
+\end{align*}
+\end{proof}
+\noindent Now, we show that $\cos: (0, \pi) \to (-1, 1)$ is bijective.
+\begin{proposition}
+The function $\cos: (0, \pi) \to (-1, 1)$ is bijective.
+\end{proposition}
+\begin{proof}
+We know that $\sin: (-\frac{\pi}{2}, \frac{\pi}{2}) \to (-1, 1)$ is bijective. Since $\cos (x) = \sin(x + \frac{\pi}{2})$, we find that $\cos: (0, \pi) \to (-1, 1)$ is bijective.
+\end{proof}
+\noindent Using this result, we define the arccosine function.
+\begin{definition}
+Define the arccosine function $\cos^{-1}: (-1, 1) \to (0, \pi)$ by the inverse function of $\cos: (0, \pi) \to (-1, 1)$.
+\end{definition}
+\noindent Next, we find the derivative of this function.
+\begin{proposition}
+Let $x \in (-1, 1)$. Then,
+\[(\cos^{-1})'(x) = -\frac{1}{\sqrt{1 - x^2}}.\]
+\end{proposition}
+\begin{proof}
+By the Inverse Function Theorem, we find that
+\[(\cos^{-1})'(x) = \frac{1}{\cos'(\cos^{-1}(x))} = \frac{-1}{\sin(\cos^{-1}(x))}.\]
+We know that $\sin(x) > 0$ for all $x \in (0, \pi)$ and $\sin^2(x) + \cos(x)^2 = 1$. In that case,
+\begin{align*}
+    (\cos^{-1})'(x) &= \frac{-1}{\sin(\cos^{-1}(x))} \\
+    &= -\frac{1}{\sqrt{1 - \cos^2(\cos^{-1}(x))}} \\
+    &= -\frac{1}{\sqrt{1 - x^2}}.
+\end{align*}
+\end{proof}
+\noindent Now, we show that $\tan: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$ is bijective.
+\begin{proposition}
+The tangent function $\tan: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$ is a bijection.
+\end{proposition}
+\begin{proof}
+We know that the tangent function is strictly increasing, so it is injective. Now, define the function $f: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$ by
+\[f(x) = \sin (x) - x \cos(x).\]
+We have
+\[f'(x) = \cos (x) - (\cos (x) - x \sin (x)) = x \sin (x) > 0\]
+for $x > 0$. We have $f(0) = 0$, so $f(x) > 0$ for all $x \in (0, \infty)$. In that case, for $x \in (0, \frac{\pi}{2})$, we have
+\begin{align*}
+    f(x) &> 0 \\
+    \sin (x) - x\cos (x) &> 0 \\
+    \sin (x) &> x \cos (x) \\
+    \tan (x) = \frac{\sin (x)}{\cos (x)} &> x.
+\end{align*}
+So, for $x > 0$, $0 < x < \tan(x)$. So, the Intermediate Value Theorem tells us that there exists a $c \in (0, x)$ such that $x = \tan (c)$. Moreover, since $0 = \tan(0)$ and $\tan(-x) = -\tan(x)$, we find that the tangent function is surjective onto $\mathbb{R}$. So, the tangent function is a bijection.
+\end{proof}
+\noindent Using this result, we define the arctangent function.
+\begin{definition}
+Define the arctangent function $\tan^{-1}: \mathbb{R} \to (-\frac{\pi}{2}, \frac{\pi}{2})$ by the inverse function of $\tan: (-\frac{\pi}{2}, \frac{\pi}{2}) \to \mathbb{R}$.
+\end{definition}
+\noindent Next, we find the derivative of the function.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[(\tan^{-1})'(x) = \frac{1}{1 + x^2}.\]
+\end{proposition}
+\begin{proof}
+By the Inverse Function Theorem, we find that
+\begin{align*}
+    (\tan^{-1})'(x) &= \frac{1}{\tan'(\tan^{-1}(x))} \\
+    &= \frac{1}{\frac{1}{\cos^2(\tan^{-1}(x))}} \\
+    &= \frac{1}{1 + \tan^2(\tan^{-1}(x))} \\
+    &= \frac{1}{1 + x^2}.
+\end{align*}
+\end{proof}
+
+\newpage
+
+\section{The exponential function}
+Now, we look at the exponential function $e^x$. We start with a similar theorem like in the imaginary case.
+\begin{theorem}
+Let $x \in \mathbb{R}_{> 0}$. Then, there exists a unique differentiable function $f: \mathbb{R} \to \mathbb{R}$ such that $f'(x) = f(x)$ and $f(0) = x$.
+\end{theorem}
+\noindent We use this result to define the exponential function.
+\begin{definition}
+Define the function $\exp: \mathbb{R} \to \mathbb{R}$ by the unique differentiable function $f: \mathbb{R} \to \mathbb{R}$ such that $f'(x) = f(x)$ and $f(0) = 1$. We denote $e^x = \exp(x)$.
+\end{definition}
+
+Now, we prove some properties of the exponential function. First, we show that $e^{x+y} = e^x e^y$.
+\begin{proposition}
+Let $x, y \in \mathbb{R}$. Then, $e^{x + y} = e^x e^y$.
+\end{proposition}
+\begin{proof}
+Let $x \in \mathbb{R}$. Define the function $f, g: \mathbb{R} \to \mathbb{R}$ by $f(y) = e^{x + y}$ and $g(y) = e^x e^y$. We find that 
+\[f(0) = e^x = e^x e^0 = g(0).\]
+Moreover,
+\[f'(y) = (e^{x+y})' = e^{x + y} = f(y), \qquad g'(y) = (e^x e^y)' = e^x e^y = g(y).\]
+Since there is a unique function $h: \mathbb{R} \to \mathbb{R}$ such that $h(0) = e^x$ and $h'(y) = h(y)$, we find that $f(x) = g(x)$ for all $x \in \mathbb{R}$. So, $e^{x + y} = e^x e^y$.
+\end{proof}
+\noindent Next, we show that $e^{-x} = \frac{1}{e^x}$.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[e^{-x} = \frac{1}{e^x}.\]
+In particular, $e^x \neq 0$.
+\end{proposition}
+\begin{proof}
+We find that
+\[e^x e^{-x} = e^{x - x} = e^0 = 1.\]
+Therefore, $e^{-x} = \frac{1}{e^x}$.
+\end{proof}
+\noindent We now show that the exponential function is bijective onto $(0, \infty)$.
+\begin{proposition}
+The function $\exp: \mathbb{R} \to (0, \infty)$ is a bijection.
+\end{proposition}
+\begin{proof}
+We know that $e^0 = 1 > 0$. Moreover, since $e^x \neq 0$ for all $x \in \mathbb{R}$, the intermediate value theorem tells us that $e^x > 0$ for all $x \in \mathbb{R}$. We know that $\exp'(x) = \exp(x)$, so the exponential function is strictly increasing. Therefore, the function is injective.
+
+\noindent Now, define the function $f: [0, \infty) \to \mathbb{R}$ by $f(x) = e^x - x$. We find that $f'(x) = e^x - 1 > 0$ for all $x \in (0, \infty)$. Therefore, $f$ is strictly increasing on $(0, \infty)$. We have $f(0) = e^0 - 0 = 1 > 0$, so $f(x) > 0$ for all $x \in [0, \infty)$. This implies that $e^x > x$ for all $x \in [0, \infty)$. We know that $1 = e^0$. Now, assume that $x > 1$. We find that $e^0 < x < e^x$, so the intermediate value theorem tells us that there exists a $c \in (0, x)$ such that $e^c = x$. Finally, assume that $0 < x < 1$. Since $\frac{1}{x} > 1$, we can find a $c \in (0, \infty)$ such that $e^c = \frac{1}{x}$. In that case, $e^{-c} = x$. Therefore, the exponential function is surjective onto $(0, \infty)$.
+\end{proof}
+
+We can now define the logarithmic function.
+\begin{definition}
+Define the function $\log: (0, \infty) \to \mathbb{R}$, where $\log$ is the inverse of the exponential function.
+\end{definition}
+\noindent Using properties of the exponential function, we show that $\log (xy) = \log (x) + \log (y)$.
+\begin{proposition}
+Let $x, y \in (0, \infty)$. Then,
+\[\log (xy) = \log (x) + \log (y).\]
+\end{proposition}
+\begin{proof}
+Since the exponential function is surjective on $(0, \infty)$, there exist $a, b \in \mathbb{R}$ such that $e^a = x$ and $e^b = y$. In that case,
+\[\log (xy) = \log (e^a e^b) = \log (e^{a + b}) = a + b = \log (x) + \log (y).\]
+\end{proof}
+\noindent Now, we use the Inverse Function Theorem to derive the logarithmic function.
+\begin{proposition}
+Let $x \in (0, \infty)$. Then, the logarithmic function is differentiable on $x$, with
+\[\log'(x) = \frac{1}{x}.\]
+\end{proposition}
+\begin{proof}
+By the Inverse Function Theorem, we find that
+\[\log'(x) = \frac{1}{\exp'(\log (x))} = \frac{1}{\exp (\log (x))} = \frac{1}{x}.\]
+\end{proof}
+\noindent We finish by generalising the theorem of $f(0) = 1$ and $f'(t) = f(t)$ or $f'(t) = if(t)$ to all the complex numbers.
+\begin{proposition}
+Let $z \in \mathbb{C}$. Then, there exists a differentiable function $f: \mathbb{R} \to \mathbb{C}$ such that $f(0) = 1$ and $f'(t) = z f(t)$ for all $t \in \mathbb{R}$.
+\end{proposition}
+\begin{proof}
+Let $z = x + iy$, for $x, y \in \mathbb{R}$. Define the function $f: \mathbb{R} \to \mathbb{C}$ by $f(t) = e^{xt} e^{iyt}$. We have
+\begin{align*}
+    f'(t) &= (e^{xt})' \cdot e^{iyt} + e^{xt} \cdot (e^{iyt})' \\
+    &= xe^{xt} e^{iyt} + e^{xt} \cdot iy e^{iyt} \\
+    &= (x + iy) e^{xt} e^{iyt} \\
+    &= ze^{xt} e^{iyt} = zf(t).
+\end{align*}
+Moreover,
+\[f(0) = e^{x \cdot 0} e^{iy \cdot 0} = 1 \cdot 1 = 1.\]
+\end{proof}
+
+\newpage
+
+\section{L'Hopital's Rule}
+In this section, we prove three versions of L'Hopital's Rule. We start by proving the Cauchy Mean Value Theorem.
+\begin{theorem}[Cauchy Mean Value Theorem]
+Let $f, g: \mathbb{R} \to \mathbb{R}$ be functions that are continuous on $[a, b]$ and differentiable on $(a, b)$ such that $g'(x) \neq 0$ for all $x \in (a, b)$. Then, there exists a $c \in (a, b)$ such that
+\[\frac{f'(c)}{g'(c)} = \frac{f(b) - f(a)}{g(b) - g(a)}.\]
+\end{theorem}
+\begin{proof}
+Since $g'(x) \neq 0$ for all $x \in (a, b)$, Rolle's Theorem tells us that $g(a) \neq g(b)$. So, define the function $h: [a, b] \to \mathbb{R}$ by
+\[h(x) = f(x) - \frac{f(b) - f(a)}{g(b) - g(a)} g(x).\]
+\begin{align*}
+    h(b) - h(a) &= f(b) - \frac{f(b) - f(a)}{g(b) - g(a)} g(b) - f(a) - \frac{f(b) - f(a)}{g(b) - g(a)} g(a) \\
+    &= [f(b) - f(a)] - (g(b) - g(a)) \cdot \frac{f(b) - f(a)}{g(b) - g(a)} = 0.
+\end{align*}
+This implies that $h(a) = h(b)$. Therefore, Rolle's Theorem tells us that there exists a $c \in (a, b)$ such that $h'(c) = 0$. In that case,
+\[f'(c) = \frac{f(b) - f(a)}{g(b) - g(a)} g'(c).\]
+Since $g'(c) \neq 0$, we find that
+\[\frac{f'(c)}{g'(c)} = \frac{f(b) - f(a)}{g(b) - g(a)}.\]
+\end{proof}
+\noindent We will now use the Cauchy Mean Value Theorem to prove the first version of L'Hopital's rule.
+\begin{proposition}[L'Hopital's Rule, Version I]
+Let $f, g: \mathbb{R} \to \mathbb{R}$ be functions and let $c \in [a, b]$, $L \in \mathbb{R}$ such that $f$ and $g$ are continuous on $[a, b] \setminus \{c\}$ and differentiable on $(a, b) \setminus \{c\}$, with $f(c) = g(c) = 0$, and $g'(x) \neq 0$ for all $x \in (a, b) \setminus \{c\}$. In that case,
+\[\lim_{x \to c} \frac{f'(x)}{g'(x)} = L \implies \lim_{x \to c} \frac{f(x)}{g(x)} = L.\]
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since the limit
+\[\lim_{x \to c} \frac{f'(x)}{g'(x)} = L,\]
+there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then 
+\[\left|\frac{f'(x)}{g'(x)} - L\right| < \varepsilon.\]
+Now, for $x \in \mathbb{R}$, if $|x - c| < \delta$, the Cauchy Mean Value Theorem tells us that there exists a $y \in (x, c)$ or $y \in (c, x)$ such that
+\[\frac{f'(y)}{g'(y)} = \frac{f(x) - f(c)}{g(x) - g(c)} = \frac{f(x)}{g(x)}.\]
+We have $|x - y| < |x - c| < \delta$, so we find that
+\[\left|\frac{f(x)}{g(x)} - L\right| = \left|\frac{f'(y)}{g'(y)} - L\right| < \varepsilon.\]
+Therefore, the limit
+\[\lim_{x \to c} \frac{f(x)}{g(x)} = L.\]
+\end{proof}
+\noindent We illustrate this rule with an example.
+\begin{example}
+The limit
+\[\lim_{x \to 0} \frac{1 - \cos (x)}{x^2} = \frac{1}{2}.\]
+\end{example}
+\begin{proof}
+We know that $1 - \cos(0) = 1 - 1 = 0$ and $x^2 = 0$, so L'Hopital's Rule, Version I tells us that
+\[\lim_{x \to 0} \frac{1 - \cos (x)}{x^2} = \lim_{x \to 0} \frac{\sin (x)}{2x}.\]
+Now, $\sin (0) = 0$ and $2x = 0$. So, L'Hopital's rule Version I tells us that
+\[\lim_{x \to 0} \frac{\sin (x)}{2x} = \lim_{x \to 0} \frac{\cos (x)}{2}.\]
+Therefore, the limit
+\[\lim_{x \to 0} \frac{1 - \cos (x)}{x^2} = \lim_{x \to 0} \frac{\sin (x)}{2x} = \lim_{x \to 0} \frac{\cos (x)}{2} = \frac{1}{2}.\]
+\end{proof}
+Now, we prove the second version of L'Hopital's rule.
+\begin{proposition}[L'Hopital's Rule, Version II]
+Let $f, g: \mathbb{R} \to \mathbb{R}$ be functions and let $L \in \mathbb{R}$ such that $f$ and $g$ are continuous and differentiable on $\mathbb{R}$, with $\lim_{x \to \infty} f(x) = \lim_{x \to \infty} g(x) = 0$, and $g'(x) \neq 0$ for all $x \in (a, \infty)$. In that case,
+\[\lim_{x \to \infty} \frac{f'(x)}{g'(x)} = L \implies \lim_{x \to \infty} \frac{f(x)}{g(x)} = L.\]
+\end{proposition}
+\begin{proof}
+Define the function $f_0, g_0: [0, 1] \to \mathbb{R}$ given by
+\[f_0(x) = \begin{cases}
+f(1/x) & x \neq 0 \\
+0 & x = 0
+\end{cases}, \qquad g_0(x) = \begin{cases}
+g(1/x) & x \neq 0 \\
+0 & x = 0
+\end{cases}.\]
+Since the limits
+\[\lim_{x \to \infty} f(x) = \lim_{x \to 0^+} f_0(x) = 0 \qquad \text{and} \qquad \lim_{x \to \infty} g(x) = \lim_{x \to 0^+} g_0(x) = 0,\]
+the functions $f_0$ and $g_0$ are continuous on $[0, 1]$ and differentiable on $(0, 1)$. Moreover, since $\lim_{x \to \infty} \frac{f'(x)}{g'(x)} = L$, we find that the limit
+\[\lim_{x \to 0} \frac{f_0'(x)}{g_0'(x)} = L.\]
+In that case, L'Hopital's Rule (Version I) tells us that the limit
+\[\lim_{x \to 0} \frac{f_0(x)}{g_0(x)} = L.\]
+Therefore, the limit
+\[\lim_{x \to \infty} \frac{f(x)}{g(x)} = L.\]
+\end{proof}
+\noindent We illustrate this rule with an example.
+\begin{example}
+Let $n \in \mathbb{Z}_{\geqslant 1}$. Then, the limit
+\[\lim_{x \to \infty} \frac{x^n}{e^x} = 0.\]
+\end{example}
+\begin{proof}
+We know that $e^x > x$, so $0 < \frac{1}{e^x} < \frac{1}{x}$. Therefore, the Sandwich Theorem tells us that the limit
+\[\lim_{x \to \infty} \frac{1}{e^x} = 0.\]
+Now, if the limit $\lim_{x \to \infty} \frac{x^n}{e^x} = 0$, then by L'Hopital's rule, we find that
+\[\lim_{x \to \infty} \frac{x^{n+1}}{e^x} = \lim_{x \to \infty} \frac{(n+1)x^n}{e^x} = (n+1) \lim_{x \to \infty} \frac{x^n}{e^x} = 0.\]
+Therefore, for all $n \in \mathbb{Z}_{\geqslant 1}$,
+\[\lim_{x \to \infty} \frac{x^n}{e^x} = 0\]
+by induction.
+\end{proof}
+\noindent We look at another example.
+\begin{example}
+The limit
+\[\lim_{x \to 0^+} x \log x = 0.\]
+\end{example}
+\begin{proof}
+We find that
+\[\lim_{x \to 0^+} x \log x = \lim_{x \to 0^+} \frac{\log x}{1/x} = \lim_{x \to 0^+} \frac{1/x}{-1/x^2} = \lim_{x \to 0^+} - x = 0.\]
+\end{proof}
+
+We finish by stating (without proof) the third version of L'Hopital's Rule.
+\begin{proposition}[L'Hopital's Rule, Version III]
+Let $f, g: \mathbb{R} \to \mathbb{R}$ be functions and let $L \in \mathbb{R}$ such that $f$ and $g$ are continuous on $(a, b]$ and differentiable on $(a, b)$, with $\lim_{x \to a^+} f(x) = \lim_{x \to a^+} g(x) = \infty$, and $g'(x) \neq 0$ for all $x \in (a, b)$. In that case,
+\[\lim_{x \to a^+} \frac{f'(x)}{g'(x)} = L \implies \lim_{x \to a^+} \frac{f(x)}{g(x)} = L.\]
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since the limit $\lim_{x \to a^+} \frac{f'(x)}{g'(x)} = L$, there exists a $\delta_1 > 0$ such that for $x \in (a, a+\delta_1)$,
+\[\left|\frac{f'(x)}{g'(x)} - L\right|< \frac{\varepsilon}{3}.\]
+Since the limit $\lim_{x \to a^+} g(x) = \infty$, the limit
+\[\lim_{x \to \infty} \frac{f(x + \delta_1)}{g(x) - g(x + \delta_1)} = 0.\]
+So, we can find a $\delta_2 \in (0, \delta_1)$ such that for $x \in (a, a+\delta_2)$,
+\[\left|\frac{f(x + \delta_1)}{g(x) - g(x + \delta_1)}\right| < \frac{\varepsilon}{3}.\]
+Furthermore, since
+\[\lim_{x \to a^+} \frac{1}{|1 - f(x + \delta_2)/f(x)|} = 1,\]
+we can find a $\delta_3 \in (0, \delta_2)$ such that for $x \in (a, a+\delta_2)$,
+\[\left|\frac{1}{1 - f(x+\delta_1)/f(x)} - 1\right| < \frac{1}{|g(x + \delta_2)| \cdot (|L| + \frac{\varepsilon}{3})}.\]
+Moreover, since
+\[\lim_{x \to a^+} \frac{1}{g(x)} = 0,\]
+we can find a $\delta_4 \in (0, \delta_3)$ such that for $x \in (a, a+\delta_3)$,
+\[\frac{1}{|g(x)|} < \frac{\varepsilon}{3}.\]
+In that case, for $x \in (0, \delta_4)$
+\begin{align*}
+    \left|\frac{f(x)}{g(x)} - L\right| &= \left|\frac{f(x)}{g(x)} - \frac{f(x) - f(x + \delta_1)}{g(x) - g(x + \delta_1)} + \frac{f(x) - f(x + \delta_1)}{g(x) - g(x + \delta_1)} - L\right| \\
+    &\leqslant \left|\frac{f(x)}{g(x)} - \frac{f(x) - f(x + \delta_1)}{g(x) - g(x + \delta_1)}\right| + \left|\frac{f(x) - f(x + \delta_1)}{g(x) - g(x + \delta_1)} - L\right| \\
+    &= \left|\frac{f(x)}{g(x)} - \frac{f(x) - f(x + \delta_1)}{g(x) - g(x + \delta_1)}\right| + \left|\frac{f'(c)}{g'(c)} - L\right| \\
+    &< \left|\frac{g(x) f(x + \delta_1) - f(x + \delta_1)}{g(x)[g(x) - g(x + \delta_1)]}\right| + \frac{\varepsilon}{3} \\
+    &\leqslant \left|\frac{f(x + \delta_1)}{g(x) - g(x + \delta_1)}\right| + \left|\frac{f(x) g(x + \delta_1)}{g(x) (g(x) - g(x+\delta_1))}\right| + \frac{\varepsilon}{3} \\
+    &< \frac{2\varepsilon}{3} + \left|\frac{f(x) g(x + \delta_1)}{g(x) (g(x) - g(x+\delta_1))}\right| \\
+    &= \frac{2\varepsilon}{3} + \left|\frac{f(x) - f(x+\delta_1)}{g(x) - g(x+\delta_1)}\right| \cdot \left|\frac{f(x)}{f(x) - f(x + \delta_1)}\right| \cdot \left|\frac{g(x+\delta_1)}{g(x)}\right| \\
+    &= \frac{2\varepsilon}{3} + \left|\frac{f'(c)}{g'(c)}\right| \cdot \left|\frac{1}{1 - f(x + \delta_1)/f(x)}\right| \cdot \left|\frac{g(x+\delta_1)}{g(x)}\right| \\
+    &< \frac{2\varepsilon}{3} + \left(|L| + \frac{\varepsilon}{3}\right) \cdot \left(\frac{1}{|g(x + \delta_1) \cdot (|L| + \frac{\varepsilon}{3})|}\right) \cdot \frac{|g(x + \delta_1)|}{|g(x)|} \\
+    &= \frac{2\varepsilon}{3} + \frac{1}{|g(x)|} \\
+    &< \frac{2\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+\end{align*}
+Therefore, the limit
+\[\lim_{x \to a^+} \frac{f(x)}{g(x)} = L.\]
+\end{proof}
+
+\begin{example}
+The limit
+\[\lim_{x \to \infty} \frac{\log x}{x} = 0.\]
+\end{example}
+\begin{proof}
+We find that $\lim_{x \to \infty} \log x = \infty$ and $\lim_{x \to \infty} x = \infty$. So, L'Hopital's Rule tells us that the limit
+\[\lim_{x \to \infty} \frac{\log x}{x} = \lim_{x \to \infty} \frac{1/x}{1} = \lim_{x \to \infty} \frac{1}{x} = 0.\]
+\end{proof}
+
+\newpage
+
+\section{Taylor's Theorem}
+In this section, we generalise the Mean Value Theorem. This is called Taylor's Theorem. We first prove it in $\mathbb{R}$.
+\begin{theorem}[Taylor's Theorem in $\mathbb{R}$]
+Let $n \in \mathbb{Z}_{\geqslant 1}$ and let $f: [a, b] \to \mathbb{R}$ be such that the $k$-th derivative $f^{(k)}$ exists and is continuous for all $1 \leqslant k < n$ and $f^{(n)}$ exists on $(a, b)$. Then, there exists a $c \in (a, b)$ such that
+\[f(b) = \sum_{k=0}^{n-1} \frac{f^{(k)}(a)}{k!} (b - a)^k + \frac{f^{(n)}(c)}{n!} (b - a)^n.\]
+\end{theorem}
+\begin{proof}
+Let $g: [a, b] \to \mathbb{R}$ be given by $g(x) = (x - a)^{n-1}$. Now, define the functions $F, G: [a, b] \to \mathbb{R}$ by
+\[F(x) = \sum_{k=0}^n \frac{f^{(k)}(x)}{k!} (b - x)^k, \qquad G(x) = \sum_{k=0}^n \frac{g^{(k)}(x)}{k!} (b - x)^k.\]
+We find that
+\begin{align*}
+    F'(x) &= \sum_{k=0}^n \frac{f^{(k+1)}(x)}{k!} (b-x)^k + \sum_{k=1}^n \frac{f^{(k)}(x)}{k!} \cdot -k(b-x)^{k-1} \\
+    &= \sum_{k=0}^n \frac{f^{(k+1)}(x)}{k!} (b-x)^k - \sum_{k=1}^n \frac{f^{(k)}(x)}{(k-1)!} (b-x)^{k-1} \\
+    &= \sum_{k=0}^n \frac{f^{(k+1)}(x)}{k!} (b-x)^k - \sum_{k=0}^{n-1} \frac{f^{(k)}(x)}{k!} (b-x)^k \\
+    &= \frac{f^{(n+1)}(x)}{n!} (b-x)^n.
+\end{align*}
+Similarly, $G'(x) = \frac{g^{(n+1)}(x)}{n!} (b-x)^n$.
+
+\noindent Now, we show that
+\[G^{(k)}(x) = \frac{(n+1)!}{(n+1-k)!} (x-a)^{n+1-k}\]
+for $k \in \{0, \dots, n+1\}$ by induction. If $k = 0$, then
+\[G(x) = (x-a)^{n+1} = \frac{(n+1)!}{(n+1)!} (x-a)^{n+1}\]
+by construction. Next, if 
+\[G^{(k)}(x) = \frac{(n+1)!}{(n+1-k)!} (x-a)^{n+1-k},\]
+for $k \in \{0, 1, \dots, n\}$, then
+\begin{align*}
+    g^{k+1}(x) &= \left(\frac{(n+1)!}{(n+1-k)!} (x-a)^{n+1-k}\right)' \\
+    &= \frac{(n+1)!}{(n+1-k)!} \cdot (n+1-k) (x-a)^{n-k} \\
+    &= \frac{(n+1)!}{(n+1-(k+1))!} (x-a)^{(n+1)-(k+1)}.
+\end{align*}
+So, the result follows by induction. In that case,
+\begin{align*}
+    G'(x) &= \frac{g^{(n+1)}(x)}{n!} (b-x)^n \\
+    &= \frac{1}{n!} (b-x)^n \cdot \frac{(n+1)!}{0!} (x-a)^0 \\
+    &= (n+1) (b-x)^n.
+\end{align*}
+We have
+\begin{align*}
+    G(a) &= \sum_{k=0}^n \frac{g^{(k)}(a)}{k!} (b-a)^k \\
+    &= \sum_{k=0}^n \frac{1}{k!} (b-a)^k \cdot \frac{(n+1)!}{(n+1-k)!} (a-a)^{n+1-k} = 0,
+\end{align*}
+and
+\begin{align*}
+    G(a) &= \sum_{k=0}^n \frac{g^{(k)}(a)}{k!} (b-a)^k \\
+    &= \sum_{k=0}^n \frac{1}{k!} (b-b)^k \cdot \frac{(n+1)!}{(n+1-k)!} (b-a)^{n+1-k} \\
+    &= \frac{1}{0!} \cdot 1 \cdot \frac{(n+1)!}{(n+1)!} (b-a)^{n+1} = (b-a)^{n+1}.
+\end{align*}
+We know that $F$ and $G$ are continuous on $[a, b]$ and differentiable on $(a, b)$. So, we can apply Cauchy's Mean Value Theorem to find that there exists a $c \in (a, b)$ such that
+\[\frac{F'(c)}{G'(c)} = \frac{F(b) - F(a)}{G(b) - G(a)}.\]
+In that case,
+\begin{align*}
+    G'(c) (F(b) - F(a)) &= F'(c) (G(b) - G(a)) \\
+    (n+1)(b-c)^n (f(b) - F(a)) &= \frac{f^{(n+1)}(c)}{n!} (b-c)^n \cdot (b-a)^{n+1} \\
+    f(b) - F(a) &= \frac{f^{(n+1)}(c)}{(n+1)!} (b-a)^{n+1} \\
+    f(b) &= F(a) + \frac{f^{(n+1)}(c)}{(n+1)!} (b-a)^{n+1} \\
+    &= \sum_{k=0}^n \frac{f^{(k)}(x)}{k!} (b-a)^k + \frac{f^{(n+1)(c)}}{(n+1)!} (b-a)^{n+1}.
+\end{align*}
+\end{proof}
+If we take $n = 1$, we find that
+\[f(b) = f(a) + f'(c)(b - a).\]
+This is the Mean Value Theorem.
+
+We will now use the Taylor's Theorem to find different values. First, we start by defining the value $e$ as a series.
+\begin{example}
+The value
+\[e = \sum_{n=0}^{\infty} \frac{1}{n!}.\]
+\end{example}
+\begin{proof}
+Let $n \in \mathbb{Z}_{\geqslant 1}$. Taylor's Theorem tells us that there exists a $c_n \in (0, 1)$ such that
+\begin{align*}
+    e = \exp(1) &= \sum_{k=0}^{n-1} \frac{\exp^{(k)}(0)}{k!} + \frac{\exp^{(n)}(c_n)}{n!} \\
+    &= \sum_{k=0}^{n-1} \frac{\exp(0)}{k!} + \frac{\exp(c_n)}{n!} \\
+    &= \sum_{k=0}^{n-1} \frac{1}{k!} + \frac{\exp (c_n)}{n!}.
+\end{align*}
+In that case,
+\[e - \sum_{k=0}^{n-1} \frac{1}{k!} = \frac{\exp(c_n)}{n!}.\]
+Moreover, for all $n \in \mathbb{Z}_{\geqslant 1}$,
+\[0 < \frac{\exp(c_n)}{n!} < \frac{e}{n!}.\]
+So, the Sandwich Theorem tells us that
+\[\lim_{n \to \infty} \frac{\exp(c_n)}{n!} = 0.\]
+In that case, we find that the series
+\[\sum_{n=1}^{\infty} \frac{1}{n!} = e.\]
+\end{proof}
+\noindent Next, we approximate $\sqrt{5}$ using Taylor's Theorem.
+\begin{example}
+The value
+\[\sqrt{5} \approx \frac{36635}{16384},\]
+with error at most $\frac{1}{10 000}$.
+\end{example}
+\begin{proof}
+Define the function $f: [4, 5] \to \mathbb{R}$ by $f(x) = \sqrt{x}$. We find that for $x \in (4, 5)$,
+\begin{align*}
+    f(x) &= \sqrt{x} & f'(x) &= \frac{1}{2\sqrt{x}} & f''(x) &= -\frac{1}{4 x^{3/2}} \\
+    f'''(x) &= \frac{3}{8 x^{5/2}} & f^{(iv)}(x) &= -\frac{15}{16 x^{7/2}} & f^{(v)}(x) &= \frac{105}{32 x^{9/2}}
+\end{align*}
+By Taylor's Theorem, we can find a $c \in (4, 5)$ such that
+\begin{align*}
+    f(5) &= f(4) + f'(4) + \frac{f''(4)}{2} + \frac{f'''(4)}{6} + \frac{f^{(iv)}(4)}{24} + \frac{f^{(v)}(c)}{120} \\
+    \sqrt{5} &= \sqrt{4} + \frac{1}{2 \sqrt{4}} - \frac{1}{2 \cdot 4 \sqrt{64}} + \frac{3}{6 \cdot 8 \sqrt{1024}} - \frac{15}{24 \cdot 16\sqrt{16384}} + \frac{f^{(v)}(c)}{120} \\
+    &= 2 + \frac{1}{4} - \frac{1}{64} + \frac{1}{512} - \frac{5}{16384} + \frac{f^{(v)}(c)}{120} \\
+    &= \frac{36635}{16384} + \frac{f^{(v)}(c)}{120}.
+\end{align*}
+In that case, $\sqrt{5} \approx \frac{36635}{16384}$, with error at most
+\[\left|\frac{f^{(v)}(c)}{120}\right| = \frac{105}{120 \cdot 32 \cdot c^{9/2}} < \frac{105}{120 \cdot 32 \cdot 4^{9/2}} = \frac{7}{131072} < \frac{1}{10000}.\]
+\end{proof}
+\noindent Now, we approximate $\sqrt{10}$ using Taylor's Theorem.
+\begin{example}
+The value
+\[\sqrt{10} \approx \frac{98371}{31104},\]
+with error at most $\frac{1}{10 000}$.
+\end{example}
+\begin{proof}
+Define the function $f: [9, 10] \to \mathbb{R}$ by $f(x) = \sqrt{x}$. By Taylor's Theorem, we can find a $c \in (9, 10)$ such that
+\begin{align*}
+    f(10) &= f(9) + f'(9) + \frac{f''(9)}{2} + \frac{f'''(9)}{6} + \frac{f^{(iv)}(9)}{24} + \frac{f^{(v)}(c)}{120} \\
+    \sqrt{10} &= \sqrt{9} + \frac{1}{2 \sqrt{9}} - \frac{1}{2 \cdot 4 \sqrt{729}} + \frac{3}{6 \cdot 8 \sqrt{6561}} - \frac{15}{24 \cdot 16\sqrt{59049}} + \frac{f^{(v)}(c)}{120} \\
+    &= 3 + \frac{1}{6} - \frac{1}{216} + \frac{1}{1296} - \frac{5}{31104} + \frac{f^{(v)}(c)}{120} \\
+    &= \frac{98371}{31104} + \frac{f^{(v)}(c)}{120}.
+\end{align*}
+In that case, $\sqrt{5} \approx \frac{98371}{31104}$, with error at most
+\[\left|\frac{f^{(v)}(c)}{120}\right| = \frac{105}{120 \cdot 32 \cdot c^{9/2}} < \frac{105}{120 \cdot 32 \cdot 9^{9/2}} = \frac{7}{5038848} < \frac{1}{10000}.\]
+\end{proof}
+
+We shall now look at Taylor's Theorem in $\mathbb{C}$.
+\begin{theorem}[Taylor's Theorem in $\mathbb{C}$]
+Let $n \in \mathbb{Z}_{\geqslant 1}$ and let $f: [a, b] \to \mathbb{C}$ be such that the $k$-th derivative $f^{(k)}$ exists and is continuous for all $1 \leqslant k < n$ and $f^{(n)}$ exists on $(a, b)$. Then, there exists a $c \in (a, b)$ such that
+\[\left|f(b) - \sum_{k=0}^{n-1} \frac{f^{(k)}(a)}{k!} (b - a)^k\right| \leqslant \frac{2 |f^{(n)}(c)|}{n!} |b - a|^n.\]
+\end{theorem}
+\begin{proof}
+Define the functions $g, h: [a, b] \to \mathbb{R}$ by $g(x) = \operatorname{Re}(f(x))$ and $h(x) = \operatorname{Im}(f(x))$. By Taylor's Theorem in $\mathbb{R}$, we can find $c_1, c_2 \in (a, b)$ such that
+\begin{align*}
+    g(b) &= \sum_{k=0}^{n-1} \frac{g^{(k)}(a)}{k!} (b-a)^k + \frac{g^{(n)(c_1)}}{n!} (b-a)^n, \\
+    h(b) &= \sum_{k=0}^{n-1} \frac{h^{(k)}(a)}{k!} (b-a)^k + \frac{h^{(n)(c_2)}}{n!} (b-a)^n.
+\end{align*}
+We know that
+\begin{align*}
+    f(b) &= g(b) + ih(b) \\
+    &= \sum_{k=0}^{n-1} \frac{g^{(k)}(a) + ih^{(k)}(a)}{k!} (b-a)^k + \frac{(b-a)^n}{n!} [g^{(n)}(c_1) + ih^{(n)}(c_2)] \\
+    &= \sum_{k=0}^{n-1} \frac{f^{(k)}(a)}{k!} (b-a)^k + \frac{(b-a)^n}{n!} [g^{(n)}(c_1) + ih^{(n)}(c_2)].
+\end{align*}
+Moreover,
+\begin{align*}
+    |g^{(n)}(c_1) + ih^{(n)}(c_2)| &\leqslant |g^{(n)}(c_1)| + |h^{(n)}(c_2)| \\
+    &\leqslant |f^{(n)}(c_1)| + |f^{(n)}(c_2)| \\
+    &\leqslant 2|f^{(n)}(c)|,
+\end{align*}
+where $c \in \{c_1, c_2\}$ satisfies $|f^{n}(c)| = \max(|f^{(n)}(c_1)|, |f^{(n)}(c_2)|)$. In that case,
+\begin{align*}
+    \left|f(b) - \sum_{k=0}^{n-1} \frac{f^{(k)}(a)}{k!} (b-a)^k\right| &= \frac{|g^{(n)}(c_1) + ih^{(n)}(c_2)|}{n!} |b-a|^n \\
+    &\leqslant \frac{2|f^{(n)}(c)|}{n!} |b-a|^n.
+\end{align*}
+\end{proof}
+\noindent We illustrate this theorem with an example.
+\begin{example}
+Let $x > 0$. Then,
+\[e^{ix} = \sum_{n=0}^{\infty} \frac{i^k}{k!} x^k.\]
+\end{example}
+\begin{proof}
+Let $f: [0, x] \to \mathbb{C}$ be given by $f(t) = e^{it}$. We find that $f^{(n)}(t) = i^n e^{it}$ for all $n \in \mathbb{Z}_{\geqslant 1}$. In that case, Taylor's Theorem tells us that there exists a $c \in (0, x)$ such that
+\begin{align*}
+    \left|e^{ix} - \sum_{k=0}^{n-1} \frac{f^{(k)}(0)}{k!} x^k \right| &\leqslant 2 \frac{|f^{(n)}(c)|}{n!} |x|^n \\
+    \left|e^{ix} - \sum_{k=0}^{n-1} \frac{i^k}{k!} x^k\right| &\leqslant 2\frac{|i^n e^{it}|}{n!} |x|^n \\
+    &= \frac{2}{n!} |x|^n.
+\end{align*}
+We find that $\frac{2}{n!} |x|^n \to 0$, and so
+\[e^{ix} = \sum_{n=0}^{\infty} \frac{i^k}{n!} x^n.\]
+\end{proof}
+
+\end{document}

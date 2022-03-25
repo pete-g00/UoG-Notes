@@ -1,0 +1,898 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{ADI}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+
+\begin{document}
+
+\chapter{Continuity and Limits}
+\section{Complex Numbers}
+We start by defining the complex numbers.
+\begin{definition}
+The complex numbers $\mathbb{C}$ is a vector space of $M_{2 \times 2}(\mathbb{R})$ given by
+\[\mathbb{C} = \left\{\begin{bmatrix}
+a & b \\
+-b & a
+\end{bmatrix} \mid a, b \in \mathbb{R}\right\}.\]
+We denote this by $a + bi$.
+\end{definition}
+\noindent By construction, it follows that $i^2 = -1$. Moreover, $\mathbb{C}$ forms a field over (matrix) addition and multiplication. We now construct the inverse element for a non-zero complex number.
+\begin{proposition}
+Let $z \in \mathbb{C}$, with $z = a + bi$ for $a, b \in \mathbb{Z}$. If $z \neq 0$, then 
+\[z^{-1} = \frac{a - bi}{a^2 + b^2}.\]
+\end{proposition}
+\begin{proof}
+Since $z \neq 0$, we know that $a^2 + b^2 > 0$. Moreover,
+\[\frac{(a + bi)(a - bi)}{a^2 + b^2} = \frac{a^2 + b^2}{a^2 + b^2} = 1.\]
+Therefore, 
+\[z^{-1} = \frac{a - bi}{a^2 + b^2}.\]
+\end{proof}
+
+Next, we now define certain values for the complex numbers.
+\begin{definition}
+Let $z \in \mathbb{C}$, with $z = a + bi$ for $a, b \in \mathbb{R}$. Then,
+\begin{itemize}
+    \item its conjugate is $\overline{z} = a - bi$;
+    \item its modulus is $|z| = \sqrt{a^2 + b^2}$;
+    \item the real part of $z$, $\operatorname{Re}(z) = a$ and the imaginary part of $z$, $\operatorname{Im}(z) = b$.
+\end{itemize}
+\end{definition}
+\noindent We can define the modulus, real part and the imaginary part in the following way as well.
+\begin{proposition}
+Let $z \in \mathbb{C}$. Then,
+\begin{itemize}
+    \item $|z| = \sqrt{z \overline{z}}$;
+    \item $\operatorname{Re}(z) = \frac{z + \overline{z}}{2}$; and
+    \item $\operatorname{Im}(z) = \frac{z - \overline{z}}{2i}$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+Let $z = a + bi$. We know that $\overline{z} = a - bi$. 
+\begin{itemize}
+    \item We have
+    \[\sqrt{z \overline{z}} = \sqrt{(a + bi)(a - bi)} = \sqrt{a^2 + b^2} = |z|.\]
+    \item We find that
+    \[\frac{z + \overline{z}}{2} = \frac{a + bi + a - bi}{2} = a = \operatorname{Re}(z).\]
+    \item We find that
+    \[\frac{z - \overline{z}}{2i} = \frac{a + bi - a + bi}{2i} = b = \operatorname{Im}(z).\]
+\end{itemize}
+\end{proof}
+\noindent We will now establish an important property of the modulus.
+\begin{proposition}
+Let $z_1, z_2 \in \mathbb{C}$. Then, $|z_1z_2| = |z_1||z_2|$.
+\end{proposition}
+\begin{proof}
+Let $z_1 = a_1 + b_1i$ and $z_2 = a_2 + b_2i$. Then,
+\[z_1 z_2 = (a_1 + b_1i)(a_2 + b_2i) = a_1a_2 - b_1b_2 + i(a_1b_2 + a_2b_1).\]
+In that case,
+\begin{align*}
+    |z_1|^2|z_2|^2 &= (a_1^2 + b_1^2)(a_2^2 + b_2^2) \\
+    &= a_1^2a_2^2 + a_1^2b_2^2 + b_1^2a_2^2 + b_1^2b_2^2 \\
+    &= a_1^2a_2^2 - 2a_1a_2b_1b_2 + b_1^2b_2^2 + a_1^2b_2^2 + 2a_1a_2b_1b_2 + b_1^2a_2^2 \\
+    &= (a_1a_2 - b_1b_2)^2 + (a_1b_2 + a_2b_1)^2 \\
+    &= |z_1z_2|^2.
+\end{align*}
+So, $|z_1||z_2| = |z_1z_2|$.
+\end{proof}
+
+Next, we prove the triangle inequality for $\mathbb{C}$. We start by proving a lemma.
+\begin{lemma}
+Let $z \in \mathbb{C}$. Then, $|\operatorname{Re}(z)| \leqslant |z|$ and $|\operatorname{Im}(z)| \leqslant |z|$.
+\end{lemma}
+\begin{proof}
+Let $z = a + bi$. We have
+\[|\operatorname{Re}(z)|^2 = a^2 \leqslant a^2 + b^2 = |z|^2,\]
+and
+\[|\operatorname{Im}(z)|^2 = b^2 \leqslant a^2 + b^2 = |z|^2.\]
+\end{proof}
+\noindent Now, we prove the triangle inequality.
+\begin{proposition}[Triangle Inequality in $\mathbb{C}$]
+Let $z_1, z_2 \in \mathbb{C}$. Then, $|z_1 + z_2| \leqslant |z_1| + |z_2|$
+\end{proposition}
+\begin{proof}
+We find that
+\begin{align*}
+    |z_1 + z_2|^2 &= (z_1 + z_2)\overline{(z_1 + z_2)} \\
+    &= (z_1 + z_2)(\overline{z_1} + \overline{z_2}) \\
+    &= z_1 \overline{z_1} + z_1 \overline{z_2} + \overline{z_1} z_2 + z_2 \overline{z_2} \\
+    &= |z_1|^2 + 2\operatorname{Re}(z_1 \overline{z_2}) + |z_2|^2 \\
+    &\leqslant |z_1|^2 + 2|z_1z_2| + |z_2|^2 \\
+    &= |z_1|^2 + 2|z_1| |z_2| + |z_2|^2 \\
+    &= (|z_1| + |z_2|)^2.
+\end{align*}
+Therefore, $|z_1 + z_2| \leqslant |z_1| + |z_2|$.
+\end{proof}
+Finally, we will show that there is no way to order the complex numbers. We first define what we mean by an order.
+\begin{definition}[Order]
+Let $R$ be a ring, and let $>$ be a relation on $R$. Then, we say that $(R, >)$ is an \emph{order} if:
+\begin{itemize}
+    \item for all $x \in R$, either $x = 0$, $x > 0$ or $0 > x$, and precisely one of these is true;
+    \item for all $x, y \in R$, $x > y$ if and only if $x - y > 0$;
+    \item for all $x, y \in R$, if $x, y > 0$, then $x + y > 0$;
+    \item for all $x, y \in R$, if $x, y > 0$, then $xy > 0$; and
+\end{itemize}
+If $(R, >)$ is an order, then we can define the following relations on $R$:
+\begin{itemize}
+    \item The relation $\geqslant$ is defined on $R$ by $x \geqslant y$ if and only if $x = y$ or $x > y$;
+    \item The relation $<$ is defined on $R$ by $x < y$ if and only if $y > x$;
+    \item The relation $\leqslant$ is defined on $R$ by $x \leqslant y$ if and only if $x = y$ or $x < y$.
+\end{itemize}
+\end{definition}
+\noindent To prove that there is no order on $\mathbb{C}$, we need to build from the axioms some familiar properties of an ordering. We start by proving that the negative numbers are less than 0.
+\begin{lemma}
+Let $R$ be a ring, and let $(R, >)$ be an order, and let $x \in R$. Then, $x > 0$ if and only if $-x < 0$.
+\end{lemma}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $x > 0$. In that case, we know that $x \neq 0$, so either $-x > 0$ or $-x < 0$. If $-x > 0$, then $0 = x - x > 0$, which is a contradiction. Therefore, we must have $-x < 0$.
+    
+    \item Now, assume that $-x < 0$. In that case, $0 > -x$. This implies that $x = 0 + x > 0$.
+\end{itemize}
+Therefore, $x > 0$ if and only if $-x < 0$.
+\end{proof}
+\noindent Next, we prove that the product of a positive and a negative number is negative.
+\begin{lemma}
+Let $R$ be a ring, and let $(R, >)$ be an order, and let $x > 0, y < 0$. Then, $xy < 0$.
+\end{lemma}
+\begin{proof}
+Since $y < 0$, we know that $-y > 0$. In that case, $-xy = x(-y) > 0$. Therefore, $xy < 0$.
+\end{proof}
+\noindent Finally, we show that there is no order on $\mathbb{C}$.
+\begin{proposition}
+There is no order relation on $\mathbb{C}$.
+\end{proposition}
+\begin{proof}
+Assume that $(\mathbb{C}, >)$ is an order. We know that $i \neq 0$. So, either $i < 0$ or $i > 0$:
+\begin{itemize}
+    \item If $i < 0$, then $-i > 0$. In that case, $-1 = (-i)^2 > 0$, as well. Moreover,
+    \[1 = i \cdot (-i) < 0 \qquad \text{and} \qquad 1 = (-1)^2 > 0.\]
+    This is a contradiction.
+    
+    \item Instead, if $i > 0$, then $-i < 0$. In that case, $-1 = i^2 > 0$. Moreover,
+    \[1 = i \cdot (-i) < 0 \qquad \text{and} \qquad 1 = (-1)^2 > 0.\]
+    This is a contradiction.
+\end{itemize}
+Therefore, $>$ cannot define an order on $\mathbb{C}$.
+\end{proof}
+\newpage
+
+\section{Definition of Continuity}
+We start by reviewing the definition of continuity.
+\begin{definition}[Continuity]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function and let $c \in \mathbb{R}$. Then, \emph{$f$ is continuous at $c$} if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. If $f$ is continuous at $c$ for every $c \in \mathbb{R}$, then we say that $f$ is \emph{continuous}.
+\end{definition}
+\noindent We start by proving the sequential characterisation of continuity.
+\begin{proposition}[Sequential Characterisation of Continuity]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function and let $c \in \mathbb{R}$. Then, $f$ is continuous at $c$ if and only if for every sequence $(x_n)_{n=1}^{\infty}$ in $\mathbb{R}$, if $x_n \to c$, then $f(x_n) \to f(c)$.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that $f$ is continuous at $c$, and let $(x_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}$ such that $x_n \to c$. Now, let $\varepsilon > 0$. Since $f$ is continuous at $c$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. Moreover, since $x_n \to c$, there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for all $n \geqslant N$, $|x_n - c| < \delta$. In that case, for $n \geqslant N$, $|f(x_n) - f(c)| < \varepsilon$. Therefore, $f(x_n) \to f(c)$.
+    
+    \item Assume that $f$ is not continuous at $c$. In that case, there exists an $\varepsilon > 0$ such that for all $\delta > 0$, there exists an $x \in \mathbb{R}$ such that although $|x - c| < \delta$, $|f(x) - f(c)| \geqslant \varepsilon$. So, define the sequence $(x_n)_{n=1}^{\infty}$ by $0 \leqslant |x_n - c| < \frac{1}{n}$ and $|f(x_n) - f(c)| \geqslant \varepsilon$. By Sandwich Theorem, we find that $|x_n - c| \to 0$. Therefore, $x_n \to c$. However, by construction, we find that $|f(x_n) - f(c)| \geqslant \varepsilon$ for all $n \in \mathbb{Z}_{\geqslant 1}$. This implies that $f(x_n) \not\to f(c)$.
+\end{itemize}
+\end{proof}
+The sequential characterisation of continuity is not that different (than proving from the definition) when it comes to proving a function is continuous at a point, however it is much more natural to use this when proving a function is not continuous. First, we compare how we can use both the definition and the characterisation to prove a function is continuous.
+\begin{example}
+Let $f: (0, \infty) \to \mathbb{R}$ be the function $f(x) = \sqrt{x}$. Then, $f$ is continuous.
+\end{example}
+\begin{proof}[Proof by the definition]
+Let $\varepsilon > 0$. Set $\delta = \varepsilon \sqrt{c}$. Then, if $|x - c| < \delta$, we find that for $x \in [0, \infty)$,
+\begin{align*}
+    |f(x) - f(c)| &= |\sqrt{x} - \sqrt{c}| \\
+    &= \frac{|x - c|}{\sqrt{x} + \sqrt{c}} \\
+    &\leqslant \frac{|x - c|}{\sqrt{c}} \\
+    &< \frac{\delta}{\sqrt{c}} = \varepsilon.
+\end{align*}
+Therefore, $f$ is continuous for all $c \in (0, \infty)$.
+\end{proof}
+\begin{proof}[Proof using sequential characterisation]
+Let $c \in (0, \infty)$, and let $(x_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}$ such that $x_n \to c$. We shall prove that $f(x_n) \to f(c)$. So, let $\varepsilon > 0$. Since $x_n \to c$, there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N$, then $|x_n - c| < \varepsilon \sqrt{c}$. In that case, for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N$, then
+\begin{align*}
+    |f(x_n) - f(c)| &= |\sqrt{x_n} - \sqrt{c}| \\
+    &= \frac{|x_n - c|}{\sqrt{x_n} + \sqrt{c}} \\
+    &< \frac{|x_n - c|}{\sqrt{c}} \\
+    &= \frac{\varepsilon \sqrt{c}}{\sqrt{c}} = \varepsilon.
+\end{align*}
+Therefore, $f$ is continuous for all $c \in (0, \infty)$.
+\end{proof}
+\noindent As we can see, proving continuity using the definition is quite similar to proving continuity using the sequential characterisation.
+
+However, using sequential characterisation is much more natural at showing that a function is not continuous at a point- we simply have to find a sequence $(x_n)_{n=1}^{\infty}$ in $\mathbb{R}$ such that $x_n \to c$ but $f(x_n) \not\to f(c)$. Like before, we shall prove that a function is not continuous at a point using both the definition and the characterisation.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by
+\[f(x) = \begin{cases}
+\sin (1/x) & x \neq 0 \\
+0 & x = 0
+\end{cases}.\]
+Then, $f$ is not continuous at $0$.
+\end{example}
+\begin{proof}[Proof by the definition]
+Let $\delta > 0$. Choose a natural number $n \in \mathbb{Z}_{\geqslant 1}$ such that $n > \frac{1}{\delta}$. In that case, set $x = \frac{1}{2n\pi + \frac{\pi}{2}}$. Then, although $0 < |x - 0| = x < \delta$, 
+\[|f(x) - f(0)| = f(x) = \sin(2n \pi + \tfrac{\pi}{2}) = 1 \geqslant 1.\]
+This implies that $f$ is not continuous at $0$.
+\end{proof}
+\begin{proof}[Proof using sequential characterisation]
+Define the sequence $(x_n)_{n=1}^{\infty}$ by 
+\[x_n = \frac{1}{2n \pi + \frac{\pi}{2}}.\]
+Then, we have $0 < x_n < \frac{1}{2n \pi}$, so $x_n \to 0$ by Sandwich Theorem. Moreover, for all $n \in \mathbb{Z}_{\geqslant 1}$,
+\[f(x_n) = \sin (2n \pi + \tfrac{\pi}{2}) = 1,\]
+so $f(x_n) \to 1 \neq f(0)$. By the sequential characterisation of continuity, this implies that $f$ is not continuous at $0$.
+\end{proof}
+\noindent Although the two proofs have a similar structure, the proof using the definition essentially defines a sequence. Therefore, it is more natural to use sequential characterisation when showing a function is not continuous at a point.
+
+Now, we will consider two main theorems of continuity- intermediate and extreme value theorem. We start by proving the intermediate value theorem.
+\begin{theorem}[Intermediate Value Theorem]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$, and let $f(a) < c < f(b)$ or $f(b) < c < f(a)$. Then, there exists a $d \in [a, b]$ such that $f(d) = c$.
+\end{theorem}
+\begin{proof}
+Without loss of generality, assume that $f(a) < c < f(b)$\sidefootnote{If instead $f(b) < c < f(a)$, then we can apply the intermediate value theorem to the function $-f$ since $-f(a) < -c < -f(b)$.}. Define the set
+\[S = \{x \in [a, b] \mid f(x) \leqslant c\}.\]
+We know that $S$ is bounded above by $b$, and $a \in S$. So, the completeness axiom tells us that $d = \sup (S)$ exists. We will show that $f(d) = c$.\sidefootnote{By construction, $d$ will be the `last time' $f(d) = c$ in the interval $[a, b]$.}
+
+\noindent We know that there exists a sequence $(x_n)_{n=1}^{\infty}$ in $S$ such that $x_n \to d$. Since $f$ is continuous at $d$, we find that $f(x_n) \to f(d)$. By construction, we know that for all $n \in \mathbb{Z}_{\geqslant 1}$, $f(x) \leqslant c$. So, the order property of limits tells us that $f(d) \leqslant c$. Since $c < f(b)$, this implies that $d \neq b$. Since $S \subseteq [a, b]$, this implies that $d < b$.
+
+\noindent Now, define the sequence $(y_n)_{n=1}^{\infty}$ in $[a, b]$ by
+\[y_n = d + \frac{b-d}{n}.\]
+Then, $y_n \to d$. By continuity, we know that $f(y_n) \to f(d)$. Moreover, for all $n \in \mathbb{Z}_{\geqslant 1}$, $y_n > d = \sup (S)$. Therefore, $y_n \not\in S$, i.e. $f(y_n) > c$. By the order property of limits, this implies that $f(d) \geqslant c$.
+
+\noindent This implies that $f(d) = c$.
+\end{proof}
+\noindent Using this theorem, we can show that a function with a `jump' is not continuous. We will consider a simple version of this- if a continuous function maps to integers, it can only map to one integer.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a continuous function such that for all $x \in \mathbb{R}$, $f(x) \in \mathbb{Z}$. Then, $f$ is a constant.
+\end{corollary}
+\begin{proof}
+Assume that $f$ is not constant. In that case, there exist $a, b \in \mathbb{R}$ with $a < b$ such that $f(a) \neq f(b)$. We know that $f(a), f(b) \in \mathbb{Z}$, so $|f(a) - f(b)| \geqslant 1$. Without loss of generality, assume that $f(a) < f(a) + 1 \leqslant f(b)$. In that case, the Intermediate Value Theorem tells us that there exists a $c \in \mathbb{R}$ such that $f(c) = f(a) + \frac{1}{2}$. Since $f(a) \in \mathbb{Z}$, we find that $f(a) + \frac{1}{2} \not\in \mathbb{Z}$. This is a contradiction. Therefore, $f$ must be a constant.
+\end{proof}
+\noindent We can also use this theorem to show that a continuous function that is never zero is either always positive or always negative.
+\begin{corollary}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a continuous function such that for all $x \in \mathbb{R}$, $f(x) \neq 0$. Then, either for all $x \in \mathbb{R}$, $f(x) > 0$ or for all $x \in \mathbb{R}$, $f(x) < 0$.
+\end{corollary}
+\begin{proof}
+Assume that there exist $x, y \in \mathbb{R}$ such that $f(x) > 0$ and $f(y) < 0$. Since $f(y) < 0 < f(x)$, the intermediate value theorem tells us that there exists a $c \in \mathbb{R}$ such that $f(c) = 0$. This is a contradiction. Therefore, either for all $x \in \mathbb{R}$, $f(x) > 0$ or for all $x \in \mathbb{R}$, $f(x) < 0$.
+\end{proof}
+\noindent Using this result, we can prove the following.
+\begin{example}
+Let 
+\[S^1 = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 = 1\},\]
+and let $f: S^1 \to \mathbb{R}$ such that $h: \mathbb{R} \to \mathbb{R}$ given by $h(t) = f(\sin t, \cos t)$ is continuous. Then, there exists a $t \in \mathbb{R}$ such that $f(\sin t, \cos t) = f(-\sin t, -\cos t)$.
+\end{example}
+\begin{proof}
+Assume that $f(\sin t, \cos t) \neq f(-\sin t, -\cos t)$ for all $t \in \mathbb{R}$. Then, define the function $g: \mathbb{R} \to \mathbb{R}$ by $g(t) = f(\sin t, \cos t) - f(-\sin t, -\cos t)$. Since $h$ is continuous, we find that $g$ too is continuous. Moreover, we know that $g(t) \neq 0$ for all $t \in \mathbb{R}$. So, either for all $t \in \mathbb{R}$, $g(t) > 0$ or for all $t \in \mathbb{R}$, $g(t) < 0$.
+\begin{itemize}
+    \item First, assume that for all $t \in \mathbb{R}$, $g(t) > 0$. In that case, $f(\sin t, \cos t) > f(-\sin t, -\cos t)$ for all $t \in \mathbb{R}$. This implies that
+    \begin{align*}
+        f(\sin t, \cos t) &> f(-\sin t, -\cos t) \\
+        &= f(\sin (t + \pi), \cos (t + \pi)) \\
+        &> f(-\sin (t + \pi), -\cos (t + \pi)) \\
+        &= f(\sin (t + 2\pi), \cos (t + 2\pi)) \\
+        &= f(\sin t, \cos t).
+    \end{align*}
+    This is a contradiction.
+    
+    \item Instead, assume that for all $t \in \mathbb{R}$, $g(t) < 0$. In that case, $f(\sin t, \cos t) < f(-\sin t, -\cos t)$ for all $t \in \mathbb{R}$. This implies that
+    \begin{align*}
+        f(\sin t, \cos t) &< f(-\sin t, -\cos t) \\
+        &= f(\sin (t + \pi), \cos (t + \pi)) \\
+        &< f(-\sin (t + \pi), -\cos (t + \pi)) \\
+        &= f(\sin (t + 2\pi), \cos (t + 2\pi)) \\
+        &= f(\sin t, \cos t).
+    \end{align*}
+    This is a contradiction.
+\end{itemize}
+Therefore, there exists a $t \in \mathbb{R}$ such that $g(t) = 0$. So, $f(\sin t, \cos t) = f(-\sin t, -\cos t)$.
+\end{proof}
+\noindent One big application of the intermediate value theorem is finding a value that a function must equal.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by $f(x) = x^{27} - 52x^{15} + 7x^2 + 2$. Then, there exists an $x \in \mathbb{R}$ such that $f(x) = 42$.
+\end{example}
+\begin{proof}
+We have $f(0) = 2$ and $f(-1) = 60$. So, the intermediate value theorem tells us that there exists an $x \in (-1, 0)$ such that $f(x) = 42$.
+\end{proof}
+\noindent We now show that an injective continuous function must be monotonic.
+\begin{corollary}
+Let $f: [a, b] \to \mathbb{R}$ be a continuous injection. Then, $f$ is strictly monotonic.
+\end{corollary}
+\begin{proof}
+Since $f$ is injective, we find that $f(a) \neq f(b)$. Without loss of generality, assume that $f(a) < f(b)$. Now, let $x, y \in (a, b)$ with $x < y$, and assume that $f(x) > f(y)$. 
+\begin{itemize}
+    \item If $f(a) < f(y) < f(x)$, then there exists a $c \in (a, x)$ such that $f(c) = f(y)$. This is not possible since $f$ is injective. So, we must have $f(y) < f(a)$.
+    \item Now, if $f(y) < f(a) < f(x)$, then there exists a $c \in (x, y)$ such that $f(c) = f(a)$. This is not possible since $f$ is injective. So, we must have $f(x) < f(a)$.
+    \item Finally, if $f(x) < f(a) < f(b)$, then there exists a $c \in (x, b)$ such that $f(c) = f(a)$. This is not possible since $f$ is injective.
+\end{itemize}
+Therefore, we must have $f(x) \leqslant f(y)$. Since $f$ is injective, we have $f(x) < f(y)$- $f$ is strictly increasing.
+\end{proof}
+
+\noindent Using this result, we can show that inverse of a bijective function is continuous.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a bijection that is continuous at $c \in \mathbb{R}$. Then, the inverse function $f^{-1}$ is continuous at $f(c)$.
+\end{proposition}
+\begin{proof}
+Without loss of generality, assume that $f$ is strictly increasing. Let $\varepsilon > 0$. We know that $c - \varepsilon < c + \varepsilon$, so $f(c - \varepsilon) < f(c + \varepsilon)$. In that case, for all $y \in \mathbb{R}$ with $c - \varepsilon < y < c + \varepsilon$, the Intermediate Value Theorem tells us that there exists an $x \in (f(c - \varepsilon), f(c + \varepsilon))$ such that $f(x) = y$. Now, let $\delta > 0$ such that $(f(c) - \delta, f(c) + \delta) \subseteq (f(c - \varepsilon), f(c + \varepsilon))$. In that case, for $y \in \mathbb{R}$, if $|y - f(c)| < \delta$, then we know that $y \in (f(c) - \delta, f(c) + \delta) \subseteq (f(c - \varepsilon) , f(c + \varepsilon))$. So, there exists an $x \in (c - \varepsilon, c + \varepsilon)$ such that $f(x) = y$. Therefore, if $|y - f(c)| < \delta$,
+\[|f^{-1}(y) - c| = |x - c| < \varepsilon.\]
+So, $f^{-1}$ is continuous at $f(c)$.
+\end{proof}
+
+% TODO: Show f: (a, b) to R case
+% \noindent We can use this proof to show that if $f: (a, b) \to \mathbb{R}$ is a continuous injection, then it too is strictly monotonic. 
+% \begin{corollary}
+% Let $f: (a, b) \to \mathbb{R}$ be a continuous injection. Then, $f$ is strictly monotonic.
+% \end{corollary}
+% \begin{proof}
+% Assume that $f$ is not strictly monotonic. In that case, we can find $x_1, y_1 \in (a, b)$ such that $x_1 < y_1$. From the result above, we know that $f$ is strictly monotonic on $[x_1, y_1]$. So, without loss of generality, assume that $f$ is not strictly monotonic on $(a, x_1]$. In that case, we can find $x_2, y_2 \in (a, x_1]$ such that $x_2 < y_2$.
+% \end{proof}
+
+% \noindent We can easily adapt this proof to the case if $f$ is of the form $f: (a, b) \to \mathbb{R}$, i.e. the domain of $f$ is an open interval. In that case, we let $x, y \in (a, b)$ with $x < y$ as above. Since the interval $(a, b)$ is open, we can find $x', y' \in (a, b)$ with $x' < x < y < y'$. We can then proceed the same way as above, substituting $x'$ for $a$ and $y'$ for $b$.
+
+We will now prove the extreme value theorem.
+\begin{theorem}[Extreme Value Theorem]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function that is continuous on $[a, b]$. Then, there exist $u, v \in [a, b]$ such that for all $x \in [a, b]$, $f(u) \leqslant f(x) \leqslant f(v)$.
+\end{theorem}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, we show that there exists a $v \in [a, b]$ such that for all $x \in [a, b]$, $f(x) \leqslant f(v)$. Assume that $f$ is not bounded above. In that case, the set
+    \[S = \{f(x) \mid x \in [a, b]\}\]
+    is not bounded above. Therefore, we can define the sequence $(x_n)_{n=1}^{\infty}$ in $[a, b]$ such that $f(x_n) > n$. We know that $(x_n)$ is a bounded sequence, so there exists a subsequence $(x_{k_n})_{n=1}^{\infty}$ such that $x_{k_n} \to x$, for some $x \in [a, b]$. Since $f$ is continuous, we find that $f(x_{k_n}) \to f(x)$. Therefore, the sequence $(f(x_{k_n}))$ is bounded. This is a contradiction since $f(x_{k_n}) > k_n \geqslant n$ for all $n \in \mathbb{Z}_{\geqslant 1}$. So, the set $S$ is bounded above.
+    
+    Since we have $f(a) \in S$, $S$ is non-empty. So, let $w = \sup (S)$. By the supremum property, we can find a sequence $(y_n)_{n=1}^{\infty}$ in $S$ such that $y_n \to w$. By construction, there exists a corresponding sequence $(x_n)_{n=1}^{\infty}$ in $[a, b]$ such that $y_n = f(x_n)$. Since $(x_n)$ is a bounded sequence, there exists a convergent subsequence $(x_{k_n})_{n=1}^{\infty}$ with $x_{k_n} \to v$. Since $(x_{k_n})$ is a sequence in $[a, b]$, $v \in [a, b]$. Moreover, since $f$ is continuous, $f(x_{k_n}) = y_{k_n} \to f(v)$. Since $y_n \to w$, we find that $y_{k_n} \to w$. Since limits are unique, $w = f(v)$. Therefore, for all $x \in [a, b]$, $f(x) \leqslant f(v)$.
+    
+    \item Since $f$ is continuous, we know that $-f$ is continuous. From the result above, we know that there exists a $u \in [a, b]$ such that for all $x \in [a, b]$, $-f(x) \leqslant -f(u)$. In that case, $f(u) \leqslant f(x)$.
+\end{itemize}
+Therefore, there exist $u, v \in [a, b]$ such that for all $x \in [a, b]$, $f(u) \leqslant f(x) \leqslant f(v)$.
+\end{proof}
+\noindent We finish this section with the following corollary.
+\begin{corollary}
+Let $f: [a, b] \to \mathbb{R}$ be a continuous function such that for all $x \in [a, b]$, $f(x) > 0$. Then, there exists an $\varepsilon > 0$ such that for all $x \in [a, b]$, $f(x) \geqslant \varepsilon$.
+\end{corollary}
+\begin{proof}
+By the extreme value theorem, there exists a $u \in [a, b]$ such that for all $x \in [a, b]$, $f(u) \leqslant f(x)$. By definition, we have $f(u) > 0$. So, let $\varepsilon = f(u)$. Then, for all $x \in [a, b]$, $f(x) \geqslant \varepsilon$.
+\end{proof}
+
+\newpage
+
+\section{Uniform Continuity}
+In this section, we will consider uniform continuity and some properties of it. We start by defining uniform continuity.
+\begin{definition}[Uniform Continuity]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function. Then, $f$ is \emph{uniformly continuous} if for $\varepsilon > 0$, there exists a $\delta > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \varepsilon$.
+\end{definition}
+\noindent The difference between continuity and uniform continuity is that the value of $\delta$ can depend on $c$ if $f$ is continuous, but not if $f$ is uniformly continuous. This condition is very limiting- it turns out that the function $f(x) = x^n$ is only uniformly continuous if $n = 1$, even though it is continuous for all $n \in \mathbb{Z}_{\geqslant 1}$.
+\begin{proposition}
+Let $n \in \mathbb{Z}_{\geqslant 1}$, and define the function $f: \mathbb{R} \to \mathbb{R}$ by $f(x) = x^n$. Then, $f$ is uniformly continuous if and only if $n = 1$.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $n = 1$, and let $\varepsilon > 0$. Set $\delta = \varepsilon$. In that case, for $x, y \in \mathbb{R}$, if $|x - y| < \delta$,
+    \[|f(x) - f(y)| = |x - y| < \delta = \varepsilon.\]
+    Therefore, $f$ is uniformly continuous if $n = 1$.
+    
+    \item Now, assume that $n \neq 1$. Let $\delta > 0$, and set $x = \max(1, \frac{1}{\delta})$ and $y = x + \frac{\delta}{2}$. Then, although $|x - y| = \frac{\delta}{2} < \delta$, 
+    \begin{align*}
+        |f(x) - f(y)| &= |x^n - y^n| \\
+        &= |x - y| \cdot |x^{n-1} + x^{n-2}y + \dots + xy^{n-2} + y^{n-1}| \\
+        &\geqslant \frac{\delta}{2} \cdot (x^{n-1} + y^{n-1}) \\
+        &\geqslant \frac{\delta}{2} \cdot (x + y) \\
+        &= \frac{\delta}{2} \cdot \left(2x + \frac{\delta}{2}\right) \\
+        &= x \cdot \delta + \frac{\delta}{4} \\
+        &\geqslant x \cdot \delta \geqslant 1.
+    \end{align*}
+    This implies that $f$ is not uniformly continuous if $n \neq 1$.
+\end{itemize}
+Therefore, $f$ is uniformly continuous if and only if $n = 1$.
+\end{proof}
+\noindent Although not every continuous function is uniformly continuous, every uniformly continuous function is continuous.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be uniformly continuous. Then, $f$ is continuous.
+\end{proposition}
+\begin{proof}
+Let $c \in \mathbb{R}$ and $\varepsilon > 0$. Since $f$ is uniformly continuous, we can find a $\delta > 0$ such that for all $x, y \in \mathbb{R}$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \varepsilon$. In that case, for $x \in \mathbb{R}$, if $|x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. So, $f$ is continuous at $c$. Therefore, $f$ is continuous.
+\end{proof}
+\noindent There is one instance when uniform continuity matches continuity. This is when the domain of the function is bounded.
+\begin{proposition}
+Let $f: [a, b] \to \mathbb{C}$ be continuous. Then, $f$ is uniformly continuous on $[a, b]$.
+\end{proposition}
+\begin{proof}[Proof by contradiction]
+Assume that $f$ is not uniformly continuous on $[a, b]$. In that case, there exists an $\varepsilon > 0$ such that for all $\delta > 0$, there exist $x, y \in [a, b]$ such that although $|x - y| < \delta$, $|f(x) - f(y)| \geqslant \varepsilon$. So, define the sequences $(x_n)_{n=1}^{\infty}$ and $(y_n)_{n=1}^{\infty}$ in $[a, b]$ such that $|x_n - y_n| < \frac{1}{n}$ and $|f(x_n) - f(y_n)| \geqslant \varepsilon$. Since $(x_n)$ is a bounded sequence, we know that there exists a convergent subsequence $(x_{k_n})$ with $x_{k_n} \to x$. Since $|x_{k_n} - y_{k_n}| < \frac{1}{k_n} < \frac{1}{n}$, we find that $y_{k_n} \to x$ as well. Since $f$ is continuous on $[a, b]$, and $x \in [a, b]$, we find that $f(x_{k_n}) \to f(x)$ and $f(y_{k_n}) \to f(x)$. Therefore, the sequence $f(x_{k_n}) - f(y_{k_n}) \to 0$. In that case,, there exists an $n \in \mathbb{Z}_{\geqslant 1}$ such that $|f(x_{k_n}) - f(y_{k_n})| < \varepsilon$. This is a contradiction. So, $f$ is uniformly continuous on $[a, b]$.
+\end{proof}
+\begin{proof}[Direct Proof]
+Let $\varepsilon > 0$, and $c \in [a, b]$. Since $f$ is continuous at $c$, we know that the set
+\[S_c = \{\delta \in (0, 1] \mid \text{for all } x \in [a, b], \text{ if } |x-c| < \delta, \text{ then } |f(x) - f(c)| < \varepsilon\}\]
+is non-empty and bounded above. So, set $\delta_c = \sup (S_c) > 0$. Then, define
+\[S = \{\delta_c > 0 \mid c \in [a, b]\},\]
+and set $\delta = \inf (S)$.
+
+\noindent If $\delta = 0$, then there exists a sequence $(x_n)_{n=1}^{\infty}$ in $S$ such that $x_N \to 0$. By the definition of the set $S$, we can find a corresponding sequence $(c_n)_{n=1}^{\infty}$ in $[a, n]$ such that $x_n = \sup (S_c)$. By Bolzano-Weirstrass, we know that $(c_n)$ has a convergent subsequence $(c_{k_n})$. Since $[a, b]$ is closed, we also know that $c_{k_n} \to c \in [a, b]$. Also, $x_n \to 0$, so we know that the subsequence $x_{k_n} \to 0$ as well.
+
+\noindent Now, consider $c \in [a, b]$. Since $f$ is continuous at $c$, we can find a $\delta_0 > 0$ such that if $|x - c| < \delta_0$, then $|f(x) - f(c)| < \frac{\varepsilon}{2}$. Moreover, since $c_{k_n} \to c$, we can find an $N_1 \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N_1$, $|c_{k_n} - c| < \frac{\delta_0}{2}$. Finally, since $x_{k_n} \to 0$, we can find an $N_2 \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N_2$, $0 < x_{k_n} < \frac{\delta_0}{3}$. Now, let $N = \max(N_1, N_2)$, and fix $n \geqslant N$. In that case, for $|c_{k_n} - x| < \frac{\delta_0}{2}$, we find that
+\begin{align*}
+    |x - c| &= |x - c_{k_n} + c_{k_n} - c| \\
+    &\leqslant |x - c_{k_n}| + |c_{k_n} - c| \\
+    &< \frac{\delta_0}{2} + \frac{\delta_0}{2} = \delta_0.
+\end{align*}
+So, we have both $|c_{k_n} - c| < \delta_0$ and $|x - c_{k_n}| < \delta_0$. Therefore, if $|c_{k_n} - x| < \frac{\delta_0}{2}$,
+\begin{align*}
+    |f(c_{k_n} - f(x)| &= |f(c_{k_n}) - f(c) + f(c) - f(x)| \\
+    &\leqslant |f(c_{k_n} - f(c)| + |f(c) - f(x)| \\
+    &< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\end{align*}
+In that case, $\frac{\delta_0}{2} \in S_{c_{k_n}}$. However, we know that $\sup (S_{c_{k_n}}) = x_{k_n} < \frac{\delta_0}{3}$- this is a contradiction. Therefore, we must have $\sup (S_c) = \delta \neq 0$.
+
+\noindent Finally, since $S$ is a set of non-negative reals with $\inf (S) \neq 0$, we find that $\inf(S) = \delta > 0$. Now, let $x, y \in [a, b]$. Since $\delta = \inf (S)$, we find that $\delta_x \geqslant \delta$. Moreover, if $|x - y| < \delta \leqslant \delta_x$, then we can find a $\delta' \in S_x$ such that $|x - y| < \delta' \leqslant \delta_x$- this is because $\sup (S_x) = \delta_x$. In that case, if $|x - y| < \delta$, then $|x - y| < \delta' \in S_x$, which implies that $|f(x) - f(y)| < \varepsilon$. Therefore, $f$ is uniformly continuous on $[a, b]$.
+\end{proof}
+\noindent It turns out that a multiple of a uniformly continuous function is uniformly continuous.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a uniformly continuous function, and let $\lambda \in \mathbb{C}$. Then, the function $\lambda f$ is uniformly continuous.
+\end{proposition}
+\begin{proof}
+If $\lambda = 0$, then $\lambda f = 0$ for all $x \in \mathbb{R}$. Therefore, $\lambda f$ is uniformly continuous.
+
+\noindent Instead, if $\lambda \neq 0$, then let $\varepsilon > 0$. Since $f$ is uniformly continuous, there exists a $\delta > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \frac{\delta}{|\lambda|}$. In that case, for $x, y \in \mathbb{R}$, if $|x - y| < \delta$, then
+\[|(\lambda f)(x) - (\lambda f)(y)| = |\lambda| \cdot |f(x) - f(y)| < |\lambda| \cdot \frac{\varepsilon}{|\lambda|} = \varepsilon.\]
+So, $\lambda f$ is uniformly continuous.
+\end{proof}
+\noindent Also, the sum of two uniformly continuous functions is uniformly continuous.
+\begin{proposition}
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be uniformly continuous functions. Then, the function $f + g$ is uniformly continuous.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since $f$ is uniformly continuous, we can find a $\delta_1 > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta_1$, then $|f(x) - f(y)| < \frac{\varepsilon}{2}$. Moreover, since $g$ is uniformly continuous, we can find a $\delta_2 > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta_2$, then $|g(x) - g(y)| < \frac{\varepsilon}{2}$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x, y \in \mathbb{R}$, if $|x - y| < \delta$, then 
+\begin{align*}
+    |(f + g)(x) - (f + g)(y)| &= |f(x) + g(x) - f(y) - g(y)| \\
+    &\leqslant |f(x) - f(y)| + |g(x) - g(y)| \\
+    &< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\end{align*}
+This implies that $f + g$ is uniformly continuous.
+\end{proof}
+\noindent However, a product of two uniformly continuous functions is not uniformly continuous- we know that $f(x) = x$ is uniformly continuous, but $f(x) \cdot f(x) = x^2$ is not uniformly continuous. Nonetheless, the composition of two uniform continuous functions is uniformly continuous.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \to \mathbb{R}$ be uniformly continuous functions. Then, the composition $f \circ g: \mathbb{R} \to \mathbb{C}$ is uniformly continuous.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since $g$ is uniformly continuous, there exists a $\delta_1 > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta_1$, then $|g(x) - g(y)| < \varepsilon$. Moreover, since $f$ is uniformly continuous, there exists a $\delta_2 > 0$ such that for $x, y \in \mathbb{R}$, if $|x - y| < \delta_2$, then $|f(x) - f(y)| < \delta_1$. In that case, for $x, y \in \mathbb{R}$,
+\[|x - y| < \delta_2 \implies |f(x) - f(y)| < \delta_1 \implies |g(f(x)) - g(f(y))| < \varepsilon.\]
+This implies that $f \circ g$ is uniformly continuous.
+\end{proof}
+\newpage
+
+\section{Function Limits}
+Now, we consider function limits.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ and $L \in \mathbb{C}$. Then, we say that the \emph{limit} 
+\[\lim_{x \to c} f(x) = L\]
+if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - L| < \varepsilon$.\sidefootnote{Note that we do not care what happens if $x = c$!}
+\end{definition}
+\noindent As we can see, the definition is very close to the definition of continuity. In fact, they generalise the concept of continuity. We can use limits to prove continuity.
+\begin{proposition}[Limit Characterisation of Continuity]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$. Then, $f$ is continuous at $c$ if and only if the limit
+\[\lim_{x \to c} f(x) = f(c).\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that $\lim_{x \to c} f(x) = f(c)$, and let $\varepsilon > 0$. If $x = c$, then we know that
+    \[|f(x) - f(c)| = 0 < \varepsilon.\]
+    Moreover, since $\lim_{x \to c} f(x) = f(c)$, there exists a $\delta > 0$ such that if $0 < |x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. Therefore, if $|x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. Therefore, $f$ is continuous at $c$.
+    
+    \item Instead, assume that $f$ is continuous at $c$, and let $\varepsilon > 0$. In that case, there exists a $\delta > 0$ such that for all $x \in \mathbb{R}$, if $|x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. Therefore, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - f(c)| < \varepsilon$. So, the limit
+    \[\lim_{x \to c} f(x) = f(c).\]
+\end{itemize}
+\end{proof}
+\noindent Moreover, there is a sequential characterisation of limits which is very similar to the sequential characterisation of continuity.
+\begin{proposition}[Sequential Characterisation of Limits]
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c\in \mathbb{R}$ and $L \in \mathbb{C}$. Then, the limit $\lim_{x \to c} f(x) = L$ if and only if for every sequence $(x_n)_{n=1}^{\infty}$ in $\mathbb{R} \setminus \{c\}$, if $x_n \to c$, then $f(x_n) \to L$.\sidefootnote{Here as well, we do not care about a sequence $(x_n)$ if it satisfies $x_n = c$ for some $n \in \mathbb{Z}_{\geqslant 1}$!}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that the limit $\lim_{x \to c} f(x) = L$, and let  $(x_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}$ such that $x_n \to c$. Now, let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - L| < \varepsilon$. Moreover, since $x_n \to c$, there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for all $n \geqslant N$, $|x_n - c| < \delta$. In that case, for $n \geqslant N$, $|f(x_n) - L| < \varepsilon$. Therefore, $f(x_n) \to L$.
+    
+    \item Assume that the limit $\lim_{x \to c} f(x) \neq L$. In that case, there exists an $\varepsilon > 0$ such that for all $\delta > 0$, there exists an $x \in \mathbb{R}$ such that although $0 < |x - c| < \delta$, $|f(x) - L| \geqslant \varepsilon$. So, define the sequence $(x_n)_{n=1}^{\infty}$ by $0 < |x_n - c| < \frac{1}{n}$ and $|f(x_n) - L| \geqslant \varepsilon$. By Sandwich Theorem, we find that $|x_n - c| \to 0$. Therefore, $x_n \to c$. However, by construction, we find that $|f(x_n) - L| \geqslant \varepsilon$ for all $n \in \mathbb{Z}_{\geqslant 1}$. This implies that $f(x_n) \not\to L$.
+\end{itemize}
+\end{proof}
+
+We will now compute use the definition to compute limits.
+\begin{example}
+The limit
+\[\lim_{x \to 1} \frac{x^2 - 5}{x + 2} = -\frac{4}{3}.\]
+\end{example}
+\begin{proof}
+Let $\varepsilon > 0$. For $x \in \mathbb{R}$,
+\[|x - 1| < 1 \iff x \in (0, 2) \iff x + 2 \in (2, 3).\]
+Therefore, if $|x-1| < 1$, then $|x+2| \geqslant 2$. Moreover, for $x \in \mathbb{R}$,
+\[|x - 1| < 1 \iff x \in (0, 2) \iff 3x \in (0, 6) \iff 3x + 7 \in (7, 13).\]
+Therefore, if $|x-1| < 1$, then $|3x+7| \leqslant 13$. In that case, let $\delta = \min(1, \frac{2}{13} \varepsilon)$. Then, for $x \in \mathbb{R}$, if $0 < |x-1| < 1$, we have $|x-1| < 1$ and $|x-1| < \frac{2}{13}$. In that case,
+\begin{align*}
+    \left|\frac{x^2 - 5}{x + 2} + \frac{4}{3}\right| &= \left|\frac{3x^2 + 4x - 7}{3(x+2)}\right| \\
+    &= \left|\frac{(3x+7)(x-1)}{3(x+2)}\right| \\
+    &\leqslant \frac{13}{2} |x - 1| \\
+    &< \frac{13}{2} \cdot \frac{2}{13} \varepsilon = \varepsilon.
+\end{align*}
+This implies that the limit
+\[\lim_{x \to 1} \frac{x^2 - 5}{x + 2} = -\frac{4}{3}.\]
+\end{proof}
+\noindent Instead of proving by the definition, we could have noted that the function $f: \mathbb{R} \setminus \{-2\} \to \mathbb{R}$ given by $f(x) = \frac{x^2 - 5}{x + 2}$ is continuous, and so the limit
+\[\lim_{x \to 1} \frac{x^2 - 5}{x + 2} = \lim_{x \to 1} f(x) = f(1) = -\frac{4}{3}.\]
+\noindent Next, we compute the following limit.
+\begin{example}
+The limit
+\[\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = 4.\]
+\end{example}
+\begin{proof}
+Let $\varepsilon > 0$. Set $\delta = \varepsilon$. In that case, for $x \in \mathbb{R}$, if $0 < |x - 2| < \delta$, then
+\[\left|\frac{x^2 - 4}{x - 2} - 4\right| = \left|\frac{(x - 2)(x + 2)}{x - 2} - 4\right| = \left|x - 2\right| < \delta = \varepsilon.\]
+\end{proof}
+\noindent Note that we needed $x \neq 2$ for the proof above to make sense- the denominator cannot be 0. However, what we essentially did was
+\[\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} \frac{(x - 2)(x + 2)}{x - 2} = \lim_{x \to 2} x + 2 = 4.\]
+We will establish this result below.
+\begin{proposition}
+Let $c \in \mathbb{R}, L \in \mathbb{C}$ and $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \setminus \{c\} \to \mathbb{C}$ be functions such that there exists a $\delta_1 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $f(x) \neq 0$.\sidefootnote{We require this condition to ensure that we can divide by $g(x)$- the function has to be non-zero around some interval/neighbourhood of $c$.} Then, 
+\[\lim_{x \to c} f(x) = L \iff \lim_{x \to c} \frac{f(x) g(x)}{g(x)} = L.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that the limit $\lim_{x \to c} f(x) = L$. By definition, this implies that there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|f(x) - L| < \varepsilon$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[\left|\frac{f(x) g(x)}{g(x)} - L\right| = \left|f(x) - L\right| < \varepsilon.\]
+    Therefore, the limit $\lim_{x \to c} \frac{f(x) g(x)}{g(x)} = L$.
+    
+    \item Now, assume that the limit $\lim_{x \to c} \frac{f(x) g(x)}{g(x)} = L$. In that case, we can find a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[\left|\frac{f(x) g(x)}{g(x)} - L\right| = |f(x) - L| < \varepsilon.\]
+    Therefore, the limit $\lim_{x \to c} f(x) = L$.
+\end{itemize}
+\end{proof}
+\noindent We could generalise this even further!
+\begin{proposition}
+Let $c \in \mathbb{R}, L \in \mathbb{C}$ and $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \setminus \{c\} \to \mathbb{C}$ be functions such that there exists a $\delta_1 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $f(x) = g(x)$.\sidefootnote{So, there is a neighbourhood around $c$ where $f$ and $g$ are essentially the same function.} Then,
+\[\lim_{x \to c} f(x) = L \iff \lim_{x \to c} g(x) = L.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that the limit $\lim_{x \to c} f(x) = L$. In that case, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|f(x) - L| < \varepsilon$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[|g(x) - L| = |f(x) - L| < \varepsilon.\]
+    This implies that the limit $\lim_{x \to c} g(x) = L$.
+    
+    \item Now, assume that the limit $\lim_{x \to c} g(x) = L$. In that case, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|g(x) - L| < \varepsilon$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[|f(x) - L| = |g(x) - L| < \varepsilon.\]
+    This implies that the limit $\lim_{x \to c} f(x) = L$.
+\end{itemize}
+\end{proof}
+
+Now, we will consider how to show a limit does not exist. Like in the case of continuity, we want to use the sequential characterisation to show this. However, there is a difference here- to show that the limit $\lim_{x \to c} f(x)$ does not exist, we need to either find a sequence $(x_n)_{n=1}^{\infty}$ in $\mathbb{R} \setminus \{c\}$ such that $f(x_n)$ does not converge, or we need to find two sequences $(x_n)_{n=1}^{\infty}$ and $(y_n)_{n=1}^{\infty}$ in $\mathbb{R} \setminus \{c\}$ such that $f(x_n)$ and $f(y_n)$ converge to different values. We illustrate both the possibilities with an example.
+\begin{example}
+Let $f: \mathbb{R} \setminus \{0\} \to \mathbb{R}$ be the function given by $f(x) = \sin (1/x)$. Then, the limit $\lim_{x \to 0} f(x)$ does not exist.
+\end{example}
+\begin{proof}[Proof using one sequence]
+Define the sequence $(x_n)_{n=1}^{\infty}$ in $\mathbb{R} \setminus \{0\}$ by 
+\[x_n = \frac{1}{n\pi + \frac{\pi}{2}}.\]
+We have $0 < x_n < \frac{1}{n\pi}$ for all $n \in \mathbb{Z}_{\geqslant 1}$, so Sandwich Theorem tells us that $x_n \to 0$. Moreover, for $n \in \mathbb{Z}_{\geqslant 1}$,
+\[f(x_n) = f(n \pi + \tfrac{\pi}{2}) = \begin{cases}
+1 & n \text{ even} \\
+-1 & n \text{ odd}.
+\end{cases}\]
+Since $(f(x_n))$ is not a Cauchy sequence, it cannot converge. Therefore, the sequential characterisation of limits tells us that the limit $\lim_{x \to 0} f(x)$ does not exist.
+\end{proof}
+\begin{proof}[Proof using two sequences]
+Define the sequences $(x_n)_{n=1}^{\infty}$ and $(y_n)_{n=1}^{\infty}$ in $\mathbb{R} \setminus \{0\}$ by
+\[x_n = \frac{1}{2n \pi + \frac{\pi}{2}}, \qquad y_n = \frac{1}{2n \pi + \frac{3\pi}{2}}.\]
+We have $0 < y_n < x_n < \frac{1}{2n \pi}$, so the Sandwich Theorem tells us that both $x_n \to 0$ and $y_n \to 0$. Moreover, for $n \in \mathbb{Z}_{\geqslant 1}$,
+\[f(x_n) = f(2n \pi + \tfrac{\pi}{2}) = 1, \qquad f(y_n) = f(2n \pi + \tfrac{3\pi}{2}) = -1.\]
+Therefore, $f(x_n) \to 1$ and $f(y_n) \to -1$. Since $1 \neq -1$, the sequential characterisation of limits tells us that the limit $\lim_{x \to 0} f(x)$ does not exist.
+\end{proof}
+
+We will now prove some properties of limits. We first show that the limit of a multiple of a function is the multiple of the limit.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ and $L, \lambda \in \mathbb{C}$, and assume that the limit $\lim_{x \to c} f(x) = L$. In that case, the limit 
+\[\lim_{x \to c} \lambda f(x) = \lambda L.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item If $\lambda = 0$, then we know that $\lambda f(x) = 0$ for all $x \in \mathbb{R}$. Therefore, the limit
+    \[\lim_{x \to c} \lambda f(x) = 0 = 0 \cdot L = \lambda L.\]
+    \item Otherwise, $\lambda \neq 0$. So, let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - L| < \frac{\varepsilon}{|L|}$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[|\lambda f(x) - \lambda L| = |\lambda| \cdot |f(x) - L| = |\lambda| \cdot \frac{\varepsilon}{|\lambda|} = \varepsilon.\]
+    Therefore, the limit $\lim_{x \to c} \lambda f(x) = \lambda L$.
+\end{itemize}
+This implies that the limit $\lim_{x \to c} \lambda f(x) = \lambda L$.
+\end{proof}
+\noindent Next, we show that the limit of the sum of two functions is the sum of the two limits.
+\begin{proposition}
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be functions, and let $c \in \mathbb{R}$ and $L_1, L_2 \in \mathbb{C}$, and assume that the limits $\lim_{x \to c} f(x) = L_1$ and $\lim_{x \to c} g(x) = L_2$. In that case, the limit 
+\[\lim_{x \to c} f(x) + g(x) = L_1 + L_2.\]
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since $\lim_{x \to c} f(x) = L_1$, there exists a $\delta_1 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $|f(x) - L_1| < \frac{\varepsilon}{2}$. Moreover, since $\lim_{x \to c} g(x) = L_2$, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|g(x) - L_2| < \frac{\varepsilon}{2}$. In that case, set $\delta = \min(\delta_1, \delta_2)$. Then, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+\begin{align*}
+    |(f(x) + g(x)) - (L_1 + L_2)| &= |f(x) - L_1 + g(x) - L_2| \\
+    &\leqslant |f(x) - L_1| + |g(x) - L_2| \\
+    &< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon. 
+\end{align*}
+This implies that the limit $\lim_{x \to c} f(x) + g(x) = L_1 + L_2$.
+\end{proof}
+\noindent Next, we will show that the limit of the product of two functions is the product of the two limits. We start with a lemma.
+\begin{lemma}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ and $L \in \mathbb{C}$ such that the limit $\lim_{x \to c} f(x) = L$. In that case, there exists a $\delta > 0, K > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x)| < K$.
+\end{lemma}
+\begin{proof}
+Since the limit $\lim_{x \to c} f(x) = L$, there exists a $\delta > 0$ such that for all $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - L| < 1$. In that case, 
+\[|f(x)| \leqslant |f(x) - L| + |L| < 1 + |L|.\]
+So, set $K = 1 + |L| \geqslant 1 > 0$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x)| < K$.
+\end{proof}
+\noindent We now prove the result.
+\begin{proposition}
+Let $f, g: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}$ and $L_1, L_2 \in \mathbb{C}$ such that the limits $\lim_{x \to c} f(x) = L_1$ and $\lim_{x \to c} g(x) = L_2$. In that case, the limit $\lim_{x \to c} f(x)g(x) = L_1L_2$.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L_1$, we can find a $\delta_1 > 0$ and a $K > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $|f(x)| < K$. Since the limit $\lim_{x \to c} g(x) = L_2$, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|g(x) - L_2| < \frac{\varepsilon}{2K}$.
+\begin{itemize}
+    \item First, assume that $L_2 = 0$. In that case, set $\delta = \min(\delta_1, \delta_2)$. So, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \[|f(x) g(x) - L_1 L_2| = |f(x)| \cdot |g(x)| < K \cdot \frac{\varepsilon}{2K} = \frac{\varepsilon}{2} < \varepsilon.\]
+    \item Next, assume that $L_2 \neq 0$. Then, we can find a $\delta_3 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_3$, then $|f(x) - L_1| < \frac{\varepsilon}{2|L_2|}$. In that case, set $\delta = \min(\delta_1, \delta_2, \delta_3)$. So, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+    \begin{align*}
+        |f(x) g(x) - L_1 L_2| &= |f(x) g(x) - f(x) L_2 + f(x) L_2 - L_1 L_2| \\
+        &\leqslant |f(x) g(x) - f(x) L_2| + |f(x) L_2 - L_1 L_2| \\
+        &= |f(x)| \cdot |g(x) - L_2| + |L_2| \cdot |f(x) - L_1| \\
+        &< K \cdot |g(x) - L_2| + |L_2| \cdot |f(x) - L_1| \\
+        &< K \cdot \frac{\varepsilon}{2K} + |L_2| \cdot \frac{\varepsilon}{2|L_2|} \\
+        &= \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+    \end{align*}
+\end{itemize}
+This implies that the limit $\lim_{x \to c} f(x)g(x) = L_1 L_2$.
+\end{proof}
+\noindent Now, we show that the limit of the quotient of two functions is the quotient of the two limits. We start with a lemma.
+\begin{lemma}
+Let $f: \mathbb{R} \to \mathbb{C}$, $c \in \mathbb{R}$ and $L \in \mathbb{C}$ such that the limit $\lim_{x \to c} f(x) = L$, with $L \neq 0$. In that case, the limit $\lim_{x \to c} \frac{1}{f(x)} = \frac{1}{L}$.
+\end{lemma}
+\begin{proof}
+Since $L \neq 0$, we can find a $\delta_1 > 0$ such that if $0 < |x - c| < \delta_1$, then $|f(x) - L| < \frac{|L|}{2}$. In that case,
+\[|f(x)| \in (\tfrac{1}{2} |L|, \tfrac{3}{2} |L|),\]
+and so $|f(x)| \geqslant \frac{1}{2} |L|$ and $f(x) \neq 0$. This implies that the expression $\frac{1}{f(x)}$ is well defined for $0 < |x - c| < \delta_1$. 
+
+\noindent Now, let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L$, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|f(x) - L| < \frac{\varepsilon \cdot |L|^2}{2}$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+\[\left|\frac{1}{f(x)} - \frac{1}{L}\right| = \left|\frac{f(x) - L}{L \cdot f(x)}\right| \leqslant \frac{2 |f(x) - L|}{|L|^2} < \frac{2\varepsilon \cdot |L|^2}{2|L|^2} = \varepsilon.\]
+This implies that the limit $\lim_{x \to c} \frac{1}{f(x)} = \frac{1}{L}$.
+\end{proof}
+\noindent Using this result, we can easily prove the quotient rule for limits.
+\begin{proposition}
+Let $f, g: \mathbb{R} \to \mathbb{C}$, and let $c \in \mathbb{R}$ and $L_1, L_2 \in \mathbb{C}$ such that the limits $\lim_{x \to c} f(x) = L_1$ and $\lim_{x \to c} g(x) = L_2$, with $L_2 \neq 0$. In that case, the limit $\lim_{x \to c} \frac{f(x)}{g(x)} = \frac{L_1}{L_2}$.
+\end{proposition}
+\begin{proof}
+Since $L_2 \neq 0$, we find that the limit
+\[\lim_{x \to c} \frac{1}{g(x)} = \frac{1}{L_2}.\]
+Therefore, 
+\[\lim_{x \to c} \frac{f(x)}{g(x)} = \lim_{x \to c} f(x) \cdot \lim_{x \to c} \frac{1}{g(x)} = \frac{L_1}{L_2}.\]
+\end{proof}
+\noindent The final property we look at is the conjugate function.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$, and let $c \in \mathbb{R}$ and $L \in \mathbb{R}$ such that the limit $\lim_{x \to c} f(x) = L$. In that case, the limit $\lim_{x \to c} \overline{f(x)} = \overline{L}$.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+\[|\overline{f(x)} - \overline{L}| = \overline{|f(x) - L|} = |f(x) - L| < \varepsilon.\]
+This implies that the limit $\lim_{x \to c} \overline{f(x)} = \overline{L}$.
+\end{proof}
+
+\noindent All of these properties are also true if $f$ is continuous. That is, if $f, g: \mathbb{R} \to \mathbb{C}$ are continuous at $c \in \mathbb{R}$, then
+\begin{itemize}
+    \item $\lambda f$ is continuous at $c$ for any $\lambda \in \mathbb{C}$;
+    \item $f + g$ is continuous at $c$; 
+    \item $fg$ is continuous at $c$; 
+    \item if $g(c) \neq 0$, $\frac{f}{g}$ is continuous at $c$; and
+    \item $\overline{f}$ is continuous at $c$.
+\end{itemize}
+We refer to all of these properties as \emph{algebraic properties} of limits/continuity. There is one final algebraic property of continuity.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \to \mathbb{R}$ be functions, and let $c \in \mathbb{R}$ such that $g$ is continuous at $c$ and $f$ is continuous at $g(c)$. In that case, the composition $f \circ g: \mathbb{R} \to \mathbb{C}$ is continuous at $c$.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since $g$ is continuous, there exists a $\delta_1 > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta_1$, then $|g(x) - g(c)| < \varepsilon$. Moreover, since $f$ is uniformly continuous, there exists a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $|x - c| < \delta_2$, then $|f(x) - f(c)| < \delta_1$. In that case, for $x \in \mathbb{R}$,
+\[|x - c| < \delta_2 \implies |f(x) - f(c)| < \delta_1 \implies |g(f(x)) - g(f(c))| < \varepsilon.\]
+This implies that $f \circ g$ is continuous.
+\end{proof}
+\noindent The corresponding property for limits would be: if we have functions $f: \mathbb{R} \to \mathbb{C}$ and $g: \mathbb{R} \to \mathbb{R}$ and $c,L \in \mathbb{R}$ and $M \in \mathbb{C}$ such that
+\[\lim_{x \to c} g(x) = L \qquad \text{and} \qquad \lim_{x \to L} f(x) = M,\]
+then the limit
+\[\lim_{x \to c} f(g(x)) = M.\]
+However, this is not true. For example, consider the functions $f, g: \mathbb{R} \to \mathbb{R}$ given by
+\[f(x) = \begin{cases}
+1 & x = 0 \\
+0 & \text{otherwise},
+\end{cases} \qquad g(x) = 0.\]
+Then, $f(g(x)) = 1$ for all $x \in \mathbb{R}$, meaning that the limit $\lim_{x \to 0} f(g(x)) = 1$. However, the limit $\lim_{x \to 0} g(x) = 0$ and the limit $\lim_{x \to 0} f(x) = 0$. Therefore, we require $g$ to be continuous at $c$ and $f$ to be continuous at $g(c)$ for the limit
+\[\lim_{x \to c} f(g(x)) = f(\lim_{x \to c} g(x)).\]
+
+The following property of limits tells us how limits behave with inequalities.
+\begin{proposition}[Order Property of Limits]
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function, and let $c, L, M \in \mathbb{R}$ and assume that there exists a $\delta_1 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $f(x) \leqslant M$. Further, suppose that the limit $\lim_{x \to c} f(x) = L$. In that case, $L \leqslant M$.\sidefootnote{If we know that for all $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $f(x) < M$ instead, then our conclusion would still be the same- $L \leqslant M$. It does not follow that $L < M$.}
+\end{proposition}
+\begin{proof}
+Assume that $L > M$. In that case, set $\varepsilon = L - M > 0$. We can find a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|f(x) - L| < \varepsilon$. Now, set $\delta = \min(\delta_1, \delta_2) > 0$. We know that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then both $f(x) \leqslant M$ and
+\[f(x) > L - \varepsilon = M.\]
+This is a contradiction. Therefore, $L \leqslant M$.
+\end{proof}
+\noindent Finally, we look at the sandwich theorem.
+\begin{theorem}[Sandwich Theorem]
+Let $f, g, h: \mathbb{R} \to \mathbb{R}$ be functions, and let $c, L \in \mathbb{R}$, and assume that there exists a $\delta_1 > 0$ such that for all $x \in \mathbb{R}$, if $0 < |x - c| < \delta_1$, then $f(x) \leqslant g(x) \leqslant h(x)$. Further, suppose that the limits $\lim_{x \to c} f(x) = \lim_{x \to c} h(x) = L$. In that case, the limit $\lim_{x \to c} g(x) = L$.
+\end{theorem}
+\begin{proof}
+Let $\varepsilon > 0$. Since the limit $\lim_{x \to c} f(x) = L$, we can find a $\delta_2 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_2$, then $|f(x) - L| < \varepsilon$. Similarly, since the limit $\lim_{x \to c} h(x) = L$, we can find a $\delta_3 > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta_3$, then $|h(x) - L| < \varepsilon$. So, set $\delta = \min(\delta_1, \delta_2, \delta_3)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then
+\[L - \varepsilon < f(x) \leqslant g(x) \leqslant h(x) < L + \varepsilon.\]
+This implies that $|g(x) - L| < \varepsilon$. So, the limit $\lim_{x \to c} g(x) = L$.
+\end{proof}
+
+We finish this section by looking at left and right limits. First, we state the definition.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}, L \in \mathbb{C}$. We say that the limit
+\[\lim_{x \to c^-} f(x) = L\]
+if for all $\varepsilon > 0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $x \in (c - \delta, c)$, then $|f(x) - L| < \varepsilon$. Also, we say that the limit
+\[\lim_{x \to c^+} f(x) = L\]
+if for all $\varepsilon > 0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $x \in (c, c + \delta)$, then $|f(x) - L| < \varepsilon$.
+\end{definition}
+\noindent Now, we show that a limit can only exist when the left and the right limit exist, and are equal.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $c \in \mathbb{R}, L \in \mathbb{C}$. Then, the limit
+\[\lim_{x \to c} f(x) = L\]
+if and only if
+\[\lim_{x \to c^-} f(x) = L \qquad \text{and} \qquad \lim_{x \to c^+} f(x) = L.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that the limit $\lim_{x \to c} f(x) = L$, and let $\varepsilon > 0$. We know that there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then $|f(x) - L| < \varepsilon$. In that case, for both $x \in (c - \delta, c)$ and $x \in (c, c + \delta)$, $|f(x) - f(c)| < L$. This implies that the limits
+    \[\lim_{x \to c^-} f(x) = L \qquad \text{and} \qquad \lim_{x \to c^+} f(x) = L.\]
+    
+    \item Instead, assume that the limits
+    \[\lim_{x \to c^-} f(x) = L \qquad \text{and} \qquad \lim_{x \to c^+} f(x) = L.\]
+    Let $\varepsilon > 0$. Then, we can find $\delta_1, \delta_2 > 0$ such that for $x \in \mathbb{R}$, if $x \in (c - \delta_1, c)$, then $|f(x) - L| < \varepsilon$, and if $x \in (c, c + \delta_2)$, then $|f(x) - L| < \varepsilon$. So, set $\delta = \min(\delta_1, \delta_2)$. In that case, for $x \in \mathbb{R}$, if $0 < |x - c| < \delta$, then either $x \in (c - \delta_1, c)$ or $x \in (c, c + \delta_2)$. Therefore, we have $|f(x) - L| < \varepsilon$. This implies that the limit $\lim_{x \to c} f(x) = L$.
+\end{itemize}
+\end{proof}
+
+\newpage
+
+\section{Infinite Limits}
+We now define infinite limits. We start by defining a limit at infinity.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $L \in \mathbb{C}$. 
+\begin{itemize}
+    \item We say that the limit
+    \[\lim_{x \to \infty} f(x) = L\]
+    if for every $\varepsilon > 0$, there exists an $M > 0$ such that if $x > M$, then $|f(x) - L| < \varepsilon$.
+    
+    \item We say that the limit
+    \[\lim_{x \to -\infty} f(x) = L\]
+    if for every $\varepsilon > 0$, there exists an $M > 0$ such that if $x < -M$, then $|f(x) - L| < \varepsilon$.
+\end{itemize}
+\end{definition}
+\noindent We will show by definition that the function $\frac{1}{x}$ converges to 0 as $x$ goes to $\infty$.
+\begin{example}
+The limit
+\[\lim_{x \to \infty} \frac{1}{x} = 0.\]
+\end{example}
+\begin{proof}
+Let $\varepsilon > 0$. Set $M = \frac{1}{\varepsilon}$. In that case, if $x > M$, then
+\[f(x) = \frac{1}{x} < \frac{1}{M} = \varepsilon.\]
+So, the limit
+\[\lim_{x \to \infty} \frac{1}{x} = 0.\]
+\end{proof}
+Next, we look at limits to infinity.
+\begin{definition}
+Let $f: [a, b) \to \mathbb{R}$ be a function. 
+\begin{itemize}
+    \item We say that the limit
+    \[\lim_{x \to b^-} f(x) = \infty\]
+    if for every $N > 0$, there exists a $\delta > 0$ such that if $x \in (b - \delta, b)$, then $f(x) > N$.
+    
+    \item We say that the limit
+    \[\lim_{x \to b^-} f(x) = -\infty\]
+    if for every $N > 0$, there exists a $\delta > 0$ such that if $x \in (b - \delta, b)$, then $f(x) < -N$.
+\end{itemize}
+\end{definition}
+\noindent Note that the function does not converge to a limit in this case- it is just a special case of divergence. Next, we define limits to infinity.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a function. 
+\begin{itemize}
+    \item We say that the limit
+    \[\lim_{x \to \infty} f(x) = \infty\]
+    if for every $N > 0$, there exists an $M > 0$ such that if $x > M$, then $f(x) > N$.
+    
+    \item We say that the limit
+    \[\lim_{x \to \infty} f(x) = -\infty\]
+    if for every $N > 0$, there exists an $M > 0$ such that if $x > M$, then $f(x) < -N$.
+    
+    \item We say that the limit
+    \[\lim_{x \to -\infty} f(x) = \infty\]
+    if for every $N > 0$, there exists an $M > 0$ such that if $x < -M$, then $f(x) > N$.
+    
+    \item We say that the limit
+    \[\lim_{x \to -\infty} f(x) = -\infty\]
+    if for every $N > 0$, there exists an $M > 0$ such that if $x < -M$, then $f(x) < -N$.
+\end{itemize}
+\end{definition}
+\noindent We will illustrate this definition with an example.
+\begin{example}
+The limit
+\[\lim_{x \to \infty} \log (x) = \infty.\]
+\end{example}
+\begin{proof}
+Let $N > 0$. Set $M = e^N$. In that case, for $x > M$,
+\[\log (x) > \log (M) > \log (e^N) = N.\]
+\end{proof}
+
+We finish by connecting these infinite limits.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be a function, and let $L \in \mathbb{C}$. Then, the following are equivalent:
+\begin{enumerate}[label=(\arabic*)]
+    \item the limit $\lim_{x \to \infty} f(x) = L$;
+    \item the limit $\lim_{x \to 0^+} f(1/x) = L$;
+    \item the limit $\lim_{x \to 0^-} f(-1/x) = L$; and
+    \item the limit $\lim_{x \to -\infty} f(-x) = L$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that the limit
+    \[\lim_{x \to \infty} f(x) = L.\]
+    Let $\varepsilon > 0$. Since the limit $\lim_{x \to \infty} f(x) = L$, there exists an $M > 0$ such that if $x > M$, then $|f(x) - L| < \varepsilon$. In that case, set $\delta = \frac{1}{M}$. Then, for $x \in (0, \frac{1}{M})$, we find that $\frac{1}{x} > M$, and so
+    \[|f(1/x) - L| < \varepsilon.\] 
+    In that case, (1) implies (2).
+    \item Now, assume that the limit
+    \[\lim_{x \to 0^+} f(1/x) = L.\]
+    Let $\varepsilon > 0$. Since the limit $\lim_{x \to 0^+} f(1/x) = L$, there exists a $\delta > 0$ such that for $x \in (0, \delta)$, $|f(1/x) - L| < \varepsilon$. In that case, for $x \in (-\delta, 0)$, we have $-x \in (0, \delta)$. This implies that
+    \[|f(-1/x) - L| < \varepsilon.\]
+    In that case, (2) implies (3).
+    \item Next, assume that the limit
+    \[\lim_{x \to 0^-} f(-1/x) = L.\]
+    Let $\varepsilon > 0$. Since the limit $\lim_{x \to 0^-} f(-1/x) = L$, there exists a $\delta > 0$ such that for $x \in (-\delta, 0)$, $|f(-1/x) - L| < \varepsilon$. So, set $M = \frac{1}{\delta}$. In that case, if $x > M$, then $\frac{1}{x} < M = \delta$, and so $\frac{-1}{x} \in (-\delta, 0)$. Therefore,
+    \[|f(-1/x) - L| < \varepsilon.\]
+    In that case, (3) implies (4).
+    \item Finally, assume that the limit
+    \[\lim_{x \to -\infty} f(-x) = L.\]
+    Let $\varepsilon > 0$. Since the limit $\lim_{x \to -\infty} f(-x) = L$, there exists an $M > 0$ such that if $x < -M$, then $|f(-x) - L| < \varepsilon$. In that case, for $x > M$, $-x < -M$, and so
+    \[|f(x) - L| < \varepsilon.\]
+    In that case, (4) implies (1).
+\end{itemize}
+So, the statements are equivalent.
+\end{proof}
+
+\end{document}

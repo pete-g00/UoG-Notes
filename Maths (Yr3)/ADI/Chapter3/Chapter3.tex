@@ -1,0 +1,686 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{ADI}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{2}
+
+\begin{document}
+
+\chapter{Power Series}
+\section{Complex Series}
+In this section, we will look at series over $\mathbb{C}$. We start by defining limits for sequences over $\mathbb{C}$.
+\begin{definition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let $L \in \mathbb{C}$. We say that $a_n \to L$ if for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant N$, then $|a_n - L| < \varepsilon$.
+\end{definition}
+\noindent The definition is very similar to limits for sequences over $\mathbb{R}$. We will use this to define series and their convergence.
+\begin{definition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, the sequence of partial sums $(s_n)_{n=1}^{\infty}$ is defined by
+\[s_n = \sum_{i=1}^n a_i.\]
+We call the sequence of partial sums $(s_n)_{n=1}^{\infty}$ the series $\sum a_n$. If $s_n \to S$ for some $S \in \mathbb{C}$, we denote this as
+\[\sum_{n=1}^{\infty} a_n = S.\]
+\end{definition}
+\noindent This too is very similar to series over $\mathbb{R}$. We will now show, like in the real case, that if the series converges then the sequence converges to 0.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$ such that the series $\sum a_n$ converges. Then, $a_n \to 0$.
+\end{proposition}
+\begin{proof}
+Let $(s_n)_{n=1}^{\infty}$ be the partial sum of $(a_n)$. We know that $s_n \to S$, for some $S \in \mathbb{C}$. In that case,
+\[a_n = s_{n+1} - s_n \to S - S = 0.\]
+\end{proof}
+
+We will now look at geometric series over $\mathbb{C}$. We start by finding a closed form for the partial sums.
+\begin{lemma}
+Let $z \in \mathbb{C}$ with $z \neq 1$ and $n \in \mathbb{Z}_{\geqslant 0}$. Then,
+\[\sum_{k=0}^n z^k = \frac{1-z^{n+1}}{1-z}.\]
+\end{lemma}
+\begin{proof}
+If $n = 0$, then we find that
+\[\sum_{k=0}^n z^k = z^0 = 1 = \frac{1 - z}{1 - z}.\]
+Now, for some $n \in \mathbb{Z}_{\geqslant 0}$, if
+\[\sum_{k=0}^n z^k = \frac{1-z^{n+1}}{1-z},\]
+then
+\begin{align*}
+    \sum_{k=0}^{n+1} z^k &= \sum_{k=0}^n z^k + z^{n+1} \\
+    &= \frac{1-z^{n+1}}{1-z} + z^{n+1} \\
+    &= \frac{1 - z^{n-1} + z^{n+1} - z^{n+2}}{1 - z} \\
+    &= \frac{1-z^{n+2}}{1-z}.
+\end{align*}
+So, the result follows from induction.
+\end{proof}
+\noindent With this closed form, we can find when the series $\sum z^n$ converges by just finding when the sequence $(z^n)$ converges. We find this below.
+\begin{lemma}
+Let $z \in \mathbb{C}$, and define the sequence $(a_n)_{n=0}^{\infty}$ by $a_n = z^n$. 
+\begin{itemize}
+    \item If $|z| < 1$, then the sequence converges to $0$.
+    \item If $|z| > 1$, then the sequence diverges.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that the sequence $(a_n)$ does not converge to $0$. In that case, there exists an $\varepsilon > 0$ such that for all $N \in \mathbb{Z}_{\geqslant 1}$, there exists an $n \geqslant N$ such that $|z|^n = |z^n| \geqslant \varepsilon$. In that case, $n \log (|z|) \geqslant \log (\varepsilon)$. Since $|z| < 1$, $\log (|z|) < 0$. This implies that
+    \[\frac{\log (\varepsilon)}{\log (|z|)} \geqslant n.\]
+    Since the value $\frac{\log (\varepsilon)}{\log (|z|)}$ is a constant, we can find an $N \in \mathbb{Z}_{\geqslant 1}$ such that $N > \frac{\log(\varepsilon)}{\log (|z|)}$. We know that we can find an $n \geqslant N$ such that
+    \[\frac{\log (\varepsilon)}{\log (|z|)} \geqslant n \geqslant N > \frac{\log(\varepsilon)}{\log (|z|)}.\]
+    This is a contradiction. So, $a_n \to 0$.
+    
+    \item Now, assume that $|z| > 1$. In that case, there exists an $\varepsilon > 0$ such that $|z| = 1 + \varepsilon$. For $n \in \mathbb{Z}_{\geqslant 0}$, know that $(1 + \varepsilon)^n \geqslant 1 + n\varepsilon$. Moreover, the limit
+    \[\lim_{n \to \infty} 1 + n \varepsilon = \infty.\]
+    So, the sequence $(a_n)$ is not bounded. This implies that the sequence diverges.
+\end{itemize}
+\end{proof}
+\noindent Using this result, we show that the series $\sum z^n$ converges if $|z| < 1$ and diverges if $|z| > 1$.
+\begin{proposition}
+Let $z \in \mathbb{C}$. Then, the series $\sum z^n$ converges if $|z| < 1$, with
+\[\sum_{n=0}^{\infty} z^n = \frac{1}{1-z}.\]
+Moreover, if $|z| > 1$, the series does not converge.
+\end{proposition}
+\begin{proof}
+If $|z| \neq 1$, then we find that
+\[\sum_{k=0}^n z^k = \frac{1 - z^{n+1}}{1 - z}.\]
+If $|z| < 1$, then we know that $z^{n+1} \to 0$, and so
+\[\sum_{k=0}^n z^k = \frac{1}{1 - z}.\]
+Moreover, if $|z| > 1$, then we know that $(z^{n+1})$ diverges. So, the series
+\[\sum_{n=0}^{\infty} z^n\]
+does not converge.
+\end{proof}
+\noindent It turns out that if $|z| = 1$, then the series diverges. However, we will not prove this in general. Nonetheless, will consider the case when $z = i$.
+\begin{example}
+The series
+\[\sum_{n=0}^{\infty} i^n\]
+does not converge.
+\end{example}
+\begin{proof}
+Let $(s_n)_{n=0}^{\infty}$ be the sequence of partial sums of the series $\sum i^n$. We know that
+\[s_n = \sum_{k=0}^n i^k = \frac{1 - i^{n+1}}{1-i}.\]
+In that case,
+\[s_{4n} = \frac{1-i}{1-i} = 1, \qquad s_{4n+3} \frac{i-1}{1-i} = 0.\]
+So, the sequence of partial sums $(s_n)$ does not converge. This implies that the series
+\[\sum_{n=0}^{\infty} i^n\]
+does not converge.
+\end{proof}
+
+We now look at absolute convergence.
+\begin{definition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, we say that the series $\sum a_n$ is \emph{absolutely convergent} if the series $\sum |a_n|$ converges.
+\end{definition}
+\noindent Like in $\mathbb{R}$, absolute convergence implies convergence in $\mathbb{C}$.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$ such that the series $\sum a_n$ converges absolutely. Then, the series $\sum a_n$ converges.
+\end{proposition}
+\begin{proof}
+Let $\varepsilon > 0$. Since the series $\sum a_n$ converges absolutely, the series $\sum |a_n|$ is Cauchy. In that case, there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for all $n \geqslant m \geqslant N$,
+\[\sum_{i=m+1}^n |a_i| = \left|\sum_{i=1}^n |a_i| - \sum_{i=1}^m |a_i|\right| < \varepsilon.\]
+Therefore,
+\[\left|\sum_{i=i}^n a_i - \sum_{i=1}^m a_i\right| = \left|\sum_{i=m+i}^n a_i\right| \leqslant \sum_{i=1}^n |a_i| < \varepsilon.\]
+This implies that the series $\sum a_n$ is Cauchy. Since $\mathbb{C}$ is complete, we find that the series $\sum a_n$ converges.
+\end{proof}
+\noindent Next, we look at another type of series- the underlying sequence is strictly positive. It turns out that the supremum of the partial sums, if it exists, has to be the sum of the series.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}_{> 0}$. Then, the series $\sum a_n$ converges if and only if the set
+\[S = \left\{\sum_{n=1}^k a_n \mid k \in \mathbb{Z}_{\geqslant 1}\right\}\]
+is bounded. Moreover, if the series converges, then $\sum a_n = \sup S$.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that the series converges. In that case, the sequence of partial sums is bounded. This implies that the set $S$ is bounded. Since the set $S$ is non-empty and bounded (above), we know that the supremum exists. Define the sequence $(s_n)_{n=1}^{\infty}$ such that $s_n < s_{n+1}$ for all $n \in \mathbb{Z}_{\geqslant 1}$ and $s_n \to \sup (S)$- this is possible since $a_n > 0$ for all $n \in \mathbb{Z}_{\geqslant 1}$. Let $n$, with
+    \[s_n = \sum_{i=1}^{x} a_i, \qquad s_{n+1} = \sum_{i=1}^{y} a_i.\]
+    If $x \geqslant y$, then $s_n \leqslant s_{n+1}$. Therefore, we must have $x < y$. So, the sequence $(s_n)$ is a subsequence of the partial sums. Since the series converges, we find that $\sum a_n = \sup (S)$.
+    
+    \item Now, assume that the series does not converge. We know that the sequence of partial sums is strictly increasing, so the monotone convergence theorem tells us that the sequence of partial sums is not bounded above. Therefore, $S$ is not bounded.
+\end{itemize}
+\end{proof}
+
+We finish with the ratio and the root test. We start with the ratio test.
+\begin{proposition}[Ratio Test]
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}_{> 0}$, and let $L \in \mathbb{R}_{\geqslant 0}$ such that
+\[\lim_{n \to \infty} \frac{a_{n+1}}{a_n} = L.\]
+If $L < 1$, then the series $\sum a_n$ converges, and if $L > 1$, then the series $\sum a_n$ diverges.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $L < 1$. Set $\varepsilon = 1 - L > 0$. Since the limit
+    \[\lim_{n \to \infty} \frac{a_{n+1}}{a_n} = L,\]
+    there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N$, $|\frac{a_{n+1}}{a_n} - L| < \frac{\varepsilon}{2}$, and so $a_{n+1} < a_n(L + \frac{\varepsilon}{2})$. In that case, for $n \geqslant N$,
+    \begin{align*}
+        \sum_{k=0}^n a_k &= \sum_{k=0}^{N-1} a_k + \sum_{k=N}^n a_k \\
+        &\leqslant \sum_{k=0}^{N-1} a_k + \sum_{k=N}^n a_N (L + \tfrac{\varepsilon}{2})^k \\
+        &\leqslant \sum_{k=0}^{N-1} a_k + \sum_{k=0}^{\infty} a_N (L + \tfrac{\varepsilon}{2})^k \\
+        &= \sum_{k=0}^{N-1} a_k + \frac{a_N}{1 - (L + \tfrac{\varepsilon}{2})}.
+    \end{align*}
+    This implies that the series $\sum a_k$ is bounded. Therefore, the series $\sum a_k$ converges.
+    
+    \item Now, assume that $L > 1$. Set $\varepsilon = L - 1 > 0$. Since the limit
+    \[\lim_{n \to \infty} \frac{a_{n+1}}{a_n} = L,\]
+    there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N$, $|\frac{a_{n+1}}{a_n} - L| < \frac{\varepsilon}{2}$, and so $\frac{a_{n+1}}{a_n} > L - \frac{\varepsilon}{2} = 1 + \frac{\varepsilon}{2}$. For $k \in \mathbb{Z}_{\geqslant 0}$, we find that
+    \[a_{N+k} > a_{N+k-1} (1 + \tfrac{\varepsilon}{2}) > \dots > a_N (1 + \tfrac{\varepsilon}{2})^k \geqslant a_N (1 + k \tfrac{\varepsilon}{2}).\]
+    Since the sequence $1 + k \frac{\varepsilon}{2} \to \infty$ as $k \to \infty$, we find that the sequence $(a_n)$ is not bounded. Therefore, the series $\sum a_n$ does not converge.
+\end{itemize}
+\end{proof}
+\noindent Next, we prove the the root test.
+\begin{proposition}[Root Test]
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{R}_{> 0}$ and let $L \in \mathbb{R}_{\geqslant 0}$ such that
+\[\lim_{n \to \infty} a_n^{1/n} = L.\]
+If $L < 1$, then the series $\sum a_n$ converges, and if $L > 1$, then the series $\sum a_n$ diverges.
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $L < 1$. Set $\varepsilon = 1 - L > 0$. Since the limit 
+    \[\lim_{n \to \infty} a_n^{1/n} = L,\]
+    there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N$, $|a_n^{1/n} - L| < \frac{\varepsilon}{2}$, and so $a_n^{1/n} < L + \frac{\varepsilon}{2}$. In that case, for $n \geqslant N$,
+    \begin{align*}
+        \sum_{k=0}^n a_k &= \sum_{k=0}^{N-1} a_k + \sum_{k=N}^n a_k \\
+        &\leqslant \sum_{k=0}^{N-1} a_k + \sum_{k=N}^n (L + \tfrac{\varepsilon}{2})^k \\
+        &\leqslant \sum_{k=0}^{N-1} a_k + \sum_{k=0}^{\infty} (L + \tfrac{\varepsilon}{2})^k \\
+        &= \sum_{k=0}^{N-1} a_k + \frac{1}{1 - (L + \tfrac{\varepsilon}{2})}.
+    \end{align*}
+    This implies that the series $\sum a_k$ is bounded. Therefore, the series $\sum a_k$ converges.
+    
+    \item Now, assume that $L > 1$. Set $\varepsilon = L - 1 > 0$. Since the limit 
+    \[\lim_{n \to \infty} a_n^{1/n} = L,\]
+    there exists an $N \in \mathbb{Z}_{\geqslant 1}$ such that for $n \geqslant N$, $|a_n^{1/n} - L| < \frac{\varepsilon}{2}$, and so $a_n^{1/n} > L - \frac{\varepsilon}{2} = 1 + \frac{\varepsilon}{2}$. Since 
+    \[a_n > (1 + \tfrac{\varepsilon}{2})^n \geqslant 1 + n\tfrac{\varepsilon}{2}\]
+    for $n \in \mathbb{Z}_{\geqslant 0}$, we find that the sequence $(a_n)$ is not bounded. Therefore, the series $\sum a_n$ does not converge.
+\end{itemize}
+\end{proof}
+\newpage
+
+\section{Power Series}
+In this section, we study power series. We start with a definition.
+\begin{definition}[Power Series]
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let $x \in \mathbb{R}$. We say that the series $\sum_{n=1}^{\infty} a_n x^n$ is a \emph{power series}.
+\end{definition}
+\noindent Essentially, a power series is a function $f(x) = \sum_{n=1}^{\infty} a_n x^n$ defined whenever the series converges. First, we show that it always converges when $x = 0$.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, the power series $\sum a_n 0^n$ converges.
+\end{proposition}
+\begin{proof}
+For $n \in \mathbb{Z}_{\geqslant 1}$, we find that the partial sum
+\[s_n = \sum_{i=1}^n a_n 0^n = \sum_{i=1}^n 0 = 0.\]
+Therefore, the power series $\sum a_n 0^n$ converges.
+\end{proof}
+\noindent We now define where the function converges- the interval of convergence.
+\begin{definition}[Interval of Convergence]
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, we define the \emph{interval of convergence} of the power series $\sum a_n x^n$ to be the set
+\[I = \left\{x \in \mathbb{R} \mid \sum a_n x^n \text{ converges}\right\}.\]
+\end{definition}
+We now look at some power series and evaluate their interval of convergence. We start with $\sum n! x^n$.
+\begin{example}
+The power series
+\[\sum_{n=1}^{\infty} n! x^n\]
+has interval of convergence $\{0\}$.
+\end{example}
+\begin{proof}
+Define the sequence $(a_n)_{n=1}^{\infty}$ by $a_n = n!$, and let $x \in \mathbb{R}$ with $x \neq 0$. We find that
+\[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} = \lim_{n \to \infty} \frac{(n+1)! |x|^{n+1}}{n! |x|^n} = n|x| > 2\]
+for $n > \frac{2}{|x|}$. Therefore, the ratio test tells us that the power series $\sum n! x^n$ diverges. So, the interval of converge of the power series $\sum n! x^n$ is $\{0\}$.
+\end{proof}
+\noindent Next, we look at the power series $\sum \frac{x^n}{n!}$.
+\begin{example}
+The power series
+\[\sum_{n=1}^{\infty} \frac{x^n}{n!}\]
+has interval of convergence $(-\infty, \infty)$.
+\end{example}
+\begin{proof}
+Define the sequence $(a_n)_{n=1}^{\infty}$ by $a_n = \frac{1}{n!}$, and let $x \in \mathbb{R}$. We find that
+\[\lim_{n \to \infty} \frac{|a_{n+1} x^{n+1}|}{|a_n x^n|} = \lim_{n \to \infty} \frac{n! |x|^{n+1}}{(n+1)! |x|^n} = \frac{1}{n} |x| \to 0 < 1.\]
+Therefore, the ratio test tells us that the power series $\sum \frac{1}{n!} x^n$ converges. So, the interval of converge of the power series $\sum \frac{1}{n!} x^n$ is $(-\infty, \infty)$.
+\end{proof}
+\noindent Now, we look at the power series $\sum x^n$.
+\begin{example}
+The power series
+\[\sum_{n=1}^{\infty} x^n\]
+has interval of convergence $(-1, 1)$.
+\end{example}
+\begin{proof}
+Define the sequence $(a_n)_{n=1}^{\infty}$ by $a_n = 1$, and let $x \in \mathbb{R}$. We find that
+\[\lim_{n \to \infty} \frac{|a_{n+1} x^n|}{|a_n x^n|} = |x| \to |x|.\]
+So, the ratio test tells us that if $|x| < 1$, the power series $\sum a_n x^n$ converges, and if $|x| > 1$, the power series $\sum a_n x^n$ diverges. Now, if $x = 1$, we find that the series
+\[\sum_{n=1}^{\infty} 1\]
+diverges. Moreover, if $x = -1$, we find that the series
+\[\sum_{n=1}^{\infty} -1\]
+diverges. Therefore, the interval of convergence of the power series $\sum x^n$ has interval of convergence $(-1, 1)$.
+\end{proof}
+\noindent Now, we look at the power series $\sum \frac{x^n}{n!}$.
+\begin{example}
+The power series
+\[\sum_{n=1}^{\infty} \frac{1}{n} x^n\]
+has interval of convergence $[-1, 1)$.
+\end{example}
+\begin{proof}
+Define the sequence $(a_n)_{n=1}^{\infty}$ by $a_n = \frac{1}{n}$, and let $x \in \mathbb{R}$. We find that
+\[\lim_{n \to \infty} \frac{|a_{n+1} x^{n+1}|}{|a_n x^n|} = \lim_{n \to \infty} \frac{|x|^{n+1}}{n+1} \cdot \frac{n}{|x|^n} = \lim_{n \to \infty} \frac{n}{n+1} |x| \to |x|.\]
+So, the ratio test tells us that if $|x| < 1$, the power series $\sum a_n x^n$ converges, and if $|x| > 1$, the power series $\sum a_n x^n$ diverges. Now, if $x = 1$, we find that the series
+\[\sum_{n=1}^{\infty} \frac{1}{n}\]
+diverges, by $p$-test (with $p = 1$). Moreover, if $x = -1$, we find that the series
+\[\sum_{n=1}^{\infty} \frac{-1}{n}\]
+converges, by Leibniz Test. Therefore, the interval of convergence of the power series $\sum \frac{1}{n} x^n$ has interval of convergence $[-1, 1)$.
+\end{proof}
+In each of the examples, we found that the interval of convergence is an interval. We will prove this now. We start with a lemma.
+\begin{lemma}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let $x \in \mathbb{R}$ such that the power series $\sum a_n x^n$ converges. Then, for $|y| < |x|$, the power series $\sum a_n y^n$ converges absolutely.
+\end{lemma}
+\begin{proof}
+Since the power series $\sum a_n x^n$ converges, we know that the sequence $a_n x^n \to 0$. In that case, the sequence $(a_n x^n)$ is bounded. So, there exists a $K > 0$ such that for all $n \in \mathbb{Z}_{\geqslant 1}$, $|a_n x^n| < K$. In that case, for $n \in \mathbb{Z}_{\geqslant 1}$,
+\[0 \leqslant |a_n y^n| = |a_n x^n| \cdot \left|\frac{y}{x}\right|^n < K \left|\frac{y}{x}\right|^n.\]
+Since $|y| < |x|$, we find that $\frac{|y|}{|x|} < 1$. Therefore, the sum $\sum |\frac{y}{x}|^n$ converges. In that case, the sum $\sum K |\frac{y}{x}|^n$ converges too. So, comparison test tells us that the sum $\sum |a_n y^n|$ converges. Therefore, the power series $\sum a_n y^n$ converges absolutely.
+\end{proof}
+\noindent Now, we will show that the interval of convergence is actually an interval.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, precisely one of the following is true:
+\begin{enumerate}[label=(\arabic*)]
+    \item The power series $\sum a_n x^n$ converges if and only if $x = 0$;
+    \item There exists an $R \in \mathbb{R}_{> 0}$ such that for $|x| < R$, the power series $\sum a_n x^n$ converges and for $|x| > R$, the power series $\sum a_n x^n$ diverges.
+    \item The power series $\sum a_n x^n$ converges for all $x \in \mathbb{R}$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Assume that (1) and (3) do not hold. Define the set
+\[S = \left\{x \in \mathbb{R}_{> 0} \mid \sum_{n=1}^{\infty} a_n x^n \text{ converges}\right\}.\]
+Since (1) isn't true, we know that there exists an $x \in \mathbb{R}$ with $x \neq 0$ such that the power series $\sum a_n x^n$ converges. In that case, $\frac{|x|}{2} \in S$ since $\frac{|x|}{2} < |x|$- the set $S$ is non-empty. Moreover, since (3) isn't true, we know that there exists a $y \in \mathbb{R}$ such that the power series $\sum a_n y^n$ diverges. In that case, for all $z \in \mathbb{R}$, if $|z| \geqslant |y|$, then the power series $\sum a_n z^n$ diverges. So, $|y|$ is an upper bound of $S$. Therefore, $S$ has a supremum.
+
+\noindent Let $R = \sup (S)$. First, let $|x| < R$. By the supremum property, there exists a $y \in S$ such that $|x| < y \leqslant R$. Since the power series $\sum a_n y^n$ converges, we find that the power series $\sum a_n x^n$ also converges. Now, let $|x| > R$ and $y = \frac{|x| + R}{2}$. We know that $y \not\in S$, so the power series $\sum a_n y^n$ diverges. Since $|x| > y$, we find that the power series $\sum a_n x^n$ diverges as well.\sidefootnote{We could not prove this without the variable $y$- since $|x| > R$, all we know is that $|x| \not\in S$. This doesn't tell us the power series $\sum a_n (-|x|)^n$ diverges!}
+\end{proof}
+\noindent So, the interval is one of the following: $\{0\}$, $(-\infty, \infty)$, $(-R, R)$, $[-R, R)$, $(-R, R]$ or $[-R, R]$. It is indeed an interval. We now define the radius of convergence.
+\begin{definition}[Radius of Convergence]
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$. Then, we define the \emph{radius of convergence} of the power series $\sum a_n x^n$ as follows:
+\begin{itemize}
+    \item $R = 0$ if the power series $\sum a_n x^n$ if and only if $x = 0$;
+    \item the value $R \in (0, \infty)$ such that for $|x| < R$, the power series $\sum a_n x^n$ converges and for $|x| > R$, the power series $\sum a_n y^n$ diverges; and
+    \item $R = \infty$ if the power series $\sum a_n x^n$ converges for all $x \in \mathbb{R}$.
+\end{itemize}
+\end{definition}
+In the examples we saw above, we were essentially using the ratio test to find the radius of convergence. We formalise this here.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let 
+\[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} = L,\]
+where $L \geqslant 0$ or $L = \infty$. Then,
+\begin{itemize}
+    \item if $L = \infty$, then the radius of convergence of the power series $\sum a_n x^n$ is $R = 0$;
+    \item if $L \in (0, \infty)$, then the radius of convergence $R = \frac{1}{L}$; and
+    \item if $L = 0$, then the radius of convergence $R = \infty$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $L = \infty$. In that case, for $x \in \mathbb{R}$ with $x \neq 0$, if the limit
+    \[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} |x|.\]
+    exists, then the limit $\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|}$ exists. So, the limit $\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} |x|$ cannot exist. Therefore, the ratio test tells us that the power series $\sum a_n x^n$ diverges. So, the radius of convergence $R = \{0\}$.
+    
+    \item Now, assume that $L \in (0, \infty)$. In that case, the limit
+    \[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} |x| = L \cdot |x|.\]
+    Now, if $|x| < \frac{1}{L}$, then the ratio test tells us that the power series $\sum a_n x^n$ converges. Moreover, if $|x| > \frac{1}{L}$, then the ratio test tells us that the power series $\sum a_n x^n$ diverges. This implies that the radius of convergence $R = \frac{1}{L}$.
+    
+    \item Finally, assume that $L = 0$. In that case, for $x \in \mathbb{R}$,
+    \[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} |x| = 0 \cdot |x| = 0.\]
+    Therefore, the ratio test tells us that the power series $\sum a_n x^n$ converges. So, the radius of convergence $R = \infty$.
+\end{itemize}
+\end{proof}
+\noindent We finish with the root test counterpart.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let 
+\[\lim_{n \to \infty} |a_n|^{1/n} = L,\]
+where $L \geqslant 0$ or $L = \infty$. Then,
+\begin{itemize}
+    \item if $L = \infty$, then the radius of convergence of the power series $\sum a_n x^n$ is $R = 0$;
+    \item if $L \in (0, \infty)$, then the radius of convergence $R = \frac{1}{L}$; and
+    \item if $L = 0$, then the radius of convergence $R = \infty$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item First, assume that $L = \infty$. In that case, for $x \in \mathbb{R}$ with $x \neq 0$, if the limit
+    \[\lim_{n \to \infty} |a_n|^{1/n} |x|.\]
+    exists, then the limit $\lim_{n \to \infty} |a_n|^{1/n}$ exists. So, $\lim_{n \to \infty} |a_n|^{1/n} |x|$ cannot exist. Therefore, the root test tells us that the power series $\sum a_n x^n$ diverges. So, the radius of convergence $R = \{0\}$.
+    
+    \item Now, assume that $L \in (0, \infty)$. In that case, the limit
+    \[\lim_{n \to \infty} |a_n|^{1/n} |x| = L \cdot |x|.\]
+    Now, if $|x| < \frac{1}{L}$, then the root test tells us that the power series $\sum a_n x^n$ converges. Moreover, if $|x| > \frac{1}{L}$, then the root test tells us that the power series $\sum a_n x^n$ diverges. This implies that the radius of convergence $R = \frac{1}{L}$.
+    
+    \item Finally, assume that $L = 0$. In that case, for $x \in \mathbb{R}$,
+    \[\lim_{n \to \infty} |a_n|^{1/n} |x| = 0 \cdot |x| = 0.\]
+    Therefore, the root test tells us that the power series $\sum a_n x^n$ converges. So, the radius of convergence $R = \infty$.
+\end{itemize}
+\end{proof}
+\newpage
+
+\section{Deriving Power Series}
+In this section, we will show that a power series is always differentiable for all $|x| < R$, where $R$ is the radius of convergence. By intuition, we would expect:
+\[\left(\sum_{n=0}^{\infty} a_n x^n\right)' = \sum_{n=1}^{\infty} na_n x^{n-1}.\]
+In this section, we will prove this. First, we show that $\sum_{n=1}^{\infty} na_n x^{n-1}$ has the same radius of convergence as $\sum_{n=1}^{\infty} a_n x^n$.
+\begin{lemma}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$ such that the power series $\sum a_n x^n$ has radius of convergence $R \in [0, \infty]$ and the power series $\sum n a_n x^{n-1}$ has radius of convergence $R' \in [0, \infty]$. In that case, $R = R'$.
+\end{lemma}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item Assume that $|x| < R'$. In that case, the power series $\sum a_n x^n$ converges absolutely. Moreover, for $n \in \mathbb{Z}_{\geqslant 1}$, if $n \geqslant |x|$,
+    \[0 \leqslant |a_n x^n| = |x a_n x^{n-1}| \leqslant |n a_n x^{n-1}|.\]
+    Therefore, comparison test tells us that the power series $\sum a_n x^n$ converges absolutely. So, $R' \leqslant R$.
+    
+    \item Instead, assume that $|x| < R$. If $x = 0$, then we know that $\sum na_n x^{n-1}$ converges. So, assume that $0 < |x| < R$. In that case, we can find a $y \in \mathbb{R}$ such that $0 < |x| < y < R$. Then, 
+    \[|n a_n x^{n-1}| = \frac{1}{|x|} |n a_n x^n| = \frac{1}{|x|} \left|n \cdot \frac{x^n}{y^n}\right| \cdot |a_n y^n|.\]
+    Since $y < |R|$, we know that the series $\sum a_n y^n$ converges absolutely. Therefore, $a_n y^n \to 0$, meaning that the sequence is bounded. So, let $K > 0$ such that $|a_n y^n| \leqslant K$ for all $n \in \mathbb{Z}_{\geqslant 1}$. In that case,
+    \[0 \leqslant |n a_n x^{n-1}| \leqslant \frac{K}{|x|} \left|n \cdot \frac{x^n}{y^n}\right|.\]
+    Moreover, the limit
+    \[\lim_{n \to \infty} \left(n \cdot \frac{|x|^n}{y^n}\right)^{1/n} = \lim_{n \to \infty} n^{1/n} \cdot \frac{|x|}{y} \to \frac{|x|}{y} < 1,\]
+    so the root test tells us that the series $\sum n \cdot \frac{|x|^n}{y^n}$ converges. Since $\frac{K}{|x|}$ is a constant (with respect to $n$), the comparison test tells us that the series $\sum na_n x^{n-1}$ converges absolutely. Therefore, $R \leqslant R'$.
+\end{itemize}
+This implies that $R = R'$.
+\end{proof}
+\noindent It is not required that the interval of convergence of a power series is the same as its derivative. For example, $\sum \frac{1}{n} x^n$ has interval of convergence $(-1, 1)$ and $\sum x^n$ has interval of convergence of $[-1, 1)$.
+
+Now, we show that the derivative of $\sum a_n x^n$ is $\sum na_n x^{n-1}$ in $(-R, R)$.
+\begin{proposition}
+Let $(a_n)_{n=1}^{\infty}$ be a sequence in $\mathbb{C}$, and let the radius of convergence of the power series $\sum a_n x^n$ be $R$ (with $R \neq 0$). Define the function $f: (-R, R) \to \mathbb{C}$ by $f(x) = \sum a_n x^n$. Then, $f$ is differentiable on $(-R, R)$, with $f'(c) = \sum na_n c^{n-1}$ for $c \in (-R, R)$.
+\end{proposition}
+\begin{proof}
+For $N \in \mathbb{Z}_{\geqslant 1}$ and $x \in (-R, R)$, denote
+\[f_N(x) = \sum_{n=1}^{N} a_n x^n.\]
+Now, let $r > 0$ such that $[c-r, c+r] \subseteq (-R, R)$. For $x \in [c-r, c+r]$, Taylor's Theorem in $\mathbb{C}$ tells us that there exists a $d \in [c-r, c+r]$ such that
+\begin{align*}
+    |f_N(x) - f_N(c) - F_N'(c) (x - c)| &\leqslant 2 \left|\frac{f_N''(d)}{2}\right| (x - c)^2 \\
+    &= |f_N''(d)| \cdot (x-c)^2.
+\end{align*}
+In that case,
+\[\left|\frac{f_N(x) - f_N(c)}{x - c} - F_N'(c)\right| \leqslant |f_N''(d)| \cdot |x - c|.\]
+We know that $|d| \leqslant |c| + r$, so $d \in (-R, R)$. In that case,
+\begin{align*}
+    |f_N''(d)| &= \left|\sum_{n=2}^{N} n(n-1) a_n d^{n-2}\right| \\
+    &\leqslant \sum_{n=2}^N n(n-1) |a_n| \cdot |d|^{n-2} \\
+    &\leqslant \sum_{n=2}^N n(n-1) |a_n| \cdot (|c| + r)^{n-2} \\
+    &\leqslant \sum_{n=2}^\infty n(n-1) |a_n| \cdot (|c| + r)^{n-2}.
+\end{align*}
+Let 
+\[M = \leqslant |x-c| \cdot \sum_{n=2}^\infty n(n-1) |a_n| \cdot (|c| + r)^{n-2}\]
+We know that for all $x \in [c-r, c+r]$ with $x \neq c$,
+\[\left|\frac{f_N(x) - f_N(c)}{x - c} - F_N'(c)\right| \leqslant M.\]
+So, take $\delta = \min(r, \frac{\varepsilon}{2M})$.
+\end{proof}
+
+We will now show that $e^x$ and $e^{ix}$ functions exist, using their power series representations. We start with $e^x$.
+\begin{corollary}
+There exists a function $f: \mathbb{R} \to \mathbb{R}$ such that $f'(x) = f(x)$ for all $x \in \mathbb{R}$ with $f(x) = 1$.
+\end{corollary}
+\begin{proof}
+Define the function $f: \mathbb{R} \to \mathbb{R}$ by
+\[f(x) = \sum_{n=0}^{\infty} \frac{1}{n!} x^n.\]
+We find that
+\[f'(x) = \sum_{n=1}^{\infty} \frac{n}{n!} x^{n-1} = \sum_{n=1}^{\infty} \frac{1}{(n-1)!} x^{n-1} = \sum_{n=0}^{\infty} \frac{1}{n!} x^n = f(x).\]
+Moreover,
+\[f(0) = \sum_{n=0}^{\infty} \frac{1}{n!} 0^n = 1.\]
+\end{proof}
+\noindent Next, we look at $e^{ix}$.
+\begin{corollary}
+There exists a function $f: \mathbb{R} \to \mathbb{C}$ such that $f'(x) = if(x)$ for all $x \in \mathbb{R}$ with $f(x) = 1$.
+\end{corollary}
+\begin{proof}
+Define the function $f: \mathbb{R} \to \mathbb{C}$ by
+\[f(x) = \sum_{n=0}^{\infty} \frac{i^n}{n!} x^n.\]
+We find that
+\[f'(x) = \sum_{n=1}^{\infty} \frac{i^n \cdot n}{n!} x^{n-1} = \sum_{n=1}^{\infty} \frac{i^n}{(n-1)!} x^{n-1} = \sum_{n=0}^{\infty} \frac{i \cdot i^n}{n!} x^n = if(x).\]
+Moreover,
+\[f(0) = \sum_{n=0}^{\infty} \frac{i^n}{n!} 0^n = 1.\]
+\end{proof}
+
+\begin{example}
+The value
+\[\sum_{n=2}^{\infty} \frac{n-1}{n!} = 1.\]
+\end{example}
+\begin{proof}
+Define the sequence $(a_n)_{n=1}^{\infty}$ by $a_n = \frac{1}{(n+1)!}$. We find that
+\[\lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} = \frac{(n+1)!}{(n+2)!} = \frac{1}{n+2} \to 0.\]
+So, the radius of convergence of the power series $\sum a_n x^n$ is $\mathbb{R}$. Now, define the function $f: \mathbb{R} \to \mathbb{R}$ by $\sum_{n=0}^{\infty} a_n x^n$. We find that
+\begin{align*}
+    1 + xf(x) &= 1 + x\sum_{n=0}^{\infty} \frac{1}{(n+1)!} x^n \\
+    &= 1 + x\sum_{n=1}^{\infty} \frac{1}{n!} x^{n-1} \\
+    &= 1 + \sum_{n=1}^{\infty} \frac{1}{n!} x^n \\
+    &= \sum_{n=0}^{\infty} \frac{1}{n!} x^n = e^x.
+\end{align*}
+So, for $x \in \mathbb{R}$,
+\[f(x) = \begin{cases}
+\frac{e^x - 1}{x} & x \neq 0 \\
+1 & x = 0.
+\end{cases}\]
+For $x \in \mathbb{R}$, we have
+\[f'(x) = \sum_{n=2}^{\infty} \frac{n-1}{n!} x^{n-2} = \begin{cases}
+\frac{(x-1) e^x + 1}{x^2} & x \neq 0 \\
+\frac{1}{2} & x = 0.
+\end{cases}\]
+In that case,
+\[\sum_{n=2}^{\infty} \frac{n-1}{n!} = f'(1) = \frac{(1-1) e^1 + 1}{1^2} = 1.\]
+\end{proof}
+
+\newpage
+
+\section{Maclaurin Series}
+By Taylor's Theorem, we can approximate a function at a point by evaluating its derivatives at another point. In this section, we fix that point to be 0. First, we illustrate how this works with an example.
+\begin{example}
+Let $f: (-1, \infty) \to \mathbb{R}$ be defined by $f(x) = \log(1 + x)$. Then, for $x \in (-1, 1]$,
+\[f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.\]
+\end{example}
+\begin{proof}
+Let $k \in \mathbb{Z}_{\geqslant 1}$. We show that
+\[f^{(k)}(x) = (-1)^{k-1} \frac{(k-1)!}{(1+x)^k}\]
+by induction. First, we find that
+\[f'(x) = \frac{1}{1+x} = \frac{0!}{(1+x)^1} \cdot (-1)^0.\]
+Now, if
+\[f^{(k)}(x) = (-1)^{k-1} \frac{(k-1)!}{(1+x)^k},\]
+then
+\begin{align*}
+    f^{(k+1)}(x) &= (f^{(k)}(x))' \\
+    &= \left((-1)^{k-1} \frac{(k-1)!}{(1+x)^k}\right)' \\
+    &= (-1)^{k-1} \frac{(k-1)!}{(1+x)^{k+1}} \cdot -k \\
+    &= (-1)^{k-1} \frac{k!}{(1+x)^{k+1}}.
+\end{align*}
+So, $f^{(k)}(0) = (-1)^{k-1} k!$. Now, the power series
+\[g(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(x)}{n!} x^n = \sum_{n=1}^{\infty} \frac{(-1)^n}{n} \cdot x^n\]
+has interval of convergence $(-1, 1]$ since $g(-x) = \sum \frac{1}{n} x^n$.
+
+\noindent Next, if $x = 0$, then
+\[g(x) = \sum_{n=1}^{\infty} \frac{(-1)^n}{n} \cdot 0^n = 0 = f(x).\]
+Instead, if $x \in (-1, 1]$ with $x \neq 0$, then let $n \in \mathbb{Z}_{\geqslant 1}$. Taylor's Theorem tells us that there exists a $c_n \in (0, x)$ or a $c_n \in (x, 0)$ such that
+\begin{align*}
+    f(x) &= \sum_{k=0}^n \frac{f^{(k)}(0)}{k!} |x|^k + \frac{f^{(n)}(c_n)}{n!} |x|^n \\
+    &= \sum_{k=1}^n \frac{(-1)^k}{k!} |x|^k + \frac{(n-1)!}{(1 + c_n)^n} \frac{|x|^n}{n!} \\
+    &= \sum_{k=1}^n \frac{(-1)^k}{k!} |x|^k + \frac{|x|^n}{n(1 + c_n)^n}.
+\end{align*}
+Since $|x| < 1$ and $1 + c_n > 0$, we find that $\frac{|x|^n}{(1 + c_n)^n}$ is bounded. Therefore, the limit
+\[\lim_{n \to \infty} \frac{|x|^n}{n(1 + c_n)^n} = 0.\]
+This implies that
+\[f(x) = \sum_{k=1}^{\infty} \frac{(-1)^k}{k!} |x|^k = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.\]
+\end{proof}
+\noindent In this case, every possible value converges to the value in the series. However, the function has domain $(-1, \infty)$, so it does not converge for $x \in (1, \infty)$. Moreover, there are functions that always converge for some $x \in \mathbb{R}$, but not to $f(x)$.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by
+\[f(x) = \begin{cases}
+\exp(-1/x^2) & x \neq 0 \\
+0 & x = 0.
+\end{cases}\]
+Then, for all $x \in \mathbb{R}$,
+\[\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n = 0.\]
+\end{proposition}
+\begin{proof}
+We know that for all $n \in \mathbb{Z}_{\geqslant 1}$,
+\[\lim_{x \to 0} \frac{\exp(-1/x^2)}{x^n} = 0.\]
+Now, we show that for all $n \in \mathbb{Z}_{\geqslant 0}$ and $x \in \mathbb{R}$ with $x \neq 0$, 
+\[f^{(n)}(x) = \frac{p_n(x)}{x^{3n}} \exp(-1/x^2),\]
+for some polynomial $p_n$. If $n = 0$, then we have $p_n(x) = 1$. Instead if 
+$f^{(n)}(x) = \frac{p_n(x)}{x^{3n}} \exp(-1/x^2)$, then for $x \neq 0$, we find that
+\begin{align*}
+    f^{(n+1)}(x) &= \left(\frac{p_n(x)}{x^{3n}} \exp(-1/x^2)\right)' \\
+    &= \frac{p_n'(x)}{x^{3n}} \exp(-1/x^2) - 3n \frac{p_n(x)}{x^{3n+1}} + \frac{p_n(x)}{x^{3n}} \exp(-1/x^2) \cdot \frac{2}{x^3} \\
+    &= \frac{\exp(-1/x^2)}{x^{3n+3}} \left(p_n'(x)x^3 - 3n p_n(x) x + 2p_n(x)\right).
+\end{align*}
+So, we have $p_{n+1}(x) = p_n'(x)x^3 - 3n p_n(x) x + 2p_n(x)$. Therefore, the result follows from induction.
+
+\noindent Using this result, we show that for all $n \in \mathbb{Z}_{\geqslant 0}$, $f^{(n)}(0) = 0$. By definition, $f^{(0)}(0) = 0$. Now, if $f^{(n)}(0) = 0$, then for $x \in \mathbb{R}$ with $x \neq 0$,
+\[\frac{f^{(n)}(x) - f^{(n)}(0)}{x} = \frac{f^{(n)}(x)}{x} = p_n(x) \frac{\exp(-1/x^2)}{x^{3n+1}}.\]
+Since the limit $\lim_{x \to 0} \frac{\exp(-1/x^2)}{x^{3n+1}} = 0$, we find that
+\begin{align*}
+    f^{(n+1)}(0) &= \lim_{x \to 0} \frac{f^{(n)}(x) - f^{(n)}(0)}{x} \\
+    &= \lim_{x \to 0} p_n(x) \frac{\exp(-1/x^2)}{x^{3n+1}} \\
+    &= \lim_{x \to 0} p_n(x) \cdot \lim_{x \to 0} \frac{\exp(-1/x^2)}{x^{3n+1}} \\
+    &= p_n(0) \cdot 0 = 0.
+\end{align*}
+So, the result follows from induction. Therefore,
+\[\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n = 0.\]
+\end{proof}
+\noindent So, the power series only agrees with the value of the function for $x = 0$. For this reason, we will define these series to be valid at some point when the power series matches the value.
+\begin{definition}
+Let $f: \mathbb{R} \to \mathbb{C}$ be an infinitely differentiable function. The Maclaurin series for $f$ is the power series
+\[\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.\]
+We say that the Maclaurin series for $f$ is valid at $x \in \mathbb{R}$ if the power series above converges for $x$, with
+\[f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.\]
+The range of validity of the Maclaurin series $\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n$ is the set of valid points.
+\end{definition}
+\noindent There is an easy way to characterise whether the Maclaurin series will be valid at a point.
+\begin{proposition}
+Let $f: \mathbb{R} \to \mathbb{R}$ be an infinitely differentiable function. Define the sequence $(c_n)_{n=1}^{\infty}$ by the value $c_n \in (0, x)$ or $c_n \in (x, 0)$ such that
+\[\left|f(x) - \sum_{k=1}^{n-1} \frac{f^{(k)}(0)}{k!} x^k\right| = \frac{|f^{(n)}(c_n)|}{n!} |x|^n.\]
+Then, the Maclaurin series for $f$ is valid at $x$ if and only if the limit
+\[\lim_{n \to \infty} \frac{|f^{(n)}(c_n)|}{n!} |x|^n = 0.\]
+\end{proposition}
+\begin{proof}
+\hspace*{0pt}
+\begin{itemize}
+    \item If the limit 
+    \[\lim_{n \to \infty} \frac{f^{(n)}(c_n)}{n!} |x|^n = 0,\]
+    then the limit
+    \[\lim_{n \to \infty} \left|f(x) - \sum_{k=1}^{n-1} \frac{f^{(k)} (0)}{k!} x^k\right| = 0.\]
+    Therefore, we find that the sum
+    \[\sum_{n=1}^{\infty} \frac{f^{(k)} (0)}{k!} x^k = f(x).\]
+    So, the Maclaurin series for $f$ is valid at $x$.
+    
+    \item If the Maclaurin series for $f$ is valid at $x$, then the sum
+    \[\sum_{n=1}^{\infty} \frac{f^{(k)} (0)}{k!} x^k = f(x).\]
+    This implies that the limit
+    \[\lim_{n \to \infty} \left|f(x) - \sum_{k=1}^{n-1} \frac{f^{(k)} (0)}{k!} x^k\right| = 0.\]
+    Therefore, the limit 
+    \[\lim_{n \to \infty} \frac{|f^{(n)}(c_n)|}{n!} |x|^n = 0.\]
+\end{itemize}
+\end{proof}
+\noindent We will now find the Maclaurin series representation for $\sin (x)$.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[\sin (x) = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)!} x^{2n+1}.\]
+\end{proposition}
+\begin{proof}
+We find that
+\[\sin^{(n)}(x) = \begin{cases}
+\sin (x) & n \equiv 0 \bmod{4} \\
+\cos (x) & n \equiv 1 \bmod{4} \\
+-\sin (x) & n \equiv 2 \bmod{4} \\
+-\cos (x) & n \equiv 3 \bmod{4}.
+\end{cases}\]
+We have $\sin (0) = 0$ and $\cos (0) = 1$, so the Maclaurin series for the sine function is the power series
+\[\sum_{n=0}^{\infty} \frac{\sin^{(n)}(0)}{n!} x^n = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)!} x^{2n+1}.\]
+The Maclaurin series for the sine function is valid at 0, since
+\[\sin(0) = 0 = \sum_{n=1}^{\infty} \frac{(-1)^n}{(2n+1)!} 0^{2n+1}.\]
+Now, let $x \neq 0$. We can define the sequence $(c_n)_{n=1}^{\infty}$ in $\mathbb{R}$ with $c_n \in (0, x)$ or $c_n \in (x, 0)$ such that
+\[\sin(x) = \sum_{i=0}^{n-1} \frac{\sin^{(i)}(0)}{i!} x^i + \frac{\sin^{(n)}(c_n)}{n!} x^n\]
+using Taylor's Theorem. We have
+\[0 \leqslant \left|\frac{\sin^{(n)}(c_n)}{n!}\right| |x|^n \leqslant \frac{|x|^n}{n!},\]
+so the Sandwich Theorem tells us that the limit
+\[\lim_{n \to \infty} \left|\frac{\sin^{(n)}(c_n)}{n!}\right| = 0.\]
+Therefore, the Maclaurin series for the sine function is valid at $x$. So, the Maclaurin series for the sine function is valid for all $x \in \mathbb{R}$. This implies that
+\[\sin (x) = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)!} x^{2n+1}.\]
+\end{proof}
+\noindent Next, we find the Maclaurin series for $\cos (x)$.
+\begin{proposition}
+Let $x \in \mathbb{R}$. Then,
+\[\cos (x) = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n)!} x^{2n}.\]
+\end{proposition}
+\begin{proof}
+We find that
+\[\cos^{(n)}(x) = \begin{cases}
+\cos (x) & n \equiv 0 \bmod{4} \\
+-\sin (x) & n \equiv 1 \bmod{4} \\
+-\cos (x) & n \equiv 2 \bmod{4} \\
+\sin (x) & n \equiv 3 \bmod{4}.
+\end{cases}\]
+We have $\sin (0) = 0$ and $\cos (0) = 1$, so the Maclaurin series for the cosine function is the power series
+\[\sum_{n=0}^{\infty} \frac{\cos^{(n)}(0)}{n!} x^n = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n)!} x^{2n}.\]
+The Maclaurin series for the cosine function is valid at 0, since
+\[\cos (0) = 1 = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n)!} x^{2n}.\]
+Now, let $x \neq 0$. We can define the sequence $(c_n)_{n=1}^{\infty}$ in $\mathbb{R}$ with $c_n \in (0, x)$ or $c_n \in (x, 0)$ such that
+\[\cos(x) = \sum_{i=1}^{n-1} \frac{\cos^{(i)}(0)}{i!} x^i + \frac{\cos^{(n)}(c_n)}{n!} x^n\]
+using Taylor's Theorem. We have
+\[0 \leqslant \left|\frac{\cos^{(n)}(c_n)}{n!}\right| |x|^n \leqslant \frac{|x|^n}{n!},\]
+so the Sandwich Theorem tells us that the limit
+\[\lim_{n \to \infty} \left|\frac{f^{(n)}(c_n)}{n!}\right| = 0.\]
+Therefore, the Maclaurin series for the cosine is valid at $x$. So, the Maclaurin series for the cosine function is valid for all $x \in \mathbb{R}$. This implies that
+\[\cos (x) = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n)!} x^{2n}.\]
+\end{proof}
+\noindent In general, the Maclaurin series for a power series is precisely the power series.
+\begin{proposition}
+Let $(a_n)_{n=0}^{\infty}$ be a sequence in $\mathbb{R}$, and let $R \in [0, \infty]$ be the radius of convergence of the power series $\sum a_n x^n$, and define the function $f: (-R, R) \to \mathbb{C}$ by $f(x) = \sum a_n x^n$. Then, the Maclaurin series for $f$ has range of validity $(-R, R)$.
+\end{proposition}
+\begin{proof}
+For $n \in \mathbb{Z}_{\geqslant 0}$, we find that
+\[f^{(n)}(x) = \sum_{k=n}^\infty a_k \cdot \frac{n!}{(k-n)!} \cdot x^{k-n}.\]
+So, 
+\[f^{(n)}(0) = \frac{n!}{(n-n)!} \cdot a_n 0^{k-k} = n! \cdot a_n.\]
+Therefore, the Maclaurin series for $f$ is
+\[\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} \cdot x^n = \frac{n! \cdot a_n}{n!} \cdot x^n = \sum_{n=0}^{\infty} a_n x^n.\]
+Since the power series $\sum a_n x^n$ has radius of convergence $R$, so the range of validity of the Maclaurin series is $(-R, R)$.
+\end{proof}
+\noindent We finish by computing another Maclaurin series.
+\begin{example}
+Let $f: \mathbb{R} \to \mathbb{R}$ be given by $f(x) = \frac{1}{1 + x^2}$. Then, the Maclaurin series for $f$ is given by
+\[\sum_{n=0}^\infty (-1)^n x^{2n},\]
+and has range of validity $(-1, 1)$.
+\end{example}
+\begin{proof}
+We know that for $|x| < 1$,
+\[\frac{1}{1 - x} = 1 + x + x^2 + x^3 + \dots = \sum_{n=0}^{\infty} x^n.\]
+Therefore, for $|x| < 1$,
+\[\frac{1}{1 + x^2} = 1 - x^2 + x^4 - x^6 + \dots = \sum_{n=0}^{\infty} (-1)^n x^{2n}.\]
+Since the power series $\sum (-1)^n x^{2n}$ has radius of convergence $R = 1$, we find that the Maclaurin series for $f$ is
+\[\sum_{n=0}^\infty (-1)^n x^{2n},\]
+with range of validity $(-1, 1)$.
+\end{proof}
+
+
+
+\end{document}
