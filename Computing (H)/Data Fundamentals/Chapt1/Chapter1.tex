@@ -63,7 +63,8 @@
     \end{itemize}
     Nonetheless, ndarrays are still mutable, e.g. we can set a value of the array without creating a new copy.
 
-    When initialising ndarrays, we need to specify its type. This is because an ndarray is stored as a block of raw numbers. For this reason, ndarrays have a thin wrapper raw blocks of memory. As a reason, they are much more efficiently stored and operations can be performed on them must faster.
+    When initialising ndarrays, we need to specify its type. This is because an ndarray is stored as a block of raw numbers. For this reason, ndarrays have a thin wrapper raw blocks of memory. As a result, they are much more efficiently stored and operations can be performed on them must faster.
+    \newpage
 
     \section{NumPy}
     We will be using NumPy, which contains a class for ndarrays. An array in NumPy has:
@@ -111,6 +112,7 @@
     We can repeat an array multiple times. The function \texttt{np.tile(array, lines)} returns another array where the shape of the tiling states how the array should be repeated/joined.
 
     \subsection{Boolean Arrays} Using boolean arrays, we can check whether elements in the array satisfy a condition. Using the condition \texttt{np.where(bool, a, b)}, we create another array, where \texttt{a} is what the value of something that satisfies the condition, and \texttt{b} is what the value of something that doesn't satisfy the condition. Using \texttt{np.nonzero(bool)}, we get an array of indices whether the value is true. We can generate boolean arrays by comparing two arrays, e.g. \texttt{x < y}.
+    \newpage
 
     \section{Map and broadcast}
     \subsection{Maps}
@@ -136,6 +138,7 @@
         \item \texttt{shape(2, 3, 4) * shape(2, 3)} is not allowed.
     \end{itemize}
     To perform the operation column-wise, we can transpose, perform the operation, then transpose back.
+    \newpage
 
     \section{Reduction and accumulation}
     \subsection{Reduction}
@@ -169,6 +172,7 @@
         \item \texttt{np.argsort(array)} returns the indices of tthe elements in the array such that those indices represent the array sorted (we can index the array using the argsorted array to get the sorted array- this is fancy indexing);
         \item \texttt{np.nonzero(array)} returns the indices of all the non-zero elements in the array (or \texttt{True} in boolean arrays).
     \end{itemize}
+    \newpage
 
     \section{Introduction to floating point}
     There are various representations of numbers. The two main classes of numbers are integers and floats. The ranges of different data types is given below.

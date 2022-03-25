@@ -95,11 +95,18 @@ A topology $\mathcal{T}$ satisfies $\mathcal{T} \subseteq \mathbb{P}(X)$, with $
     \item $\mathcal{T}_3 = \{\varnothing, \{b\}, \{a, b\}\}$;
     \item $\mathcal{T}_4 = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}$.
 \end{enumerate}
-We know that $\mathcal{T}_1$ is the indiscrete topology and $\mathcal{T}_4$ is the discrete topology. So, these are both topologies on $X$. Moreover, the other two sets $\mathcal{T}_2$ and $\mathcal{T}_3$ are topologies since they satisfy the other two axioms. Moreover, only $\mathcal{T}_4$ can be induced by a metric on $X$. 
+We know that $\mathcal{T}_1$ is the indiscrete topology and $\mathcal{T}_4$ is the discrete topology. So, these are both topologies on $X$. Moreover, the other two sets $\mathcal{T}_2$ and $\mathcal{T}_3$ are topologies since they satisfy the other two axioms. Only $\mathcal{T}_4$ can be induced by a metric on $X$. 
 \newpage
 
 \section{Homeomorphisms}
-Although the topologies $\mathcal{T}_2$ and $\mathcal{T}_3$ are not equal, they have the same elements up to relabelling- a function that maps $a$ to $b$ will transform the topology $\mathcal{T}_2$ to $\mathcal{T}_3$. These are called homeomorphisms.
+In the previous sections, we saw that there are 4 topologies on $\{a, b\}$:
+\begin{enumerate}
+    \item $\mathcal{T}_1 = \{\varnothing, \{a, b\}\}$;
+    \item $\mathcal{T}_2 = \{\varnothing, \{a\}, \{a, b\}\}$;
+    \item $\mathcal{T}_3 = \{\varnothing, \{b\}, \{a, b\}\}$;
+    \item $\mathcal{T}_4 = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}$.
+\end{enumerate}
+Although the topologies $\mathcal{T}_2$ and $\mathcal{T}_3$ are not equal, they have the same elements up to relabelling- a function that maps $a$ to $b$ will transform the topology $\mathcal{T}_2$ to $\mathcal{T}_3$. These topologies are homeomorphic, and the map is called the homeomorphism.
 \begin{definition}
 Let $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T}_Y)$ be topological spaces, and let $f: X \to Y$ be a function. Then, $f$ is a \emph{homeomorphism} if  it is bijection, and for all $U \subseteq X$, $U$ is open in $X$ if and only if $f(U)$ is open in $Y$. If there exists a homeomorphism $f: X \to Y$, then we say that $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T}_Y)$ are \emph{homeomorphic}. We denote $X \cong Y$.
 \end{definition}
@@ -211,7 +218,7 @@ Let $U \subseteq Z$ be open in $Z$. Since $g$ is continuous, we know that the pr
 This implies that the preimage $(g \circ f)^{-1}(U)$ is open in $X$. Therefore, $g \circ f$ is continuous.
 \end{proof}
 
-We will now look at some examples of continuous functions. If $X$ is some topological space and $Y$ has the indiscrete topology. Then, every function $f: X \to Y$ is continuous. Since $Y$ has the indiscrete topology, an open set in $Y$ is either $Y$ or $\varnothing$. Moreover, we have $f^{-1}(Y) = X$ and $f^{-1}(\varnothing) = \varnothing$, and both of these sets are open in $X$. 
+We will now look at some examples of continuous functions. If $X$ is some topological space and $Y$ has the indiscrete topology, then every function $f: X \to Y$ is continuous. Since $Y$ has the indiscrete topology, an open set in $Y$ is either $Y$ or $\varnothing$. Moreover, we have $f^{-1}(Y) = X$ and $f^{-1}(\varnothing) = \varnothing$, and both of these sets are open in $X$. 
 
 Instead, if $X$ has the indiscrete topology and $Y$ has the discrete topology, then the only continuous functions $f: X \to Y$ are the constant functions, i.e. there exists a $y \in Y$ such that $f(x) = y$ for all $x \in X$. To see this, let $c \in Y$. Since $Y$ has the discrete topology, the set $\{c\}$ is open. Since $f$ is continuous, this means that
 \[f^{-1}(\{c\}) = f^{-1}(c)\]
@@ -274,7 +281,7 @@ Define the function $f: U \to D_3^2$ given by
 \frac{d_\infty(\bm{0}, \bm{x})}{d_2(\bm{0}, \bm{x})} \bm{x} & \bm{x} \neq \bm{0} \\
 \bm{0} & \bm{x} = \bm{0}.
 \end{cases}\]
-We claim that $f$ is a homeomorphism.\sidefootnote{The formula comes from the fact that the closed ball around $\bm{0}$ of radius 3 is a square with respect to the $d_\infty$ metric, and a circle with respect to the $d_2$ metric.} First, we show that $f$ is well-defined, i.e. $f(\bm{x}) \in D_3^2$ for all $\bm{x}$. First, we note that for all $c \geqslant 0$, $\bm{x}, \bm{y} \in \mathbb{R}^2$,
+We claim that $f$ is a homeomorphism.\sidefootnote{The formula comes from the fact that the closed ball around $\bm{0}$ of radius 3 is a square with respect to the $d_\infty$ metric, and a circle with respect to the $d_2$ metric.} First, we show that $f$ is well-defined, i.e. $f(\bm{x}) \in D_3^2$ for all $\bm{x}$. We note that for all $c \geqslant 0$, $\bm{x}, \bm{y} \in \mathbb{R}^2$,
 \begin{align*}
     d_2(c\bm{x}, c\bm{y}) &= \sqrt{(cx_1 - cy_1)^2 + (cx_2 - cy_2)^2} \\
     &= \sqrt{c^2[(x_1 - y_1)^2 + (x_2 - y_2)^2]} \\
@@ -305,9 +312,11 @@ Let $(X, \mathcal{T})$ be a topological space, and $A \subseteq X$ be a subset. 
 \noindent In metric spaces, we saw that all open sets in the subspace metric are of the form $U \cap A$, for some set $U$ that is open in $X$. So, this generalises that concept. As expected, the subspace topology forms a topological space in its own right. This is because:
 \begin{enumerate}[label=\textbf{T\arabic*}.]
     \item Since $A = X \cap A$ and $\varnothing = \varnothing \cap A$, the sets are open in $A$;
-    \item If $(U_i)_{i \in I}$ is open in $A$, then $(V_i)_{i \in I}$ is open in $X$, with $V_i = U_i \cap A$. In that case,
+    \item If $(U_i)_{i \in I}$ is open in $A$, then $(V_i)_{i \in I}$ is open in $X$, with $V_i = U_i \cap A$. In that case, the set
+    \[\bigcup_{i \in I} V_i\]
+    is open in $X$. Therefore, the set
     \[\left(\bigcup_{i \in I} V_i \right) \cap A = \bigcup_{i \in I} (V_i \cap A) = \bigcup_{i \in I} U_i.\]
-    So, the union is open in $A$.
+    is open in $A$. So, the union is open in $A$.
     \item If $U_1, U_2, \dots, U_n$ are open in $A$, then $V_1, V_2, \dots, V_n$ are open in $X$, with $V_i = U_i \cap A$. In that case,
     \[\left(\bigcap_{i = 1}^n V_i \right) \cap A = \bigcap_{i=1}^n (V_i \cap A) = \bigcap_{i=1}^n U_i.\]
     So, the intersection is open in $A$.
@@ -535,9 +544,9 @@ Now, we look at the 4 topologies on $X = \{a, b\}$ again:
     \item $\mathcal{T}_3 = \{\varnothing, \{b\}, \{a, b\}\}$;
     \item $\mathcal{T}_4 = \{\varnothing, \{a\}, \{b\}, \{a, b\}\}$.
 \end{enumerate}
-Then, only $\mathcal{T}_4$ is Hausdorff. The example above shows that $\mathcal{T}_1$ is not Hausdorff. In $\mathcal{T}_2$, the only open set containing $b$ is $X$, which also contains $a$. So, $\mathcal{T}_2$ is not Hausdorff. Similarly, $\mathcal{T}_3$ is not Hausdorff. Moreover, $\mathcal{T}_4$ is Hausdorff since $\{a\}$ and $\{b\}$ are open.
+Then, only $\mathcal{T}_4$ is Hausdorff. The example above shows that $\mathcal{T}_1$ is not Hausdorff. In $\mathcal{T}_2$, the only open set containing $b$ is $X$, which also contains $a$. So, $\mathcal{T}_2$ is not Hausdorff. Similarly, $\mathcal{T}_3$ is not Hausdorff. On the other hand, $\mathcal{T}_4$ is Hausdorff since $\{a\}$ and $\{b\}$ are open.
 
-Next, we look at some topologies on $\mathbb{R}$ and see whether they are Hausdorff. Under the Euclidean topology, $\mathbb{R}$ is Hausdorff since this is induced by a metric. On the other hand, under the cofinite topology, $\mathbb{R}$ is not Hausdorff. In fact, for two open non-empty sets $U, V$, the intersection $U \cap V$ is not empty. In the cofinite topology, an open set $U$ is either $\varnothing, X$ or $X \setminus U$ is finite. So, we know that $\mathbb{R} \setminus U$ and $\mathbb{R} \setminus V$ are finite. Since $\mathbb{R}$ is infinite, there exists an $x \in \mathbb{R}$ such that $x \not\in \mathbb{R} \setminus U$ and $x \not\in \mathbb{R} \setminus V$. In that case, we have $x \in U \cap V$, i.e. $U \cap V$ is not empty.
+Now, we look at some topologies on $\mathbb{R}$ and see whether they are Hausdorff. Under the Euclidean topology, $\mathbb{R}$ is Hausdorff since this is induced by a metric. On the other hand, under the cofinite topology, $\mathbb{R}$ is not Hausdorff. In fact, for two open non-empty sets $U, V$, the intersection $U \cap V$ is not empty. In the cofinite topology, an open set $U$ is either $\varnothing, X$ or $X \setminus U$ is finite. So, we know that $\mathbb{R} \setminus U$ and $\mathbb{R} \setminus V$ are finite. Since $\mathbb{R}$ is infinite, there exists an $x \in \mathbb{R}$ such that $x \not\in \mathbb{R} \setminus U$ and $x \not\in \mathbb{R} \setminus V$. In that case, we have $x \in U \cap V$, i.e. $U \cap V$ is not empty.
 
 Next, let $X = \{1, 2, 3, 4\}$ and define the topologies on $X$:
 \begin{enumerate}
@@ -823,121 +832,121 @@ Since $Y$ is Hausdorff and $f(C)$ is compact, we find that $f(C)$ is closed in $
 \end{proof}
 \newpage
 
-\section{Product and Quotient Topologies}
-The product and quotient constructions provide us with new ways of making topological spaces. We start by defining the product topology.
-\begin{definition}
-Let $X, Y$ be topological spaces. A subset $U$ of $X \times Y$ is open if and only if for each $u \in U$, there exist open sets $A \subseteq X, B \subseteq Y$ such that $u \in A \times B \subseteq U$.
-\end{definition}
-\noindent So, if $A \subseteq X$ is open and $B \subseteq Y$ is open, then $A \times B$ is open in $X \times Y$- for all $(a, b) \in A \times B$, we have $a \in A \subseteq A$ and $b \subseteq B$. However, not every open set in $X \times Y$ is of the form $A \times B$. For example, in $\mathbb{R} \times \mathbb{R}$, the set
-\[B_{\mathbb{R}^2}(0, 1) = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 < 1\}\]
-is open. Let $(x, y) \in B_{\mathbb{R}^2}(0, 1)$. We know that $x^2 + y^2 < 1$, and so $-1 < x < 1$ and $-1 < y < 1$. Let
-\[\varepsilon_1 = \min(x+1, 1-x), \qquad \varepsilon_2 = \min(y+1, 1-y),\]
-and set $A = (x-\frac{\varepsilon_1}{2}, x+\frac{\varepsilon_1}{2})$ and $B = (y-\frac{\varepsilon_2}{2}, y+\frac{\varepsilon_2}{2})$. Then, $(x, y) \in A \times B$, and for $(a, b) \in A \times B$,
-\begin{align*}
-    a^2 + b^2 &\leqslant (x+\tfrac{\varepsilon_1}{2})^2 + (y+\tfrac{\varepsilon_2}{2})^2 \\
-    &= x^2 + y^2 + x \varepsilon_1 + y \varepsilon_2 + \frac{1}{4} (\varepsilon_1^2 + \varepsilon_2^2) \\
-    &< 1.
-\end{align*}
-% TODO: Correctly finish
-Therefore, $A \times B \subseteq B_{\mathbb{R}^2}(0, 1)$. This implies that $B_{\mathbb{R}^2}(0, 1)$ is open in $\mathbb{R} \times \mathbb{R}$ under the product topology.
+% \section{Product and Quotient Topologies}
+% The product and quotient constructions provide us with new ways of making topological spaces. We start by defining the product topology.
+% \begin{definition}
+% Let $X, Y$ be topological spaces. A subset $U$ of $X \times Y$ is open if and only if for each $u \in U$, there exist open sets $A \subseteq X, B \subseteq Y$ such that $u \in A \times B \subseteq U$.
+% \end{definition}
+% \noindent So, if $A \subseteq X$ is open and $B \subseteq Y$ is open, then $A \times B$ is open in $X \times Y$- for all $(a, b) \in A \times B$, we have $a \in A \subseteq A$ and $b \subseteq B$. However, not every open set in $X \times Y$ is of the form $A \times B$. For example, in $\mathbb{R} \times \mathbb{R}$, the set
+% \[B_{\mathbb{R}^2}(0, 1) = \{(x, y) \in \mathbb{R}^2 \mid x^2 + y^2 < 1\}\]
+% is open. Let $(x, y) \in B_{\mathbb{R}^2}(0, 1)$. We know that $x^2 + y^2 < 1$, and so $-1 < x < 1$ and $-1 < y < 1$. Let
+% \[\varepsilon_1 = \min(x+1, 1-x), \qquad \varepsilon_2 = \min(y+1, 1-y),\]
+% and set $A = (x-\frac{\varepsilon_1}{2}, x+\frac{\varepsilon_1}{2})$ and $B = (y-\frac{\varepsilon_2}{2}, y+\frac{\varepsilon_2}{2})$. Then, $(x, y) \in A \times B$, and for $(a, b) \in A \times B$,
+% \begin{align*}
+%     a^2 + b^2 &\leqslant (x+\tfrac{\varepsilon_1}{2})^2 + (y+\tfrac{\varepsilon_2}{2})^2 \\
+%     &= x^2 + y^2 + x \varepsilon_1 + y \varepsilon_2 + \frac{1}{4} (\varepsilon_1^2 + \varepsilon_2^2) \\
+%     &< 1.
+% \end{align*}
+% % TODO: Correctly finish
+% Therefore, $A \times B \subseteq B_{\mathbb{R}^2}(0, 1)$. This implies that $B_{\mathbb{R}^2}(0, 1)$ is open in $\mathbb{R} \times \mathbb{R}$ under the product topology.
 
-It turns out that a property that both $X$ and $Y$ have is inherited by $X \times Y$. For instance, if $X$ and $Y$ are connected, then $X \times Y$ is also connected.
-\begin{proposition}
-Let $X$ and $Y$ be non-empty connected topological spaces. Then, $X \times Y$ is connected under the product topology.
-\end{proposition}
-\begin{proof}
-Let $(U_i)_{i \in I}$ be an open cover in $X \times Y$. For $i \in I$, since $U_i$ is open in $X \times Y$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U_i$ for $u \in U_i$. Therefore,
-\[U_i = \bigcup_{u \in U_i} A_{u, i} \times B_{u, i}.\]
-In that case,
-\[\bigcup_{i \in I} \bigcup_{u \in U_i} A_{u, i} = X, \qquad \bigcup_{i \in I} \bigcup_{u \in U_i} B_{u, i} = Y.\]
-So, $(A_{u, i})_{i \in I, u \in U_i}$ and $(B_{u, i})_{i \in I, u \in U_i}$ are open covers of $X$ and $Y$ respectively. Since $X$ and $Y$ are connected, there exist finite covers
-\[\bigcup_{i=1}^n \bigcup_{a=1}^r A_{u_a, x_i} = X, \qquad \bigcup_{j=1}^m \bigcup_{b=1}^s B_{u_b, y_j} = Y.\]
-In that case,
-\[\bigcup_{i=1}^n U_{x_i} \cup \bigcup_{j=1}^m U_{y_j} \supseteq \bigcup_{i=1}^n \bigcup_{a=1}^r \bigcup_{j=1}^m \bigcup_{b=1}^s A_{u_a, x_i} \times B_{u_b, y_j} = X \times Y.\]
-So, we have found a finite subcover of $X \times Y$- $X \times Y$ is connected.
-% TODO: THis is wrong
-\end{proof}
-\noindent Next, we show that if $X$ and $Y$ are path-connected, then $X \times Y$ is also path-connected.
-\begin{proposition}
-Let $X$ and $Y$ be path-connected topological spaces. Then, $X \times Y$ is path-connected under the product topology.
-\end{proposition}
-\begin{proof}
-Let $(x_1, y_1), (x_2, y_2) \in X \times Y$. Since $X$ and $Y$ are path-connected, there exist continuous functions $\gamma_x: [0, 1] \to X$ and $\gamma_y: [0, 1] \to Y$ such that $\gamma_x(0) = x_1$, $\gamma_x(1) = x_2$, $\gamma_y(0) = y_1$ and $\gamma_y(1) = y_2$. Now, define the function $\gamma: [0, 1] \to X \times Y$ by $\gamma(t) = (\gamma_x(t), \gamma_y(t))$. Then, $\gamma(0) = (x_1, y_1)$ and $\gamma(1) = (x_2, y_2)$. Next, we show that $\gamma$ is continuous. First, for $A \subseteq X$ and $B \subseteq Y$,
-\begin{align*}
-    \gamma^{-1}(A \times B) &= \{t \in [0, 1] \mid \gamma(t) \in A \times B\} \\
-    &= \{t \in [0, 1] \mid \gamma_x(t) \in A, \gamma_y(t) \in B\} \\
-    &= \gamma_x^{-1}(A) \cap \gamma_y^{-1}(B).
-\end{align*}
-Now, let $U \subseteq X \times Y$ be open. In that case, for all $u \in U$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U$. In that case,
-\[U = \bigcup_{u \in U} A_u \times B_u.\]
-Therefore,
-\begin{align*}
-    \gamma^{-1} (U) &= \gamma^{-1} \left(\bigcup_{u \in U} A_u \times B_u\right) \\
-    &= \bigcup_{u \in U} \gamma^{-1} (A_u \times B_u) \\
-    &= \bigcup_{u \in U} \gamma_x^{-1}(A_u) \cap \gamma_y^{-1}(B_u).
-\end{align*}
-Since $\gamma_x$ and $\gamma_y$ are continuous, the preimages $\gamma_x^{-1}(A_u)$ and $\gamma_y^{-1}(B_u)$ are open in $[0, 1]$. So, their intersection is open in $[0, 1]$. Arbitrary unions of open sets is open, so $\gamma^{-1} (U)$ is open. This implies that $\gamma$ is continuous- it is a path going from $(x_1, y_1)$ to $(x_2, y_2)$. So, $X \times Y$ is path-connected.
-\end{proof}
-\noindent Finally, we show that if $X$ and $Y$ are Hausdorff, then $X \times Y$ is also Hausdorff.
-\begin{proposition}
-Let $X$ and $Y$ be Hausdorff topological spaces. Then, $X \times Y$ is Hausdorff under the product topology.
-\end{proposition}
-\begin{proof}
-Let $(x_1, y_1), (x_2, y_2) \in X \times Y$ with $(x_1, y_1) \neq (x_2, y_2)$. In that case, either $x_1 \neq x_2$ or $y_1 \neq y_2$. Without loss of generality, assume that $x_1 \neq x_2$. Since $X$ is Hausdorff, there exist open subsets $U_1, U_2 \subseteq X$ such that $x_1 \in U_1, x_2 \in U_2$ and $U_1 \cap U_2 = \varnothing$. Let $V_1 = U_1 \times Y$ and $V_2 = U_2 \times Y$. We know that $V_1$ and $V_2$ are open in $X \times Y$. We know that $(x_1, y_1) \in V_1$ and $(x_2, y_2) \in V_2$. 
-\begin{align*}
-    V_1 \cap V_2 &= \{(x, y) \in X \times Y \mid x \in U_1 \cap U_2\} \\
-    &= \{(x, y) \in X \times Y \mid x \in \varnothing\} = \varnothing.
-\end{align*}
-Therefore, $X \times Y$ is Hausdorff.
-\end{proof}
+% It turns out that a property that both $X$ and $Y$ have is inherited by $X \times Y$. For instance, if $X$ and $Y$ are connected, then $X \times Y$ is also connected.
+% \begin{proposition}
+% Let $X$ and $Y$ be non-empty connected topological spaces. Then, $X \times Y$ is connected under the product topology.
+% \end{proposition}
+% \begin{proof}
+% Let $(U_i)_{i \in I}$ be an open cover in $X \times Y$. For $i \in I$, since $U_i$ is open in $X \times Y$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U_i$ for $u \in U_i$. Therefore,
+% \[U_i = \bigcup_{u \in U_i} A_{u, i} \times B_{u, i}.\]
+% In that case,
+% \[\bigcup_{i \in I} \bigcup_{u \in U_i} A_{u, i} = X, \qquad \bigcup_{i \in I} \bigcup_{u \in U_i} B_{u, i} = Y.\]
+% So, $(A_{u, i})_{i \in I, u \in U_i}$ and $(B_{u, i})_{i \in I, u \in U_i}$ are open covers of $X$ and $Y$ respectively. Since $X$ and $Y$ are connected, there exist finite covers
+% \[\bigcup_{i=1}^n \bigcup_{a=1}^r A_{u_a, x_i} = X, \qquad \bigcup_{j=1}^m \bigcup_{b=1}^s B_{u_b, y_j} = Y.\]
+% In that case,
+% \[\bigcup_{i=1}^n U_{x_i} \cup \bigcup_{j=1}^m U_{y_j} \supseteq \bigcup_{i=1}^n \bigcup_{a=1}^r \bigcup_{j=1}^m \bigcup_{b=1}^s A_{u_a, x_i} \times B_{u_b, y_j} = X \times Y.\]
+% So, we have found a finite subcover of $X \times Y$- $X \times Y$ is connected.
+% % TODO: THis is wrong
+% \end{proof}
+% \noindent Next, we show that if $X$ and $Y$ are path-connected, then $X \times Y$ is also path-connected.
+% \begin{proposition}
+% Let $X$ and $Y$ be path-connected topological spaces. Then, $X \times Y$ is path-connected under the product topology.
+% \end{proposition}
+% \begin{proof}
+% Let $(x_1, y_1), (x_2, y_2) \in X \times Y$. Since $X$ and $Y$ are path-connected, there exist continuous functions $\gamma_x: [0, 1] \to X$ and $\gamma_y: [0, 1] \to Y$ such that $\gamma_x(0) = x_1$, $\gamma_x(1) = x_2$, $\gamma_y(0) = y_1$ and $\gamma_y(1) = y_2$. Now, define the function $\gamma: [0, 1] \to X \times Y$ by $\gamma(t) = (\gamma_x(t), \gamma_y(t))$. Then, $\gamma(0) = (x_1, y_1)$ and $\gamma(1) = (x_2, y_2)$. Next, we show that $\gamma$ is continuous. First, for $A \subseteq X$ and $B \subseteq Y$,
+% \begin{align*}
+%     \gamma^{-1}(A \times B) &= \{t \in [0, 1] \mid \gamma(t) \in A \times B\} \\
+%     &= \{t \in [0, 1] \mid \gamma_x(t) \in A, \gamma_y(t) \in B\} \\
+%     &= \gamma_x^{-1}(A) \cap \gamma_y^{-1}(B).
+% \end{align*}
+% Now, let $U \subseteq X \times Y$ be open. In that case, for all $u \in U$, there exist open sets $A_u \subseteq X$ and $B_u \subseteq Y$ such that $u \in A_u \times B_u \subseteq U$. In that case,
+% \[U = \bigcup_{u \in U} A_u \times B_u.\]
+% Therefore,
+% \begin{align*}
+%     \gamma^{-1} (U) &= \gamma^{-1} \left(\bigcup_{u \in U} A_u \times B_u\right) \\
+%     &= \bigcup_{u \in U} \gamma^{-1} (A_u \times B_u) \\
+%     &= \bigcup_{u \in U} \gamma_x^{-1}(A_u) \cap \gamma_y^{-1}(B_u).
+% \end{align*}
+% Since $\gamma_x$ and $\gamma_y$ are continuous, the preimages $\gamma_x^{-1}(A_u)$ and $\gamma_y^{-1}(B_u)$ are open in $[0, 1]$. So, their intersection is open in $[0, 1]$. Arbitrary unions of open sets is open, so $\gamma^{-1} (U)$ is open. This implies that $\gamma$ is continuous- it is a path going from $(x_1, y_1)$ to $(x_2, y_2)$. So, $X \times Y$ is path-connected.
+% \end{proof}
+% \noindent Finally, we show that if $X$ and $Y$ are Hausdorff, then $X \times Y$ is also Hausdorff.
+% \begin{proposition}
+% Let $X$ and $Y$ be Hausdorff topological spaces. Then, $X \times Y$ is Hausdorff under the product topology.
+% \end{proposition}
+% \begin{proof}
+% Let $(x_1, y_1), (x_2, y_2) \in X \times Y$ with $(x_1, y_1) \neq (x_2, y_2)$. In that case, either $x_1 \neq x_2$ or $y_1 \neq y_2$. Without loss of generality, assume that $x_1 \neq x_2$. Since $X$ is Hausdorff, there exist open subsets $U_1, U_2 \subseteq X$ such that $x_1 \in U_1, x_2 \in U_2$ and $U_1 \cap U_2 = \varnothing$. Let $V_1 = U_1 \times Y$ and $V_2 = U_2 \times Y$. We know that $V_1$ and $V_2$ are open in $X \times Y$. We know that $(x_1, y_1) \in V_1$ and $(x_2, y_2) \in V_2$. 
+% \begin{align*}
+%     V_1 \cap V_2 &= \{(x, y) \in X \times Y \mid x \in U_1 \cap U_2\} \\
+%     &= \{(x, y) \in X \times Y \mid x \in \varnothing\} = \varnothing.
+% \end{align*}
+% Therefore, $X \times Y$ is Hausdorff.
+% \end{proof}
 
-In the product topology, the projection maps are continuous.
-\begin{proposition}
-Let $X$ and $Y$ be topological spaces, and let $p: X \times Y \to X$ be given by $p(x, y) = x$. Then, $p$ is continuous.
-\end{proposition}
-\begin{proof}
-Let $U$ be open in $X$. Then,
-\begin{align*}
-    p^{-1}(U) &= \{(x, y) \in X \times Y \mid p(x, y) \in U\} \\
-    &= \{(x, y) \in X \times Y \mid x \in U\} \\
-    &= U \times Y.
-\end{align*}
-Since $U$ is open in $X$ and $Y$ is open in $Y$, we find that the product $U \times Y$ is open in $X \times Y$. Therefore, $p$ is continuous.
-\end{proof}
-\noindent Similarly, the map $q: X \times Y \to Y$ given by $q(x, y) = y$ is continuous.
+% In the product topology, the projection maps are continuous.
+% \begin{proposition}
+% Let $X$ and $Y$ be topological spaces, and let $p: X \times Y \to X$ be given by $p(x, y) = x$. Then, $p$ is continuous.
+% \end{proposition}
+% \begin{proof}
+% Let $U$ be open in $X$. Then,
+% \begin{align*}
+%     p^{-1}(U) &= \{(x, y) \in X \times Y \mid p(x, y) \in U\} \\
+%     &= \{(x, y) \in X \times Y \mid x \in U\} \\
+%     &= U \times Y.
+% \end{align*}
+% Since $U$ is open in $X$ and $Y$ is open in $Y$, we find that the product $U \times Y$ is open in $X \times Y$. Therefore, $p$ is continuous.
+% \end{proof}
+% \noindent Similarly, the map $q: X \times Y \to Y$ given by $q(x, y) = y$ is continuous.
 
-Next, we look at quotient topology. 
-\begin{definition}
-Let $X$ be a topological space and $\sim$ be an equivalence relation on $X$, and $p: X \to X/\sim$ the quotient map, i.e. $p(x) = [x]$ for all $x \in X$. Then, define the quotient topology on $X/\sim$, where $U \subseteq X/\sim$ is open if and only if $p^{-1}(U)$ is open in $X$. 
-\end{definition}
-\noindent By construction, the quotient map $p$ is continuous. Moreover, a continuous function $f: X \to Y$ that obeys the equivalence condition is continuous.
-\begin{proposition}
-Let $X$ and $Y$ be topological spaces, $\sim$ be an equivalence relation on $X$, and let $f: X \to Y$ be a function such that for all $x, y \in X$, if $x \sim y$, then $f(x) = f(y)$. Then, the map $\overline{f}: X/\sim \to Y$ defined by $\overline{f}([x]) = f(x)$ is continuous if and only if $f$ is continuous.
-\end{proposition}
-\begin{proof}
-\hspace*{0pt}
-\begin{itemize}
-    \item We first show that $\overline{f}$ is well-defined. Let $[x], [y] \in X/\sim$ such that $[x] = [y]$. In that case, $x \sim y$. By assumption, we know that $f(x) = f(y)$. Therefore,
-    \[\overline{f}([x]) = f(x) = \overline{f}(y) = f([y]).\]
-    So, $\overline{f}$ is well-defined.
+% Next, we look at quotient topology. 
+% \begin{definition}
+% Let $X$ be a topological space and $\sim$ be an equivalence relation on $X$, and $p: X \to X/\sim$ the quotient map, i.e. $p(x) = [x]$ for all $x \in X$. Then, define the quotient topology on $X/\sim$, where $U \subseteq X/\sim$ is open if and only if $p^{-1}(U)$ is open in $X$. 
+% \end{definition}
+% \noindent By construction, the quotient map $p$ is continuous. Moreover, a continuous function $f: X \to Y$ that obeys the equivalence condition is continuous.
+% \begin{proposition}
+% Let $X$ and $Y$ be topological spaces, $\sim$ be an equivalence relation on $X$, and let $f: X \to Y$ be a function such that for all $x, y \in X$, if $x \sim y$, then $f(x) = f(y)$. Then, the map $\overline{f}: X/\sim \to Y$ defined by $\overline{f}([x]) = f(x)$ is continuous if and only if $f$ is continuous.
+% \end{proposition}
+% \begin{proof}
+% \hspace*{0pt}
+% \begin{itemize}
+%     \item We first show that $\overline{f}$ is well-defined. Let $[x], [y] \in X/\sim$ such that $[x] = [y]$. In that case, $x \sim y$. By assumption, we know that $f(x) = f(y)$. Therefore,
+%     \[\overline{f}([x]) = f(x) = \overline{f}(y) = f([y]).\]
+%     So, $\overline{f}$ is well-defined.
     
-    \item Now, assume that $f$ is continuous. Let $U \subseteq Y$ be open. Then, 
-    \begin{align*}
-        x \in f^{-1}(U) &\iff f(x) \in U \\
-        &\iff \overline{f}([x]) \in U \\
-        &\iff \overline{f}(p(x)) \in U \\
-        &\iff x \in p^{-1}(\overline{f}^{-1}(U)).
-    \end{align*}
-    Therefore, $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$. Since $f$ is continuous, we know that $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$ is open in $X$. So, $\overline{f}^{-1}(U)$ is open in $X/\sim$, by definition. Therefore, $\overline{f}$ is continuous.
+%     \item Now, assume that $f$ is continuous. Let $U \subseteq Y$ be open. Then, 
+%     \begin{align*}
+%         x \in f^{-1}(U) &\iff f(x) \in U \\
+%         &\iff \overline{f}([x]) \in U \\
+%         &\iff \overline{f}(p(x)) \in U \\
+%         &\iff x \in p^{-1}(\overline{f}^{-1}(U)).
+%     \end{align*}
+%     Therefore, $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$. Since $f$ is continuous, we know that $f^{-1}(U) = p^{-1}(\overline{f}^{-1}(U))$ is open in $X$. So, $\overline{f}^{-1}(U)$ is open in $X/\sim$, by definition. Therefore, $\overline{f}$ is continuous.
     
-    \item Next, assume that $\overline{f}$ is continuous. Let $U \subseteq Y$ be open. In that case, $\overline{f}^{-1}(U)$ is open in $X/\sim$. By definition, this implies that $p^{-1}(\overline{f}^{-1}(U)) = f^{-1}(U)$ is open in $X$. This implies that $f$ is continuous.
-\end{itemize}
-\end{proof}
+%     \item Next, assume that $\overline{f}$ is continuous. Let $U \subseteq Y$ be open. In that case, $\overline{f}^{-1}(U)$ is open in $X/\sim$. By definition, this implies that $p^{-1}(\overline{f}^{-1}(U)) = f^{-1}(U)$ is open in $X$. This implies that $f$ is continuous.
+% \end{itemize}
+% \end{proof}
 
-We will now look at some examples of quotient spaces. Let $X = [0, 1]$, with equivalence relation $\sim$, where
-\[x \sim y \iff x = y \text{ or } \{x, y\} = \{0, 1\}.\]
-Then, $[0, 1]/\sim \cong S^1$. We first show that $[0, 1]/\sim$ is compact. We note that $[0, 1]$ is compact, and the quotient $[0, 1]/\sim$ is the image of $[0, 1]$ under the quotient map $p: [0, 1] \to [0, 1]/\sim$. Therefore, $[0, 1]/\sim$ is compact. Moreover, $S^1$ is a Hausdorff space- it is a subspace of $\mathbb{R}^2$. Finally, there is a bijection $f: [0, 1]/\sim \to S^1$ by $f([t]) = (\cos 2\pi t, \sin 2\pi t)$. This is well defined since $f([0]) = (1, 0) = f([1])$. This map is continuous since $g: [0, 1] \to S^1$ given by $f(t) = (\cos 2\pi t, \sin 2\pi t)$ is continuous. Moreover, it is a bijection, with inverse
-\[f^{-1}(\cos 2\pi t, \sin 2\pi t) = [t].\]
-Therefore, $f: [0, 1]/\sim \to S^1$ is a continuous bijection from a compact space to a Hausdorff space- $f$ is a homeomorphism.
+% We will now look at some examples of quotient spaces. Let $X = [0, 1]$, with equivalence relation $\sim$, where
+% \[x \sim y \iff x = y \text{ or } \{x, y\} = \{0, 1\}.\]
+% Then, $[0, 1]/\sim \cong S^1$. We first show that $[0, 1]/\sim$ is compact. We note that $[0, 1]$ is compact, and the quotient $[0, 1]/\sim$ is the image of $[0, 1]$ under the quotient map $p: [0, 1] \to [0, 1]/\sim$. Therefore, $[0, 1]/\sim$ is compact. Moreover, $S^1$ is a Hausdorff space- it is a subspace of $\mathbb{R}^2$. Finally, there is a bijection $f: [0, 1]/\sim \to S^1$ by $f([t]) = (\cos 2\pi t, \sin 2\pi t)$. This is well defined since $f([0]) = (1, 0) = f([1])$. This map is continuous since $g: [0, 1] \to S^1$ given by $f(t) = (\cos 2\pi t, \sin 2\pi t)$ is continuous. Moreover, it is a bijection, with inverse
+% \[f^{-1}(\cos 2\pi t, \sin 2\pi t) = [t].\]
+% Therefore, $f: [0, 1]/\sim \to S^1$ is a continuous bijection from a compact space to a Hausdorff space- $f$ is a homeomorphism.
 
 \end{document}
