@@ -42,7 +42,7 @@
     We use the following notations to denote sets:
     \begin{itemize}
         \item $\mathbb{R}$- the set of real numbers;
-        \item $\mathbb{R}_{\geq 0}$- the set of non-negative real numbers;
+        \item $\mathbb{R}_{\geqslant 0}$- the set of non-negative real numbers;
         \item $\mathbb{R}^n$- the set of tuples of real numbers, of length $n$;
         \item $\mathbb{R}^{n \times m}$- the set of 2D arrays (i.e. matrices) with $n$ rows and $m$ columns.
         \item $(\mathbb{R}^n, \mathbb{R}^n) \to \mathbb{R}$- an operation that maps two vectors in $\mathbb{R}^n$ to $\mathbb{R}$.
@@ -68,16 +68,17 @@
         \end{bmatrix}.\]
         It is an operation $(\mathbb{R}^n, \mathbb{R}^n) \to \mathbb{R}^n$. Two vectors with different dimensions cannot be added- they live in two different vector spaces.
 
-        \item norm, which measures the length of a vector. It is an operation of the form $\mathbb{R}^n \to \mathbb{R}_{\geq 0}$.
+        \item norm, which measures the length of a vector. It is an operation of the form $\mathbb{R}^n \to \mathbb{R}_{\geqslant 0}$.
         
-        \item inner product, which allows the angles of two vectors to be compared. If two vectors are orthogonal, their inner product is 0. In $\mathbb{R}^n$, the inner product
+        \item inner product, which allows the angles of two vectors to be compared. If two vectors are orthogonal, their inner product is 0. In $\mathbb{R}^n$, the inner product is given by
         \[\mathbf{x} \cdot \mathbf{y} = x_1 y_1 + x_2 y_2 + \dots + x_n y_n.\]
         It is an operation of the form $(\mathbb{R}^n, \mathbb{R}^n) \to \mathbb{R}$.
     \end{itemize}
     
     A normed vector space (i.e. a vector space with a norm) is a topological vector space. This implies that the space is continuous, i.e. it makes sense to talk about vectors being close together/a vector has a neighbourhood around it. If the vector space has an inner product defined, it is an inner product space- it makes sense to talk about an angle between the vectors.
 
-    Vectors can be thought of as: points in space, arrows pointing from the origin, and tuples of numbers. Practically, vectors are tuples of numbers. But, it is a good idea to think of vectors as points- they represent points from some data spaces. Matrices, on the other hand, represent operations on data- matrices wrap space. We can represent vectors and matrices as arrays.
+    Vectors can be thought of as: points in space, arrows pointing from the origin, and tuples of numbers. Practically, vectors are tuples of numbers. But, it is a good idea to think of vectors as points- they represent points in some data space. Matrices, on the other hand, represent operations on data- matrices wrap space. We can represent vectors and matrices as arrays.
+    \newpage
 
     \section{Using vectors}
     Vectors are used a lot in data science. This is because vectors can be:
@@ -126,6 +127,7 @@
     Images can be represented as a 2D array of brightness. Group of pixels can be unraveled to a vector, e.g. an 8 by 8 patch of pixels can be unraveled to a vector in $\mathbb{R}^{64}$.
 
     Image compression can be done by splitting an image into patches and then unraveling each patch into vectors: $\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_n$. We can then cluster the vectors to find a small number of vectors ($\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_m$) that approximate nearby vectors. Instead of storing the image, we store few representative vectors $\mathbf{y}_i$ (this is called the codebook), and the other areas in the image are indices of the closest matching vector in the codebook (i.e. $\mathbf{y}_j$ such that $\lVert \mathbf{x}_i - \mathbf{y}_j \rVert$ is minimised). This is vector quantisation- it quantises the vector space into a small number of discrete regions. The process maps visual similarity onto spatial relationships.
+    \newpage
 
     \section{Norms, means and interpolation}
     We have already seen elementwise addition and scalar multiplication on arrays/vectors. These operations allow us to take a weighted sum of vectors: $\lambda \mathbf{x}_1 + \lambda \mathbf{x}_2 + \dots + \lambda \mathbf{x}_n$, where all vectors $\mathbf{x}_i$ are from the same vector space (i.e. have the same dimension).
@@ -133,7 +135,7 @@
     \subsection{Linear Interpolation}
     We can also linearly interpolate between two vectors. This is given by
     \[\operatorname{lerp}(\mathbf{x}, \mathbf{y}, \alpha) = (1 - \alpha) \mathbf{x} + \alpha \mathbf{y}.\]
-    This is goverend by the value of $\alpha$- as $\alpha$ goes from 0 to 1, we get a smooth straight line from $\mathbf{x}$ to $\mathbf{y}$. The image below illustrates this.
+    This is governed by the value of $\alpha$- as $\alpha$ goes from 0 to 1, we get a smooth straight line from $\mathbf{x}$ to $\mathbf{y}$. The image below illustrates this.
     \begin{figure}[H]
         \centering
         \includegraphics[scale=0.7]{src/3.1 lerp.png}
@@ -149,9 +151,9 @@
     \begin{itemize}
         \item The $l_2$ norm (or the Euclidean norm) is the normal distance. Geometrically, the length corresponds to the radius of a sphere centered at the origin just touching the point;
         \item The $l_1$ norm (or the taxicab norm) gives the sum of absolute values. It is used to measure distances in high dimensions, or on grids. Geometrically, the length corresponds to the axis-aligned steps to get to that point;
-        % \item The $l_0$ pseudo-norm just counts the number of non-zero elements;
+        \item The $l_0$ pseudo-norm just counts the number of non-zero elements;
         \item The $l_\infty$ norm gives the maximum element in the vector. It is used to capture maximum activation or excusion. Geometrically, the length corresponds to the length of a cube centered at the origin just touching this point;
-        % \item The $l_{-\infty}$ norm gives the minimum element in the vector. It is used to capture minimum excusion.
+        \item The $l_{-\infty}$ norm gives the minimum element in the vector. It is used to capture minimum excusion.
     \end{itemize}
     
     A unit vector has norm 1. We can normalise a vector $\mathbf{x}$ by scaling it by $\frac{1}{\lVert \mathbf{x} \rVert}$. We typically talk about a unit vector with respect to the Euclidean norm. The Euclidean normalisation of random vectors in $\mathbb{R}^2$ is given below.
@@ -179,7 +181,7 @@
     \subsection{Mean Vector}
     The mean vector is the generalisation of the mean scalar, i.e.
     \[\sum_{i=1}^N \frac{1}{N} \mathbf{x}_i.\]
-    The mean represents the geometric centroid of the vectors, and captures the center of mass of the vectors. By subtracting the mean from the dataset, we can center it with zero mean.
+    The mean represents the geometric centroid of the vectors, and captures the center of mass of the vectors. By subtracting the mean from the dataset, we can center it so that its mean becomes zero.
     \begin{figure}[H]
         \centering
         \includegraphics[scale=0.55]{src/3.4 Centered Data.png}
@@ -187,15 +189,14 @@
     \end{figure}
 
     There is no simple, direct algorithm to compute the median in higher dimensions. This is because the operation cannot be decomposed into scalar multiplication and addition.
+    \newpage
 
     \section{Vectors in higher dimensions}
-    Data science typically involves vectors with a lot of dimensions. For instance, a 512x512 image lives in $\mathbb{R}^{262 144}$. We can consider one data point to be a vector of measurements. Our choice of the measurements will impact the performance, behaviour of the algorithms.
+    Data science typically involves vectors with a lot of dimensions. For instance, a $512 \times 512$ image lives in $\mathbb{R}^{262 144}$. We can consider one data point to be a vector of measurements. Our choice of the measurements will impact the performance, behaviour of the algorithms.
 
-    Geometry in higher dimensions is counter-intuitive. This is because the volume of space increases exponentially as the dimension increases. This means that there is a lot of empty space in higher dimensions. In particular, if data is sparse, it can be difficult to generalise in high-dimensional spaces.
+    Geometry in higher dimensions is counter-intuitive. This is because the volume of space increases exponentially as the dimension increases. This means that there is a lot of empty space in higher dimensions. In particular, if data is sparse, it can be difficult to generalise in high-dimensional spaces. 
 
-    Many algorithms that work well with few dimensions do not genralise to higher dimensions. This is due to the curse of dimensionality.
-
-    Consider the following histogram that represent data about temperature and humidity.
+    Many algorithms that work well with few dimensions do not generalise to higher dimensions. This is due to the curse of dimensionality. Consider the following histogram that represent data about temperature and humidity.
     \begin{figure}[H]
         \centering
         \includegraphics[scale=0.5]{src/3.5 2DHistogram.png}
@@ -227,6 +228,7 @@
         \caption{Distribution of distance of random points in a 2D hypercube, with respect to the Euclidean norm.}
     \end{figure}
     \noindent We expect the distance between any two points to be spread- between some vectors, the distance could be quite close to 0. However, this just isn't true in higher dimensions, as we can see above. Other norms (e.g. $L_1$ and $L_\infty$) are less sensitive to the curse, but they aren't perfect.
+    \newpage
 
     \section{Matrices}
     Matrices are 2D arrays of reals: $\mathbb{R}^{n \times m}$ ($n$ rows and $m$ columns). Vectors represent point in space; matrices represent operations to transform vectors. Operations defined by matrices are rigid transformations.
@@ -242,7 +244,7 @@
 
     Matrices represent linear maps of vectors. That is, a matrix is like a function that can be applied to a vector by multiplication, i.e. $f(\mathbf{x}) = A \mathbf{x}$. A matrix representation presents the function in a very compact way.
 
-    If we have an $n \times m$ matrix, then the matrix $A$ represents a function $(\mathbb{R}^m) \to \mathbb{R}^n$ such that
+    If we have an $n \times m$ matrix, then the matrix $A$ represents a function $\mathbb{R}^m \to \mathbb{R}^n$ such that:
     \begin{itemize}
         \item all straight lines remain straight;
         \item all parallel lines remain parallel; and
@@ -255,7 +257,7 @@
     \end{align*}
     This property is linearity, and matrices represent linear maps.
 
-    A linear map is a function $f: \mathbb{R}^m \to \mathbb{R}^n$ that satisfy the linearity conditions. An $n \times n$ matrix matrix maps from the vector space to itself $(\mathbb{R}^n) \to \mathbb{R}^n$- this is called a linear transform. If a map satisfies $AAx = Ax$, i.e. $f(f(x)) = f(x)$, then it is called a linear projection, e.g. it projects 3D points into a 2D plane. Every linear map of real vectors can be written as a real matrix.
+    A linear map is a function $f: \mathbb{R}^m \to \mathbb{R}^n$ that satisfy the linearity conditions. An $n \times n$ matrix matrix maps from the vector space to itself $\mathbb{R}^n \to \mathbb{R}^n$- this is called a linear transform. If a map satisfies $AAx = Ax$, i.e. $f(f(x)) = f(x)$, then it is called a linear projection, e.g. it projects 3D points into a 2D plane. Every linear map of real vectors can be written as a real matrix.
 
     We will now look at some examples of matrix transformations in 2D:
     \begin{itemize}
@@ -355,6 +357,7 @@
     We only change the strides in the header, so this operation takes constant time. In 1D, the transpose of a row vector is a column vector. We can define the inner product of two vectors using matrix multiplication and transpose, i.e. $\mathbf{x} \cdot \mathbf{y} = \mathbf{x}\mathbf{y}^T$. This gives rise to the outer product $\mathbf{x} \otimes \mathbf{y} = \mathbf{x}^T \mathbf{y}$. The result is an $n \times n$ matrix.
 
     The transposition of a product is given by $(AB)^T = B^T A^T$. If $A$ is $p \times q$ and $B$ is $q \times r$, then $B^T$ is $r \times q$ and $A^T$ is $q \times r$. Also, $(A + B)^T = A^T + B^T$.
+    \newpage
 
     \section{Covariance Matrix}
     Along with the mean vector, we can compute the variation/spread found in the dataset. In the 1D case, variance is given by
@@ -371,6 +374,7 @@
     \end{figure}
 
     The covariance matrix and the mean vector generalise the concepts of standard deviation and the mean scalar in the real case respectively. In particular, the mean vector represents the center of the data points, and the covariance matrix the spread of the data.
+   \newpage 
 
     \section{Types of matrices}
     We now look at different types of matrices:
@@ -426,6 +430,7 @@
         \end{bmatrix}\]
         is a symmetric matrix.
     \end{itemize}
+    \newpage
 
     \section{Graphs and matrices}
     We can represent (directed) graphs using (adjacency) matrices. For each pair of vertices in the graph, if they have an edge, the entry is 1, otherwise the entry is 0.
@@ -459,9 +464,10 @@
     \begin{itemize}
         \item What about in a week's time? What will $x_7$ be?
         \item What about in one hour's time (i.e. a 24th of a day)? What will be $x_{1/24}$ be?
-        \item What about at time $x_{\infty}$? What is the long term behaviour? Will the system reach a steady state (an equilibrium)? Or will it oscillate forever?
+        \item What about at time $x_{\infty}$, i.e. the long term behaviour? Will the system reach a steady state (an equilibrium)? Or will it oscillate forever?
         \item What about if we wanted to go backwards in time? If we know $x_0$, can we predict yesterday $x_{-1}$?
     \end{itemize}
+    \newpage
 
     \section{More matrix operations}
     \subsection{Exponentiation}
@@ -491,7 +497,7 @@
         \end{figure}
     \end{itemize}
     
-    \section{Eigenvalues and eigenvectors}
+    \subsection{Eigenvalues and eigenvectors}
     Consider the depot example again. We can see how the packages flow over time, where we vary the initial depot.
     \begin{figure}[H]
         \centering
@@ -508,13 +514,13 @@
         \includegraphics[scale=0.4]{src/3.26 Start at 29.png}
         \caption{The evolution of package locations over time, starting at depot 29.}
     \end{figure}
-    \noindent No matter which depot we start from, the packages end up about the same configuration. This is a steady state- in terms of adjacency matrix, this is an eigenvector.
+    \noindent No matter which depot we start from, the packages end up about the same configuration. This is a steady state. In terms of the adjacency matrix, this is an eigenvector.
 
     Matrices represent linear transformations, which involves rotation and/or scaling vectors. But, there are some vectors that do not get rotated by a linear transformation- they only get scaled. Such vectors are called eigenvalues, and the scaling factor is an eigenvalue.
 
     We can find the leading (biggest) eigenvalue by power iteration. Given a vector $\mathbf{x}$ and a matrix $A$, and a number of iterations $n$, the power iteration computes $A^n \mathbf{x}$, but normalising at each multiplication, i.e. $\mathbf{x}_0 = \mathbf{x}$, and
     \[\mathbf{x}_{i+1} = \frac{A \mathbf{x}_i}{\lVert A \mathbf{x}_i \rVert_{\infty}}.\]
-    By normalising, we ensure the value doesn't increase to $\infty$ or decrease to $0$. We can normalise using any norm- the infinity norm is the most efficient/most commonly used.
+    By normalising, we ensure the value doesn't increase or decrease dramatically. We can normalise using any norm- the infinity norm is the most efficient/most commonly used.
 
     Regardless of our choice of $\mathbf{x}$, the vector we find after power iteration is unique (up to sign)- this is true for most square matrices. The resulting vector is the leading eigenvector. It has to just scale the vector (and not rotate) since we are always normalising- the scale effect is remove. We can use the relation $A \mathbf{x} = \lambda \mathbf{x}$ to compute the leading eigenvalue. Here, $\lambda$ is the (leading) eigenvalue, and $\mathbf{x}$ is the (leading) eigenvector.
 
@@ -539,8 +545,8 @@
         \caption{The eigenspectrum of the matrix.}
     \end{figure}
     
-    \section{Issues in eigendecomposition}
-    The function \texttt{np.linalg.eig} is numerically unstable because of rounding errors due to limitations in floating point representations. Nonetheless, it is pretty good most of the time. A more stable algorithm for real, symmetric matrices is \texttt{np.linalg.eigh}. Typically, there is not a big difference in eigenvalues/eigenvectors if they are big. However, there could be a big difference in eigenvalues/eigenvectors when the values are very small. However, \texttt{np.linalg.eigh} is typically better.
+    The function \texttt{np.linalg.eig} is numerically unstable because of rounding errors due to limitations in floating point representations. Nonetheless, it is pretty good most of the time. A more stable algorithm for real, symmetric matrices is \texttt{np.linalg.eigh}. Typically, there is not a big difference in eigenvalues/eigenvectors if they are big. However, there could be a big difference in eigenvalues/eigenvectors when the values are very small. Nonetheless, \texttt{np.linalg.eigh} is typically better.
+    \newpage
 
     \section{Principal component analysis}
     We know that the covariance matrix gives us insight into correlations between variables in the dataset. We can plot a representation of the covariance matrix as an ellipse which aligns with the distribution of the data points. Uncorrelated data looks close to a circle, while strong correlations correspond to a long, thin ellipse. The eigenvectors of the covariance matrix, scaled by the eigenvalue, from the principal axes of the ellipse.
@@ -574,6 +580,7 @@
         \item predicting graph flows;
         \item performing Principal Component Analysis on high-dimensional data sets for exploratory data analysis, 2D visualisation or data compression.
     \end{itemize}
+    \newpage
 
     \section{Determinant, trace and definiteness}
     \subsection{Trace and determinant}
@@ -593,11 +600,15 @@
 
     We can conclude many properties about the transformation corresponding to a matrix using its eigenspectrum:
     \begin{itemize}
-        \item if a matrix has one or more zero eigenvalues, the transform it performs is one that collapses one or more dimensions in a vector space. This type of operation is irreversible, and this tells us that $A$ is singular- more on that in a moment.
+        \item if a matrix has one or more zero eigenvalues, the transform it performs is one that collapses one or more dimensions in a vector space. This type of operation is irreversible, and this tells us that $A$ is singular.
+        
         \item Eigenvectors corresponding to larger (absolute) eigenvalues are more ``important''; they represents directions in which data will get stretched by the most.
+        
         \item If the eigenspectrum is nearly flat (i.e. eigenvalues all have similar values), then $A$ represents a transform that stretches vectors almost equally in all directions (like transforming a sphere to another sphere).
+        
         \item If the eigenspectrum has few large eigenvalues and lots of small ones, then vectors will get stretched along a few directions, but shrink away to nothing along others (like transforming a sphere to a long, skinny ellipse).
     \end{itemize}
+    \newpage
 
     \section{Inversion}
     For some $n \times n$ matrices $A$, there exists an inverse matrix $A^{-1}$ such that:
@@ -642,7 +653,7 @@
 
     In general, the inverse of a sparse matrix is not sparse. This means that sparse matrix algorithms virtually never involve a direct inverse, since a sparse matrix could be easily be $10^6 \times 10^6$, but with maybe only a few million non-zero entries, and might be stored in a few dozen megabytes. The inverse form would have $10^{12}$ entries and would require a terabyte or more to store.
 
-    \section{Solving linear systems}
+    \subsection{Solving linear systems}
     We can use the inverse matrix to take one step to the past. For instance, if $A$ corresponds to one day forward, $A^{-1}$ corresponds to one day backwards. To go $n$ days backwards, we can compute $(A^{-1})^n$. However, inversion is highly problematic from a numerical point of view, and roundoff error will lead to severely distorted results with repeated negative powers of a matrix.
 
     A matrix corresponds to a system of equations. For instance, the matrix 
@@ -658,9 +669,10 @@
         y_3 &= 0.6x_1 + 1.1x_2 - 0.3x_3.
     \end{align*}
     We can use the inverse of a matrix to find the solution. A matrix corresponds to $A \mathbf{x} = \mathbf{y}$, so the solution to the system is $\mathbf{x} = A^{-1} \mathbf{y}$. As this only works for square matrices, $\mathbf{x}$ and $\mathbf{y}$ must have the same dimension. An alternative approach in solving these linear equations is to find $\mathbf{x}$ such that $\lVert A \mathbf{x} - \mathbf{y} \rVert$.
-    
+    \newpage
+
     \section{The SVD}
-    Like eigendecomposition can be used to decompose square matrices, there is a generalisation- singular value decomposition (SVD). Given $n \times m$ matrix $A$, we can write
+    Like eigendecomposition can be used to decompose square matrices, there is a generalisation- singular value decomposition (SVD). Given an $n \times m$ matrix $A$, we can write
     \[A = U \Sigma V^T,\]
     where:
     \begin{itemize}
@@ -680,21 +692,20 @@
     \end{itemize}
     If $A$ is symmetric, positive semi-definite matrix, then the eigenvectors of the columns of $U$ or the columns of $V$. The eigenvalues are in $\Sigma$.
 
-    So, SVD can convert any matrix into a product of 3 matrices, $U$, $\Sigma$ and $V$, where
-    \begin{itemize}
-        \item $U$ is orthogonal, i.e. it is purely rotational;
-        \item $\Sigma$ is diagonal, i.e. it is purely scaling; and
-        \item $V$ is orthogonal, i.e. it is purely rotational.
-    \end{itemize}
+    % So, SVD can convert any matrix into a product of 3 matrices, $U$, $\Sigma$ and $V$, where
+    % \begin{itemize}
+    %     \item $U$ is orthogonal, i.e. it is purely rotational;
+    %     \item $\Sigma$ is diagonal, i.e. it is purely scaling; and
+    %     \item $V$ is orthogonal, i.e. it is purely rotational.
+    % \end{itemize}
 
-    \section{Using the SVD for fractional powers}
+    \subsection{SVD for fractional powers}
     We can use the SVD to compute fractional powers of a matrix. For an $n \times m$ matrix $A$, $A^k = V \Sigma^k U^T$ (and if $A$ is symmetric, then $A^k = U \Sigma^k V^T$ is also the same thing). We can also use the SVD to compute the inverse of a square matrix: $A^{-1} = V \Sigma^{-1} U^T$. This can be computed in $O(n)$ time since $\Sigma^{-1}$ can be computed by reciprocating the diagonal entries in $\Sigma$.
 
     Moreover, we can compute the pseudo-inverse of a matrix, even if it isn't a square/inverse. It is given by the same formula $A^{+} = V \Sigma^{-1} U^T$. This allows us to invert (some) non-square matrices. We pad $\Sigma$ with zeroes to invert it. The function \texttt{np.linalg.pinv} does this computation. It is possible that the problem doesn't have an exact solution- the pseudo-inverse function tries to minimise $\lVert A \mathbf{x} - \mathbf{y} \rVert_2$.
 
-    Assume that we have 2 datasets, one consisting of $\mathbf{x}$ values and the other with $\mathbf{y}$ values, in matrices $X$ and $Y$ respectively. We want to fit a line to this dataset to predict $\mathbf{y}$ values, using $\mathbf{y} = A \mathbf{x}$, or lots of $\mathbf{y}$ values at the same time, using $Y = AX$. The equation of the line/plane is given in $A$, i.e. $\mathbf{x} = A^+ \mathbf{y}$. In general, we have $A = X^+ Y$. We can use this formula to fit a line/plane through the dataset, even when we have many more points than the number of dimensions required to specify the line/plane. A system of equations where there are more inputs than outputs is called ``overdetermined''.
-    
-    \section{Rank and condition}
+    Assume that we have 2 datasets, one consisting of $\mathbf{x}$ values and the other with $\mathbf{y}$ values, in matrices $X$ and $Y$ respectively. We want to fit a line to this dataset to predict $\mathbf{y}$ values, using $\mathbf{y} = A \mathbf{x}$, or lots of $\mathbf{y}$ values at the same time, using $Y = AX$. The equation of the line/plane is given in $A$, i.e. $\mathbf{x} = A^+ \mathbf{y}$. In general, we have $A = X^+ Y$. We can use this formula to fit a line/plane through the dataset, even when we have many more points than the number of dimensions required to specify the line/plane. A system of equations where there are more inputs than outputs is called overdetermined.
+
     \subsection{Rank of a matrix}
     The rank of a matrix is the number of non-zero singular values. If the number of non-zero singular values is equal to the size of the matrix, then the matrix is full rank. A full rank matrix has a non-zero determinant and will be invertible. The rank tells us how many dimensions of the parallelotope that the transform represents will have. If a matrix does not have full rank, it is singular (non-invertible) and has deficient rank. If the number of non-zero singular values is much less than the size of the matrix, the matrix is low rank.
 
@@ -704,6 +715,7 @@
     The condition number of a matrix is the ratio of the largest singular value to the smallest. This is only defined for full rank matrices. The condition number measures how sensitive inversion of the matrix is to small changes. A matrix with a small condition number is called well-conditioned and is unlikely to cause numerical issues. A matrix with a large condition number is ill-conditioned, and numerical issues are likely to be significant.
 
     Inverting an ill-conditioned matrix will not be very accurate due to the floating point roundoff errors. We can think of rank as measuring ``how singular'' the matrix is, i.e. how many dimensions are lost in the transformation. We can think of the condition number as measuring how close a non-singular matrix is to being singular. A matrix which is nearly singular may become effectively singular due to floating point roundoff errors.
+    \newpage
 
     \section{Whitening a dataset}
     Whitening removes all linear correlations within the data. Given a matrix $X$, the whitened matrix $X^w$ is given by $X^w = (X - \mu) \Sigma^{-1/2}$, where $\mu$ is the mean row vector (containing the mean of each column), and $\Sigma$ is the covariance matrix.
