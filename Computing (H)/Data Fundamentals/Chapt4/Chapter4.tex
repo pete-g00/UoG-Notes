@@ -55,8 +55,8 @@ Most optimisation problems also have an extra aspect- a constraint. This is a li
 
 We will only consider optimisation processes that minimise a value. We can always make the loss function return the negative value so that the final result will be a maximum.
 
-For example, an optimisation problem can be that we are given a function $f$ which takes in some parameter vector $\theta$ along with a fixed input vector $\mathbf{x}$, and we want to find a particular set of parameters $\theta^*$ such that $f(\mathbf{x}, \theta^*)$ is as close to some value $y$ as possible. In that case, the loss function would try to minimise the distance between $f(\mathbf{x}, \theta)$ and $y$, i.e.
-\[L(\theta) = \lVert f(\mathbf{x}, \theta) - y \rVert.\]
+For example, an optimisation problem can be that we are given a function $f$ which takes in some parameter vector $\theta$ along with a fixed input vector $\mathbf{x}$, and we want to find a particular set of parameters $\theta^*$ such that $f(\mathbf{x}; \theta^*)$ is as close to some value $y$ as possible. In that case, the loss function would try to minimise the distance between $f(\mathbf{x}; \theta)$ and $y$, i.e.
+\[L(\theta) = \lVert f(\mathbf{x}; \theta) - y \rVert.\]
 It is possible that evaluation the loss function $L$ is expensive, e.g.
 \begin{itemize}
     \item it might take a long time to compute the value;
@@ -65,6 +65,7 @@ It is possible that evaluation the loss function $L$ is expensive, e.g.
     \item it might require data that cannot be accessed for free.
 \end{itemize}
 So, a good optimisation algorithm would try to mimise the number of times we call the loss function. To do this, there has to be some (mathematical) structure within the optimisation process.
+\newpage
 
 \section{Discrete and continuous problems}
 If the parameters are from a continuous space (e.g. $\mathbb{R}^n$), then problem is continuous optimisation. If the parameters are from a discrete space, then the problem is discrete optimisation. It is easier to optimise in a continuous space since we can make assumptions about the data (using continuity and smoothness).
@@ -93,13 +94,13 @@ Normally, the loss function is smooth and continuous (this is different to $\mat
 
 Now, we consider an optimisation algorithm- finding the median of a dataset in $\mathbb{R}^2$. The median can be computed by sorting the dataset and choosing the minimum elment. Another way of thinking about the median is that it minimises the sum of distances to all vectors of the dataset. So, this can be viewed as an optimisation algorithm. Here, the parameter set $\Theta = \mathbb{R}^2$, and we want to find the value $\theta \in \Theta$ such that the value
 \[L(\theta) = \sum_i \lVert \theta - \mathbf{x}_i \rVert_2\]
-is minimised, where $\mathbf{x}_i$ are the set of 2D points in the dataset (the collection of target points). The following image illustrates this.
+is minimised, where $\mathbf{x}_i$ are the set of 2D points in the dataset (the collection of target points). The following image illustrates the optimsation process.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{src/4.2 optimising a point to equal distance.png}
     \caption{Finding the minimum of a 2D dataset using optimisation.}
 \end{figure}
-\noindent Here, the blue points are the values in the dataset. The green point is our inital guess, and we iteratively try to optimise the value- the value we find in each iteration is given in orange. We can use the same idea in higher dimensions.
+\noindent Here, the blue points are the values in the dataset. The green point is our inital guess, and we iteratively try to optimise the value (given in orange)- the value we find in each iteration is given in orange. Moreover, the estimated median is given as a green star. We can use the same idea in higher dimensions.
 
 Now, consider another problem- given a set of points in $\mathbb{R}^n$, we want to find out a layout of points such that the points are evenly spaced. In that case, the parameter space $\Theta = \mathbb{R}^n$, and the loss function is
 \[L(\theta) = \sum_i \sum_j (\alpha - \lVert \mathbf{x}_i - \mathbf{x}_j \rVert_2)^2,\]
@@ -109,6 +110,8 @@ where $\alpha$ is the space we want most of the points to differ by- we unravel 
     \includegraphics[scale=0.5]{src/4.3 optimising points for equal distance.png}
     \caption{Optimising points in $\mathbb{R}^2$ for equal distance.}
 \end{figure}
+\noindent As the optimsation process continues, the values are evenly spaced. There are many possible configurations of the optimal position in this case.
+\newpage
 
 \section{Constrained optimisation}
 The constrained optimisation equation is
@@ -121,7 +124,7 @@ A box constraint is just the requirement that $\theta$ lies in some $\mathbb{R}^
 
 Unconstrained optimisation has no constraints. Typically, the values returned by unconstrained optimisation is not helpful/feasible in real life. There are 2 way of implementing a constrained optimisation problem- purely constrained one or penalty approach. 
 
-In a pure constrained approach, we use an optimisation algorithm that implements hard constraints inherently. This might be straightforward in some cases, but is difficult in most. Typically, constraints will be specified as either a convex region or a simple (hyper)rectangular region of the space (a box constraint). Using constrained optimisation, we can guarantee that the solution is feasible (i.e. it obeys the constraints). It might also mean that we perform fewer computations (since there are fewer possible outcomes). However, it may be less efficient than an unconstrained optimisation; there are fewer algorithms that can be used to optimise; and it can be hard to specify the constraint to the optimiser.
+In a pure constrained approach, we use an optimisation algorithm that implements hard constraints inherently. This might be straightforward in some cases, but is difficult in most cases. Typically, constraints will be specified as either a convex region or a simple (hyper)rectangular region of the space (a box constraint). Using constrained optimisation, we can guarantee that the solution is feasible (i.e. it obeys the constraints). It might also mean that we perform fewer computations (since there are fewer possible outcomes). However, it may be less efficient than an unconstrained optimisation; there are fewer algorithms that can be used to optimise; and it can be hard to specify the constraint to the optimiser.
 
 In a soft constraint approach, we can add a penalty term to the loss function to discourage solutions that do not match the constraints. It is more appropriate if there is no set boundary of constraints (e.g. it doesn't matter if the values are just one a bit out of the constraint). We modify the loss function to
 \[L(\theta') = L(\theta) + \lambda(\theta),\]
@@ -144,7 +147,9 @@ We can either require these constraints with a constrained optimisation algorith
     \includegraphics[scale=0.6]{src/4.4 constrained ball optimisation.png}
     \caption{Constrained ball optimisation graph.}
 \end{figure}
-\noindent The optimised throw angle is $32.4^{\circ}$ and strength $1.00$, with distance $104.0$ m. Instead, if we used a penalty term to optimise, the penalty function could be the following.
+\noindent The optimised throw angle is $32.4^{\circ}$ and strength $1.00$, with distance $104.0$ m. 
+
+Instead, if we used a penalty term to optimise, the penalty function could be the following.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{src/4.5 penalty function.png}
@@ -157,6 +162,7 @@ We can either require these constraints with a constrained optimisation algorith
     \caption{The penalty ball optimisation graph.}
 \end{figure}
 \noindent The optimised throw angle is $35.2^{\circ}$ and strength $1.06$, with distance $101.1$ m.
+\newpage
 
 \section{Properties of the objective function}
 \subsection{Convexity: global and local minima}
@@ -195,18 +201,20 @@ An objective function is continuous if small changes in $\theta$ lead to small c
     \caption{A discontinuous function.}
 \end{figure}
 \noindent Optimising discontinuous objective functions is typically much harder than optimising continuous function- small changes in the parameter can lead to arbitrary changes in the objective function. Continuity is why continuous optimisation is easier than discrete optimisation.
+\newpage
 
 \section{Algorithms}
 \subsection{Linear Least Squares}
 The linear least squares is an optimisation technique which tries to find the closest set of parameters $\mathbf{x}$ such that $A \mathbf{x}$ is as close to $\mathbf{y}$ as we can. So, the objective function is
 \[L(\mathbf{x}) = \lVert A \mathbf{x} - \mathbf{y} \rVert_2.\]
-This equation is convex- the function is quadratic, so it must have one global minimum (even if $\mathbf{x}$ has multiple dimensions). Quadratic functions have either one or zero minimum.
+This equation is convex- the function is quadratic, so it must have one global minimum (even if $\mathbf{x}$ has multiple dimensions). 
+% Quadratic functions have either one or zero minimum.
 
-\subsection{Line fitting}
+% \subsection{Line fitting}
 Given a pair of vectors $\mathbf{x}$ and $\mathbf{y}$, we can try to fit a line through it. We saw in the previous chapter that we can use pseudo-inverse (via SVD) to fit a line. We will create samples from $y = 2x + 1$ with some noise. Usng the SVD, we get the following estimate:
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{src/4.11 linear regression least squares.png}
+    \includegraphics[scale=0.5]{src/4.11 linear regression least squares.png}
     \caption{Linear regression using least squares.}
 \end{figure}
 
@@ -218,7 +226,6 @@ while the objective function is changing:
     adjust parameters;
     evaluate the objective function;
     if better solution found, change the best parameter;
-return the best parameter;
 \end{verbatim}
 
 \subsection{Grid Search}
@@ -279,7 +286,7 @@ The pros of random search is:
 The cons of random search is:
 \begin{itemize}
     \item extremely inefficient, and only appropriate if there is no structure in data to exploit;
-    \item must be possible to random sample the parameter space;
+    \item must be possible to randomly sample the parameter space;
     \item results do not necessarily get better, i.e. there is no way to predict how the optimisation would proceed.
 \end{itemize}
 
@@ -289,6 +296,7 @@ The following figure illustrates the random search algorithm to find the line fi
     \includegraphics[scale=0.5]{src/4.15 random search line configurations.png}
     \caption{Random search line configurations.}
 \end{figure}
+\newpage
 
 \section{Metaheuristics}
 We can use metaheuristics to improve random searching.
@@ -305,13 +313,14 @@ Local searching algorithms make incremental changes towards a local minimum. If 
 The local minima we find depends on the initial conditions. Local searching creates a trajectory through the parameter space such that the objective function is getting smaller. The following graph illustrates these two points.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{src/4.16 locality.png}
+    \includegraphics[scale=0.45]{src/4.16 locality.png}
     \caption{How the local mimum depends on the initial condition.}
 \end{figure}
 
 A local searching algorithm is hill climbing. It modifies the random searching algorithm and assumes some topology of the parameter space so we can find a neighbourhood around the parameter vector. This allows us to make incremental changes to it. Instead of drawing random samples, we sample near the current best parameter in hopes of finding an even more optimal configuration. We only change the parameter given that the loss function gets smaller.
 
-Simple hill climbing only changes one of the parameter vector elements in one go, examining each direction in turn. Stochastic hill climbing makes a random change to the parameter vector (i.e. all the components get changed). It either accepts or rejects the change depending on whether the loss function get smaller.
+Simple hill climbing only changes one of the parameter vector elements in one go, examining each direction in turn. Stochastic hill climbing makes a random change to the parameter vector (i.e. all the components get changed). 
+% It either accepts or rejects the change depending on whether the loss function get smaller.
 
 The following figure illustrates the hill search algorithm to find the line fit through the data above.
 \begin{figure}[H]
@@ -350,7 +359,6 @@ The following is a possible simulated annealing temperature schedule.
     \includegraphics[scale=0.5]{src/4.19 simulated annealing search line configurations.png}
     \caption{Simulated annealing search line configurations.}
 \end{figure}
-
 
 \subsection{Population}
 We can apply an analogue of evolution in optimisation, by:
@@ -403,6 +411,7 @@ The cons of memory algorithms are:
     \item no guarantee of convergence;
     \item even more hyperparameters than genetic algorithms.
 \end{itemize}
+\newpage
 
 \section{Quality of optimisation}
 \subsection{Convergence}
@@ -450,12 +459,13 @@ Many things could go wrong, such as:
         \caption{Critical points in $\mathbb{R}^2$.}
     \end{figure}
 \end{itemize}
+\newpage
 
 \section{Deep Neural Networks}
 Deep learning or deep neural networks have become a major part of modern machine learning research. They have had astonishing success in fields like speech recognition, machine translation, image classifcation and image synthesis.
 
-In deep learning, we essentially aim to approximate a given function. For instance, we might be given a set of observations $\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_n$ and corresponding outputs $\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_n$, and we want to find a function $\mathbf{y}' = f(\mathbf{x}, \theta)$ where $\mathbf{x}$ is some observation and $\theta$ a set of parameters, such that
-\[\theta^* = \operatornamewithlimits{argmin}_\theta \sum_i \lVert f(\mathbf{x}_i, \theta) - \mathbf{y}_i \rVert.\]
+In deep learning, we essentially aim to approximate a given function. For instance, we might be given a set of observations $\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_n$ and corresponding outputs $\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_n$, and we want to find a function $\mathbf{y}' = f(\mathbf{x}; \theta)$ where $\mathbf{x}$ is some observation and $\theta$ a set of parameters, such that
+\[\theta^* = \operatornamewithlimits{argmin}_\theta \sum_i \lVert f(\mathbf{x}_i; \theta) - \mathbf{y}_i \rVert.\]
 We can then use the function $f$ to predict outputs for unseen observations. Clearly, it is an optimisation problem. The difficult here is that we can have millions of parameters, so we need to come up with a way to optimise in such a large vector space in a reasonable amount of time.
 
 The way we deal with this is that the networks are constructure in a simple way. A neural network typically consists of layers, each of which is a linear map followed by a simple, fixed, non-linear function. It is like: rotate, stretch (linear map) and fold (simple non-linear folding). The output of one layer is the input of the next layer.
@@ -476,6 +486,7 @@ For optimisation problems like deep neural networks, heuristic search is inadequ
 
 \subsection{Rolling a ball}
 An intuition for higher-order optimisation can be formed by considering a ball rolling on a (smooth) surface, which represents the value of the objective function across a 2D domain (i.e. if we had a parameter vector $\theta$ with two elements). The ball will eventually settle in a configuration where there is a balanced set of forces applied to it. This will happen, for example, if the ball settles at a minimum where the normal of the surface is parallel with gravity.
+\newpage
 
 \section{Derivatives}
 If the function $f$ is a scalar function, then $f'(x) = \frac{dy}{dx}$ is the first derivative with respect to $x$. The second derivative with respect to $x$ is $f''(x) = \frac{d^2 y}{dx^2}$. In general, if the function $f$ maps to $\mathbb{R}^n$, then we have an $n \times n$ derivative matrix, called the Jacobian, i.e.
@@ -509,6 +520,7 @@ There are 3 types of algorithms:
     \item first order algorithm requires evaluation of $L(\theta)$ and its derivative $\nabla L(\theta)$. This class of algorithms are called gradient descent algorithms.
     \item second order optimisation algorithm requires evaluation of $L(\theta)$, $\nabla L(\theta)$ and $\nabla^2 L(\theta)$. This class of algorithms are called quasi-Newtonian algorithms.
 \end{itemize}
+\newpage
 
 \section{Optimisation with derivatives}
 If we know/can compute the gradient of an objective function, we know the slope of a function at a given point. This gives us the direction of the fastest increase and the steepness of the slope. Knowing the derivative of the objective function massively improves the optimisation algorithm- we can go down the direction of the fastest decrease of the value in hopes of finding the global minimum.
@@ -526,7 +538,7 @@ There is a difference between having continuous derivatives and knowing what tho
     \item at least $C^1$ continuous (no step changes anywhere in the function or its derivative), and
     \item differentiable (gradient is defined everywhere).
 \end{itemize}
-In practice, these constraints are relaxed a bit, as we will see.
+In practice, these constraints are relaxed a bit.
 
 Many objective functions satisfy these conditions, and first-order methods can be vastly more efficient than zeroth-order methods. For particular class of functions (e.g. convex), there are known bounds on number of steps required to converge for specific first-order optimisers.
 
@@ -553,6 +565,7 @@ The following graph illustrates this process.
 In this case, the optimisation process just takes one step- there is no iteration. However, we normally do not have a closed form for the derivative; we can only evaluate the derivative at some point. In this case, we can still dramatically accelerate optimisation by taking steps such that we ``run downhill'' as fast as possible. To do this, we need to be able to compute the gradient at any point on the objective function.
 
 Essentially, for an objective function $f: \mathbb{R}^n \to \mathbb{R}$, we will have a gradient function $f: \mathbb{R}^n \to \mathbb{R}^n$. The gradient function takes in the same parameter. At a given point, the gradient of a function points in the direction where the function increases the fastest. The magnitude of this vector is the rate at which the function is changing.
+\newpage
 
 \section{Gradient Descent}
 The basic first-order algorithm is called gradient descent, and involves iterations like in random searching- we start with some initial guess $\theta_0$, and try to converge to the minimum using the equation
@@ -624,6 +637,7 @@ Stochastic relaxation can make an impossibly steep gradient Lipschitz continuous
     \includegraphics[scale=0.65]{src/4.30 stochastic relaxation.png}
     \caption{Stochastic relaxation of a function.}
 \end{figure}
+\newpage
 
 \section{Stochastic Gradient Descent}
 In gradient descent, we have to evaluate the function and the gradient during each iteration. This can make the process quite long, e.g. if the data has thousands of dimensions. If we can break the objective function into smaller chunks, then the optimiser can do gradient descent on each of those chunks separately. This might be much faster. This is called stochastic gradient descent, because the step it takes depends on a random part of the objective function.
@@ -631,13 +645,13 @@ In gradient descent, we have to evaluate the function and the gradient during ea
 So, assume that the objective function is of the form
 \[L(\theta) = \sum_i L_i(\theta).\]
 This is quite common when matching parameters to observations. For instance, in machine learning, we have some training sets $\mathbf{x}_i$ with known outputs $y_i$, and we want to find the parameter vector $\theta$ such that
-\[L(\theta) = \sum_i \lVert f(\mathbf{x}_i, \theta) - y_i \rVert\]
+\[L(\theta) = \sum_i \lVert f(\mathbf{x}_i; \theta) - y_i \rVert\]
 is minimised- we try to mimise the distance between the inputs and the outputs elementwise.
 
 Differentiating is a linear operation, meaning that
 \[\frac{d}{dx}(a f(x) + bg(x)) = af'(x) + bg'(x).\]
 Therefore,
-\[\nabla \sum_i \lVert f(\mathbf{x}_i, \theta) - y_i \rVert = \sum_i \nabla \lVert f(\mathbf{x}_i, \theta) - y_i \rVert.\]
+\[\nabla \sum_i \lVert f(\mathbf{x}_i; \theta) - y_i \rVert = \sum_i \nabla \lVert f(\mathbf{x}_i; \theta) - y_i \rVert.\]
 So, we can take a subset of the dataset, compute the gradient for each sample/subset. Over time, the randomness will average out. Each subset is a minibatch, and one run (i.e. every dataset has been seen by the optimiser) through the dataset is an epoch.
 
 \subsection{Memory advantages}
@@ -645,10 +659,10 @@ Stochastic gradient descent (SGD) has major advantages in terms of memory since 
 
 Particularly on memory-constrained devices such as GPUs, it can be impossible to store the entire dataset on the device. Splitting up into batches can get around this limitation. It can also have advantages with respect to the memory hierarchy- small batches of data may induce fewer cache misses and thus result in enhanced performance.
 
-\subsection{Heuristic enhancement}
-SGD can improve the performance of optimisation in terms of objective function decrease. In particular, it reduces the likelihood of getting stuck in minima. This is because random partitioning adds noise to the dataset. This allows the gradient descent to not always go downhill, but also to jump over a hill.
+% \subsection{Heuristic enhancement}
+% SGD can improve the performance of optimisation in terms of objective function decrease. In particular, it reduces the likelihood of getting stuck in minima. This is because random partitioning adds noise to the dataset. This allows the gradient descent to not always go downhill, but also to jump over a hill.
 
-Adding noise is a heuristic approach. It is very effective. This is a limited version of stochastic relaxation- the function gets smoothened out by averaging over random subsamples. This means that if the function is not Lipschitz continuous (or has a high Lipschitz constant), then SGD can still work well when gradient descent wouldn't.
+% Adding noise is a heuristic approach. It is very effective. This is a limited version of stochastic relaxation- the function gets smoothened out by averaging over random subsamples. This means that if the function is not Lipschitz continuous (or has a high Lipschitz constant), then SGD can still work well when gradient descent wouldn't.
 
 \subsection{Using SGD}
 There is no guarantee that SGD will move in the right direction. However, it is normally effective in practice. We can break the linear regression example into multiple subproblems by choosing a few random points at time. The following figure illustrates the SGD to find the line fit through the data.
@@ -657,6 +671,7 @@ There is no guarantee that SGD will move in the right direction. However, it is 
     \includegraphics[scale=0.5]{src/4.31 stochastic gradient descent line configurations.png}
     \caption{SGD line configurations.}
 \end{figure}
+\newpage
 
 \section{Random Restart and Momentum}
 We will try to apply gradient descent to a function which has:
@@ -665,7 +680,7 @@ We will try to apply gradient descent to a function which has:
     \item multiple local minima,
     \item a huge ridge through the middle.
 \end{itemize}
-The graph of such a function is given below.
+The following is a result of gradient descent.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{src/4.32 gradient descent horrible function.png}
@@ -683,12 +698,15 @@ In this case, the next value for $\theta$ is:
 \[\theta_{i+1} = \theta_i - v.\]
 The value $\alpha$ controls the change in velocity. If $\alpha$ is close to 1, there is more momentum in the system. If $\alpha$ is close to 0, this is pretty much the normal gradient descent.
 
-Momentum will give the following traceback with the minimum above.
+Momentum and random restart gives the following traceback with the minimum above.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{src/4.33 random restart horrible function.png}
-    \caption{Mometum traceback.}
+    \caption{Mometum and Random restart traceback.}
 \end{figure}
+\noindent Running the algorithm multiple times means that it is more likely to find the global minimum. 
+
+\newpage
 
 \section{Second order derivatives}
 The first order derivatives represents the slope of the function. The second order derivatives represent the curvature of the function. For every parameter component $\theta_i$, the Hessian stores how the steepness of every other $\theta_j$ changes.
