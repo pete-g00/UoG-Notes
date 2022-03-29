@@ -45,7 +45,7 @@ In this course, we will look at displaying 3 basic categories of data:
     \item plots of single 2D arrays, e.g. contour plots (whole table).
 \end{itemize}
 
-\section{Grammar of Graphics}
+\subsection{Grammar of Graphics}
 The following terminologies are used when describing graphics.
 \begin{itemize}
     \item stat: A statistic computed from the dataset\sidefootnote{Dataset is a table of numbers.} to allow the data to be summarised compactly in a graphic (e.g. mean, value, standard deviation bars, binning values in a histogram, etc.).
@@ -71,10 +71,9 @@ The following terminologies are used when describing graphics.
 \noindent Altogether, this is called the Layered Grammar of Graphics. A pictorial representation is given below:
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.55]{src/2.1 grammar of graphics.png}
+    \includegraphics[scale=0.5]{src/2.1 grammar of graphics.png}
     \caption{The Flowchart of layered grammar of graphics.}
 \end{figure}
-\newpage
 
 An example of a figure is given below.
 \begin{figure}[H]
@@ -82,7 +81,7 @@ An example of a figure is given below.
     \includegraphics[scale=0.25]{src/2.2 figure examples.png}
     \caption{Examples of multiple figures.}
 \end{figure}
-\noindent In the graph, the figure on the left has 6 facets; the top right figure has one fact with single layer; the bottom right figure has one facet and two layers.
+\noindent In the graph, the figure on the left has 6 facets; the top right figure has one facet with single layer; the bottom right figure has one facet and two layers.
 
 A plot should have guides to explain how the stats/raw values from the dataset have been mapped to the coordinate system. This includes:
 \begin{itemize}
@@ -102,7 +101,7 @@ To display data, plots have geoms. These are geometric objects that represent so
 \begin{itemize}
     \item lines/curves, which represent continuous functions. They have colour, thickness and style (e.g. dotted, dashed, etc.)
     \item markers, which represent disconnected point. They have colour, size and style.
-    \item patches, which represent a shape with an area (e.g. bars in a bar chart). THey have colour, size and style.
+    \item patches, which represent a shape with an area (e.g. bars in a bar chart). They have colour, size and style.
 \end{itemize}
 
 The anatomy of a figure is given below.
@@ -119,6 +118,7 @@ We will use \texttt{matplotlib} for visualisation. An example of a matplotlib gr
     \includegraphics[scale=0.55]{src/2.4 example matplotlib plot.png}
     \caption{A \texttt{matplotlib} plot.}
 \end{figure}
+\newpage
 
 \section{Simple Plots}
 Most of the time, a plot will only have two variables- one independent variable, and one dependent variable, which depends on the independent variable. In a function $y = f(x)$, $x$ is the independent variable, and $y$ is the dependent variable- it depends on the value of $x$. As with the notation, the independent variable is plotted on the $x$-axis, and the dependent variable on the $y$-axis.
@@ -174,6 +174,7 @@ An example of the graph is given below.
     \includegraphics[scale=0.5]{src/2.10 ribbon plot with central line and markers.png}
     \caption{A ribbon plot with central line and markers.}
 \end{figure}
+\newpage
 
 \section{How to not plot}
 We will now look at different examples of visualisation and criticise/improve them. First, assume that we are comparing various doses of vitamin C and how that affects the length of guinea pig teeth length. The vitamin C is given either as a vitamin C tablet, or orange juice.
@@ -236,6 +237,7 @@ At this point, the two views (vitamin C and orange juice) have been plotted on t
     \includegraphics[scale=0.5]{src/2.15 VitC Example Plot 5.png}
     \caption{A faceted plot of comparing the effect of vitamin C on guinea pig tooth growth.}
 \end{figure}
+\newpage
 
 \section{Multiple visualisations of a dataset}
 Now, we will look at multiple visualisations of a dataset with another example. Assume we have a dataset that gives the gas usage in the UK from 1960-1986, one every 3 months. We can create a simple line graph out of it, with markers to show raw data.
@@ -285,7 +287,7 @@ Now, we will look at multiple visualisations of a dataset with another example. 
 \noindent Finally, we can produce a cumulative line graph to show the increase in CO2 product. In this case, we are plotting a stat instead of the dataset.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.4]{src/2.23 Gas Example Plot 8.png}
+    \includegraphics[scale=0.5]{src/2.23 Gas Example Plot 8.png}
     \caption{UK Gas cumulative CO2 produced from gas since 1960.}
 \end{figure}
 \newpage
@@ -416,7 +418,7 @@ We can use different markers (i.e. different geoms) to distinguish different lay
     \includegraphics[scale=0.6]{src/2.39 Gas Example Plot 23.png}
     \caption{An example of graphs where the layers are distinguished by marker colour.}
 \end{figure}
-It is important to choose colours wisely. It is possible that the data might get printed in black and white. Moreover, a lot of people suffer some form of colour blindness, so we should avoid just separating layers using colour.
+It is important to choose colours wisely. It is possible that the data might get printed in black and white. Moreover, a significant proportion of people people suffer some form of colour blindness, so we should avoid just separating layers using colour.
 
 Instead of identifying layers, we can use markers to display another attribute. For example, we can vary the colour and the scale of the marker to convey some extra information. To see this, consider the following graph that shows earthquakes in Fiji.
 \begin{figure}[H]
@@ -511,23 +513,24 @@ We can render geoms with transparency, so that values behind can show clearly. T
     \includegraphics[scale=0.6]{src/2.52 Fiji example Plot 5.png}
     \caption{Earthquakes in Fiji 5\% opacity}
 \end{figure}
+\newpage
 
 \section{Coords}
 We can specify visual units to present data with different shape. 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{src/2.53 compact line graph.png}
+    \includegraphics[scale=0.6]{src/2.53 compact line graph.png}
     \caption{Compact line graph}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{src/2.54 wide line graph.png}
+    \includegraphics[scale=0.6]{src/2.54 wide line graph.png}
     \caption{Wide line graph}
 \end{figure}
 \noindent Similarly, we can use axis limits to specify the data unit range which is mapped on. 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{src/2.55 axis limits.png}
+    \includegraphics[scale=0.6]{src/2.55 axis limits.png}
     \caption{A line graph with different axis limits.}    
 \end{figure}
 \noindent Also, we can change the aspect ratio of the coordinate system. This can be used to ensure that images do not get stretched out/squashed.
@@ -555,6 +558,7 @@ If the data has large spans of magnitude, we should plot it in log coordinates. 
 We cannot use log plots in every case- logarithms are only defined for strictly positive numbers. So, we cannot plot signed data on a log scale (without shifting it to strictly positive values). There are modified versions of the log scale that ignore some area around 0, and plot \texttt{log(abs(x))*sign(x)}. This is called the symmetric logarithm, or symlog. The area around 0 that is cut out is plotted linear, which distorts the plot.
 
 For angular measurements, we can use polar coordinates. These have axes- radius $r$ and angle $\theta$.
+\newpage
 
 \section{Facets and Layers}
 Multiple geoms can be rendered in the same visualisation as either:
@@ -581,6 +585,7 @@ We could also use double $y$-axes. Here, the $x$-mapping layer is common for all
 Like above, it is much better to use different facets; separate coordinate systems for separate aspects of the datset. Facets need not share anything in common. Nonetheless, if they show the same attribute, then it is a good idea to use the same scale (if possible) to make comparisons easy between the coords.
 
 There are many ways to lay out facets in a figure, e.g. $2 \times 2, 4 \times 1$, etc.
+\newpage
 
 \section{Communicating uncertainity}
 A figure must communicate uncertainity correctly and not mislead the reader. It is common to have observation error, so the samples obtained may not represent the true values. For example, the reading on a thermometer is not the true temperature of the air.
