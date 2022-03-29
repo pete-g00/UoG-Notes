@@ -75,6 +75,7 @@ Amplitude quantisation introduces noise- there is a difference between the value
     \caption{Residual amplitude of quantisation.}
 \end{figure}
 \noindent Clearly, the noise has no structure and is oscillating randomly.
+\newpage
 
 \section{Sampling theory}
 If we sample a dataset enough, we can reconstruct a continuous signal perfectly, as long as that signal does not have too much high frequency content. In particular, Nyquist's limit tells us that for a sampling rate $f_s$, we can reconstruct the original signal from a sampled signal if the signal contains frequencies at most
@@ -100,7 +101,7 @@ We must sample at regular intervals. Below we have a moving average line for the
 
 So, we can only use the moving average if we have a regularly sampled signal. Nonetheless, there are 2 ways of drawing a line for cherry data. We can do regression (e.g. linear regression) to fit a line through the data (e.g. least squares), using optimisation or probability. We can also convert the data into regularly sampled form, and then use signal processing operations. This can be done using interpolation and resampling. This two-step process of interpolation and resampling is called gridding.
 
-\section{Gridding}
+\subsection{Gridding}
 The first step of gridding is interpolation- we estimate a value between some known measurements. An interpolating function produces estimates for a value of a function in between the data points. Let the data points be $[(t_0, x_0), \dots, (t_n, x_n)]$. Interpolation will give us a function $f$ such that $f(t_i) = x_i$ for all the data points. Moreover, the interpolated function $f$ can be evaluated anywhere between $x_0$ and $x_n$.
 
 There are many ways to interpolate, such as:
@@ -122,6 +123,7 @@ After interpolation, we resample. Using the interpolated graph, we evaluate $t$ 
     \caption{Height and volume of cherry trees, with a line fit using gridding.}
 \end{figure}
 We can use resampling to align multiple time series that are being sampled at different rates- we can resample to a common sampling rate. This alignment process is essential when combining sensor data from multiple streams.
+\newpage
 
 \section{Filtering and smoothing}
 To remove noise from signals, we need to filter and smoothen it. Filtering takes advantage of the temporal structure of the data. We assume that the noise is random/independent. For example, we may have $x[t] = y[t] + \mathcal{N}(0, \sigma)$, where $y[t]$ is the true value and $\mathcal{N}(0, \sigma)$ is the noise. The values of $\sigma$ are independent with respect to time and the previous value $y[t-1]$.
@@ -134,6 +136,7 @@ We expect the true signal to change slowly, but the noise to change fast and ran
 The sliding window takes a smplied signal of some (maybe unbounded) length, and reduces it to a collection of fixed length vectors. We break the signal into equally spaced chunks/windows, each of length $K$. We then process these as an $N \times K$ matrix- $N$ windows of $K$ samples. We can perform any operations on these vectors/matrices (e.g. matrix operations, norms, quantisation). As we expect, the moving average depends on the length of the sliding window $K$- as $K$ gets bigger, the signal gets more smoothened out.
 
 Using moving averages on sound reduces the high frequency content. The longer the moving average, the smoother the waveform and the more high-frequencies are suppressed. We can apply moving averages on images as well (spatially). This has the effect of blurring the image (box blur).
+\newpage
 
 \section{Nonlinear filtering}
 Moving average is a linear filter- it is the weighted average. Linarity means: $f(x + y) = f(x) + f(y)$; $f(0) = 0$; $f(ax) = af(x)$.
@@ -146,20 +149,21 @@ This is a special type of order filter- in an order filter, we sort all the valu
 Median filtering adds more robustness to extreme values than moving averages. The following image illustrates how linear and median filtering help remove noise from a corrupt signal.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{src/6.8 sine with noise.png}
+    \includegraphics[scale=0.5]{src/6.8 sine with noise.png}
     \caption{The sine curve with impulsive noise.}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{src/6.9 sine with noise (linear).png}
+    \includegraphics[scale=0.5]{src/6.9 sine with noise (linear).png}
     \caption{The sine curve with impulsive noise, smoothened by linear filtering.}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{src/6.10 sine with noise (median).png}
+    \includegraphics[scale=0.5]{src/6.10 sine with noise (median).png}
     \caption{The sine curve with impulsive noise, smoothened by median filtering.}
 \end{figure}
 \noindent Clearly, median filtering is much better at removing extrme outliers than linear filtering. However, since we need to sort the array/use specialised mean cascade algorithms, these algorithms are slower.
+\newpage
 
 \section{Convolution}
 Most filters we apply are linear. These are very efficient and have been studied very well. A linear filter is a filter where the output is a weighted sum of the neighbouring values (and the original value). Although this is quite limited, there are many effects we can acheive using linear filtering. They are also quite efficient since the CPU (especially digital signal processing-specific CPUs) often have a multiply and accumulate operation. It can multiply by a constant and accumulate to a register. This makes linear filters very straightforward.
@@ -255,6 +259,7 @@ The discrete version of the delta function is an array of zeroes with a single 1
 
 % However, it is quite difficult to produce a perfect impulse in real world, as we need to deal with noise in the data. This is not an issue in the digital world as we can simulate noise-free impulses.
 We can also use the delta function to capture something that behaves like a (linear) filter. We can inject the delta function to something so that we can create a filter representing this environment. Since the dirac delta function is the identity convolution, we can add to any signal to get the same sound back, but with this filter. In particular, we can add background feel to a sound (e.g. echo) using this property- this is called impulse response recovery, and is part of reverberation. Producing the dirac delta function (or any convolution) from the real world is difficult due to noise.
+\newpage
 
 \section{Frequency}
 Until now, we have thought of a signal as a sequence of amplitude measurements over the time domain. We can also think of signals as a sum of oscillations over the frequency domain. These two representations are equivalent.
@@ -279,7 +284,7 @@ To understand how the Fourier transform works, we can try to understand the corr
 The value $c$ can be used to interpret the correlation between two signals, or the inner product representation of signals. If $c \approx 0$, then the two signals are not correlated. If $c$ is large and positive, then the two signals are similar, i.e. $a[t] = b[t]$. Instead, if $c$ is large and negative, the two signals are close to being inverse, i.e. $a[t] = -b[t]$.
 
 If we now generate every possible frequency of sine wave as sampled signals $a_1[t], a_2[t], \dots$ and correlate each with a test signal $b[t]$, then for some $a[t]$, the result will be nearly zero (the signals are unrelated), while for others it will be larger (since $a[t]$ has some parts that are oscillating at the test frequency of $b[t]$). This is the amplitude $A$ of the response. Using this, we can compute the function $c(\omega)$, which is a sine wave and $c'(\omega)$ which is a cosine wave. Furthermore, we can compute the phase
-\[\theta = \frac{c(\omega)}{c'(\omega)},\]
+\[\theta = \tan^{-1} \frac{c(\omega)}{c'(\omega)},\]
 and the magnitude
 \[A = \sqrt{c(\omega)^2 + c'(\omega)^2}.\]
 

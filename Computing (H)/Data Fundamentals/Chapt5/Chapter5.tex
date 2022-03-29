@@ -51,6 +51,7 @@ The following terms are used in probability theory:
 In words, a random variable $X$ has probability distribution $P(X)$, which assigns probabilities $0 \leq P(X = x) \leq 1$ to outcomes $x$, which belong in some sample space $\mathbf{x}$. The probability distribution is defined by a probability mass/density function $f_X(x)$ which assigns probabilities to outcomes such that the sum of probabilities over all the possible outcomes
 \[\sum_{x \in X} f_X(x) = 1.\]
 We can observe specific outcomes $x_i$ drawn from a distribution as a result of trials. We can sample new outcomes $x_j'$ given a distribution $P(X)$. Assuming outcomes have values, we can evaluate the average expected value $E[X]$ across infinitely many trials.
+\newpage
 
 \section{Philosophy of probability}
 There are two types of probability- Bayesian and Frequentist.
@@ -85,6 +86,7 @@ On the other hand, Frequentist:
     \item probability is the long-term frequency of events;
     \item parameters of population assumed to be fixed, data to be random.
 \end{itemize}
+\newpage
 
 \section{Forward and inverse probability}
 Generative process is the idea that there is some unknown process going on, the results of which can be observed. The process is governed by some variables that we do not know, but we can infer.
@@ -95,7 +97,7 @@ For example, consider the urn problem. We have poured some balls (black and whit
     \item What is the distribution of black and white balls? This is an inverse probability question- these questions depend on unobservable variables that generated these observations.
 \end{itemize}
 
-\section{Axioms of probability}
+\subsection{Axioms of probability}
 The following are the axioms of probability:
 \begin{itemize}
     \item the value
@@ -144,6 +146,7 @@ For example, consider the probability of getting a value between 2 and 12 after 
     \includegraphics[scale=0.6]{src/5.1 pmf of sum 2d6 dice.png}
     \caption{The PMF of two dice rolls.}
 \end{figure}
+\newpage
 
 \section{Expectation}
 If a random variable takes on numerical values, then we define the  expected value/expectation of a random variable by
@@ -165,6 +168,7 @@ for a discrete random variable. For example, the expected value of the square of
 % We can compute the expectation of a two-dice game, where one gets 10 points if the two dice roll the same number, and 0 otherwise (pairs of nothing game). We apply this as a function to the PMF.
 
 Expected values are essential in making rational decisions, the central problem of decision theory. They combine scores (or utility) with uncertainty (probability).
+\newpage
 
 \section{Samples and sampling}
 Samples (or observations) are observed outcomes form an experiment. We can sample from a distribution. This involves simulating outcoms according to the probability distribution. For example, we can sample from the sum of dice PMF by rolling two dice and summing the result. This is a sample or a draw from the distribution. For discrete random variables, this is easy- we simply produce samples by drawing each outcome according to its probability.
@@ -209,6 +213,7 @@ We will look at another example. Consider the likelihood of characters in differ
     \caption{Empirical PMF for Metamorphosis}
 \end{figure}
 \noindent The two texts were written by two different authors, and so have somewhat different empirical PMFs. Nonetheless, they are quite similar since both texts are in English.
+\newpage
 
 \section{Joint, Conditional and Marginal}
 The joint probability of two probabilities is written $P(X, Y)$. It denotes the probability that both $X$ and $Y$ take the specific value at the same time, i.e. $P(X = x) \land P(Y = y)$. The marginal probability is finding $P(X)$ using $P(X, Y)$- we integrate/sum over all the possible outcomes of $Y$.
@@ -217,7 +222,8 @@ for a PDF, and
 \[P(X) = \sum_y P(X, Y)\]
 for a PMF. Two random variables are independent if they do not depend on each other. If the variables are independent, we have $P(X, Y) = P(X) P(Y)$.
 
-The conditional probability of a random variable $X$ given a random variable $Y$ is the likelihood of the outcomes of $X$ given the outcomes of $Y$. It is denoted $P(X|Y)$. If $X$ and $Y$ are independent, then $P(X|Y) = P(X)$ and $P(Y|X) = P(Y)$.
+The conditional probability of a random variable $X$ given a random variable $Y$ is the likelihood of the outcomes of $X$ given the outcomes of $Y$. It is denoted $P(X|Y)$. If $X$ and $Y$ are independent, then $P(X|Y) = P(X)$ and $P(Y|X) = P(Y)$. In general,
+\[P(X|Y) = \frac{P(X, Y)}{P(Y)}.\]
 
 We can use bigraphs to visualise conditional and joint probabilities. For instance, we can use joint probability to compare the likelihood of two consecutive character appearing in Metamorphosis.
 \begin{figure}[H]
@@ -237,7 +243,8 @@ We can use bigraphs to visualise conditional and joint probabilities. For instan
     \includegraphics[scale=0.6]{src/5.9 conditional probability.png}
     \caption{Joint probability of characters in Metamorphosis.}
 \end{figure}
-\noindent Using the bigraph above, we can predict the next character. For example, We can look along the rows to do this look up: each row sums to 1.0. For example, in the \texttt{q} row, the probability is concentrated on the entry in column \texttt{u}- \texttt{u} always follows \texttt{q} in English.
+\noindent Using the bigraph above, we can predict the next character. We can look along the rows to do this look up: each row sums to 1.0. In the \texttt{q} row above, the probability is concentrated on the entry in column \texttt{u}- \texttt{u} always follows \texttt{q} in English.
+\newpage
 
 \section{Writing and Manipulating Probabilities}
 Probabilities can be used to represent belief. But the raw numbers (e.g. $P(X = x) = 0.9999$) are not always a useful way to make judgments, communicate results, or in some cases, even do computations.
@@ -258,6 +265,7 @@ We can also define log likelihood by $\log P(A|B)$.
 % To mean the likelihood of $x_i$, we write $\mathcal{L}(x_i)$. This is not a probability; it is a function of data, and $\mathcal{L}(x_i) = f_X(x_i)$.
 
 Given two observations, we can see whether a third observation is more like the first or the second. We can do this using log likelihoods. For example, if we consider the text Macbeth and compare its character PMF with the log likelihoods of Romeo and Juliet and Metamorphosis PMF, the difference is 113.97- this is positive meaning that it is more like Romeo and Juliet. Instead, if we do the same thing for The Trial, we get $-928.35$. This means that the text is more like Kafka.
+\newpage
 
 \section{Bayes' Rule}
 \subsection{Prior, likelihood and posterior}
@@ -289,14 +297,15 @@ Assume that there is a plauge (plauge $X$) spreading all around the world. A new
     \item a $5\%$ false positive rule, i.e. $5\%$ of the time people who don't have the disease test positive.
     \item a $5\%$ false negative rule, i.e. $5\%$ of the time people who have the disease test negative.
 \end{itemize}
-One in one hundred thousand ($1:100 000$) people are known to have Plague $X$ (we might know this because it's universally fatal within one year, and one in a hundred thousand people died of it last year, for example). If someone takes the test and the result is positive, then we can compute the likelihood of having the plauge using Bayes' rule.
+One in one hundred thousand ($1:100 000$) people are known to have Plague $X$. If someone takes the test and the result is positive, then we can compute the likelihood of having the plauge using Bayes' rule.
 \small{\begin{align*}
     P(\operatorname{Plague}|\operatorname{Test}) &= \frac{P(\operatorname{Test}|\operatorname{Plague}) P(\operatorname{Plague})}{ P(\operatorname{Test})} \\
     &= \frac{P(\operatorname{Test}|\operatorname{Plague}) P(\operatorname{Plague})}{P(\operatorname{Test}|\operatorname{\lnot Plague})P(\operatorname{\lnot Plague}) + P(\operatorname{Test}|\operatorname{Plague})P(\operatorname{Plague})}.
 \end{align*}}
 So, after testing positive, one has a $1:5263$ chance of having the plague. Although the test is $95\%$ accurate, the probability of having the plague is very low. This is because so few people have actually gotten the plauge.
 
-Natural frwquency explanations involve imagining concrete poulations of a fixed size ($10 000$ people in a room, for example), and considering the proportions as counts (how many people in the room have the plauge?). Bayes' rule is the way to combine evidence- it is used to update the prior belief using observations to get the posterior belief.
+Natural frequency explanations involve imagining concrete poulations of a fixed size ($10 000$ people in a room, for example), and considering the proportions as counts (how many people in the room have the plauge?). Bayes' rule is the way to combine evidence- it is used to update the prior belief using observations to get the posterior belief.
+\newpage
 
 \section{Entropy}
 Entropy is the measure of the ``surprise'' of the result. A flat, uniform distribution is very ``surprising'' because the values are very hard to predict; a narrow, peaked distribution is unsurprising because the values are always very similar.
@@ -305,7 +314,9 @@ This is a precise quantification- it gets the information in a distribution. The
 
 Entropy is given by
 \[H(X) = \sum_x -P(X = x) \log_2 P(X = x).\]
-It is the expected value of the log-probability of a random variable (the `average' log-probability). For example, if a toin coss is unbiased, an observer would have no way of predicting whether the next observation will be heads or tails. Instead, if it is biased, then the observer will be less surprised if their prediction matched the observation. The following image summarises this.
+It is the expected value of the log-probability of a random variable (the `average' log-probability). 
+
+For example, if a toin coss is unbiased, an observer would have no way of predicting whether the next observation will be heads or tails. Instead, if it is biased, then the observer will be less surprised if their prediction matched the observation. The following image summarises this.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.55]{src/5.10 entropy of coin toss.png}
@@ -318,6 +329,7 @@ It is the expected value of the log-probability of a random variable (the `avera
     \caption{Entropy of conditional distribution of characters in Metamorphosis.}
 \end{figure}
 \noindent Most of the time, there is some surprise as to what the next character is. However, if the character is \texttt{q}, then there is no surprise, since the next character is always \texttt{u}.
+\newpage
 
 \section{Continuous Random Variables}
 \subsection{Problems with continuous random variables}
