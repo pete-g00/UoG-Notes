@@ -92,7 +92,7 @@
 \chapter{Concepts}
 
 \section{Variables and lifetime}
-In functional PLS, a variable stands for a fixed, but a possibly unknown, value. In imperative and object-oriented PLs, a variable contains a value. The variable may be inspected and updated as often as desired. Such a variable can be used to model a real-world object whose state changes over time.
+In functional PLs, a variable stands for a fixed, but a possibly unknown, value. In imperative and object-oriented PLs, a variable contains a value. The variable may be inspected and updated as often as desired. Such a variable can be used to model a real-world object whose state changes over time.
 
 To understand imperative variables, we assume an abstract storage model. A store is a collection of cells, each of which has a unique address. Each cell is either allocated or unallocated. Each allocated cell contains either a simple value or undefined. An allocated cell can be inspected, unless it contains undefined. An allocated cell can be updated at any time.
 
@@ -593,6 +593,7 @@ Modern PLs have nested block structure- blocks may be nested freely within other
 
 For example, C has a flat block structure for functions, but nested block structure for variables. Having a flat block structure for functions means that we cannot declare functions within functions, but that they can be accessed from anywhere within the program.
 
+\subsection{Binding}
 A binding occurrence of identifier $I$ is an occurrence of $I$ where $I$ is bound to some entity $e$. An applied occurrence of identifier $I$ is an occurrence of $I$ where use is made of the entity $e$ to which $I$ is bound. If the PL is statically scoped, every applied occurrence of $I$ should correspond to exactly one binding occurrence of $I$. Below we have a C program.
 
 A PL is statically scoped if the body of a procedure is executed in the environment of the procedure definition. Then, we can decide at compile-time which binding occurrence of an identifier corresponds to a given applied occurrence. 
@@ -671,7 +672,7 @@ A proper procedure (or just procedure) embodies a command to be executed. A proc
 
 A function procedure (or just function) embodies an expression to be evaluated. A function call is an expression. It causes the function's body to be evaluated. It results in a value (which is returned by the function).
 
-Imperative PLs usually support both procedures and functions. For example, in Pascal and Ada, procedures and functions are syntatically distinct. However, in C and Java, the only distinction is that a procedure's result type is \texttt{VOID}. Functional PLs only support functions. Object-oriented PLs also support procedures as methods. A static method is a procedure exported by a class. An instance method is a procedure attached to an object.
+Imperative PLs usually support both procedures and functions. For example, in Pascal and Ada, procedures and functions are syntactically distinct. However, in C and Java, the only distinction is that a procedure's result type is \texttt{VOID}. Functional PLs only support functions. Object-oriented PLs also support procedures as methods. A static method is a procedure exported by a class. An instance method is a procedure attached to an object.
 
 The following is a procedure in C.
 \begin{lstlisting}[language=C]

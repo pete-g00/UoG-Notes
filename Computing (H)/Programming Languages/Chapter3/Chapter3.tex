@@ -83,6 +83,16 @@
     morestring=[b]"
 }
 
+\lstdefinelanguage{jouette}{ 
+    keywords={LOAD, SUBI, STORE, ADD, ADDI, MUL, SUB, COPY},
+    ndkeywords={fp, r0},
+    sensitive=true,
+    comment=[l]{\#},
+    % morecomment=[s]{/*}{*/},
+    morestring=[b]',
+    morestring=[b]"
+}
+
 \lstset{style=thestyle}
 
 \chapterstyle{thatcher}
@@ -1387,8 +1397,6 @@ This can be seen in the figure below.
 \end{figure}
 \noindent The diagram represents the SVM data store when the main program has called $P$, and $P$ has called $Q$. A local frame contains the local variables, the return address and the dynamic link which points to the previous frame. The stack pointer (sp) points to the first cell above the top of the stack, and the frame pointer (fp) points to the first cell of the topmost frame.
 
-% TODO: Compilation of a program
-
 We will use this for procedure declaration, whose visit method is given below.
 \begin{lstlisting}[language=java]
 void visitProc(FunParser.ProcContext ctx) {
@@ -1477,8 +1485,6 @@ public class Address {
 \newpage
 
 \section{Runtime organisation}
-% TODO: First slide
-
 The representation of each primitive type may be language defined or implementation defined. Typically, this is a fixed amount of bits. Some primitive types include \texttt{BOOL}, \texttt{CHAR}, \texttt{INT} and \texttt{FLOAT}.
 
 We represent an array by juxtaposing its components. The following is a representation of an array of type $\{0, 1, 2 \dots\} \to T$.
@@ -1488,18 +1494,16 @@ We represent an array by juxtaposing its components. The following is a represen
         \draw (0, 0) rectangle (1, 3.5);
 
         \draw[dotted] (0, 1) -- (1, 1);
-        \node at (1.5, 0.5) {\texttt{T[0]}};
+        \node at (1.5, 0.5) {\texttt{A[0]}};
 
         \draw[dotted] (0, 2) -- (1, 2);
-        \node at (1.5, 1.5) {\texttt{T[1]}};
+        \node at (1.5, 1.5) {\texttt{A[1]}};
         
         \draw[dotted] (0, 3) -- (1, 3);
-        \node at (1.5, 2.5) {\texttt{T[2]}};
+        \node at (1.5, 2.5) {\texttt{A[2]}};
     \end{tikzpicture}
 \end{figure}
-\noindent The offset of \texttt{T[i]} from the base. If each element is of 4 bits, then \texttt{T[0]} is at offset 0; \texttt{T[1]} is at offset 4; etc.
-
-Each component takes the same size. The offset of array component $i$ (relative to the array's base address) is linearly related to $i$, i.e.
+\noindent Each component takes the same size. So, if each element is of 4 bits, then \texttt{A[0]} is at offset 0; \texttt{A[1]} is at offset 4; etc. In general, the offset of array component $i$ (relative to the array's base address) is linearly related to $i$, i.e.
 \[\text{offset} = \text{size of component} \times i.\]
 Since $i$ is not known to the compiler, the offset of component $i$ gets calculated at runtime.
 
@@ -1570,7 +1574,6 @@ At any given time, the stack contains one or more activation frames. An active p
 The compiler fixes the size and the layout of each frame. The offset of each global and local variable (relative to the base of the frame) is known to the compiler.
 
 % The following figure shows the SVM data store when the main program has called $P$, and $P$ has called $Q$. The stack pointer \texttt{sp} points to the first free cell above the top of the stack. The frame pointer \texttt{fp} points to the first cell of the topmost frame.
-% TODO: SVM has been done above as well
 
 A heap variable's lifetime starts when the heap variable is created. It ends when it is destroyed or becomes unreachable. The lifetimes of heap variables follow no pattern. Heap variables occupy a storage region called the heap. 
 
@@ -1861,7 +1864,7 @@ Code selection is difficult for real machines because CISC (complex instruction 
 
 Register allocation for real machines is an issue. Registers should be used as much as possible. RISC machines typically have only general-purpose registers. CISC machines typically have a variety of special-purpose registers (e.g. int registers, float registers and address registers).
 
-Registers are fast. So, we aim to use registers as much as possible for local variables and intermediate results of expressions. The issue is that the number of registers is limited. Different variables can be allocated the same register if their lifetimes do not overlap. Hwere, a variable is deemed to be live only if it might be inspected later.
+Registers are fast. So, we aim to use registers as much as possible for local variables and intermediate results of expressions. The issue is that the number of registers is limited. Different variables can be allocated the same register if their lifetimes do not overlap. Here, a variable is deemed to be live only if it might be inspected later.
 
 A basic block (BB) is a stright-line sequence of instructions. There are no jumps expect at the end of the BB. Moreover, the jumps are to the start of a BB. Within a BB, we break up complicated expressions using temporary variables such that each assignment instruction contains at most one operator. 
 
@@ -1894,7 +1897,7 @@ t8 <- t6 x t7
 return t8
 \end{lstlisting}
 
-Within the BB, we determine where each variable is alive and then allocate registers.
+Within the BB, we determine where each variable is alive and then allocate registers. For the BB above, we determine the register allocation and allocate registers as follows.
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}
@@ -1903,11 +1906,11 @@ Within the BB, we determine where each variable is alive and then allocate regis
             t2 <- t1 + c,
             s <- t2 / 2,
             t3 <- s - a,
-            t4 <- s x t3,
+            t4 <- s $\times$ t3,
             t5 <- s - b,
-            t6 <- t4 x t5,
+            t6 <- t4 $\times$ t5,
             t7 <- s - c,
-            t8 <- t6 x t7,
+            t8 <- t6 $\times$ t7,
             return t8} 
         {
             \node at (-2, -0.5*\i) {\texttt{\code}};
@@ -1938,6 +1941,7 @@ Within the BB, we determine where each variable is alive and then allocate regis
     \end{tikzpicture}
 \end{figure}
 
+\subsection{Control-flow graphs}
 A control-flow graph is a directed graph in which:
 \begin{itemize}
     \item each vertex is a BB;
@@ -1962,15 +1966,43 @@ int pow(int b, int n) {
 }
 \end{lstlisting}
 Its control-flow graph is given below.
-% TODO: Control-flow graph
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw (0, 0) node[label=120:BB1] {} rectangle (2, -1.5);
+        \node[align=left] at (0.75, -0.75) {p $\leftarrow$ 1 \\ q $\leftarrow$ b \\ m $\leftarrow$ n};
+
+        \draw (0, -2.5) node[label=90:BB2] {} rectangle (2, -3.5);
+        \node[align=left] at (1, -3) {t1 $\leftarrow$ m$>$0 \\ jump if t1};
+
+        \draw (1, -4.5) node[label=90:BB3] {} rectangle (3, -5.5);
+        \node[align=left] at (2, -5) {t2 $\leftarrow$ m$\&$1 \\ jump if t2};
+
+        \draw (2, -6.5) node[label=90:BB4] {} rectangle (4, -7);
+        \node[align=left] at (3, -6.75) {p $\leftarrow$ p*q};
+
+        \draw (1, -8) node[label=90:BB5] {} rectangle (3, -9);
+        \node[align=left] at (2, -8.5) {m $\leftarrow$ m/2 \\ q $\leftarrow$ q*q};
+
+        \draw (0, -10) node[label=90:BB6] {} rectangle (2, -10.5);
+        \node[align=left] at (0.75, -10.25) {return p};
+
+        \draw[->] (1, -1.5) -- (1, -2.5);
+        \draw[->] (1, -3.5) -- (2, -4.5);
+        \draw[->] (2, -5.5) -- (3, -6.5);
+        \draw[->] (3, -7) -- (2, -8);
+        \draw[->] (3, -8.5) -- (5, -8.5) -- (5, -3) -- (2, -3);
+        \draw[->] (0, -3) -- (-1, -3) -- (-1, -10.25) -- (0, -10.25);
+    \end{tikzpicture}
+\end{figure}
 
 Each section is a BB. We consider which variables are alive at BB.
 \begin{itemize}
-    \item $b$ and $n$ are alive only in BB1;
-    \item $p$ is alive everywhere;
-    \item $m$ and $q$ are alive everywhere except in BB6;
-    \item $t1$ is alive only in BB2; and
-    \item $t2$ is alive only in BB3.
+    \item b and n are alive only in BB1;
+    \item p is alive everywhere;
+    \item m and q are alive everywhere except in BB6;
+    \item t1 is alive only in BB2; and
+    \item t2 is alive only in BB3.
 \end{itemize}
 
 For each BB $b$, we define the following 4 sets of variables in a control-flow graph:
@@ -2003,7 +2035,7 @@ These equations give rise to the liveness analysis algorithm. We compute $in[b]$
 \end{itemize}
 The live variables in block $b$ are $in[b] \cup def[b]$.
 
-We illustrate this with an example. We have 
+We illustrate this with the BB example above. We have 
 \begin{align*}
     use[BB1] &= \{b, n\} & def[BB1] &= \{p, q, m\} \\
     use[BB2] &= \{m\} & def[BB2] &= \{t1\} \\
@@ -2053,41 +2085,98 @@ Native code generation is simplified by using a low-level intermediate represent
 Consider the C assignment \texttt{a[i] = v}. Assume that \texttt{a} has type \texttt{int*} and \texttt{v} has type \texttt{int}. Moreover, each \texttt{int} occupies 4 bytes. Variable \texttt{a} is located at offset $a$ within the topmost activation frame. The variable \texttt{i} is located in register r9. The variable \texttt{v} is located at the offset \texttt{v} within the topmost activation frame. Then, the address of \texttt{a[i]} is
 \[\text{base address of } \texttt{a} + 4 \times \texttt{i}.\]
 The following is the IR tree for the given code.
-% TODO: Add figure
-
-The IR trees are given below.
-% TODO: ??
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance=4cm},
+        level 2/.style={sibling distance=2.5cm},
+    ]
+        \node[ellipse, draw] {move}
+        child {
+            node[ellipse, draw] {mem}
+            child {
+                node[ellipse, draw] {+}
+                child {
+                    node[ellipse, draw] {mem}
+                    child {
+                        node[ellipse, draw] {+}
+                        child {
+                            node[draw, label=-90:REG] {fp}
+                        }
+                        child {
+                            node[draw, label=-90:CONST] {$a$}
+                        }
+                    }
+                }
+                child {
+                    node[ellipse, draw] {$\times$}
+                    child {
+                        node[draw, label=-90:REG] {9}
+                    }
+                    child {
+                        node[draw, label=-90:CONST] {4}
+                    }
+                }
+            }
+        }
+        child {
+            node[ellipse, draw] {mem}
+            child {
+                node[ellipse, draw] {+}
+                child {
+                    node[draw, label=-90:REG] {fp}
+                }
+                child {
+                    node[draw, label=-90:CONST] {$v$}
+                }
+            }
+        };
+    \end{tikzpicture}
+\end{figure}
 
 Now, we consider an example. Jouette is a hypothetical RISC machine. It has 32 general-purpose registers from r0 to r31. The register r0 is always zero. The following is its instruction set.
-% TODO: Add table
-
-The following are some syntax trees:
-% TODO: Them trees
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Mnemonic & Behaviour \\
+        \hline
+        \texttt{ADD} $r, r', r''$ & $r \leftarrow r' + r''$ \\
+        \texttt{SUB} $r, r', r''$ & $r \leftarrow r' - r''$ \\
+        \texttt{MUL} $r, r', r''$ & $r \leftarrow r' \times r''$ \\
+        \texttt{ADDI} $r, r', c$ & $r \leftarrow r' + c$ \\
+        \texttt{SUBI} $r, r', c$ & $r \leftarrow r' - c$ \\
+        \texttt{LOAD} $r, c, (r')$ & $r \leftarrow$ mem$[r' + c]$ \\
+        \texttt{STORE} $r, c, (r')$ & mem$[r' + c] \leftarrow r$ \\
+        \texttt{COPY} $(r), (r')$ & mem$[r'] \leftarrow$ mem$[r]$ \\
+        \hline
+    \end{tabular}
+    \caption{The Jouette instruction set}
+\end{table}
+\noindent Here, $c$ refers to a constant and $r$, $r'$ and $r''$ refer to registers.
 
 We translate the source code or AST into an IR tree. We cover the tree with IR instruction patterns. We emit code corresponding to these instruction patterns, performing register allocation along the way.
 
-The AST for \texttt{a[i] = v} is the following.
-\begin{lstlisting}
-LOAD    r1, a(fp)
+Using the AST for \texttt{a[i] = v}, we can produce the following Jouette code.
+\begin{lstlisting}[language=jouette]
+LOAD    r1, a (fp)
 ADDI    r2, r0, 4
 MUL     r2, r9, r2
 ADD     r1, r1, r2
-LOAD    r2, v(fp)
+LOAD    r2, v (fp)
 STORE   r2, 0 (r1)
 \end{lstlisting}
-% TODO: AST
-
-\begin{lstlisting}
-LOAD    r1, a(fp)
+\noindent The following code is also equivalent.
+\begin{lstlisting}[language=jouette]
+LOAD    r1, a (fp)
 ADDI    r2, r0, 4
 MUL     r2, r9, r2
 ADD     r1, r1, r2
 ADDI    r2, fp, v
 COPY    (r2), (r1)
 \end{lstlisting}
-% TODO: AST
 
-The code selection is the maximal much algorithm. To cover the IR tree $t$ using the patterns $ps$, we do the following:
+The code selection is the maximal munch algorithm. To cover the IR tree $t$ using the patterns $ps$, we do the following:
 \begin{itemize}
     \item find the largest pattern $p$ in $ps$ that covers the top of $t$.
     \item find each uncovered subtree $s$ of $t$ (from left to right).
@@ -2098,7 +2187,4 @@ The code selection is the maximal much algorithm. To cover the IR tree $t$ using
 \end{itemize}
 The time complexity is $O(|t|)$. The emitted code is optimal in that no two adjacent patterns could be replaced by a single pattern. Moreover, the number of instructions is minimal.
 
-
-
-    
 \end{document}
