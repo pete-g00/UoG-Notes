@@ -50,7 +50,7 @@ Let $X$ be a set and $d: X \times X \to \mathbb{R}$ be a function. Then, $(X, d)
     \item for all $x_1, x_2 \in X$, $d(x_1, x_2) \geqslant 0$, and $d(x_1, x_2) = 0$ if and only if $x_1 = x_2$; 
     \item for all $x_1, x_2 \in X$, $d(x_1, x_2) = d(x_2, x_1)$; and
     \item for all $x_1, x_2, x_3 \in X$,
-    \[d(x_1, x_3) \leqslant d(x_1, x_2) + d(x_2 + x_3).\]
+    \[d(x_1, x_3) \leqslant d(x_1, x_2) + d(x_2, x_3).\]
 \end{enumerate}
 If $(X, d)$ is a metric space, then we say that $d$ a \emph{metric} on $X$.
 \end{definition}
@@ -531,7 +531,7 @@ This is the (unsigned) area between the two functions. We know that a continuous
 
 We will now verify that this $(C[0, 1], d_1)$ is a metric space. We start with a lemma.
 \begin{lemma}
-Let $h: [0, 1] \to \mathbb{R}$ be a continuous function such that there exists an $x_0 \in [0, 1]$ $h(x_0) = k > 0$. Then, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - x_0| \leqslant \delta$, then $f(x) \geqslant \frac{k}{2}$.
+Let $h: [0, 1] \to \mathbb{R}$ be a continuous function such that there exists an $x_0 \in [0, 1]$ such that $h(x_0) = k > 0$. Then, there exists a $\delta > 0$ such that for $x \in [0, 1]$, if $|x - x_0| \leqslant \delta$, then $f(x) \geqslant \frac{k}{2}$.
 \end{lemma}
 \begin{proof}
 Since $h$ is continuous at $x_0$, there exists a $\delta > 0$ such that for $x \in \mathbb{R}$, if $|x - x_0| < 2\delta$, then $|h(x) - h(x_0)| < \frac{k}{2}$. In that case,
@@ -560,9 +560,9 @@ In particular, if $|x - x_0| \leqslant \delta$, then $h(x) \geqslant \frac{k}{2}
     \end{align*}
 \end{enumerate}
 
-Now, we look at another metric on a function space- taking the maximum value of $f$ and $g$. To do this, the functions $f$ and $g$ need to be bounded. So, we define boundedness:
+Now, we look at another metric on a function space- taking the supremum of $|f-g|$. To do this, the functions $f$ and $g$ need to be bounded. So, we define boundedness:
 \begin{definition}
-Let $X$ be a (non-empty) set. A function $f: X \to \mathbb{R}$ is bounded if there exists an $M > 0$ such that for all $x \in X$, $|f(x)| < M$. We denote by $\mathcal{B}[X]$ the set of bounded functions $f: X \to \mathbb{R}$. 
+Let $X$ be a (non-empty) set. A function $f: X \to \mathbb{R}$ is \emph{bounded} if there exists an $M > 0$ such that for all $x \in X$, $|f(x)| < M$. We denote by $\mathcal{B}[X]$ the set of bounded functions $f: X \to \mathbb{R}$. 
 \end{definition}
 The sup-metric on this space is the function $d_\infty: \mathcal{B}[X] \times \mathcal{B}[X] \to \mathbb{R}$ given by
 \[d_\infty(f, g) = \sup_{x \in X} |f(x) - g(x)|.\]
@@ -610,7 +610,7 @@ Let $f: [0, 1] \to \mathbb{R}$ be a continuous function. Then, there exist $u, v
 
 We will now compare the two metrics $d_1$ and $d_\infty$ on $C[0, 1]$.
 \begin{proposition}
-Let $f, g: [0, 1] \to \mathbb{R}$ be continuous function. Then, $d_1(f, g) \leqslant d_\infty(f, g)$.
+Let $f, g: [0, 1] \to \mathbb{R}$ be continuous functions. Then, $d_1(f, g) \leqslant d_\infty(f, g)$.
 \end{proposition}
 \begin{proof}
 By definition, for all $x \in [0, 1]$, $|f(x) - g(x)| \leqslant d_\infty(f, g)$. In that case,
@@ -683,7 +683,7 @@ if and only if $x_n \to a$ and $y_n \to b$ in $\mathbb{R}$.
 \end{proof}
 Since $d_1$ and $d_2$ are strongly equivalent to $d_\infty$, we have actually characterised which sequences in $\mathbb{R}^2$ converge under those metrics. For this, consider the following lemma.
 \begin{lemma}
-Let $X$ be a set and let $d_1$ and $d_2$ be metrics on $X$ such that there exists a constant $c > 0$ such that for all $x, y \in X$
+Let $X$ be a set and let $d_1$ and $d_2$ be metrics on $X$ such that there exists a constant $c > 0$ such that for all $x, y \in X$,
 \[d_1(x, y) \leqslant cd_2(x, y).\]
 Furthermore, let $(x_n)_{n=1}^{\infty}$ be a sequence in $X$ and let $x \in X$ such that $x_n \to x$ in $(X, d_2)$. Then, $x_n \to x$ in $(X, d_1)$.
 \end{lemma}
@@ -1341,7 +1341,7 @@ Let $(X, d_1)$ and $(X, d_2)$ be metric spaces. Then, the metrics $d_1$ and $d_2
 \noindent So, strongly equivalent metrics are topologically equivalent. In particular, the metrics $d_1$, $d_2$ and $d_\infty$ in $\mathbb{R}^2$ are topologically equivalent. Nonetheless, not every topologically equivalent metric is strongly equivalent.
 
 \begin{lemma}
-Let $(X, d_1)$, $(X, d_2)$ and $(Y, d_Y)$ be metric spaces such that $d_1$ and $d_2$ are topologically equivalent, and let $f: X \to Y$ and $g: Y \to X$ be function. Then, 
+Let $(X, d_1)$, $(X, d_2)$ and $(Y, d_Y)$ be metric spaces such that $d_1$ and $d_2$ are topologically equivalent, and let $f: X \to Y$ and $g: Y \to X$ be functions. Then, 
 \begin{itemize}
     \item $f$ is $(d_1, d_Y)$-continuous if and only if $f$ is $(d_2, d_Y)$-continuous;
     \item $g$ is $(d_Y, d_1)$-continuous if and only if $g$ is $(d_Y, d_2)$-continuous.
