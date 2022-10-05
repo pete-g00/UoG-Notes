@@ -1,0 +1,169 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Topics In Algebra}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+
+\begin{document}
+    \chapter{Review of 3H Algebra}
+    \section{Isomorphism Theorems}
+
+    \begin{theorem}[First Isomorphism Theorem]
+        Let $G$ and $H$ be groups, and let $\varphi: G \to H$ be a homomorphism. Then, $G/\ker \varphi \cong \operatorname{Im}(\varphi)$.
+    \end{theorem}
+    \begin{proof}
+        Let $H = \ker \varphi$. Define the map $\psi: G/H \to \operatorname{Im}(\varphi)$ by $\psi(gH) = \varphi(g)$. Let $g_1H, g_2H \in G/H$. We know that $g_2^{-1}g_1 \in H$, and so $\varphi(g_1) = \varphi(g_2)$. So, $\psi$ is well-defined. Moreover, since $\varphi$ is a homomorphism, we find that $\psi$ is a homomorphism. Also, by construction, $\psi$ is surjective.
+
+        Now, we claim that $\psi$ is injective. Let $g_1H, g_2H \in G/H$ such that $\psi(g_1H) = \varphi(g_2H)$. In that case, $\varphi(g_1) = \varphi(g_2)$. Hence, $g_2^{-1}g_1 \in H$, meaning that $g_1H = g_2H$. This implies that $\psi$ is injective. So, $\psi$ defines an isomorphism.
+    \end{proof}
+
+    \begin{theorem}[Second Isomorphism Theorem]
+        Let $G$ be a group, and let $H, N \leq G$ with $N \vartriangleleft G$. Then, $HN \leq G$, $H \cap N \vartriangleleft H$, and
+        \[H/(H \cap N) \cong HN/N.\]
+    \end{theorem}
+    \begin{proof}
+        Define the map $\varphi: H \to H/N$ by $\varphi(h) = hN$. This is a homomorphism, with
+        \[\ker \varphi = \{g \in H \mid \varphi(g) = N\} = \{g \in H \mid g \in N\} = H \cap N,\]
+        and
+        \[\operatorname{Im} \varphi = \{hN \mid h \in H\} = HN/N.\]
+        Hence, 
+        \[H/(H \cap N) \cong HN/N.\]
+    \end{proof}
+
+    \begin{theorem}[Correspondence Theorem for Subgroups]
+        Let $G$ be a group, and let $N \vartriangleleft G$. Then, there exists a bijection $f: S \to X$, where $S$ is the set of subgroups of $G$ containing $N$, and $X$ is the set of subgroups of $G/N$.
+    \end{theorem}
+    \begin{proof}
+        Let $q: G \to G/N$ be the quotient map. Define the map $f: S \to X$ by 
+        \[f(H) = q(H) = \{hN \mid h \in H\} =: H/N.\]
+        We show that $f$ is bijective. Let $L \leq G/N$. Then, set 
+        \[K = q^{-1}(L) = \{g \mid gN \in L\}.\]
+        We have $N \in L$, so $N \leq K$. This implies that $K \in S$. Moreover,
+        \[gN \in L \iff g \in K \iff gN \in K/N.\]
+        So, $L = K/N$. This implies that $f$ is surjective. Also, for $H/N = K/N$, we have
+        \[g \in H \iff gN \in H/N \iff gN \in K/N \iff g \in K.\]
+        So, $H = K$. This implies that $f$ is injective as well. Hence, $f$ is a bijection.
+    \end{proof}
+
+    \begin{theorem}[Third Isomorphism Theorem]
+        Let $G$ be a group, and let $H, K \vartriangleleft G$, wth $K \leq H$. Then,
+        \[(G/K)/(H/K) \cong G/H.\]
+    \end{theorem}
+    \begin{proof}
+        Define the map $\psi: G/K \to G/H$ by $\psi(gK) = gH$. For $g_1K, g_2K \in G/H$, if $g_1K = g_2K$, then $g_2^{-1}g_1 \in K \subseteq H$. So, $g_1H = g_2H$, meaning that $\psi$ is well-defined. Moreover, the map $\psi$ is surjective by construction. The map $\psi$ is also a homomorphism by definition of quotients. Now,
+        \[\ker \psi = \{gK \in G/K \mid gK = H\} = \{gK \in G/K \mid g \in H\} = H/K.\]
+        So, the First Isomorphism Theorem tells us that
+        \[(G/K)/(H/K) \cong G/H.\]
+    \end{proof}
+
+    \newpage
+
+    \section{Intersection, Product and Join}
+    \begin{proposition}
+        Let $G$ be a group and $H, K \leq G$ with $H \vartriangleleft G$. Then, $HK \leq G$.
+    \end{proposition}
+
+    \begin{definition}
+        Let $G$ be a group and $H, K \leq G$. Then, the \emph{join} of $H$ and $K$ is given by
+        \[H \wedge K := \bigcap_{\substack{N \leq G \\ H, K \leq N}} N.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $G$ be a group and $H, K \leq G$. Then, $HK = H \wedge K$ if and only if $HK \leq G$.
+    \end{proposition}
+    \begin{proof}
+        If $HK = H \wedge K$, then $HK \leq G$. So, assume that $HK \leq G$. We have $H, K \leq HK$, so $H \wedge K \leq HK$ by definition. Now, let $hk \in HK$ and $N \leq G$ such that $H, K \leq N$. Then, $h, k \in N$, meaning that $hk \in N$. Hence, $hk \in H \wedge K$. So, $HK = H \wedge K$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $G$ be a group and $H, K \leq G$ be finite. Then,
+        \[|HK| = \frac{|H| |K|}{|H \cap K|}.\]
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+    \newpage
+    
+    \section{Composition Series}
+    \begin{definition}
+        Let $G$ be a group, and let $H_i \leq G$ for all $i \in \{1, \dots, n-1\}$. We say that 
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        is a \emph{group series} if $H_i \leq H_{i+1}$ for all $i \in \{0, \dots, n-1\}$. The group series
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        is a \emph{normal} series if $H_i \vartriangleleft G$ for all $i \in \{0, \dots, n-1\}$. Also, the group series
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        is \emph{subnormal} if $H_i \vartriangleleft H_{i+1}$ for all $i \in \{0, \dots, n-1\}$.
+    \end{definition}
+
+    \begin{definition}
+        Let $G$ be a group, and let 
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        be a subnormal series. We say that the group series is a \emph{composition series} if for all $n \in \{0, \dots, n-1\}$, $H_i/H_{i+1}$ is simple. If 
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        is a normal series such that for all $n \in \{0, \dots, n-1\}$, $H_i/H_{i+1}$ is simple, then the group series is a \emph{principal series}.
+    \end{definition}
+
+    \begin{proposition}
+        $\mathbb{Z}$ has no composition series.
+    \end{proposition}
+    \begin{proof}
+        Let the following be a subnormal series for $\mathbb{Z}$:
+        \[\{0\} = G_0 \vartriangleleft G_1 \vartriangleleft \dots G_n = \mathbb{Z}.\]
+        We know that the subgroup $G_1 = m\mathbb{Z}$, for some $m \in \mathbb{Z}$. Then, the quotient $G_1/G_0 \cong m\mathbb{Z}$ is not simple. So, the subnormal series is not a composition series.
+    \end{proof}
+
+    \begin{theorem}[Jordan-Holder Theorem]
+        
+    \end{theorem}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{definition}
+        Let $G$ be a group. We say that $G$ is \emph{solvable} if there exists a normal series
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
+        such that for all $i \in \{1, 2, \dots, n-1\}$, $H_i/H_{i+1}$ is abelian.
+    \end{definition}
+
+    \begin{example}
+        The group $S_5$ is not solvable.
+    \end{example}
+    \begin{proof}
+        
+    \end{proof}
+\end{document}
