@@ -767,6 +767,23 @@ We illustrate the procedure with an example. Consider the following set of point
 \noindent We are guaranteed to make the right angle when we connect the last point with the pivot, as long as the pivot belongs to the convex hull.
 
 The algorithm for the Graham Scan is given below.
+\begin{lstlisting}[language=pseudocode]
+List<Point> grahamScan(List<Point> points) {
+    simplePolygon(points);
+    List<Point> cHull = [points[0], points[1], points[2]];
+    
+    // add all the other points to the list => remove 
+    // if the last 3 form a left angle
+    for (var i = 3; i < points.length; i++) {
+        while (angle(cHull[-2], cHull[-1], points[i]) > pi) {
+            cHull.pop();
+        }
+        cHull.add(points[i]);
+    }
+    
+    return cHull;
+}
+\end{lstlisting}
 % TODO: Add algorithm
 
 Now, we consider the complexity of the algorithm. The algorithm uses simple polygon construction, which has $O(n \log n)$ complexity. We can check whether the turn is anti-clockwise in $O(1)$ time. Now, the while loop within the for loop could imply that the complexity is $O(n^2)$. However, since a point is eliminated at most once from the list, the complexity of the entire loop is $O(n)$. Hence, the algorithm has complexity $O(n \log n)$.
