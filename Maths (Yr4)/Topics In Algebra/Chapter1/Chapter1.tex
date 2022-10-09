@@ -242,4 +242,25 @@
         \[\{e\} \leq A_5 \leq S_5.\]
         The quotients are $A_5$ and $\mathbb{Z}_2$. By Jordan-Holder, we know that any composition series of $S_5$ will have these quotients. Since $A_5$ is not abelian, we find that $S_5$ is not solvable.
     \end{proof}
+
+    \begin{definition}
+        Let $G$ be a group, and let $H = G/Z(G)$. Define the subgroup $Z_1(G) = q^{-1}(Z(H))$, where $q \colon G \to H$ is the quotient map. We define the \emph{ascending central series} of $G$ to be the following group series as follows:
+        \begin{itemize}
+            \item if $G = Z_1(G)$, then
+            \[\{e\} \leq Z(G) \leq G.\]
+            \item otherwise, we define
+            \[\{e\} \leq Z(G) \leq Z_1(G) \leq \dots \leq G,\]
+            where $Z_2(G)$ can be constructed the same way we constructed $Z_1(G)$- the series terminates when $Z_n(G) = G$, if possible.
+        \end{itemize}
+        If $G$ has a finite ascending central series, then $G$ is \emph{nilpotent}.
+    \end{definition}
+
+    \begin{example}
+        Let $G = S_3$. Then, $Z(G)$ is trivial, meaning that $Z_1(G)$ is trivial too. So, it has the following ascending central series:
+        \[\{()\} \leq \{()\}  \leq \dots \]
+        This does not terminate, so $S_3$ is not nilpotent. Now, let $G = \mathbb{Z}_6$. Then, $Z(G) = G$, meaning that it has the following ascending central series:
+        \[\{0\} \leq \mathbb{Z}_6.\]
+        Finally, let $G = D_4$. Then, $Z(G) = \langle r^2 \rangle$, meaning that $G/Z(G)$ is abelian. Hence, it has the following ascending central series:
+        \[\{e\} \leq \{e, r^2\} \leq D_4.\]
+    \end{example}
 \end{document}
