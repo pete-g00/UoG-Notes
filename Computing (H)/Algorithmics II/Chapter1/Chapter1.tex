@@ -58,7 +58,7 @@
 
 \lstdefinelanguage{pseudocode}{ 
     keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, range},
-    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map},
+    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
     sensitive=true,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
@@ -872,6 +872,860 @@ Another application is to compute the furthest pair of points in a set of points
     \end{tikzpicture}
 \end{figure}
 \noindent Then, we choose the pair such that the distance is the longest- this is the longest distance of the entire set of points, not just the convex hull. This algorithm is called the rolling calipers.
+\newpage
+
+\section{Closest Pairs}
+In this section, we will look at how to find the closest pair of points from a set, using a divide-and-conquer method.
+
+We are given a set of points, and we want to compute the closest pair of points in the set. A naive algorithm would go through each pair of points and find the minimum distance- this is $O(n^2)$. We will use a divide-and-conquer method to improve the complexity to $O(n \log n)$.
+
+The closest pairs algorithm starts by sorting the given points with respect to the $x$-coordinate. We will then divide the set into 2 equally-sized subsets. This is the divide step. We will compute the closest pair of points in both subsets, and then use that to find the closest pair of points in the entire set. This is the conquer step.
+
+We will now look at the combining step. Assume that the two subsets are $P$ and $Q$, and we have a closest pair of points $(p_1, p_2)$ in $P$ of distance $d_1$, and a closest pair of points $(q_1, q_2)$ in $Q$ of distance $d_2$. Let $d$ be the minimum of $d_1$ and $d_2$. Now, the closest pair of points in entire set is either going to be $(a, b)$, which has distance $d$ and both the points are from either $P$ or $Q$, or it will be $(x, y)$, with $x \in P$ and $y \in Q$, where the distance between the points $x$ and $y$ is strictly less than $d$. Hence, we only need to look at points within $d$ of the the midpoint separating $P$ and $Q$. This is shown in the figure below:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (2.5, 0.0) {};
+
+        \draw (p2) -- (p3);
+        \draw (p5) -- (p6);
+
+        \fill[red, opacity=0.2] (2.375-0.4, -0.5) rectangle (2.375+0.4, 2);
+        
+        \draw[dotted] (2.375, -0.5) -- (2.375, 2);
+    \end{tikzpicture}
+\end{figure}
+\noindent The left subsection is $P$, and the right subsection is $Q$. The closest pair of points in $P$ and $Q$ are also shown. The pink strip represents points that are within $d$ of the the midpoint, with respect to the $x$-coordinate. So, if there are two points $(x, y)$ with $x \in P$ and $y \in Q$ and distance between $x$ and $y$ less than $d$, then they both must lie on the pink strip.
+
+It is possible that most of the points lie on the pink strip, so the algorithm would still be $O(n^2)$ overall. We will improve the algorithm by sorting the coordinates with respect to the $y$-coordinate as well. This means that we can just look at the points that come above a point on the pink strip. Moreover, we only need to look at a constant number of points above the point. We will illustrate this with a figure:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (1) at (0, 0) {};
+
+        \draw (0, 0) rectangle (1, 1);
+        
+        \begin{scope}
+            \clip (0, 0) rectangle (1, 1);
+            \fill[blue, opacity=0.3] (0, 0) circle (0.98);
+        \end{scope}
+    \end{tikzpicture}
+\end{figure}
+\noindent Above, we have a square of size $d \times d$, where $d$ is the smaller distance between the closest pair of points in $P$ and $Q$. We have further restricted the strip above, since a $y$-coordinate greater than $d$ cannot have distance smaller than $d$. If we have a point at the left corner of the square, we find that any point on the blue arc will have distance less than $d$ both in $P$- this is a contradiction. Hence, if there is another point in $P$ lying on the square, it must be outside of the blue arc. In the worst case, we will only have 4 points in $P$- one at each of the corners. When we extend this to a $2d \times d$ rectangle for both $P$ and $Q$, this corresponds to the following figure:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (1) at (0, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (2) at (0, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (4) at (1, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (5) at (2, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (6) at (2, 1) {};
+
+        \draw (0, 0) rectangle (1, 1);
+        \draw (1, 0) rectangle (2, 1);
+    \end{tikzpicture}
+\end{figure}
+\noindent So, for a given point, we just need to consider 5 points on the strip that are above the point.
+
+To check the points, we still have to sort the points with respect to the $y$-coordinate during the combining stage. This is possible by sorting the points every time, but that would lead to the complexity $O(n \log^2 n)$. We can do better by implicitly applying merge sort within the combination phase. So, we assume that the points in $P$ and $Q$ are also sorted by the $y$-coordinate. So, we can then merge the two lists during the combination phase.
+
+We will now illustrate the algorithm with an example. So, assume that we are given the following points.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt] at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt] at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt] at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt] at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt] at (5.0, 1.0) {};
+    \end{tikzpicture}
+\end{figure}
+\noindent First, we sort the points with respect to their $x$-coordinate. We will label them using this order.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+    \end{tikzpicture}
+\end{figure}
+\noindent Next, we split the set into subsets- we will do this until each subset has just one point.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+
+        \foreach \x in {0.5, 1.1, 1.6, 2.375, 2.875, 3.5, 4.5} {
+            \draw[dotted] (\x, -0.5) -- (\x, 2);
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent At the base case, the shortest pair of points will be the two points that we are given.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+
+        \draw (p1) -- (p2);
+        \draw (p3) -- (p4);
+        \draw (p5) -- (p6);
+        \draw (p7) -- (p8);
+
+        \foreach \x in {1.1, 2.375, 3.5} {
+            \draw[dotted] (\x, -0.5) -- (\x, 2);
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent Right now, we have 4 closest pair of points. We will combine two pairs to get just 2 closest pairs.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+
+        \draw (p1) -- (p2);
+        \draw (p3) -- (p4);
+        \draw (p5) -- (p6);
+        \draw (p7) -- (p8);
+
+        \fill[red, opacity=0.2] (1.1-0.82, -0.5) rectangle (1.1+0.82, 2);
+        \fill[red, opacity=0.2] (3.5-0.56, -0.5) rectangle (3.5+0.56, 2);
+
+        \foreach \x in {1.1, 2.375, 3.5} {
+            \draw[dotted] (\x, -0.5) -- (\x, 2);
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent In the left case, the points $p_2$ and $p_3$ lie in the strip. Clearly, the distance between $p_2$ and $p_3$ is smaller than the minimum distance, so we make that the shortest distance in the left subsection. In the right subsection, the points $p_6$ and $p_7$ lie in the strip, but the distance between them is longer than the minimum distance of the closest pairs. Hence, the minimum distance is the one between $p_5$ and $p_6$.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+
+        \draw (p2) -- (p3);
+        \draw (p5) -- (p6);
+
+        \fill[red, opacity=0.2] (2.375-0.36, -0.5) rectangle (2.375+0.36, 2);
+        
+        \draw[dotted] (2.375, -0.5) -- (2.375, 2);
+    \end{tikzpicture}
+\end{figure}
+\noindent We shall now combine the two subsections to find the closest pair in the entire section. In this case, no points lies on the strip, so it is not possible to improve the distance. 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_1$}] (p1) at (0.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_2$}] (p2) at (1.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_3$}] (p3) at (1.2, 1.2) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_4$}] (p4) at (2.0, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_5$}] (p5) at (2.75, 1.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_6$}] (p6) at (3.0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt, label={-90:$p_7$}] (p7) at (4.0, 0.0) {};
+        \node[circle, draw, fill, inner sep=1pt, label={90:$p_8$}] (p8) at (5.0, 1.0) {};
+
+        \draw (p2) -- (p3);
+    \end{tikzpicture}
+\end{figure}
+\noindent Hence, the closest pair of points is $(p_2, p_3)$.
+
+The following is the algorithm to find the distance between the closest pair of points:
+\begin{lstlisting}[language=pseudocode]
+double closestPair(List<Point> points) {    
+    // sort wrt x-coordinate
+    points.sort((Point p1, Point p2) => p1.x.compareTo(p2.x));
+    // run the closest pair recursive algorithm
+    return sqrt(closestPairRec(points, 0, points.length-1));
+}
+
+double closestPairRec(List<Point> points, int i, int k) {
+  // equal index => base index; maximum possible index
+  if (i == k) {
+    return double.infinity;
+  }
+
+  int j = (i + k) / 2;
+  double mid = (points[j].x + points[j+1].x) / 2;
+
+  int d1 = closestPairRec(points, i, j);
+  int d2 = closestPairRec(points, j+1, k);
+  int d = min(d1, d2);
+  
+  // sort w.r.t y-coordinate (assuming each sublist is sorted)
+  merge(points, i, j, k);
+  
+  // filter points lying on the strip
+  List<Point> filteredPoints = filterPoints(
+    points, i, k, sqrt(d), mid
+  );
+  
+  // Improving best distance using the filtered points
+  for (int a=0; a < filteredPoints.length; a++) {
+    for (int b=a+1; b<=min(a+5, filteredPoints.length-1); b++) {
+      int newD = Point.d2(filteredPoints[a], filteredPoints[b]);
+      if (newD < d) {
+        d = newD;
+      }
+    }
+  }
+
+  return d;
+}
+\end{lstlisting}
+\noindent The function \texttt{Point.d2} computes the squared distance between two points. The \texttt{merge} function merges the \texttt{points} array between indices \texttt{i} and \texttt{k}, assuming it sorted between \texttt{i} and \texttt{j}, and \texttt{j} and \texttt{k}.
+
+Next, we consider the complexity of the closest pairs algorithm. Let $f(n)$ be the complexity of the algorithm when we are given $n$ pairs. The initial sorting takes $O(n \log n)$. Then, we have a divide-and-conquer segment, within which we make 2 recursive calls to sublists, and extra $O(n)$ time to process the shortest closest pair and merge the coordinates with respect to the $y$-value. Hence,
+\[f(n) \leq O(n \log n) + 2f(n/2) + O(n), \qquad f(1) = O(1).\]
+Without loss of generality, assume that $n = 2^k$.\sidefootnote{We want to study the asymptotic behaviour of $n$, so if $n$ is not of the form $2^k$, we can just increase the value of $n$ to the next power of 2.} Then, we can simplify the expression as follows:
+\begin{align*}
+    f(n) &\leq O(n \log n) + 2f(n/2) + O(n) \\
+    &\leq O(n \log n) + 2 \cdot 2f(n/4) + O(n) + O(n) \\
+    &= O(n \log n) + 2^2 f(n/4) + 2O(n) \\
+    & \dots \\
+    &\leq O(n \log n) + 2^kf(1) + kO(n) \\
+    &= O(n \log n) + O(n) + O(n \log n) = O(n \log n).
+\end{align*}
+
+\newpage
+
+\section{Vertical and horizontal lines}
+In this section, we will be considering how to find all the points of intersections between a set of horizontal and vertical lines.
+
+We are given a set of $h$ horizontal and $v$ vertical line segments in the plane, and we need to compute all the intersections. The naive method takes $O(hv)$ time. It is not possible to improve this complexity all the time- we might have that all the horizontal and the vertical line segments intersect, i.e. $hv$ intersections. We will aim to find an algorithm that has better time complexity when there are only few intersections- it has complexity $O(n \log n + p)$, where $n = h + v$ and $p$ is the number of intersections. This is the line-sweep algorithm.
+
+In the algorithm, we represent a horizontal line (segment) by both of its endpoints, and represent a vertical line by one of its endpoints. So, we have a list of $2h + v$ points. Next, we sort this list with respect to the $x$-coordinate- this takes $O(n \log n)$ time. We will assume that no two horizontal lines, or vertical lines, intersect each other- we can just combine them into a single horizontal/vertical line so that they don't intersect. We will then scan left to right, keeping track of horizontal lines whose start we have encountered but not the end, and then check whether it intersects with a vertical line when we encounter one.
+
+We will now illustrate the algorithm. Assume we are given the following lines. We will illustrate the algorithm using a sweep line. At the start, it is left to all the points.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw (p11) -- (p12);
+
+        \draw[dashed, red] (-0.5, -0.5) -- (-0.5, 3);
+    \end{tikzpicture}
+\end{figure}
+\noindent We move the sweep rightwards. First, we encounter two horizontal points.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw[red] (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw[red] (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw (p11) -- (p12);
+
+        \draw[dashed, red] (0, -0.5) -- (0, 3);
+    \end{tikzpicture}
+\end{figure}
+\noindent So, we add 2 horizontal lines to the candidate set. We move the sweep again.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw[red] (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw[red] (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw (p11) -- (p12);
+
+        \draw[dashed, red] (0.5, -0.5) -- (p1);
+        \draw[dashed, red] (p2) -- (0.5, 3);
+        
+        \foreach \c in {(0.5, 1.5)} {
+            \node[circle, red, draw, fill, inner sep=1pt] at \c {};
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent We now encounter a vertical line. So, we check whether any horizontal lines in the candidate set have $y$-coordinate between the start and the end of the vertical line. In this case, only the top horizontal line satisfies this. We move the sweep forward.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw[red] (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw[red] (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw (p11) -- (p12);
+
+        \draw[dashed, red] (1, -0.5) -- (p3);
+        \draw[dashed, red] (p4) -- (1, 3);
+        
+        \foreach \c in {(0.5, 1.5), (1, 1.5), (1, 0.5)} {
+            \node[circle, red, draw, fill, inner sep=1pt] at \c {};
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent We now encounter the end of a horizontal line and a vertical line. We count the intersection between the ending horizontal line and the vertical line. So, the ending horizontal point should come after the vertical line in the sorted list so that the intersection counts. After the intersection, we remove the horizontal line from the candidate set. We move the sweep further.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw[red] (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw[red] (p11) -- (p12);
+        
+        \draw[dashed, red] (1.5, -0.5) -- (p5);
+        \draw[dashed, red] (p6) -- (1.5, 3);
+        
+        
+        \foreach \c in {(0.5, 1.5), (1, 1.5), (1, 0.5)} {
+            \node[circle, red, draw, fill, inner sep=1pt] at \c {};
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent We now encounter another vertical line. We count the intersection between the starting horizontal line and the vertical line. So, the starting horizontal point should come before the vertical line in the sorted list. This means that the horizontal line gets added to the candidate set so that it can be considered when we search which lines the vertical line intersects. We move the sweep to the right.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw[red] (p11) -- (p12);
+
+        \draw[dashed, red] (2.5, -0.5) -- (2.5, 3);
+        
+        \foreach \c in {(0.5, 1.5), (1, 1.5), (1, 0.5)} {
+            \node[circle, red, draw, fill, inner sep=1pt] at \c {};
+        }
+    \end{tikzpicture}
+\end{figure}
+\noindent We now encounter the end of the horizontal line. So, we remove it from the candidate set, and we have come to the end of the sorted list. Hence, we have found all the intersections. These are the following:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[circle, draw, fill, inner sep=1pt] (p1) at (0.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p2) at (0.5, 2) {};
+        \draw (p1) -- (p2);
+
+        \node[circle, draw, fill, inner sep=1pt] (p3) at (1, 0) {};
+        \node[circle, draw, fill, inner sep=1pt] (p4) at (1, 2.5) {};
+        \draw (p3) -- (p4);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p5) at (1.5, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p6) at (1.5, 2.5) {};
+        \draw (p5) -- (p6);
+
+        \node[circle, draw, fill, inner sep=1pt] (p7) at (0, 1.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p8) at (1, 1.5) {};
+        \draw (p7) -- (p8);
+
+        \node[circle, draw, fill, inner sep=1pt] (p9) at (0, 0.5) {};
+        \node[circle, draw, fill, inner sep=1pt] (p10) at (1.5, 0.5) {};
+        \draw (p9) -- (p10);
+        
+        \node[circle, draw, fill, inner sep=1pt] (p11) at (1.5, 1) {};
+        \node[circle, draw, fill, inner sep=1pt] (p12) at (2.5, 1) {};
+        \draw (p11) -- (p12);
+
+        
+        \foreach \c in {(0.5, 1.5), (1, 1.5), (1, 0.5)} {
+            \node[circle, red, draw, fill, inner sep=1pt] at \c {};
+        }
+    \end{tikzpicture}
+\end{figure}
+
+When we encounter a vertical line in the list, we want our algorithm to efficiently compute the intersections it has with the candidate set- it is possible for all the horizontal line segments to be candidates for this intersection, so we cannot use a linear scan to find all the intersections and for the algorithm to be better than the naive algorithm. 
+
+Instead, we need to use a binary search algorithm. To do so, the list of candidates points must be represented in a way that supports range searching- we need to find all those lines in the candidate set such that their $y$-coordinate is between the start and the end of the vertical line. Moreover, we need to be able to efficiently add and remove entries from the data structure. So, a good choice for this would be AVL trees.
+
+AVL trees are binary search trees. They are balanced, which means that for any subtree, the length of the left and the right child differs by at most 1. So, the height of the tree is $O(\log h)$, where $h$ is the number of nodes in the tree. Hence, search, insertion and deletion are $O(\log h)$. Moreover, a range search is $O(k + \log h)$, where $k$ is the number of elements that lie in the range.
+
+We illustrate range searching with an example. Assume we are given the following AVL Tree.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+        ]
+        \node[ellipse, draw, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw, inner sep=5pt] {10}
+                }
+                child {
+                    node[ellipse, draw, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw, inner sep=5pt] {17}
+                    }
+                }
+            }
+            child {
+                node[ellipse, draw, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw, inner sep=5pt] {23}
+                    }
+                }
+                child {
+                    node[ellipse, draw, inner sep=5pt] {27}
+                }
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent We will range search between 15 and 21. We start the search from the root.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, inner sep=5pt] {17}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                edge from parent[blue]
+            }
+            child {
+                node[ellipse, draw=black, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[blue]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The root value is $20$, so it lies within $15$ and $21$. So, we go down both the subtrees, starting with the left one.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, inner sep=5pt] {17}
+                        edge from parent[black]
+                    }
+                    edge from parent[blue]
+                }
+                edge from parent[black]
+            }
+            child {
+                node[ellipse, draw=black, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[blue]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The value $15$ is between $15$ and $21$. However, we only go down the right subtree since any number below $15$ won't be in the range.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, inner sep=5pt] {17}
+                        edge from parent[blue]
+                    }
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            }
+            child {
+                node[ellipse, draw=black, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[blue]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The next value is $18$, which lies between $15$ and $21$. We go down both the left subtree, but there is no right subtree, so we cannot go down right.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {17}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            }
+            child {
+                node[ellipse, draw=black, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[blue]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The value $17$ is between $15$ and $21$, but we cannot go down anymore. So, we now go back to the right subtree of the root.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {17}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            }
+            child {
+                node[ellipse, draw=black, fill=yellow!30, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[blue]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The value $24$ does not lie between $15$ and $21$. So, we just go down the left subtree.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance = 3.5cm}, 
+        level 2/.style={sibling distance = 2cm}, 
+    ]
+        \node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {20}
+            child {
+                node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {15}
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {10}
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {18}
+                    child[left] {
+                        node[ellipse, draw=black, fill=blue!30, inner sep=5pt] {17}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            }
+            child {
+                node[ellipse, draw=black, fill=yellow!30, inner sep=5pt] {24}
+                child {
+                    node[ellipse, draw=black, fill=yellow!30, inner sep=5pt] {22}
+                    child[right] {
+                        node[ellipse, draw=black, inner sep=5pt] {23}
+                        edge from parent[black]
+                    }
+                    edge from parent[black]
+                }
+                child {
+                    node[ellipse, draw=black, inner sep=5pt] {27}
+                    edge from parent[black]
+                }
+                edge from parent[black]
+            };
+    \end{tikzpicture}
+\end{figure}
+\noindent The value $22$ does not lie between $15$ and $21$, so we would go down the left subtree. However, there is no left subtree, so the range search is complete.
+
+Below is the algorithm for range search in an AVL tree.
+\begin{lstlisting}[language=pseudocode]
+int rangeSearch(BNode<double> node, double start, double end) {
+  if (node == null) {
+    return 0;
+  }
+
+  int match = node.value >= start && node.value <= end ? 1 : 0;
+  
+  if (node.value <= start) {
+    return match + rangeSearch(node.right, start, end);
+  } else if (node.value >= end) {
+    return match + rangeSearch(node.left, start, end);
+  }
+
+  return 1 + rangeSearch(node.left, start, end) 
+           + rangeSearch(node.right, start, end);
+}
+\end{lstlisting}
+
+We will now justify the complexity of the algorithm. We need to find the $k$ values that lie in the range. Moreover, at each level, we need to visit at most 1 node out of the range to the left and the right, so it will take $O(\log h)$ complexity when traversing the values that don't lie in the range. IN total, the algorithm has $O(k + \log h)$ complexity.
+
+Next, the algorithm to compute the number of intersections is the following:
+\begin{lstlisting}[language=pseudocode]
+int intersection(List<HLine> horizontals, List<VLine> verticals) {
+  // get all the points, and sort them.
+  List<Point> points = horizontals.map(hor => hor.start) + 
+                       verticals.map(ver => ver.start) +
+                       horizontals.map(hor => hor.end);
+  // need to take care of horizontal and vertical points with the same x-coordinate
+  points.sort((Point p1, Point p2) => p1.x.compareTo(p2.x));
+
+  // candidates will be sorted wrt y-coordinate
+  BTree<HLine> candidates = BTree(
+    (HLine l1, HLine l2) => l1.start.y.compareTo(l2.start.y)
+  );
+  int count = 0;
+  
+  for (int i=0; i<points.length; i++) {
+    if (points[i].isHorizontal && candidates.has(points[i])) {
+      candidates.remove(points[i]);
+    } else if (points[i].isHorizontal) {
+        candidates.add(points[i]);
+    } else {
+        count += candidates.rangeSearch(
+          points[i].start.y, 
+          points[i].end.y
+        );
+    }
+  }
+  return count;
+}
+\end{lstlisting}
+We can easily modify this to return the list of intersection points.
+
+We will now consider the complexity of the line sweep. The list of points has length $2h + v = O(n)$, so when we sort them by the $x$-coordinate, it has $O(n \log n)$ complexity. At each horizontal point, we have to insert or delete it, which has complexity $O(h \log h)$. Moreover, at each vertical point, we need to do a range search, which has complexity $O(p + v \log h)$, where $p$ is the total number of intersections. Hence, the total complexity of the algorithm is $O(p + n \log n)$.
 
 
 \end{document}
