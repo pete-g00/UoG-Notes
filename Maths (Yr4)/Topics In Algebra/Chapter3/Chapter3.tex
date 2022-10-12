@@ -1,0 +1,185 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Topics In Algebra}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{2}
+
+\begin{document}
+    \chapter{Finite abelian Groups}
+    \section{Basis of an abelian group}
+    \begin{definition}
+        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ be a finite subset of $G$. We say that $S$ \emph{generates} $G$ if for all $x \in G$, there exist $\alpha_i \in \mathbb{Z}$, for $1 \leq i \leq n$ such that
+        \[x = \alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n.\]
+        If so, we denote $G = \langle x_1, x_2, \dots, x_n \rangle$.
+    \end{definition}
+
+    \begin{definition}
+        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ be a finite subset of $G$. We say that $S$ is a \emph{basis} for $G$ if:
+        \begin{itemize}
+            \item $S$ generates $G$, and
+            \item for all $m_i \in \mathbb{Z}$, $1 \leq i \leq n$,
+            \[m_1 x_1 + m_2 x_2 + \dots + m_n x_n = 0 \implies m_i x_i = 0 \ \forall \ 1 \leq i \leq n.\]
+        \end{itemize}
+    \end{definition}
+
+    \begin{proposition}
+        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ be a basis for $G$. Then,
+        \[G \cong \langle x_1 \rangle \times \langle x_2 \rangle \times \dots \times \langle x_n \rangle.\]
+    \end{proposition}
+    \begin{proof}
+        Define the map $\varphi \colon \langle x_1 \rangle \times \langle x_2 \rangle \times \dots \times \langle x_n \rangle \to G$ by
+        \[\varphi(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) = \alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n.\]
+        Since $G$ is abelian, the map is a homomorphism. Moreover, since $S$ generates $G$, the map is surjective. Now, let $(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) \in \ker \varphi$. In that case,
+        \[\alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n = 0.\]
+        Since $S$ is a basic, we find that $\alpha_i x_i = 0$ for all $1 \leq i \leq n$. Hence, 
+        \[(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) = (0, 0, \dots, 0).\]
+        This implies that the kernel is trivial. So, 
+        \[G \cong \langle x_1 \rangle \times \langle x_2 \rangle \times \dots \times \langle x_n \rangle.\]
+    \end{proof}
+
+    \begin{lemma}
+        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ generate $G$, and let $c_1, c_2, \dots, c_n \in \mathbb{Z}_{\geq 0}$ with $\gcd(c_1, c_2, \dots, c_n) = 1$. Denote $y_1 = c_1x_1 + c_2x_2 + \dots + c_nx_n$. Then, there exists $y_2, y_3, \dots, y_n \in G$ such that $G = \langle y_1, y_2, \dots, y_n \rangle$.
+    \end{lemma}
+    \begin{proof}
+        We will show this by induction on $s = c_1 + c_2 + \dots + c_n \geq 1$. If $s = 1$, then we know that $c_i = 1$ for some $1 \leq i \leq n$, and $c_j = 0$ for all $1 \leq j \leq n$ with $i \neq j$. Hence, $y_1 = x_i$. In that case, we can set $y_2, y_3, \dots, y_n$ to be the remaining elements in $x_1, x_2, \dots, x_n$, and the statement holds. 
+        
+        Now, assume that $s \geq 2$. Since $\gcd(c_1, c_2, \dots, c_n) = 1$, we find that there exist two elements $x_i, x_j \neq 0$. Without loss of generality, assume that $x_1 \geq x_2 > 0$. We claim that $M = \langle x_1, x_1 + x_2, x_3, \dots, x_k \rangle$. For $x \in M$, we know that there exist $\alpha_i \in \mathbb{Z}$ for $1 \leq i \leq n$ such that
+        \[x = \alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n.\]
+        Hence,
+        \[x = (\alpha_1 - \alpha_2) x_1 + \alpha_2 (x_1 + x_2) + \dots + \alpha_n x_n \in \langle x_1, x_1 + x_2, \dots, x_n \rangle.\]
+        Hence, $M = \langle x_1, x_1 + x_2, \dots, x_n \rangle$. Moreover, since $\gcd(c_1, c_2, \dots, c_n) = 1$, we can find $a_1, a_2, \dots, a_n$ such that
+        \[c_1 a_1 + c_2 a_2 + \dots + c_n a_n = 1.\]
+        Hence,
+        \[(c_1 - c_2) a_1 + c_2 (a_1 + a_2) + \dots + c_n a_n = 1.\]
+        This implies that $\gcd(c_1 - c_2, c_2, \dots, c_n) = 1$. Further, we have $(c_1 - c_2) + c_2 + \dots + c_n < s$. So, the induction hypothesis tells us that there exist $y_2, \dots, y_n \in G$ with
+        \[y_1 = (c_1 - c_2) x_1 + c_2 (x_1 + x_2) + \dots + c_n x_n = c_1 x_1 + c_2 x_2 + \dots + c_n x_n\]
+        such that $M = \langle y_1, y_2, \dots, y_n \rangle$. So, the result follows from induction.
+    \end{proof}
+
+    \begin{definition}
+        Let $G$ be an abelian group. We say that $G$ is \emph{finitely generated} if there exist $x_1, x_2, \dots, x_n$ such that $G = \langle x_1, x_2, \dots, x_n \rangle$.
+    \end{definition}
+
+    \begin{theorem}
+        Let $G$ be a finitely generated abelian group. Then, $G$ has a basis. In particular, $G$ is a direct product of cyclic groups.
+    \end{theorem}
+    \begin{proof}
+        We will use induction on the length of the shortest generating set. If the length is 1, then $G = \langle x_1 \rangle$, for some $x_1 \in G$. Hence, $\{x_1\}$ is a basis for $G$. Now, assume that the shortest generating set of $G$ has length is $n$. So, fix $G = \langle x_1, x_2, \dots, x_n \rangle$, where for any other $y_1, y_2, \dots, y_n \in G \setminus \{0\}$ with $G = \langle y_1, y_2, \dots, y_n \rangle$, we have $1 < |x_1| \leq |y_1|$. Assume, for a contradiction, that $G \not\cong \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$. Define the map $\varphi: G \to \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$ by $\varphi(\alpha_1 x_1, w) = \alpha_1 x_1 + w$. This is a surjective homomorphism, so it cannot be injective. So, let $(\alpha_1 x_1, w) \in \ker \varphi$ be a non-trivial element. We must have $\alpha_1 \neq 0$. Denote
+        \[w = \alpha_2 x_2 + \dots + \alpha_n x_n.\]
+        By changing $x_i$ to $-x_i$ if needed, we can assume that $\alpha_i \geq 0$ for all $1 \leq i \leq n$. We can further assume that $\alpha_1 < |x_1|$. We have $d = \gcd(\alpha_1, \alpha_2, \dots, \alpha_n) > 0$. So, define $c_i = \alpha_i/d$. Then, the lemma tells us that there exist $y_2, \dots, y_n$ with
+        \[y_1 = c_1 x_1 + \dots + c_n x_n\]
+        such that $M = \langle y_1, \dots, y_n \rangle$. We know that 
+        \[dy_1 = \alpha_1 x_1 + \dots + \alpha_n x_n = 0.\]
+        In that case, 
+        \[|y_1| \leq d \leq \alpha_1 < |x_1|.\]
+        This is a contradiction. Hence, 
+        \[G \cong \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle.\]
+        By induction, we know that $\langle x_2, \dots, x_n \rangle$ has a basis $\{z_1, z_2, \dots, z_k\}$. Then, $G$ has basis $\{x_1, z_1, z_2, \dots, z_k\}$.
+    \end{proof}
+
+    \begin{corollary}
+        Let $G$ be a finite abelian group such that for any $k \geq 0$, $G$ has at most $k$ elements of order dividing $k$. Then, $G$ is cyclic.
+    \end{corollary}
+    \begin{proof}
+        By the previous result, we find that 
+        \[G \cong \langle x_1 \rangle \times \langle x_2 \rangle \times \dots \times \langle x_n \rangle.\]
+        Since $G$ is finite, $x_i$ has finite order for all $1 \leq i \leq n$. Now, let $1 \leq i, j \leq n$ with $i \neq j$. If $k \mid |x_i|$ and $k \mid |x_j|$, then both $\langle x_i \rangle$ and $\langle x_j \rangle$ have distinct subgroups of order $k$. Hence, $G$ has more than $k$ elements of order dividing $k$. So, we must find that $\gcd(|x_i|, |x_j|) = 1$. In that case,
+        \[|(x_1, x_2, \dots, x_n)| = \lvert x_1 \rvert \lvert x_2 \rvert \dots \lvert x_n \rvert.\]
+        Hence, $G$ is cyclic.
+    \end{proof}
+
+    \newpage
+
+    \section{The Fundamental Theorem}
+    \begin{theorem}[Fundamental Theorem of Finitely Generated Abelian Groups]
+        Let $G$ be a non-trivial finitely generated abelian group. Then, 
+        \[G \cong \mathbb{Z}^r \times \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k},\]
+        where $n_i \geq 2$ for $1 \leq i \leq k$ and $r \geq 0$. Moreover,
+        \begin{itemize}
+            \item $r$ (called the \emph{rank}) is uniquely determined by $G$;
+            \item the values $n_i$ can be chosen such that $n_1 \mid n_2 \mid \dots \mid n_k$- these are uniquely determined by $G$ (called the \emph{invariant factors});
+            \item the values $n_i$ can be chosen to be prime powers- these are uniquely determined by $G$, up to permutation (called the \emph{elementary divisors}).
+        \end{itemize}
+    \end{theorem}
+    \begin{proof}
+        By the previous result, we know that
+        \[G \cong \mathbb{Z}^r \times \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k}.\]
+        We first show that the rank is uniquely determined by $G$. So, let $p$ be a prime such that $p \nmid n_i$ for $1 \leq i \leq k$. Then, 
+        \[G/pG \cong (\mathbb{Z}_p)^r\]
+        since $\mathbb{Z}_{n_i} = p\mathbb{Z}_{n_i}$ for all $1 \leq i \leq k$- we have $(p, n_i) = 1$. The space $(\mathbb{Z}_p)^r$ is a vector space over the field $\mathbb{F}_p$. We have
+        \[r = \dim_{\mathbb{F}_p} (G/pG)^r,\]
+        so it is uniquely determined by $G$.
+        
+        We will now show the existence of elementary divisors. We know that for $n_1, n_2 \in \mathbb{Z}_{\geq 1}$, if $(n_1, n_2) = 1$, then
+        \[\mathbb{Z}_{n_1} \times \mathbb{Z}_{n_2} \cong \mathbb{Z}_{n_1 n_2}.\]
+        So, if the prime factorisation of $n_i$ is $n_i = p_1^{\alpha_1} p_2^{\alpha_2} \dots p_k^{\alpha_k}$, then
+        \[\mathbb{Z}_{n_i} \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \mathbb{Z}_{p_2^{\alpha_2}} \times \dots \times \mathbb{Z}_{p_k^{\alpha_k}}.\]
+        Hence, we have the existence of elementary divisors. Using this, we can construct invariant factors- assume that the following is the elementary divisor representation of $G$:
+        \[G \cong \mathbb{Z}_{p_1^{\alpha_{1, 1}}} \times \dots \times \mathbb{Z}_{p_1^{\alpha_{1, n}}} \times \mathbb{Z}_{p_2^{\alpha_{2, 1}}} \dots \times \mathbb{Z}_{p_k^{\alpha_{k, n}}},\]
+        where $p_i^{\alpha_{i, n}} \geq 1$ and $0 \leq \alpha_{i, j-1} \leq \alpha_{i, j}$ for $1 \leq i \leq k$ and $1 \leq j \leq n$. Then,
+        \[G \cong \mathbb{Z}_{x_1} \times \mathbb{Z}_{x_2} \times \dots \times \mathbb{Z}_{x_n}\]
+        is the invariant factor representation for $G$, where
+        \[x_j = \prod_{i=1}^k p_i^{\alpha_{i, j}}.\]
+        By construction, we have $x_1 \mid x_2 \mid \dots \mid x_n$. Hence, we can find an invariant factor representation for $G$.
+
+        We next show the uniqueness of elementary divisors and invariant factors. Since there is an algorithm that produces invariant factors from elementary divisors, it suffices to show that the elementary divisors are unique. Assume that 
+        \[G \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \mathbb{Z}_{p_2^{\alpha_2}} \times \dots \times \mathbb{Z}_{p_k^{\alpha_k}}.\]
+        Let $p$ be a prime. By Cauchy's Theorem, $p \in \{p_1, p_2, \dots, p_k\}$ if and only if $G$ has an element of order $p$.
+        % TODO: Complete the proof
+    \end{proof}
+
+    \begin{example}
+        Let
+        \[G = \mathbb{Z}_{16} \times \mathbb{Z}_{18} \times \mathbb{Z}_{27} \times \mathbb{Z}_{52}.\]
+        This is a finitely generated abelian group, but is not in elementary divisor form or invariant factor form. To convert it to elementary divisor, we break each factor into its prime factors.
+        \[G \cong \mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_{16} \times \mathbb{Z}_9 \times \mathbb{Z}_{27} \times \mathbb{Z}_{13}.\]
+        Now, to convert it to invariant factors, we write all the factors as follows:
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{ccc}
+                2 & 4 & 16 \\
+                1 & 9 & 27 \\
+                1 & 1 & 13 
+            \end{tabular}
+        \end{table}
+        \noindent We combine each column to construct the invariant factors. In this case, we have
+        \[G \cong \mathbb{Z}_2 \times \mathbb{Z}_{36} \times \mathbb{Z}_{5616}.\]
+    \end{example}
+\end{document}
