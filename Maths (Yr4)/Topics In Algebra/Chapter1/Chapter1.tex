@@ -225,7 +225,7 @@
     \end{proof}
 
     \begin{definition}
-        Let $G$ be a group. We say that $G$ is \emph{solvable} if there exists a normal series
+        Let $G$ be a group. We say that $G$ is \emph{solvable} if there exists a subnormal series
         \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
         such that for all $i \in \{1, 2, \dots, n-1\}$, $H_i/H_{i+1}$ is abelian.
     \end{definition}
@@ -245,7 +245,7 @@
             \item if $G = Z_1(G)$, then
             \[\{e\} \leq Z(G) \leq G.\]
             \item otherwise, we define
-            \[\{e\} \leq Z(G) \leq Z_1(G) \leq \dots \leq G,\]
+            \[\{e\} \leq Z(G) \leq Z_1(G) \leq Z_2(G) \leq \dots \leq G,\]
             where $Z_2(G)$ can be constructed the same way we constructed $Z_1(G)$- the series terminates when $Z_n(G) = G$, if possible.
         \end{itemize}
         If $G$ has a finite ascending central series, then $G$ is \emph{nilpotent}.
@@ -259,4 +259,31 @@
         Finally, let $G = D_4$. Then, $Z(G) = \langle r^2 \rangle$, meaning that $G/Z(G)$ is abelian. Hence, it has the following ascending central series:
         \[\{e\} \leq \{e, r^2\} \leq D_4.\]
     \end{example}
+
+    \begin{definition}
+        Let $G$ be a group. We defined the \emph{derived series} for $G$ to be the following subnormal series:
+        \[G = G_0 \geq G_1 \geq G_2 \geq \dots\]
+        where $G_i = [G_{i-1}, G_{i-1}]$. We say that the derived series terminates if there exists an $n \in \mathbb{Z}_{\geq 1}$ such that $G_n$ is trivial.
+    \end{definition}
+
+    \begin{example}
+        Let $G = S_3$. Then, $[G, G] = A_3$\sidefootnote{It is the smallest normal subgroup such that the quotient is abelian.}. Since $A_3$ is abelian, we have $[A_3, A_3] = 1$. Hence, the derived series for $G$ is:
+        \[S_3 \geq A_3 \geq \{()\}.\]
+        Next, if $G = A_5$, then $[G, G] = A_5$. So, the derived series is:
+        \[A_5 \geq A_5 \geq \dots\]
+        So, the series does not terminate.
+    \end{example}
+
+    \begin{proposition}
+        Let $G$ be a group. Then, $G$ is solvable if and only if the derived series terminates.
+    \end{proposition}
+    \begin{proof}
+        Assume that the derived series terminates. Hence,
+        \[G = G_0 \geq G_1 \geq \dots \geq G_n = \{e\}\]
+        is a subnormal series for $G$. We know that $G_i = [G_{i-1}, G_{i-1}]$, hence $G_i/G_{i+1}$ is abelian. So, $G$ is solvable.
+
+        Now, assume that $G$ is solvable. In that case, there exists a subnormal series
+        \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_n = G\]
+        such that $H_{i+1}/H_i$ is abelian. In particular, we have $[H_{i+1}, H_{i+1}] \leq H_i$. Since $[H_{i+1}, H_{i+1}] \vartriangleleft H_{i+1}$, we find that $[H_{i+1}, H_{i+1}] \vartriangleleft H_i$. So, we can refine the subnormal series to its derived series. This implies that the derived series terminates.
+    \end{proof}
 \end{document}

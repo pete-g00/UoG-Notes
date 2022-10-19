@@ -1,0 +1,94 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Topics In Algebra}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{3}
+
+\begin{document}
+    \chapter{Free Groups}
+    \section{Introduction to Free Groups}
+    \begin{definition}
+        Let $S$ be a set, and fix a set $S^-$ disjoint to $S$ with a bijection $f\colon S \to S^-$, and a singleton set $\{e\}$. Denote $X_S = S \cup S^- \cup \{1\}$. We define the \emph{inverse map} $-1\colon X_S \to X_S$ by
+        \[s^{-1} = \begin{cases}
+            e & s = e \\
+            \varphi(s) & s \in S \\
+            \varphi^{-1}(s) & s \in S^-.
+        \end{cases}\]
+    \end{definition}
+
+    \begin{definition}
+        Let $S$ be a set. A \emph{word} on $S$ is an infinite tuple $(s_1, s_2, \dots)$ with values in $X_S$ such that there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $s_n = e$. A \emph{reduced word} on $S$ is a word $(s_1, s_2, \dots)$ such that:
+        \begin{itemize}
+            \item if $s_N = e$ for some $N \geq 1$, then $s_n = e$ for all $n \geq N$;
+            \item if $s_i \neq e$, then $s_{i+1} \neq s_1^{-1}$ for all $n \in \mathbb{Z}_{\geq 1}$.
+        \end{itemize}
+        We denote a reduced word $(s_1, s_2, \dots, s_n, e, e, \dots)$ by $s_1s_2 \dots s_n$, where $s_n \neq e$. The set of all reduced words is denoted by $F(S)$. We have the inclusion map $\iota \colon S \to F(S)$ given by $\iota(s) = (s, e, e, \dots)$. We also denote $e = (e, e, e, \dots)$, and call it \emph{identity element}.
+    \end{definition}
+
+    \begin{definition}
+        Let $S$ be a set. Define the operation $\cdot \colon F(S) \to F(S)$ by 
+        \[s_1 \dots s_n \cdot t_1 \dots t_k = \]
+        The operation is called \emph{concatenation}.
+    \end{definition}
+
+    \begin{proposition}
+        Let $S$ be a set. Then, $F(S)$ is a group under concatenation.
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{proposition}
+        Let $S$ be a set, $G$ be a group, and $f: S \to G$ be a map. Then, there exists a unique homomorphism $\varphi: F(S) \to G$ such that $\varphi(s) = f(s)$ for all $s \in S$.
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{corollary}
+        Let $S$ be a set. Then, $F(S)$ is unique.
+    \end{corollary}
+    \begin{proof}
+        
+    \end{proof}
+    \newpage
+
+    \section{Group Relation and Presentation}
+\end{document}

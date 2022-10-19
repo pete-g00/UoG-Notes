@@ -1,0 +1,290 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Measure \& Probability}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+\chapterstyle{thatcher}
+
+\begin{document}
+    \chapter{Rings and Algebras}
+    \setcounter{section}{-1}
+    \section{Recap of Set Theory}
+    \begin{definition}
+        Let $X$ be a set. Then, the \emph{powerset of $X$} is the set of subsets of $X$, and is denoted by $\mathcal{P}(X)$.
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set, and let $(X_i)_{i \in I}$ be a collection of subsets of $X$, for some indexing set $I$. We define the \emph{union} to be:
+        \[\bigcup_{i \in I} X_i = \{x \in X \mid \exists i \in I \text{ s.t. } x \in X_i\}.\]
+        Similarly, we define the \emph{intersection} to be:
+        \[\bigcap_{n=1}^\infty A_n = \{x \in X \mid \forall i \in I \text{ s.t. } x \in X_i\}.\]
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set, and let $A \subseteq X$. We define the \emph{complement of $A$} to be:
+        \[A^c = X \setminus A = \{x \in X \mid x \not\in A\}.\]
+    \end{definition}
+
+    \begin{proposition}[De Morgan Law]
+        Let $A$ and $B$ be sets. Then,
+        \[(A \cup B)^c = A^c \cap B^c, \qquad (A \cap B)^c = A^c \cup B^c.\]
+        In general, for a collection of sets $(A_i)_{i \in I}$, where $I$ is an index set,
+        \[\left(\bigcup_{i \in I} A_i\right)^c = \bigcap_{i \in I} A_i^c, \qquad \left(\bigcap_{i \in I} A_i\right)^c = \bigcup_{i \in I} A_i^c.\]
+    \end{proposition}
+
+    \begin{definition}
+        Let $S$ be a set. We say that \emph{$S$ is countable} if either $S$ is empty, or there exists a surjective function $f: \mathbb{Z}_{\geq 1} \to S$. If so, we can denote
+        \[S = \{f(1), f(2), f(3), \dots\}.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $S$ be a countable set, and let $T \subseteq S$. Then, $T$ is countable.
+    \end{proposition}
+
+    \begin{proposition}
+        Let $S$ be a countably infinite set. Then, there exists a bijective function $f: \mathbb{Z}_{\geq 1} \to S$.
+    \end{proposition}
+
+    \begin{proposition}
+        Let $S$ and $T$ be countable sets. Then, their union $S \cup T$ is countable.
+    \end{proposition}
+
+    \begin{proposition}
+        Let $(S_n)_{n=1}^\infty$ be a sequence of countable sets. Then, their union 
+        \[\bigcup_{n=1}^\infty S_n\]
+        is countable.
+    \end{proposition}
+
+    \begin{proposition}
+        Let $S$ and $T$ be countable sets. Then, the product $S \times T$ are countable.
+    \end{proposition}
+
+    \begin{corollary}
+        The set $\mathbb{Q}$ is countable.
+    \end{corollary}
+
+    \begin{proposition}
+        The set $[0, 1]$ is not countable.
+    \end{proposition}
+
+    \begin{definition}
+        Let $A$ and $B$ be sets. We say that $|A| = |B|$ if there exists a bijection $f: A \to B$. If there exists an injective function $f: A \to B$, then we say that $|A| \leq |B|$.
+    \end{definition}
+    \newpage
+
+    \section{Rings and Algebras}
+    \begin{definition}
+        Let $X$ be a set. We say that $\mathcal{R} \subseteq \mathcal{P}(X)$ is a \emph{ring} (of subsets of $X$) if:
+        \begin{itemize}
+            \item $\varnothing \in \mathcal{R}$;
+            \item for all $A, B \in \mathcal{R}$, the difference $A \setminus B \in \mathcal{R}$;
+            \item for all $A, B \in \mathcal{R}$, the union $A \cup B \in \mathcal{R}$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set, and let $\mathcal{R} \subseteq \mathcal{P}(X)$ be a ring. Then, for $A, B \in \mathcal{R}$, the intersection $A \cap B \in \mathcal{R}$.
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{definition}
+        Let $X$ be a set. We say that $\mathcal{A} \subseteq \mathcal{P}(X)$ is an \emph{algebra} (of subsets of $X$) if $\mathcal{A}$ is a ring with $X \in \mathcal{A}$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set, and $\mathcal{A} \subseteq \mathcal{P}(X)$. Then, $\mathcal{A}$ is an algebra if and only if:
+        \begin{itemize}
+            \item $\varnothing \in \mathcal{A}$;
+            \item for all $A \in \mathcal{A}$, the complement $A^c \in \mathcal{A}$; and
+            \item for all $A, B \in \mathcal{A}$, the union $A \cup B \in \mathcal{A}$.
+        \end{itemize}
+    \end{proposition}
+
+    \begin{definition}
+        Let $X$ be a set. We say that $\mathcal{A} \subseteq \mathcal{P}(X)$ is a \emph{$\sigma$-algebra} (of subsets of $X$) if $\mathcal{A}$ is an algebra such that for all $(A_n)_{n=1}^\infty$ in $\mathcal{A}$, the union
+        \[\bigcup_{n=1}^\infty A_n \in \mathcal{A}.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set, and $\mathcal{A} \subseteq \mathcal{P}(X)$. Then, $\mathcal{A}$ is a $\sigma$-algebra if and only if:
+        \begin{itemize}
+            \item $\varnothing \in \mathcal{A}$;
+            \item for all $A \in \mathcal{A}$, the complement $A^c \in \mathcal{A}$; and
+            \item for a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{A}$, the union
+            \[\bigcup_{n=1}^\infty A_n \in \mathcal{A}.\]
+        \end{itemize}
+    \end{proposition}
+
+    \begin{proposition}
+        Let $X$ be a set, and $\mathcal{A} \subseteq \mathcal{P}(X)$ be a $\sigma$-algebra. Then, for a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{A}$, the intersection
+        \[\bigcap_{n=1}^\infty A_n \in \mathcal{A}.\]
+    \end{proposition}
+    \newpage
+
+    \section{Borel Sets}
+    \begin{definition}
+        We define $\mathcal{E}(\mathbb{R})$ to be the set containing all finite unions of intervals in $\mathbb{R}$.
+    \end{definition}
+
+    \begin{proposition}
+        The set $\mathcal{E}(\mathbb{R})$ is a ring.
+    \end{proposition}
+
+    \begin{definition}
+        Let $n \in \mathbb{Z}_{\geq 1}$. We define $\mathcal{E}(\mathbb{R}^n)$ to be the set containing all finite union of intervals in $\mathbb{R}^n$, where an interval in $\mathbb{R}^n$ is a product of $n$ intervals in $\mathbb{R}$.
+    \end{definition}
+
+    \begin{proposition}
+        The set $\mathcal{E}(\mathbb{R}^n)$ is a ring.
+    \end{proposition}
+
+    \begin{definition}
+        We define the \emph{Borel set} $\mathcal{B}(\mathbb{R})$ to be the $\sigma$-algebra generated by $\mathcal{E}(\mathbb{R})$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $A \in \mathcal{B}(\mathbb{R})$ and $x \in \mathbb{R}$. Then,
+        \[x + A = \{x + a \mid a \in A\} \in \mathcal{B}(\mathbb{R}).\]
+    \end{proposition}
+    \newpage
+
+    \section{Measure on Algebra}
+    \begin{definition}
+        Let $X$ be a set and $\mathcal{R}$ be a ring of subsets of $X$. We say that $\mu \colon \mathcal{R} \to [0, \infty]$ is an \emph{additive set function} if:
+        \begin{itemize}
+            \item $\mu(\varnothing) = 0$ and
+            \item for all $A, B \in \mathcal{R}$ with $A \cap B = \varnothing$, $\mu(A \cup B) = \mu(A) + \mu(B)$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set and $\mathcal{R}$ be a ring of subsets of $X$. We say that $\mu \colon \mathcal{R} \to [0, \infty]$ is a \emph{measure} if:
+        \begin{itemize}
+            \item $\mu(\varnothing) = 0$ and
+            \item for a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{R}$ of pairwise disjoint sets, if $\bigcup_{n=1}^\infty A_n \in \mathcal{R}$, then
+            \[\mu \left(\bigcup_{n=1}^\infty A_n\right) = \sum_{n=1}^\infty \mu(A_n).\]
+        \end{itemize}
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty]$ be an additive set function. We say that $\mu$ is \emph{$\sigma$-finite} if there exists a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{R}$ such that $\mu(A_n) < \infty$ for all $n \in \mathbb{Z}_{\geq 1}$, and
+        \[X = \bigcup_{n=1}^\infty A_n.\]
+        If we have $X \in \mathcal{R}$ with $\mu(X) < \infty$, then $\mu$ is \emph{finite}.
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty)$ be a measure. Then, the following are equivalent:
+        \begin{itemize}
+            \item $\mu$ is countably additive (i.e. a measure);
+            \item If $(A_n)_{n=1}^\infty$ is a sequence in $\mathcal{R}$ with $A_n \subseteq A_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
+            \[A = \bigcup_{n=1}^\infty A_n \in \mathcal{R},\]
+            then
+            \[\mu(A) = \lim_{n \to \infty} \mu(A_n).\]
+            \item If $(A_n)_{n=1}^\infty$ is a sequence in $\mathcal{R}$ with $A_n \supseteq A_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
+            \[\bigcap_{n=1}^\infty A_n = A,\]
+            then
+            \[\mu(A) = \lim_{n \to \infty} \mu(A_n).\]
+            \item If $(A_n)_{n=1}^\infty$ is a sequence in $\mathcal{R}$ with $A_n \supseteq A_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
+            \[\bigcap_{n=1}^\infty A_n = \varnothing,\]
+            then
+            \[\lim_{n \to \infty} \mu(A_n) = 0 = \mu(\varnothing).\]
+        \end{itemize}
+    \end{proposition}
+
+    \begin{definition}
+        We define the \emph{Lebesgue measure} $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ as the extension of $\lambda(I) = \sup I - \inf I$, for some interval $I$.
+    \end{definition}
+
+    \begin{lemma}
+        Let $A \in \mathcal{E}(\mathbb{R})$ with $\lambda(A) > 0$. Then, for all $\delta \in (0, 1)$, there exists a closed $A' \in \mathcal{E}(\mathbb{R})$ such that $A' \subseteq A$ and $\lambda(A') = (1 - \delta ) \lambda(A)$. In particular, for every $\varepsilon > 0$, there exists a closed $A' \in \mathcal{E}(\mathbb{R})$ such that $\lambda(A \setminus A') < \varepsilon$.
+    \end{lemma}
+
+    \begin{theorem}
+        The Lebesgue measure $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ is a measure.
+    \end{theorem}
+    \newpage
+
+    \section{Outer Measure}
+    \begin{definition}
+        Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then, we define $\mu^* \colon \mathcal{P}(X) \to [0, \infty]$ by:
+        \[\mu^*(A) = \inf \left\{\sum_{j=1}^\infty \mu(E_j) \mid (E_j)_{j=1}^\infty \text{ in } \mathcal{R}, A \subseteq \bigcup_{j=1}^\infty E_j\right\}\]
+        and $\mu^*(A) = \infty$ if there is no $(E_j)_{j=1}^\infty$ in $\mathcal{R}$ containing $A$.
+    \end{definition}
+
+    \begin{lemma}
+        Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then,
+        \begin{itemize}
+            \item $\mu^*(\varnothing) = 0$;
+            \item for $A \subseteq B \subseteq X$, $\mu^*(A) \leq \mu^*(B)$;
+            \item for all $A \in \mathcal{R}$, $\mu^*(A) = \mu(A)$;
+            \item for a sequence $(A_n)_{n=1}^\infty$ in $X$,
+            \[\mu \left(\bigcup_{n=1}^\infty A_n\right) = \sum_{n=1}^\infty \mu(A_n).\]
+        \end{itemize}
+    \end{lemma}
+
+    \begin{definition}[Caratheodory's Condition]
+        Let $X$ be a set, $\mathcal{R}$ a ring, a measure $\mu \colon \mathcal{R} \to [0, \infty]$, and $A \subseteq X$. We say that $A$ is \emph{$\mu^*$-measurable} if for all $S \subseteq X$,
+        \[\mu^*(S) = \mu^*(S \cap A) + \mu^*(S \cap A^c).\]
+        We denote by $\mathcal{M}_{\mu^*}$ the set of $\mu^*$-measurable sets of $X$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then,
+        \begin{itemize}
+            \item $\mathcal{R} \subseteq \mathcal{M}_{\mu^*}$;
+            \item $\mathcal{M}_{\mu^*}$ is an algebra;
+            \item $\mathcal{M}_{\mu^*}$ is a $\sigma$-algebra;
+            \item $\mu^*$ is a measure on $\mathcal{M}_{\mu^*}$.
+        \end{itemize}
+    \end{proposition}
+
+    \begin{proposition}[Caratheodory Extension Theorem]
+        Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then, $\mu$ extends to a measure on the $\sigma$-algebra $\mathcal{A}(\mathcal{R})$ generated by $\mathcal{R}$.
+    \end{proposition}
+
+    \begin{proposition}
+        The Lebesgue measure $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ extends to a unique measure $\lambda^* \colon \mathcal{B}(\mathbb{R}) \to [0, \infty]$.
+    \end{proposition}
+
+    \begin{proposition}
+        Let $x \in \mathbb{R}$ and $A \in \mathcal{B}(\mathbb{R})$. Then, 
+        \[\lambda(x + A) = \lambda(A).\]
+    \end{proposition}
+    
+\end{document}
