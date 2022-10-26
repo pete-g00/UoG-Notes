@@ -46,12 +46,12 @@
     \section{Cauchy Theorem}
 
     \begin{lemma}
-        Let $G$ be a $p$-group and $X$ be a set that $G$ acts on. Then, $|X^G| \equiv |X| \bmod{p}$.
+        Let $G$ be a $p$-group and $X$ be a finite set that $G$ acts on. Then, $|X^G| \equiv |X| \bmod{p}$.
     \end{lemma}
     \begin{proof}
-        Let $|G| = p^n$. Since orbits form an equivalence class, we know that
-        \[|X| = |X^G| + \sum_{i=1}^n p^i |X_i|,\]
-        where $X_i$ is the number of orbits of length $p^i$. Hence, $|X^G| \equiv |X| \bmod{p}$.
+        Let $|G| = p^n$. Since orbits form an equivalence relation, we know that
+        \[|X| = |X^G| + \sum_{i=1}^n p^i n_i,\]
+        where $n_i$ is the number of orbits of length $p^i$. Hence, $|X^G| \equiv |X| \bmod{p}$.
     \end{proof}
 
     \begin{proposition}
@@ -67,7 +67,7 @@
         Let $G$ be a group of order $p^2$, for some prime $p$. Then, $G$ is abelian.
     \end{corollary}
     \begin{proof}
-        We know that $Z(G)$ is a subgroup of $G$. So, $|Z(G)| \in \{1, p, p^2\}$. By the proposition above, we find that $|Z(G)| \neq 1$. Now, assume that $|Z(G)| = p$. Then, let $g \in G$ with $g \not\in Z(G)$. Consider the centraliser subgroup $C_G(g)$. We have $Z(G) \leq C_G(g)$, and $g \in C_G(g)$. Hence $|C_G(g)| \geq p + 1$. By Lagrange's Theorem, we must have that $C_G(g) = G$. That is, for all $x \in G$, $gx = xg$, meaning that $g \in Z(G)$. This is a contradiction. So, we must have $|Z(G)| = p^2$. That is, $G$ is abelian.
+        We know that $Z(G)$ is a subgroup of $G$. So, $|Z(G)| \in \{1, p, p^2\}$. By the proposition above, we find that $|Z(G)| \neq 1$. Now, assume that $|Z(G)| = p$. Then, let $g \in G$ with $g \not\in Z(G)$. Consider the centraliser subgroup $C_G(g)$. We have $Z(G) \leq C_G(g)$, and $g \in C_G(g)$. Hence $|C_G(g)| \geq p + 1$. By Lagrange's Theorem, we must have that $C_G(g) = G$. That is, for all $x \in G$, $gx = xg$, meaning that $g \in Z(G)$. This is a contradiction. So, we must have $|Z(G)| = p^2$. Hence, $G$ is abelian.
     \end{proof}
 
     \begin{theorem}[Cauchy Theorem]

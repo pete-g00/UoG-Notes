@@ -57,7 +57,7 @@
 }
 
 \lstdefinelanguage{pseudocode}{ 
-    keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, range},
+    keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, max},
     ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
     sensitive=true,
     comment=[l]{//},
@@ -921,4 +921,906 @@
         \end{tikzpicture}
     \end{figure}
     \noindent Here, the common branch node with the greatest depth is \texttt{ab}. However, it is not a common substring of \texttt{a} and \texttt{bab}.
+    \newpage
+
+    \section{Matching Regular Expressions}
+    In this section, we will look at searching a regular expressions in some text. There are many algorithms to search a string in some text, including brute-force, KMP, BM and suffix trees. We will generalise the brute-force algorithm to match regular expressions.
+
+    A \emph{regular expression} represents a set of strings on some alphabet $\Sigma$, called a \emph{language}. For example, if the regular expression is \texttt{a|b}, then the language is: $\{\texttt{a}, \texttt{b}\}$. We say that a string \emph{matches} a regular expression if it is an element of the language.
+
+    We will now define regular expressions over some alphabet $\Sigma$.
+    \begin{itemize}
+        \item the empty string $\epsilon$ is a regular expression, with language $\{\epsilon\}$;
+        \item for a character $\sigma \in \Sigma$, $\sigma$ is a regular expression, with language $\{\sigma\}$;
+        \item for regular expressions \texttt{R} and \texttt{S} with languages $L_{\texttt{R}}$ and $L_{\texttt{S}}$, their concatenation \texttt{RS} is a regular expression with language
+        \[L_{\texttt{RS}} = \{XY \mid X \in L_{\texttt{R}}, Y \in L_{\texttt{S}}\}.\]
+        \item for regular expressions \texttt{R} and \texttt{S} with languages $L_{\texttt{R}}$ and $L_{\texttt{S}}$, their choice \texttt{R|S} is a regular expression, with language $L_{\texttt{R|S}} = L_{\texttt{R}} \cup L_{\texttt{S}}$.
+        \item for a regular expression \texttt{R} with language $L_{\texttt{R}}$, its closure $\texttt{R}^*$ is a regular expression, with language 
+        \[L_{\texttt{R}^*} = \{\epsilon\} \cup \{XY \mid X \in L_{\texttt{R}}, Y \in L_{\texttt{R}^*}\}.\]
+        \item for a regular expression \texttt{R} with language $L_{\texttt{R}}$, its bracketed form \texttt{(R)} is a regular expression with language $L_{\texttt{(R)}} = L_{\texttt{R}}$.
+    \end{itemize}
+
+    When we unpack a regular expression, the following is the order of precedence:
+    \begin{itemize}
+        \item the bracket has the highest precedence (and can be used to override any of the precedence rule below);
+        \item the closure operation;
+        \item the concatenation operation; and
+        \item the choice operation.
+    \end{itemize}
+    Hence, the regular expression $\texttt{ab}^*\texttt{d}$ has the language
+    \[\{\texttt{ad}, \texttt{abd}, \texttt{abbd}, \dots\},\]
+    while $(\texttt{ab})^* \texttt{d}$ has the language
+    \[\{\texttt{d}, \texttt{abd}, \texttt{ababd}, \dots\}.\]
+    There are further regular expressions such as complement \texttt{-x} which refers to all characters in $\Sigma$ except \texttt{x}, and \texttt{?} which corresponds to any character in $\Sigma$.
+
+    We will now look at the problem- given a text \texttt{T} and a regular expression \texttt{R}, check whether \texttt{T} matches \texttt{R}. The algorithm we will look at considers each position in text, and checks whether we have had a match with a substring ending at that position. To do so, we need to keep track of all prefixes of \texttt{R} that are matched at any given position. We will use an non-deterministic finite automaton (NDFA) to do so.
+
+    An NDFA is a directed graph with vertices, called states. There are always two states- a starting state and a halting state. The edges are called transitions, and have an label- a character in the alphabet $\Sigma$, including the empty character $\epsilon$. We say that an NDFA \emph{accepts} a string if there exists a path from the starting state to the halting state that matches all the characters in the string using the edge labels.
+
+    Every regular expression can be represented by an NDFA, and vice versa (though neither representation is unique). For instance, an NDFA for the regular expression $\texttt{a}^*|\texttt{b}^*$ is:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3, 0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:4}] (q4) at (3, -0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:5}] (q5) at (4.5, 0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (6, 0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (6, -0.75) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:9}] (q9) at (7.5, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (7.5, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {$\epsilon$} (q3);
+            \draw[-stealth] (q2) edge node[below] {$\epsilon$} (q4);
+            \draw[-stealth] (q3) edge[bend left] node[above] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend left] node[below] {$\epsilon$} (q3);
+            \draw[-stealth] (q4) edge[bend left] node[above] {\texttt{b}} (q6);
+            \draw[-stealth] (q6) edge[bend left] node[below] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q7);
+            \draw[-stealth] (q6) edge node[below] {$\epsilon$} (q8);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+            \draw[-stealth] (q1) edge[bend left=40] node[above] {$\epsilon$} (q7);
+            \draw[-stealth] (q2) edge[bend right=40] node[below] {$\epsilon$} (q8);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent The starting state is 0, shown by an arrow coming to it. The halting state is 9, which is shown by double circle. Some of the strings it accepts are given below:
+    \begin{itemize}
+        \item the empty string, which can be matched by following the path: $0- 1 - 7 - 9$;
+        \item the string \texttt{b}, which can be matched by following the path: $0 - 2 - 4 - 6 - 8 - 9$; and
+        \item the string \texttt{aa}, which can be matched by following the path: $0 - 1 - 3 - 5 - 3 - 5 - 7 - 9$.
+    \end{itemize}
+
+    We will now systematically construct an NDFA given a regular expression. This representation will have different properties that will allow us to conclude the efficiency of the algorithm. The following is the way we construct an NDFA:
+    \begin{itemize}
+        \item The following is the NDFA for the empty string:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (1.5, 0) {};
+                \node[circle, draw, inner sep=1.75pt] at (1.5, 0) {};
+                
+                \draw[-stealth] (-0.5, 0) -- (q0);
+                \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \end{tikzpicture}
+        \end{figure}
+
+        \item The following is the NDFA for a character $\sigma$:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (1.5, 0) {};
+                \node[circle, draw, inner sep=1.75pt] at (1.5, 0) {};
+
+                \draw[-stealth] (-0.5, 0) -- (q0);
+                \draw[-stealth] (q0) edge node[above] {$\sigma$} (q1);
+            \end{tikzpicture}
+        \end{figure}
+
+        \item Let the NDFAs for $\texttt{R}_1$ and $\texttt{R}_2$ be the following:
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}
+                    \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                    \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                    \node at (2.5, 0) {$\texttt{R}_1$};
+                    \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                    \node[circle, draw, inner sep=1.75pt] at (5, 0) {};
+
+                    \draw[-stealth] (-0.5, 0) -- (q0);
+                    \draw[-stealth] (q0) -- (1.5, 0.25);
+                    \draw[-stealth] (q0) -- (1.5, -0.25);
+                    \draw[-stealth] (3.5, 0.25) -- (q1);
+                    \draw[-stealth] (3.5, -0.25) -- (q1);
+                \end{tikzpicture}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}
+                    \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                    \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                    \node at (2.5, 0) {$\texttt{R}_2$};
+                    \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                    \node[circle, draw, inner sep=1.75pt] at (5, 0) {};
+
+                    \draw[-stealth] (-0.5, 0) -- (q0);
+                    \draw[-stealth] (q0) -- (1.5, 0.25);
+                    \draw[-stealth] (q0) -- (1.5, -0.25);
+                    \draw[-stealth] (3.5, 0.25) -- (q1);
+                    \draw[-stealth] (3.5, -0.25) -- (q1);
+                \end{tikzpicture}
+            \end{subfigure}
+        \end{figure}
+        Then, the NDFA for $\texttt{R}_1\texttt{R}_2$ is the following:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                \node at (2.5, 0) {$\texttt{R}_1$};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                \draw (6.5, -0.25) rectangle (8.5, 0.25);
+                \node at (7.5, 0) {$\texttt{R}_2$};
+                \node[circle, draw, inner sep=2.5pt] (q2) at (10, 0) {};
+                \node[circle, draw, inner sep=1.75pt] at (10, 0) {};
+
+                \draw[-stealth] (-0.5, 0) -- (q0);
+                \draw[-stealth] (q0) -- (1.5, 0.25);
+                \draw[-stealth] (q0) -- (1.5, -0.25);
+                \draw[-stealth] (3.5, 0.25) -- (q1);
+                \draw[-stealth] (3.5, -0.25) -- (q1);
+                \draw[-stealth] (q1) -- (6.5, 0.25);
+                \draw[-stealth] (q1) -- (6.5, -0.25);
+                \draw[-stealth] (8.5, 0.25) -- (q2);
+                \draw[-stealth] (8.5, -0.25) -- (q2);
+            \end{tikzpicture}
+        \end{figure}
+        
+        \item Let the NDFAs for $\texttt{R}_1$ and $\texttt{R}_2$ be the following:
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}
+                    \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                    \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                    \node at (2.5, 0) {$\texttt{R}_1$};
+                    \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                    \node[circle, draw, inner sep=1.75pt] at (5, 0) {};
+
+                    \draw[-stealth] (-0.5, 0) -- (q0);
+                    \draw[-stealth] (q0) -- (1.5, 0.25);
+                    \draw[-stealth] (q0) -- (1.5, -0.25);
+                    \draw[-stealth] (3.5, 0.25) -- (q1);
+                    \draw[-stealth] (3.5, -0.25) -- (q1);
+                \end{tikzpicture}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \begin{tikzpicture}
+                    \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                    \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                    \node at (2.5, 0) {$\texttt{R}_2$};
+                    \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                    \node[circle, draw, inner sep=1.75pt] at (5, 0) {};
+
+                    \draw[-stealth] (-0.5, 0) -- (q0);
+                    \draw[-stealth] (q0) -- (1.5, 0.25);
+                    \draw[-stealth] (q0) -- (1.5, -0.25);
+                    \draw[-stealth] (3.5, 0.25) -- (q1);
+                    \draw[-stealth] (3.5, -0.25) -- (q1);
+                \end{tikzpicture}
+            \end{subfigure}
+        \end{figure}
+        Then, the NDFA for $\texttt{R}_1|\texttt{R}_2$ is the following:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                \node at (2.5, 0) {$\texttt{R}_2$};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                
+                \node[circle, draw, inner sep=2.5pt] (q2) at (0, 1) {};
+                \draw (1.5, 0.75) rectangle (3.5, 1.25);
+                \node at (2.5, 1) {$\texttt{R}_1$};
+                \node[circle, draw, inner sep=2.5pt] (q3) at (5, 1) {};
+
+                \node[circle, draw, inner sep=2.5pt] (q4) at (-1.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt] (q5) at (6.5, 0.5) {};
+                \node[circle, draw, inner sep=1.75pt] at (6.5, 0.5) {};
+
+                \draw[-stealth] (-2, 0.5) -- (q4);
+                \draw[-stealth] (q0) -- (1.5, 0.25);
+                \draw[-stealth] (q0) -- (1.5, -0.25);
+                \draw[-stealth] (3.5, 0.25) -- (q1);
+                \draw[-stealth] (3.5, -0.25) -- (q1);
+                
+                \draw[-stealth] (q2) -- (1.5, 0.75);
+                \draw[-stealth] (q2) -- (1.5, 1.25);
+                \draw[-stealth] (3.5, 0.75) -- (q3);
+                \draw[-stealth] (3.5, 1.25) -- (q3);
+
+                \draw[-stealth] (q4) edge node[below] {$\epsilon$} (q0);
+                \draw[-stealth] (q4) edge node[above] {$\epsilon$} (q2);
+                \draw[-stealth] (q1) edge node[below] {$\epsilon$} (q5);
+                \draw[-stealth] (q3) edge node[above] {$\epsilon$} (q5);
+            \end{tikzpicture}
+        \end{figure}
+
+        \item The NDFA for \texttt{(R)} is the same as \texttt{R}.
+        
+        \item Let the NDFA for \texttt{R} be the following:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                \node at (2.5, 0) {\texttt{R}};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+                \node[circle, draw, inner sep=1.75pt] at (5, 0) {};
+
+                \draw[-stealth] (-0.5, 0) -- (q0);
+                \draw[-stealth] (q0) -- (1.5, 0.25);
+                \draw[-stealth] (q0) -- (1.5, -0.25);
+                \draw[-stealth] (3.5, 0.25) -- (q1);
+                \draw[-stealth] (3.5, -0.25) -- (q1);
+            \end{tikzpicture}
+        \end{figure}
+        Then, the NDFA for $\texttt{R}^*$ is the following:
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt] (q0) at (0, 0) {};
+                \draw (1.5, -0.25) rectangle (3.5, 0.25);
+                \node at (2.5, 0) {\texttt{R}};
+                \node[circle, draw, inner sep=2.5pt] (q1) at (5, 0) {};
+
+                \node[circle, draw, inner sep=2.5pt] (q2) at (-1.5, 0) {};
+                \node[circle, draw, inner sep=2.5pt] (q3) at (6.5, 0) {};
+                \node[circle, draw, inner sep=1.75pt] at (6.5, 0) {};
+
+                \draw[-stealth] (-2, 0) -- (q2);
+                \draw[-stealth] (q0) -- (1.5, 0.25);
+                \draw[-stealth] (q0) -- (1.5, -0.25);
+                \draw[-stealth] (3.5, 0.25) -- (q1);
+                \draw[-stealth] (3.5, -0.25) -- (q1);
+
+                \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q0);
+                \draw[-stealth] (q1) edge node[above] {$\epsilon$} (q3);
+                \draw[-stealth] (q1) edge[bend left=50] node[below] {$\epsilon$} (q0);
+                \draw[-stealth] (q2) edge[bend left=30] node[above] {$\epsilon$} (q3);
+            \end{tikzpicture}
+        \end{figure}
+    \end{itemize}
+
+    We illustrate the construction of the NDFA for the regular expression $\texttt{(a}^*\texttt{b}|\texttt{ac)d}$. The NDFA for \texttt{a}, \texttt{b}, \texttt{ac} and \texttt{d} are the following:
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt, label={90:0}] (q1) at (1.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt, label={90:1}] (q3) at (3.5, 0.5) {};
+                \node[circle, draw, inner sep=1.75pt] at (3.5, 0.5) {};
+    
+                \draw[-stealth] (1, 0.5) -- (q1);
+                \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+                \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt, label={90:0}] (q1) at (1.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt, label={90:1}] (q3) at (3.5, 0.5) {};
+                \node[circle, draw, inner sep=1.75pt] at (3.5, 0.5) {};
+    
+                \draw[-stealth] (1, 0.5) -- (q1);
+                \draw[-stealth] (q1) edge node[above] {\texttt{b}} (q3);
+                \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.3\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt, label={90:0}] (q1) at (1.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt, label={90:1}] (q3) at (3.5, 0.5) {};
+                \node[circle, draw, inner sep=1.75pt] at (3.5, 0.5) {};
+    
+                \draw[-stealth] (1, 0.5) -- (q1);
+                \draw[-stealth] (q1) edge node[above] {\texttt{d}} (q3);
+                \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.5\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, inner sep=2.5pt, label={90:0}] (q1) at (1.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt, label={90:1}] (q3) at (3.5, 0.5) {};
+                \node[circle, draw, inner sep=2.5pt, label={90:2}] (q7) at (5.5, 0.5) {};
+                \node[circle, draw, inner sep=1.75pt] at (5.5, 0.5) {};
+
+                \draw[-stealth] (1, 0.5) -- (q1);
+                \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+                \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+                \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+    \end{figure}
+    \noindent So, the regular expression for $\texttt{a}^*$ is the following:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={-90:0}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:1}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:3}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=1.75pt] at (4.5, -0.5) {};
+
+            \draw[-stealth] (1, -0.5) -- (q2);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Now, the regular expression for $\texttt{a}^*\texttt{b}$ is the following:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={-90:0}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:1}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:3}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:4}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=1.75pt] at (5.5, -0.5) {};
+
+            \draw[-stealth] (1, -0.5) -- (q2);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Next, we construct the regular expression for $\texttt{a}^*\texttt{b|ac}$.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (7, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Finally, the regular expression for $\texttt{(a}^*\texttt{b|ac)d}$ is the following:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+
+    By constructing the NDFA this way, we can guarantee that there is precisely one start and halt state. This follows from construction. Also, if the regular expression has length $r$, then there are at most $2r$ states in the NDFA. This is because every node has either one edge labelled by a character, or at most 2 edges labelled by $\epsilon$.
+
+    We will now consider how the algorithm works. Given a string $s$ and a regular expression \texttt{R}, we first construct the NDFA for \texttt{R} as given by the algorithm above. Then, we run the algorithm by iterating through the characters in $s$. We keep track of all the states we can get to by following $s$ up to some index (and taking any $\epsilon$-edges). If we can reach the halting state at any point, we will have matched the string. We will make use of two functions to do so- \texttt{extendByEpsilon}, which extends the list of states by the ones that can be reached from this list and any $\epsilon$-edges; and \texttt{extendByChar}, which tells us what the next state would be if we took the character given from any of the states present.
+
+    We illustrate the algorithm with an example- we have the regular expression $\texttt{(a}^*\texttt{b|ac)d}$ and the text \texttt{cabaabd}. The NDFA for the regular expression is the following:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent At the start, we can only be at the starting state. Nonetheless, there are some $\epsilon$-edges that we can take from the start. This is shown below.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent The reached states are given in black and the extended states are given in red. If the state 10 was already red (or black), the algorithm would be over. However, this is not the case, so we enter the main loop of the algorithm. We start by matching \texttt{c}. There is no \texttt{c} that can be reached from any of the black or the red states. At any point, we can restart and reach the initial state. Hence, the state of the NDFA remains as given above. Next, we move to \texttt{a}. In this case, we can match an \texttt{a} and get further in the NDFA:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We still haven't reached the final state, so the algorithm has not yet terminated. We next match \texttt{b} and continue along.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We have now reached state 9, but still not 10. So, we continue on with the algorithm. The next letter is \texttt{a}. We cannot go further from 8 or 9 using \texttt{a}, so we are back at the previous state:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We are at the same state when we match the \texttt{a} again. When we match \texttt{b}, we get the same state as above. Finally, we match \texttt{d}. In that case, the state of the NDFA is the following:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:0}] (q0) at (0, 0) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={90:1}] (q1) at (1.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:2}] (q2) at (1.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:3}] (q3) at (3.5, 0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:4}] (q4) at (2.5, -0.5) {};
+            \node[circle, draw, fill, inner sep=2.5pt, label={-90:5}] (q5) at (3.5, -0.5) {};
+            \node[circle, draw, fill=red, inner sep=2.5pt, label={-90:6}] (q6) at (4.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={90:7}] (q7) at (5.5, 0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:8}] (q8) at (5.5, -0.5) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:9}] (q9) at (7, 0) {};
+            \node[circle, draw, inner sep=2.5pt, label={-90:10}] (q10) at (8.25, 0) {};
+            \node[circle, draw, fill, inner sep=1.75pt] at (8.25, 0) {};
+
+            \draw[-stealth] (-0.5, 0) -- (q0);
+            \draw[-stealth] (q0) edge node[above] {$\epsilon$} (q1);
+            \draw[-stealth] (q0) edge node[below] {$\epsilon$} (q2);
+            \draw[-stealth] (q1) edge node[above] {\texttt{a}} (q3);
+            \draw[-stealth] (q3) edge node[above] {\texttt{c}} (q7);
+            \draw[-stealth] (q7) edge node[above] {$\epsilon$} (q9);
+            \draw[-stealth] (q9) edge node[above] {\texttt{d}} (q10);
+            \draw[-stealth] (q2) edge node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q2) edge[bend right=50] node[below] {$\epsilon$} (q6);
+            \draw[-stealth] (q4) edge[bend right] node[below] {\texttt{a}} (q5);
+            \draw[-stealth] (q5) edge[bend right] node[above] {$\epsilon$} (q4);
+            \draw[-stealth] (q5) edge node[above] {$\epsilon$} (q6);
+            \draw[-stealth] (q6) edge node[below] {\texttt{b}} (q8);
+            \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We have now reached the final state, meaning that we have found a match of the regular expression in the text ending at position. In this case, it is \texttt{abd}.
+
+    The pseudocode for the algorithm is given below:
+\begin{lstlisting}[language=pseudocode]
+bool match(String string, NDFA ndfa) {
+    Set<NDFAState> y = {ndfa.startState};
+    Set<NDFAState> x = extendByEpsilon(y);
+    
+    // if the ndfa accepts the empty string, there os a match
+    if (x.contains(ndfa.haltState)) {
+        return true;
+    }
+
+    for (int i=0; i<string.length; i++) {
+        y = extendByChar(x);
+        y.add(ndfa.startState);
+
+        x = extendByEpsilon(y);
+        if (x.contains(ndfa.haltState)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+\end{lstlisting}
+
+    We will now consider the complexity of the algorithm. Let $r$ be the length of the regular expression and $t$ the length of the text. We loop at most $t$ times. Within each iteration, we use \texttt{extendByEpsilon} and \texttt{extendByChar}. The function \texttt{extendByChar} has complexity $O(n)$, where $n$ is the number of states in the NDFA- we compute \texttt{extendByChar} for each state in $O(1)$ time and combine the result. The function \texttt{extendByEpsilon} uses a depth first search approach, and has complexity $O(n+m)$, where $m$ is the number of edges. We know that an NDFA constructed as above has at most $2r$ states, and each state has at most 2 edges. Hence, the algorithm is $O(rt)$.
+    \newpage
+
+    \section{Longest Common Subsequence}
+    In this section, we will consider computing the longest common subsequence in different ways. A subsequence of a string can be constructed by removing some characters from it, while maintaining the same order. We want to compute the longest common subsequence for two strings- its length and the actual subsequence. Typically, the longest common subsequence is not unique. Longest common substring is a measure of global similarity of two strings. 
+
+    Our first approach for the computation is dynamic programming (DP). Here, we build the solution by computing smaller solutions. We will first look at iterative DP. When computing the LCS of two strings \texttt{s1} and \texttt{s2}, we have a table with the  row label the characters in \texttt{s1} and the column label the characters in \texttt{s2}, including the empty character. We fill the first row and column with 0s, and recursively define
+    \[\texttt{table}[i, j] = \begin{cases}
+        1 + \texttt{table}[i-1, j-1] & \texttt{s1}[i-1] == \texttt{s2}[j-1] \\
+        \max (\texttt{table}[i-1, j], \texttt{table}[i, j-1]) & \text{otherwise}.
+    \end{cases}\]
+    The length of the LCS is given at the bottom right position. We illustrate this with an example- the table below is the DP table where we compute the LCS of \texttt{acbacadb} and \texttt{abadcda}:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccc}
+            & $\epsilon$ & a & c & b & a & c & a & d & b \\
+            \hline 
+            $\epsilon$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            a & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+            b & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
+            a & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
+            d & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
+            c & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
+            d & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 5 & 5 \\
+            a & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & 5 
+        \end{tabular}
+    \end{table}
+    In the DP table, we have computed the LCS of different substrings of the 2 strings. For example, the LCS of any string with the empty string is 0- this is given in the first row and the first column. Moreover, the LCS of \texttt{acba} and \texttt{aba} is 3. In particular, the LCS of the two strings is 5- this is the bottom right entry.
+
+    The algorithm for this version of LCS, to compute the length, is given below:
+\begin{lstlisting}[language=pseudocode]
+int lcs(String s1, String s2) {
+    // initialise the 2D table with 0s
+    List<List<int>> table = List(s1.length+1,List(s2.length+1,0));
+
+    // use the formula to fill the table
+    for (int i=1; i<s1.length+1; i++) {
+        for (int j=1; j<s2.length+1; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                table[i][j] = 1 + table[i-1][j-1];
+            } else {
+                table[i][j] = max(table[i-1][j], table[i][j-1]);
+            }
+        }
+    }
+
+    return table[s1.length][s2.length];
+}
+\end{lstlisting}
+    We will now consider the complexity of the algorithm. It takes $O(1)$ time to fill in each entry of the table. So, the algorithm takes $O(mn)$ time and space, where $m$ and $n$ are the lengths of \texttt{s1} and \texttt{s2} respectively.
+
+    We will now look at constructing the LCS using the DP table. We do this by backtracking from the bottom right entry- what choice did we make to get to that value. Every time we go up diagonally, we know that there was a match, so this character is part of the common subsequence. We illustrate this with the LCS for \texttt{acbacadb} and \texttt{abadcda}:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccc}
+            & $\epsilon$ & {\color{blue} a} & c & {\color{blue} b} & {\color{blue} a} & {\color{blue} c} & a & {\color{blue} d} & b \\
+            \hline 
+            $\epsilon$ & {\color{red} 0} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            {\color{blue} a} & 0 & {\color{red} 1} & {\color{red} 1} & 1 & 1 & 1 & 1 & 1 & 1 \\
+            {\color{blue} b} & 0 & 1 & 1 & {\color{red} 2} & 2 & 2 & 2 & 2 & 2 \\
+            {\color{blue} a} & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 3 & 3 \\
+            d & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 4 & 4 \\
+            {\color{blue} c} & 0 & 1 & 2 & 2 & 3 & {\color{red} 4} & {\color{red} 4} & 4 & 4 \\
+            {\color{blue} d} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & {\color{red} 5} & {\color{red} 5} \\
+            a & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & {\color{red} 5} 
+        \end{tabular}
+    \end{table}
+    \noindent The values in red spell out how we got to the bottom right entry. The blue characters are the ones part of the common subsequence. In this case, it is \texttt{abacd}. This is not a unique traceback. For example, instead of going up from the bottom right position, we could have also gone to the left. This can lead to different common subsequences, but they will all have the maximum length possible.
+    
+    Instead of storing the entire table, we just need to store the previous row (and the diagonal value). This version of the algorithm is given below:
+    % TODO: Add algorithm
+    This algorithm still has $O(mn)$ time complexity, but the space complexity is $O(n)$. This approach does not allow us to construct the LCS. Nonetheless, there exists an algorithm that takes $O(mn)$ time complexity and $O(n)$ space and computes the actual LCS.
+    
+    When we construct the DP table iteratively, we compute all the entries. However, this might not be necessary. We can use a \emph{lazy} approach that computes all values that we need in order to find the bottom right entry on the table. This approach uses recursion. A naive approach to do so is the following:
+\begin{lstlisting}[language=pseudocode]
+// compute the lcs of s1[0..i] and s2[0..j]
+int lcs(String s1, String s2, int i, int j) {
+    if (i == 0 || j == 0) {
+        return 0;
+    } else if (s1[i-1] == s2[j-1]) {
+        return 1 + lcs(s1, s2, i-1, j-1);
+    } else {
+        return max(lcs(s1, s2, i-1, j), lcs(s1, s2, i, j-1));
+    }
+}
+\end{lstlisting}
+    In this case, we do not necessarily compute all the entries in the DP table. However, this algorithm is very inefficient- it is exponential. This is because many computations are being repeated. For instance, the recursion trace of the values $(i, j)$ when we compute LCS for \texttt{caa} and \texttt{ab} is shown below:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            level 1/.style={sibling distance=3.5cm},
+            level 3/.style={sibling distance=1.5cm},
+        ]
+            \node {$(3, 2)$}
+            child {
+                node {$(2, 2)$}
+                child {
+                    node {$(1, 2)$}
+                    child {
+                        node {$(0, 2)$}
+                    }
+                    child[red] {
+                        node {$(1, 1)$}
+                        child[red] {
+                            node {$(0, 1)$}
+                        }
+                        child[red] {
+                            node {$(1, 0)$}
+                        }
+                        edge from parent[black]
+                    }
+                }
+                child {
+                    node {$(2, 1)$}
+                    child {
+                        node {$(2, 0)$}
+                    }
+                    child[red] {
+                        node {$(1, 1)$}
+                        child[red] {
+                            node {$(0, 1)$}
+                        }
+                        child[red] {
+                            node {$(1, 0)$}
+                        }
+                        edge from parent[black]
+                    }
+                }
+            }
+            child {
+                node {$(3, 1)$}
+                child[right] {
+                    node {$(2, 0)$}
+                }
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Even when we are comparing such simple strings, we have 3 common nodes in the recursion trace. Nonetheless, we can see that some combinations of $(i, j)$ are never computed, e.g. $(3, 0)$. 
+
+    To improve the complexity of the recursive algorithm, we make use of \emph{memoisation}. Here, we use some space to keep track of which values we have already computed, i.e. we maintain an instance of the DP table. This version of the algorithm is given below:
+\begin{lstlisting}[language=pseudocode]
+// compute the lcs of s1[0..i] and s2[0..j] given the table of 
+// values (initially -1)
+int lcs(String s1, String s2, int i, int j, 
+    List<List<int>> table) {
+    // compute the value if needed
+    if (table[i][j] == -1) {
+        if (i == 0 || j == 0)  {
+            table[i][j] = 0;
+        } else if (s1[i-1] == s2[j-1]) {
+            table[i][j] = 1 + lcs(s1, s2, i, j, table);
+        } else {
+            table[i][j] = max(
+                lcs(s1, s2, i-1, j, table), 
+                lcs(s1, s2, i, j-1, table)
+            );
+        }
+    }
+
+    return table[i][j];
+}
+\end{lstlisting}
+    This algorithm has time and space complexity $O(mn)$ due to memoisation, and it only computes the necessary values. We can see this below, where we compute the LCS for \texttt{acbacadb} and \texttt{abadcda}:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccc}
+            & $\epsilon$ & {\color{blue} a} & c & {\color{blue} b} & {\color{blue} a} & {\color{blue} c} & a & {\color{blue} d} & b \\
+            \hline
+            $\epsilon$ & 0 & -1 & 0 & 0 & -1 & 0 & -1 & 0 & -1 \\
+            a & -1 & 1 & 1 & -1 & 1 & 1 & 1 & 1 & -1 \\
+            b & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
+            a & -1 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
+            d & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
+            c & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
+            d & 0 & 1 & 2 & 2 & 3 & 4 & -1 & 5 & 5 \\
+            a & -1 & -1 & -1 & -1 & -1 & -1 & 5 & 5 & 5
+        \end{tabular}
+    \end{table}
+    \noindent Clearly, not all the values have been computed, and we could still recover the LCS. However, we initialise the table with value \texttt{-1}- this means that we have already made use of the entire space. 
+    
+    To avoid this, we can declare the list and its size, and not initialise it with any values, and use pointers. In this case, we store the following values:
+    \begin{itemize}
+        \item the DP table, which is not initialised (and will have garbage values at the start);
+        \item the pointers table, which is also not initialised, that has the same dimension as the DP table;
+        \item a 1D list of pointers, with length equal to the product of the dimension of the DP table; and
+        \item the number of values we have computed in the table.
+    \end{itemize}
+    The pointers table stores at which call the value at table was computed. The pointer list points back to the index in the DP table/pointer (we can convert the 2D index $(i, j)$ to the 1D index $i * m + j$, where $m$ is the length of \texttt{s1}). This way, we can avoid initialising the DP table. The algorithm now computes whether a value is correct as follows:
+    \begin{itemize}
+        \item we first check the pointers table at the given index. If it is less than 0 or bigger than the number of values we have computed, then it is not a valid value, i.e. we have not yet computed the value.
+        \item otherwise, we check whether the 1D list of pointers. We know at this point that the value at this list of pointer is correct (it is one of the values that has been computed). So, if this pointer value points back to the same index in the table of pointers/values, we know that the value in the table is correct.
+    \end{itemize}
+
+    In this case, the algorithm is the following:
+\begin{lstlisting}[language=pseudocode]
+int lcs(String s1, String s2, int i, int j,
+    List<List<int>> table, List<List<int>> tablePointers, 
+    List<int> pointers1D) {
+    bool isValid = false;
+    int val = tablePointers[i][j];
+    // to be valid, val must be between 0 and len = all inserted pointers in pointers1D
+    if (val >= 0 && val < len) {
+        // check whether the 1D pointer matches as well
+        isValid = pointers1D[val] == i*s1.length+j;
+    }
+
+    if (!isValid) {
+        if (i == 0 || j == 0)  {
+            table[i][j] = 0;
+        } else if (s1[i-1] == s2[j-1]) {
+            table[i][j] = 1 + lcs(s1, s2, i, j, table);
+            len++;
+        } else {
+            table[i][j] = max(
+                lcs(s1, s2, i-1, j, table), 
+                lcs(s1, s2, i, j-1, table)
+            );
+        }
+
+        // change pointer values
+        tablePointers[i][j] = len;
+        pointers1D[len] = i*s1.length+j;
+        len++;
+    }
+
+    return table[i][j];
+}
+\end{lstlisting}
+    Although this algorithm takes more space, it avoids initialising the table of values- it is truly lazy. This technique is called \emph{virtual initialisation} (inserting values at unpredictable positions and deciding whether an entry is garbage).
+
+
 \end{document}
