@@ -6,7 +6,7 @@
 
 \usepackage{fancyhdr}
 \usepackage{float}
-
+\usepackage{graphics}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -1598,25 +1598,25 @@ bool match(String string, NDFA ndfa) {
     \section{Longest Common Subsequence}
     In this section, we will consider computing the longest common subsequence in different ways. A subsequence of a string can be constructed by removing some characters from it, while maintaining the same order. We want to compute the longest common subsequence for two strings- its length and the actual subsequence. Typically, the longest common subsequence is not unique. Longest common substring is a measure of global similarity of two strings. 
 
-    Our first approach for the computation is dynamic programming (DP). Here, we build the solution by computing smaller solutions. We will first look at iterative DP. When computing the LCS of two strings \texttt{s1} and \texttt{s2}, we have a table with the  row label the characters in \texttt{s1} and the column label the characters in \texttt{s2}, including the empty character. We fill the first row and column with 0s, and recursively define
-    \[\texttt{table}[i, j] = \begin{cases}
-        1 + \texttt{table}[i-1, j-1] & \texttt{s1}[i-1] == \texttt{s2}[j-1] \\
-        \max (\texttt{table}[i-1, j], \texttt{table}[i, j-1]) & \text{otherwise}.
+    Our first approach for the computation is dynamic programming (DP). Here, we build the solution by computing smaller solutions. We will first look at iterative DP. When computing the LCS of two strings \texttt{s1} and \texttt{s2}, we have a table \texttt{t} with the  row label the characters in \texttt{s1} and the column label the characters in \texttt{s2}, including the empty character. We fill the first row and column with 0s, and recursively define
+    \[\texttt{t}_{i, j} = \begin{cases}
+        1 + \texttt{t}_{i-1, j-1} & \texttt{s1}[i-1] = \texttt{s2}[j-1] \\
+        \max (\texttt{t}_{i-1, j}, \texttt{t}_{i, j-1}) & \text{otherwise}.
     \end{cases}\]
     The length of the LCS is given at the bottom right position. We illustrate this with an example- the table below is the DP table where we compute the LCS of \texttt{acbacadb} and \texttt{abadcda}:
     \begin{table}[H]
         \centering
         \begin{tabular}{c|ccccccccc}
-            & $\epsilon$ & a & c & b & a & c & a & d & b \\
+            & $\epsilon$ & \texttt{a} & \texttt{c} & \texttt{b} & \texttt{a} & \texttt{c} & \texttt{a} & \texttt{d} & \texttt{b} \\
             \hline 
             $\epsilon$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-            a & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
-            b & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
-            a & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
-            d & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
-            c & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
-            d & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 5 & 5 \\
-            a & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & 5 
+            \texttt{a} & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+            \texttt{b} & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
+            \texttt{a} & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
+            \texttt{d} & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
+            \texttt{c} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
+            \texttt{d} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 5 & 5 \\
+            \texttt{a} & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & 5 
         \end{tabular}
     \end{table}
     In the DP table, we have computed the LCS of different substrings of the 2 strings. For example, the LCS of any string with the empty string is 0- this is given in the first row and the first column. Moreover, the LCS of \texttt{acba} and \texttt{aba} is 3. In particular, the LCS of the two strings is 5- this is the bottom right entry.
@@ -1647,16 +1647,16 @@ int lcs(String s1, String s2) {
     \begin{table}[H]
         \centering
         \begin{tabular}{c|ccccccccc}
-            & $\epsilon$ & {\color{blue} a} & c & {\color{blue} b} & {\color{blue} a} & {\color{blue} c} & a & {\color{blue} d} & b \\
+            & $\epsilon$ & \texttt{\color{blue} a} & \texttt{c} & \texttt{\color{blue} b} & \texttt{\color{blue} a} & \texttt{\color{blue} c} & \texttt{a} & \texttt{\color{blue} d} & \texttt{b} \\
             \hline 
             $\epsilon$ & {\color{red} 0} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-            {\color{blue} a} & 0 & {\color{red} 1} & {\color{red} 1} & 1 & 1 & 1 & 1 & 1 & 1 \\
-            {\color{blue} b} & 0 & 1 & 1 & {\color{red} 2} & 2 & 2 & 2 & 2 & 2 \\
-            {\color{blue} a} & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 3 & 3 \\
-            d & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 4 & 4 \\
-            {\color{blue} c} & 0 & 1 & 2 & 2 & 3 & {\color{red} 4} & {\color{red} 4} & 4 & 4 \\
-            {\color{blue} d} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & {\color{red} 5} & {\color{red} 5} \\
-            a & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & {\color{red} 5} 
+            \texttt{\color{blue} a} & 0 & {\color{red} 1} & {\color{red} 1} & 1 & 1 & 1 & 1 & 1 & 1 \\
+            \texttt{\color{blue} b} & 0 & 1 & 1 & {\color{red} 2} & 2 & 2 & 2 & 2 & 2 \\
+            \texttt{\color{blue} a} & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 3 & 3 \\
+            \texttt{d} & 0 & 1 & 1 & 2 & {\color{red} 3} & 3 & 3 & 4 & 4 \\
+            \texttt{\color{blue} c} & 0 & 1 & 2 & 2 & 3 & {\color{red} 4} & {\color{red} 4} & 4 & 4 \\
+            \texttt{\color{blue} d} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & {\color{red} 5} & {\color{red} 5} \\
+            \texttt{a} & 0 & 1 & 2 & 2 & 3 & 4 & 5 & 5 & {\color{red} 5} 
         \end{tabular}
     \end{table}
     \noindent The values in red spell out how we got to the bottom right entry. The blue characters are the ones part of the common subsequence. In this case, it is \texttt{abacd}. This is not a unique traceback. For example, instead of going up from the bottom right position, we could have also gone to the left. This can lead to different common subsequences, but they will all have the maximum length possible.
@@ -1758,16 +1758,16 @@ int lcs(String s1, String s2, int i, int j,
     \begin{table}[H]
         \centering
         \begin{tabular}{c|ccccccccc}
-            & $\epsilon$ & {\color{blue} a} & c & {\color{blue} b} & {\color{blue} a} & {\color{blue} c} & a & {\color{blue} d} & b \\
+            & $\epsilon$ & \texttt{\color{blue} a} & \texttt{c} & \texttt{\color{blue} b} & \texttt{\color{blue} a} & \texttt{\color{blue} c} & \texttt{a} & \texttt{\color{blue} d} & \texttt{b} \\
             \hline
             $\epsilon$ & 0 & -1 & 0 & 0 & -1 & 0 & -1 & 0 & -1 \\
-            a & -1 & 1 & 1 & -1 & 1 & 1 & 1 & 1 & -1 \\
-            b & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
-            a & -1 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
-            d & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
-            c & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
-            d & 0 & 1 & 2 & 2 & 3 & 4 & -1 & 5 & 5 \\
-            a & -1 & -1 & -1 & -1 & -1 & -1 & 5 & 5 & 5
+            \texttt{\color{blue} a} & -1 & 1 & 1 & -1 & 1 & 1 & 1 & 1 & -1 \\
+            \texttt{\color{blue} b} & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 \\
+            \texttt{\color{blue} a} & -1 & 1 & 1 & 2 & 3 & 3 & 3 & 3 & 3 \\
+            \texttt{d} & 0 & 1 & 1 & 2 & 3 & 3 & 3 & 4 & 4 \\
+            \texttt{\color{blue} c} & 0 & 1 & 2 & 2 & 3 & 4 & 4 & 4 & 4 \\
+            \texttt{\color{blue} d} & 0 & 1 & 2 & 2 & 3 & 4 & -1 & 5 & 5 \\
+            \texttt{a} & -1 & -1 & -1 & -1 & -1 & -1 & 5 & 5 & 5
         \end{tabular}
     \end{table}
     \noindent Clearly, not all the values have been computed, and we could still recover the LCS. However, we initialise the table with value \texttt{-1}- this means that we have already made use of the entire space. 
@@ -1821,6 +1821,157 @@ int lcs(String s1, String s2, int i, int j,
 }
 \end{lstlisting}
     Although this algorithm takes more space, it avoids initialising the table of values- it is truly lazy. This technique is called \emph{virtual initialisation} (inserting values at unpredictable positions and deciding whether an entry is garbage).
+    \newpage
 
+    \section{Local Similarity in Strings}
+    In the section above, we saw local common subsequence between two strings- this is a measure of how globally similar two strings are. We will now consider the concept of local string similarity, which will lead us to the Smith-Waterman algorithm.
+
+    Consider the two strings \texttt{GAACTACATCATCTACTC} and \texttt{CGCATGTGACAGCTTCA}. A longest common subsequence of the two strings has length 10, given in the alignment below:
+    \begin{table}[H]
+        \centering
+        \scalebox{0.85}{
+            \begin{tabular}{cccccccccccccccccccccccccccccccccccccccc}
+                & \texttt{G} &   & \texttt{A} & \texttt{A} & \texttt{C} & \texttt{T} & \texttt{A} & \texttt{C} & \texttt{A} & \texttt{T} & \texttt{C} & \texttt{A} & \texttt{T} & \texttt{C} & \texttt{T} & \texttt{A} &   & \texttt{C} & \texttt{T} &  & \texttt{C} \\
+              \texttt{C} & \texttt{G} & \texttt{C} & \texttt{A} &   &   & \texttt{T} &   &   & \texttt{G} & \texttt{T} & \texttt{G} & \texttt{A} &   & \texttt{C} &   & \texttt{A} & \texttt{G} & \texttt{C} & \texttt{T} & \texttt{T} & \texttt{C} & \texttt{A}
+            \end{tabular}
+        }
+    \end{table}
+    \noindent The LCS is quite spread out. We can also ask whether there is a strongly similar contiguous block of characters that (almost) match within the two strings. For the two strings, the substrings \texttt{CATCTAC} and \texttt{CATGTGAC} are very similar. If we assign match a score of 1, and a mismatch (insertion, deletion or substitution) a score of $-1$, then these substrings would score 4; 2 differences and 6 matches.
+
+    We can compute the local similarity using a DP approach. The recursive definition to compute the table \texttt{t} is given as follows:
+    \[\texttt{t}_{i, j} = \begin{cases}
+        1 + \texttt{t}_{i-1, j-1} & s1[i-1] = s2[j-1] \\
+        \max(0, \max(\texttt{t}_{i-1, j-1}, \texttt{t}_{i, j-1}, \texttt{t}_{i-1, j}) - 1) & \text{otherwise}.
+    \end{cases}\]
+    In the base case, we have $\texttt{t}_{i, 0} = 0$ and $\texttt{t}_{0, j} = 0$. Since the empty string is always locally similar between the two strings, and has length 0, the local similarity is always non-negative. If there is a match, the score increases by 1. Otherwise, the score decreases by 1 from the best one corresponding to a mismatch, but stays bigger than 0. We keep track of the best score in the table- this corresponds to the end of the locally similar substrings.
+
+
+    We will illustrate the DP table with an example. Below, we compute the local similarity for \texttt{ADGGAGTAC} and \texttt{DGACTA}:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccccc}
+            & $\epsilon$ & \texttt{A} & \texttt{D} & \texttt{G} & \texttt{G} & \texttt{A} & \texttt{G} & \texttt{T} & \texttt{A} & \texttt{C} \\
+            \hline
+            $\epsilon$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{D} & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{G} & 0 & 0 & 0 & 2 & 1 & 0 & 1 & 0 & 0 & 0 \\
+            \texttt{A}& 0 & 1 & 0 & 1 & 1 & 2 & 1 & 0 & 1 & 0 \\
+            \texttt{C} & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 2 \\
+            \texttt{T} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 2 & 1 & 1 \\
+            \texttt{A} & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 1 & {\color{red} 3} & 2
+        \end{tabular}
+    \end{table}
+    \noindent In this case, the best score is 3. In this case, there is a unique occurrence of the value 3; in general, this need not be the case. If one pair of strongly similar substrings is a substring of another pair, we say that the shorter one is a \emph{contraction} of the longer one, and that the longer one is not \emph{minimal}.
+    
+    We can trace back from this value to the score 0 to find the strongly similar substrings.
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccccc}
+            & $\epsilon$ & \texttt{A} & \texttt{D} & \texttt{G} & \texttt{G} & \texttt{A} & \texttt{G} & \texttt{T} & \texttt{A} & \texttt{C} \\
+            \hline
+            $\epsilon$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{D} & 0 & 0 & 1 & {\color{red} 0} & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{G} & 0 & 0 & 0 & 2 & {\color{red} 1} & 0 & 1 & 0 & 0 & 0 \\
+            \texttt{A}& 0 & 1 & 0 & 1 & 1 & {\color{red} 2} & 1 & 0 & 1 & 0 \\
+            \texttt{C} & 0 & 0 & 0 & 0 & 0 & 1 & {\color{red} 1} & 0 & 0 & 2 \\
+            \texttt{T} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\color{red} 2} & 1 & 1 \\
+            \texttt{A} & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 1 & {\color{red} 3} & 2
+        \end{tabular}
+    \end{table}
+    \noindent Using this traceback, we can compute the alignment of the two locally similar substrings:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{cccccccc}
+            \texttt{G} & \texttt{A} & \texttt{\color{red} G} & \texttt{T} & \texttt{A} \\
+            \texttt{G} & \texttt{A} & \texttt{\color{red} C} & \texttt{T} & \texttt{A}
+        \end{tabular}
+    \end{table}
+    \noindent It has score 3 since there are 4 matching characters and 1 mismatch. The indices of the locally similar substrings are called the \emph{extents}. In this case, the extent in \texttt{s1} is 1-7, and the extent in \texttt{s2} is 1-6.
+    
+    The following is the iterative DP algorithm for the Smith-Waterman algorithm, computing the highest score.
+\begin{lstlisting}[language=pseudocode]
+int smithWaterman(String s1, String s2) {
+    int bestScore = 0;
+    List<List<int>> values = List(s1.length+1, 
+        List(s2.length+1, 0));
+
+    for (int i=1; i<s1.length+1; i++) {
+        for (int j=1; j<s2.length+1; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                values[i][j] = 1 + values[i-1][j-1];
+
+                if (values[i][j] > bestScore) {
+                    bestScore = values[i][j];
+                }
+            } else {
+                values[i][j] = max(
+                    values[i-1][j-1], values[i][j-1],
+                    values[i-1][j], 0
+                );
+            }
+        }
+    }
+
+    return bestScore;
+}
+\end{lstlisting}
+    We can extend the algorithm to also do the traceback. This allows us to compute the extent (and the alignment) of the local similarity.
+
+    We now consider the complexity of the algorithm. The time complexity of the algorithm in any DP version is $O(mn)$. The space complexity can be lowered to $O(n)$ by only storing the current/previous row (in the same array), along with the diagonal value. We can extend the algorithm to also compute all the positions where the best score occurs- this can increase the space complexity in the $O(n)$ algorithm to $O(n+r)$, where $r$ is the maximum length of the best scoring points at any point during the algorithm.
+
+    We can also get the $O(n+r)$ complexity when we compute the extent in the two strings. The 2D index of the best score represents the end of the extent; we need to traceback in order to find the start of the extent (called the \emph{origin}) in the two strings. We do this using a (space-optimised) DP algorithm, keeping the table \texttt{x} for the origin in \texttt{s1}, and \texttt{y} for the origin in \texttt{s2}. The position, in the two cases is computed by the following recurrence relations:
+\[\texttt{x}_{i, j} = \begin{cases}
+    i & \texttt{t}_{i, j} = 0 \\
+    \texttt{x}_{i-1, j-1} & s1[i-1] = s2[j-1] \\
+    \texttt{x}_{i-1, j} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i-1, j} \\
+    \texttt{x}_{i, j-1} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i, j-1} \\
+    \texttt{x}_{i-1, j-1} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i-1, j-1}, 
+    \end{cases}
+    \texttt{y}_{i, j} =  \begin{cases}
+    j & \texttt{t}_{i, j} = 0 \\
+    \texttt{y}_{i-1, j-1} & s1[i-1] = s2[j-1] \\
+    \texttt{y}_{i-1, j} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i-1, j} \\
+    \texttt{y}_{i, j-1} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i, j-1} \\
+    \texttt{y}_{i-1, j-1} & \texttt{t}_{i, j} = 1 + \texttt{t}_{i-1, j-1}.
+\end{cases}\]
+    \noindent This equation follows from how we compute the origin of the best score:
+    \begin{itemize}
+        \item if the value is 0, then we are at the origin, i.e. if $\texttt{t}_{i, j} = 0$, then $\texttt{x}_{i, j} = i$;
+        \item if the values match, then we incremented the diagonal score, meaning that the origin is the same as for the diagonal, i.e. if $s1[i-1] = s2[j-1]$, then $\texttt{x}_{i, j} = \texttt{x}_{i-1, j-1}$;
+        \item if we decreased the value in case of a mismatch, then we take the score that we took. In this case, we give precedence to deletion, then insertion and finally substitution; this order can be changed to get the right extent.
+    \end{itemize}
+
+    We saw above that the following was the DP table used to find best scoring local similarity for \texttt{ADGGAGTAC} and \texttt{DGACTA}:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|ccccccccccc}
+            & $\epsilon$ & \texttt{A} & \texttt{D} & \texttt{G} & \texttt{G} & \texttt{A} & \texttt{G} & \texttt{T} & \texttt{A} & \texttt{C} \\
+            \hline
+            $\epsilon$ & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{D} & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+            \texttt{G} & 0 & 0 & 0 & 2 & 1 & 0 & 1 & 0 & 0 & 0 \\
+            \texttt{A}& 0 & 1 & 0 & 1 & 1 & 2 & 1 & 0 & 1 & 0 \\
+            \texttt{C} & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 2 \\
+            \texttt{T} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 2 & 1 & 1 \\
+            \texttt{A} & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 1 & {\color{red} 3} & 2
+        \end{tabular}
+    \end{table}
+    \noindent The position of the best score is $(7, 5)$. We will now find the $(x, y)$ origin values for this computation:
+    \begin{table}[H]
+        \centering
+        \scalebox{0.9}{
+        \begin{tabular}{c|ccccccccccc}
+            & $\epsilon$ & \texttt{A} & \texttt{D} & \texttt{G} & \texttt{G} & \texttt{A} & \texttt{G} & \texttt{T} & \texttt{A} & \texttt{C} \\
+            \hline
+            $\epsilon$ & (0, 0) & (1, 0) & (2, 0) & (3, 0) & (4, 0) & (5, 0) & (6, 0) & (7, 0) & (8, 0) & (9, 0) \\
+            \texttt{D} & (0, 1) & (1, 1) & (1, 0) & (3, 1) & (4, 1) & (5, 1) & (6, 1) & (7, 1) & (8, 1) & (9, 1) \\
+            \texttt{G} & (0, 2) & (1, 2) & (2, 2) & (1, 0) & (3, 1) & (5, 2) & (5, 1) & (7, 2) & (8, 2) & (9, 2) \\
+            \texttt{A} & (0, 3) & (0, 2) & (2, 3) & (1, 0) & (1, 0) & (3, 1) & (3, 1) & (7, 3) & (7, 2) & (9, 3) \\
+            \texttt{C} & (0, 4) & (1, 4) & (2, 4) & (3, 4) & (4, 4) & (3, 1) & (3, 1) & (7, 4) & (8, 4) & (7, 2) \\
+            \texttt{T} & (0, 5) & (1, 5) & (2, 5) & (3, 5) & (4, 5) & (5, 5) & (6, 5) & (3, 1) & (3, 1) & (7, 2) \\
+            \texttt{A} & (0, 6) & (0, 5) & (2, 6) & (3, 6) & (4, 6) & (4, 5) & (6, 6) & (3, 1) & {\color{red} (3, 1)} & (3, 1)
+        \end{tabular}}
+    \end{table}
+    \noindent So, we find that the extents are $s1[3..7]$ and $s2[1..5]$.
 
 \end{document}
