@@ -58,7 +58,7 @@
 
 \lstdefinelanguage{pseudocode}{ 
     keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, max},
-    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, Edge, Graph, Queue, Vertex, Network},
+    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, Edge, Graph, Queue, Vertex, Network, Student, Lecturer},
     sensitive=true,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
@@ -1418,6 +1418,622 @@ void fordFulkerson(Network network) {
         \end{subfigure}
     \end{figure}
     \noindent The edges $\{u_1, v_1\}$ and $\{u_2, v_2\}$ are part of the maximum cardinality matching, as seen on the left. This can be inferred from right too- these edges are precisely those with flow value 1. If we use the network flow version of the algorithm, we will get a more efficient algorithm- it is $O(\sqrt{|V|}(|V| + |E|))$ instead of $O(|V| (|V| + |E|))$ we saw above.
+    \newpage
+
+    \section{Stable Marriage Problem}
+    In this section, we discuss a matching problem called the Stable Marriage Problem. We are given the same number of students and lecturers, with preferences from both sides on who they would like to supervise/be supervised by, and we want to find an optimal matching. The optimal matching satisfies the condition that, if the lecturer/student were to be assigned to a different partner, then at least one of them would not be happy with it.
+
+    We will consider optimality formally now. So, assume that we have 4 students and 4 lecturers, with the following preferences:
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & $\texttt{l}_2$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & $\texttt{l}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+            \caption{Student's Preferences}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & $\texttt{s}_3$ & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & $\texttt{s}_2$ \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+            \caption{Lecturer's Preferences}
+        \end{subtable}
+    \end{table}
+    \noindent One possible matching is the one given below:
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & $\texttt{l}_2$ & {\color{red} $\texttt{l}_4$} & \underline{$\texttt{l}_1$} & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & {\color{red} $\texttt{s}_1$} & \underline{$\texttt{s}_4$} & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent So, we have the following pairs: $(\texttt{s}_1, \texttt{l}_1), (\texttt{s}_2, \texttt{l}_3), (\texttt{s}_3, \texttt{l}_2), (\texttt{s}_4, \texttt{l}_4)$ . This is not an optimal matching- $(\texttt{s}_1, \texttt{l}_4)$ is a matching where both the student and the lecturer prefer each other. This is called a \emph{blocking pair}. The following is an optimal (stable) matching:
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & $\texttt{l}_2$ & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & \underline{$\texttt{l}_1$} & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & \underline{$\texttt{s}_4$} & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent We will now show that it is a stable matching and has no blocking pairs. Clearly, $\texttt{s}_2$ and $\texttt{s}_3$ have their first choice, so they cannot lead to a blocking pair. Although $\texttt{s}_1$ would prefer $\texttt{l}_2$ over $\texttt{l}_4$, the lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$. The same is the case for $\texttt{s}_4$, which means that no student is part of a blocking pair, and hence there are no blocking pairs.
+
+    Given a matching, we can check whether it is stable by checking whether any student is part of a blocking pair. That is, we iterate through all the students and check whether any lecturer they prefer to the one they are currently assigned would also prefer the student over their current assignee. We can do this in $O(n^2)$ time- in the worst case, the student has been assigned their last choice, so we have to look through almost all the lecturers, so the loop is $O(n^2)$. The body of the loop can be $O(1)$- we can make use of a data structure to check whether a lecturer prefers a student over another one in constant time.
+
+    We will now consider an algorithm to find the stable matching- the Gale-Shapley Algorithm. The following is the algorithm:
+\begin{lstlisting}[language=pseudocode]
+List<(Student, Lecturer)> galeShapley(List<Student> students, 
+    List<Lecturer> lecturers) {
+    Stack<Student> unmatched = students.toStack();
+    List<(Student, Lecturer)> matches = [];
+    while (unmatched.isNotEmpty) {
+        Student s = unmatched.pop();
+        Lecturer l = lecturers[s.currentChoice];
+        if (l.isUnmatched) {
+            matches.add(s, l);
+        } else if (l.prefers(s, students[l.currentChoice])) {
+            Student prevS = students[l.currentChoice];
+            prevS.currentChoice = prevS.getNextChoice();
+            unmatched.add(prevS);
+            matches.add(s, l);
+        } else {
+            s.currentChoice = s.getNextChoice();
+            unmatched.add(s);
+        }
+    }
+    return matches;
+}
+\end{lstlisting}
+    \noindent This is the student-oriented version of the algorithm- we are going down the student's preferences and finding the best lecturer for them. The algorithm runs until every student has been matched. Within the loop, we try to assign the student to some lecturer. We select the first lecturer that the student hasn't applied to- this is their \texttt{currentChoice}. If this lecturer is unassigned, we can provisionally match them. Otherwise, lecturer has two students that have applied to work with them- the lecturer rejects the one it prefers less, and this student is added back to the queue, where they will try the next choice. 
+    
+    We will now illustrate the algorithm. So, assume that we are starting with the following instance of the Stable Marriage Problem.
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & $\texttt{l}_2$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & $\texttt{l}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+            \caption{Student's Preferences}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & $\texttt{s}_3$ & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & $\texttt{s}_2$ \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+            \caption{Lecturer's Preferences}
+        \end{subtable}
+    \end{table}
+    \noindent We will match the students to the lecturers, going from their top preference to the last. 
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & \underline{$\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & $\texttt{l}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_1$} & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & $\texttt{s}_2$ \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent So, we start with matching $(\texttt{s}_1, \texttt{l}_2)$. It might end up being changed, but they are paired at this point. 
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & \underline{$\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & $\texttt{l}_2$ & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_1$} & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent Similarly, we can match $(\texttt{s}_2, \texttt{l}_3)$. This is still a valid matching.
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & \underline{$\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & \underline{$\texttt{s}_1$} & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent Next, we try to match $\texttt{s}_3$. Its first choice is $\texttt{l}_2$, but they are currently paired with $\texttt{s}_1$. The lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$, so $\texttt{l}_2$ rejects $\texttt{s}_1$. 
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent Hence, $\texttt{s}_1$ is unmatched, so we try to match it with its next choice- $\texttt{l}_4$.
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent The pair $(\texttt{s}_1, \texttt{l}_4)$ is a valid match for now.
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & \underline{$\texttt{s}_4$} & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent Next, we match $\texttt{s}_4$ with $\texttt{l}_4$. The lecturer $\texttt{l}_4$ now has two offers- from $\texttt{s}_1$ and $\texttt{s}_4$, and they prefer $\texttt{s}_1$ over $\texttt{s}_4$. 
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & {\color{gray} $\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{l}_4$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent So, $\texttt{s}_4$ gets rejected by $\texttt{l}_4$.
+    \begin{table}[H]
+        \centering
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
+                $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
+                $\texttt{s}_4$ & $\texttt{l}_4$ & \underline{$\texttt{l}_1$} & $\texttt{l}_3$ & $\texttt{l}_2$
+            \end{tabular}
+        \end{subtable}
+        \hfill
+        \begin{subtable}{0.45\textwidth}
+            \centering
+            \begin{tabular}{c|cccc}
+                $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & \underline{$\texttt{s}_4$} & $\texttt{s}_3$ \\
+                $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
+                $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
+                $\texttt{s}_4$ & {\color{gray} $\texttt{l}_4$} & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
+            \end{tabular}
+        \end{subtable}
+    \end{table}
+    \noindent Next, we match $\texttt{s}_4$ with $\texttt{l}_1$. The lecturer $\texttt{l}_1$ wasn't assigned before, so $(\texttt{l}_1, \texttt{s}_4)$ gives the final matching. All the students have been matched, so the algorithm terminates- we have found a stable matching.
+
+    We will now show that the Gale-Shapley algorithm terminates with every student assigned. In particular, we claim that no student gets rejected by all the lecturers. Assume, for a contradiction, that the student $s$ gets rejected by all the lecturers. This can only happen if all the lecturers have been assigned to a student at that point during the algorithm. However, if a lecturer is assigned at some point, they remain assigned (they might change who they are matched to, but they do not become unmatched). This implies that when $s$ was rejected by the last lecturer in its preference list, all the lecturers were assigned. However, there are the same number of students and lecturers, and a student cannot be assigned to more than one lecturer. This is a contradiction- no student can be rejected by all the lecturers. Hence, every student gets accepted by some lecturer, meaning that the algorithm terminates. 
+    
+    In the worst case, a student might only be accepted by the last lecturer in its list, so the while loop can run $O(n^2)$ times. The body of the while loop is constant time (we can check whether a lecturer prefers a student over another in constant time). A student applies to a student just once, so the algorithm has $O(n^2)$ time complexity. Note that the algorithm is linear in size of the input- the input is the preference list which has $O(n^2)$ space complexity for both students and lecturers.
+
+    Next, we show that the algorithm terminates with the stable matching. When the algorithm terminates, we have a matching containing all the students. Let $s$ be a student and let $l$ be a lecturer that $s$ prefers over its matching. This means that, at some point during the algorithm, $s$ applied to $l$. Moreover, since $(s, l)$ is not in the matching, we know that $l$ rejected $s$ at some point. The only reason this could happen is if $l$ got an offer from a student that they preferred over $s$. Hence, $(s, l)$ cannot be a blocking pair. So, there is no blocking pair in the matching- it is stable. This also shows that every instance of the Stable Marriage Problem has a stable matching.
+
+    The Gale-Shapley algorithm given above is non-deterministic- the order in which the students apply to the lecturers is not specified. But, it turns out that this does not affect the final outcome of the algorithm- every ordering in which the students apply will give the same result. Moreover, in the student-oriented Gale-Shapley algorithm, every student gets their best lecturer choice, while every lecturer gets their worst student choice.
+
+    We shall now consider how to implement the algorithm in $O(n^2)$ time. In particular, we will show how to compute whether a lecturer prefers a student over another in $O(1)$ time. To do so, we assume that the preferences are given as two matrices (lists of lists)- \texttt{sp} for student preferences and \texttt{lp} for lecturer preferences, e.g. \texttt{sp[s, i] = l} if \texttt{s} has the lecturer \texttt{l} at \texttt{i}-th position in their preference list. Using these matrices, we construct the lecturer's ranking lists- \texttt{lr[l, s] = i} if \texttt{lp[l, i] = s}. For instance, assume that the \texttt{lp} matrix is the following:
+    \[\texttt{lp} = \begin{bmatrix}
+        \texttt{s}_2 & \texttt{s}_1 & \texttt{s}_4 & \texttt{s}_3 \\
+        \texttt{s}_4 & \texttt{s}_3 & \texttt{s}_1 & \texttt{s}_2 \\
+        \texttt{s}_1 & \texttt{s}_4 & \texttt{s}_3 & \texttt{s}_2 \\
+        \texttt{s}_2 & \texttt{s}_1 & \texttt{s}_4 & \texttt{s}_3
+    \end{bmatrix}.\]
+    So, we have $\texttt{lp}[\texttt{l}_1, 0] = \texttt{s}_2$. Then, the \texttt{lr} matrix is the following:
+    \[\texttt{lr} = \begin{bmatrix}
+        1 & 0 & 3 & 2 \\
+        2 & 3 & 1 & 0 \\
+        0 & 3 & 2 & 1 \\
+        1 & 0 & 3 & 2
+    \end{bmatrix}.\]
+    From this matrix, we can tell whether a lecturer prefers a student over another in constant time. For instance, $\texttt{l}_1$ prefers $\texttt{s}_2$ over $\texttt{s}_1$ since $\texttt{lr}[\texttt{l}_1, \texttt{s}_2] = 0 < 1 = \texttt{lr}[\texttt{l}_1, \texttt{s}_1]$. We can construct the ranking table for all the lecturers at the start of the algorithm in $O(n^2)$ time.
+
+    \newpage
+
+    \section{All Pairs Shortest Paths}
+    In this section, we will look at an algorithm to find all pairs of shortest paths in a weighted directed graph. That is, for a pair $(v, w)$ of vertices in the graph, we want to find a path from $v$ to $w$ which has the smallest weight. We will allow the weights in the graph to be negative, and will consider how to deal with this complication as well.
+
+    Assume that we have the following weighted directed graph.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth] (2) -- node[right] {$2$} (3);
+            \draw[-stealth] (4) -- node[left] {$3$} (1);
+            \draw[-stealth] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent The following matrix gives the weight of the shortest path between any pair of vertices.
+    \[D^* = \begin{bmatrix}
+        0 & -5 & -3 & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -2 & 0  & 0
+    \end{bmatrix}\]
+    Every diagonal entry is 0- traveling from a vertex to itself should not cost anything\sidefootnote{And it also shouldn't be profitable!}. If a distance is $\infty$, then there is no path between the two vertices, e.g. there is no path from $v_1$ to $v_4$. Since we allow negative weights, it is possible that the shortest path between two vertices has negative value, e.g. the best path from $v_4$ to $v_2$ has weight $-2$- the path is $v_4 \to v_1 \to v_2$.
+
+    We have previously seen the Dijkstra's algorithm to find the path of smallest weight from a vertex to all the other vertices. It takes $O(n^2)$ time (or $O(n \log n + m)$ using a Fibonacci heap), where $n = |V|$ and $m = |E|$. So, we could use this algorithm to get all pairs shortest paths in $O(n^3)$ time applying the algorithm to all the vertices. However, this algorithm does not work with edges that have negative weight. For instance, consider the following graph:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[inner sep=2.5pt, draw, circle, label={180:$v_1$}] (1) at (0, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={0:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={90:$v_3$}] (3) at (1, 1.25) {};
+
+            \draw[-stealth] (1) -- node[below] {4} (2);
+            \draw[-stealth] (1) -- node[above, rotate=55] {2} (3);
+            \draw[-stealth] (2) -- node[above, rotate=-55] {$-3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent When computing the path of smallest weight from $v_1$, the algorithm iterates as follows:
+    \begin{itemize}
+        \item $v_1$ has an edge to $v_3$ of shortest weight, so $v_1 - v_3$ has weight 2;
+        \item $v_3$ has an edge to $v_2$ of shortest weight, so $v_1 - v_2$ has weight $-1$.
+    \end{itemize}
+    However, it is possible to take the path $v_1 - v_2 - v_3$ to get a path of weight 1. We cannot find this since the algorithm is greedy.
+
+    Alternatively, we can use the Bellman-Ford algorithm which can handle negative weights. It has complexity $O(mn)$. So, if we used this algorithm to find all pairs shortest paths, it would take $O(mn^2)$ time. If the graph is dense (i.e. a lot of edges), then this is $O(n^4)$. We will now look at the Floyd-Warshall algorithm which computes all pairs shortest paths in $O(n^3)$ time, using dynamic programming. Although the algorithm works with negative edge weights, it won't work for graphs with negative cycles. For instance, consider the following graph:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[inner sep=2.5pt, draw, circle, label={180:$v_1$}] (1) at (0, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={0:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={90:$v_3$}] (3) at (1, 1.25) {};
+
+            \draw[-stealth] (1) -- node[below] {2} (2);
+            \draw[-stealth] (1) -- node[above, rotate=55] {2} (3);
+            \draw[-stealth] (2) -- node[above, rotate=-55] {$-5$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent In this graph, the loop $v_1 - v_3 - v_2 - v_1$ has weight $-1$, which means that we can loop around the graph as many times as we wish to decrease the length of the shortest path for any two vertices. The Floyd-Warshall algorithm will give unexpected results when used on graphs with negative cycles.
+    
+    We will now consider how the Floyd-Warshall algorithm works. During the algorithm, we iterate $n$ times, and keep track of the current all-pair shortest path matrix. During an iteration $i$, we improve the weight of the shortest path by allowing vertex $v_i$ to be part of the shortest path. In particular, we compare whether the current shortest path from a vertex $v_a$ to another vertex $v_b$ with the current shortest path from vertex $v_a$ to $v_i$ and $v_i$ to $v_b$. If the latter is the smaller one, we update the value; otherwise, we keep it as is. We store these values in distance matrices $D_i$. So, the matrix $D_i$ stores the shortest path distance from any pair of vertices that goes through the vertices $v_1, v_2, \dots, v_i$. Hence, after the algorithm terminates, the distance matrix $D_n$ holds the values of all pairs shortest paths.
+
+    Next, we will look at the dynamic programming algorithm formally. At the start, the matrix $D_0$ is given as follows:
+    \[D_0[i, j] = \begin{cases}
+        0 & i = j \\
+        wt(v_i, v_j) & (v_i, v_j) \in E \\
+        \infty & \text{otherwise}.
+    \end{cases}\]
+    The matrix $D_0$ represents the length of the (shortest) path going from a vertex to another that does not involve any other vertex. This equals the weight of the edge between the two vertices, if it exists. If the two vertices are the same, then the weight is 0 (assuming there are no negative cycles). If the two vertices are different and have no edge between them, then there is no path at this point- we denote this by $\infty$. Now, we construct the matrix $D_k$ from $D_{k-1}$ as follows:
+    \[D_k[i, j] = \min (D_{k-1}[i, j], D_{k-1}[i, k] + D_{k-1}[k, j]).\]
+    This follows from what we mentioned above- the distance from vertex $v_i$ to $v_j$ is either the previous distance, or the distance going through vertex $v_k$.
+
+\begin{lstlisting}[language=pseudocode]
+List<List<int>> floydWarshall(Graph graph) {
+    List<List<int>> dPrev = List.filled(graph.vertices.length, 
+        List(graph.vertices.length)
+    );
+    for (int i=0; i<graph.vertices.length; i++) {
+        for (int j=0; j<graph.vertices.length; i++) {
+            if (i == j) {
+                dPrev[i, j] = 0;
+            } else {
+                dPrev[i, j] = graph.adjMatrix[i, j];
+            }
+        }
+    }
+
+    for (int k=1; k<graph.vertices.length; i++) {
+        List<List<int>> dNext = List.filled(graph.vertices.length, 
+            List(graph.vertices.length)
+        );
+        for (int i=0; i<graph.vertices.length; i++) {
+            for (int j=0; j<graph.vertices.length; j++) {
+                dNext[i, j] = min(dPrev[k-1][i, j],
+                    dPrev[k-1][i, k] + 
+                    dPrev[k-1][k, j]
+                );
+            }
+        }
+        dPrev = dNext;
+    }
+    return distanceMatrices[graph.vertices.length-1];
+}
+\end{lstlisting}
+    From the algorithm, it is clear that the Floyd-Warshall has $O(n^3)$ time complexity and $O(n^2)$ space complexity.
+
+    Using the Floyd-Warshall algorithm, we can detect whether a graph has negative cycle. In particular, if $D^*[i, i] \neq 0$ for any vertex $v_i$, the graph has a negative cycle.
+
+    Along with the length of the shortest path between two vertices, we would also like to compute that path. To do so, it suffices to store the predecessor vertex in the path- we can follow the predecessor vertex until we get to the first vertex. So, we can also keep track of the predecessor vertices in the algorithm. These are stored in a dynamic programming matrix like with the distance matrix. In particular, 
+    \[\Pi_0[i, j] = \begin{cases}
+        \texttt{null} & i = j \\
+        i & (v_i, v_j) \in E \\
+        \texttt{null} & \text{otherwise},
+    \end{cases} \qquad \Pi_k[i, j] = \begin{cases}
+        \Pi_{k-1}[i, j] & D_k[i, j] = D_{k-1}[i, j] \\
+        \Pi_k[k, j] & \text{otherwise}.
+    \end{cases}\]
+    At the start, the only paths we have are of length 1, so the predecessor of a path from $v_i$ to $v_j$ is $v_i$. There is no predecessor for paths of length 0. In the recursive case, if we stick to the previous weight, then the predecessor vertex also remains the same. Otherwise, the shortest path from $v_i$ to $v_j$ is now $v_i - \dots - v_k - \dots - v_j$, meaning that the predecessor is the same as the one for the path $v_k - \dots - v_j$. The final predecessor matrix $\Pi_n$ gives the predecessor for the all pairs shortest path.
+
+    We will now illustrate the algorithm with an example. So, assume that we have the following weighted directed graph.    
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth] (2) -- node[right] {$2$} (3);
+            \draw[-stealth] (4) -- node[left] {$3$} (1);
+            \draw[-stealth] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Originally, we have the following initial distance matrix $D_0$ and initial predecessor matrix $\Pi_0$:
+    \[D_0 = \begin{bmatrix}
+        0 & -5 & \infty & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -1 & 3 & 0
+    \end{bmatrix}, \qquad \Pi_0 = \begin{bmatrix}
+        \texttt{null} & 1 & \texttt{null} & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & 4 & 4 & \texttt{null}
+    \end{bmatrix}.\]
+    \noindent We will now construct $D_1$- this involves the vertex $v_1$.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth, dashed] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth] (2) -- node[right] {$2$} (3);
+            \draw[-stealth, dashed] (4) -- node[left] {$3$} (1);
+            \draw[-stealth] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent So, the edges we have access to are $(v_4, v_1)$ and $(v_1, v_2)$. So, the only path we can improve is the one from $v_4$ to $v_2$- the current weight is $-1$, but we can make it $-2$ through this path.
+    \[D_1 = \begin{bmatrix}
+        0 & -5 & \infty & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & {\color{red} -2} & 3 & 0
+    \end{bmatrix}, \qquad \Pi_1 = \begin{bmatrix}
+        \texttt{null} & 1 & \texttt{null} & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & {\color{red} 1} & 4 & \texttt{null}
+    \end{bmatrix}.\]
+    \noindent Along with the distance, the predecessor value also changes- the predecessor edge in the path from $v_4$ to $v_2$ is now $v_1$, not $v_4$. We next allow edges going through the vertex $v_2$:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth, dotted] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth, dashed] (2) -- node[right] {$2$} (3);
+            \draw[-stealth, dotted] (4) -- node[left] {$3$} (1);
+            \draw[-stealth, dashed] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent So, the paths we can improve go from $v_1$ to $v_3$; from $v_4$ to $v_3$. In both cases, we can improve them from the current value- the current weight from $v_1$ to $v_3$ is $\infty$. 
+    \[D_2 = \begin{bmatrix}
+        0 & -5 & {\color{red}-3} & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -2 & {\color{red} 0} & 0
+    \end{bmatrix}, \qquad \Pi_2 = \begin{bmatrix}
+        \texttt{null} & 1 & {\color{red} 2} & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & 1 & {\color{red} 2} & \texttt{null}
+    \end{bmatrix}.\]
+    \noindent We also change the predecessors- in both cases, the value is 2. Now, we allow edges through the vertex $v_3$:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth, dotted] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth, dotted] (2) -- node[right] {$2$} (3);
+            \draw[-stealth, dotted] (4) -- node[left] {$3$} (1);
+            \draw[-stealth, dotted] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth, dashed] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \[D_3 = \begin{bmatrix}
+        0 & -5 & -3 & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -2 & 0 & 0
+    \end{bmatrix}, \qquad \Pi_3 = \begin{bmatrix}
+        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & 1 & 2 & \texttt{null}
+    \end{bmatrix}.\]
+    \noindent Nothing improves here since the vertex $v_3$ is a sink. Finally, we allow edges going through the vertex $v_4$.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={135:$v_1$}] (1) at (0, 0) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={45:$v_2$}] (2) at (2, 0) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={-45:$v_3$}] (3) at (2, -1.5) {};
+            \node[fill=red, inner sep=2.5pt, draw, circle, label={-135:$v_4$}] (4) at (0, -1.5) {};
+            
+            \draw[-stealth, dotted] (1) -- node[above] {$-5$} (2);
+            \draw[-stealth, dotted] (2) -- node[right] {$2$} (3);
+            \draw[-stealth, dotted] (4) -- node[left] {$3$} (1);
+            \draw[-stealth, dotted] (4) -- node[above, rotate=45] {$-1$} (2);
+            \draw[-stealth, dotted] (4) -- node[below] {$3$} (3);
+        \end{tikzpicture}
+    \end{figure}
+    \[D_4 = \begin{bmatrix}
+        0 & -5 & -3 & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -2 & 0 & 0
+    \end{bmatrix}, \qquad \Pi_4 = \begin{bmatrix}
+        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & 1 & 2 & \texttt{null}
+    \end{bmatrix}.\]
+    \noindent In this case as well, there is no improvement since $v_4$ is a source. Hence, the final matrix of weights and predecessors is:
+    \[D^* = \begin{bmatrix}
+        0 & -5 & -3 & \infty \\
+        \infty & 0 & 2 & \infty \\
+        \infty & \infty & 0 & \infty \\
+        3 & -2 & 0 & 0
+    \end{bmatrix}, \qquad \Pi^* = \begin{bmatrix}
+        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
+        \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
+        4 & 1 & 2 & \texttt{null}
+    \end{bmatrix}.\]
+    We can use the predecessor matrix to compute the shortest path, e.g. from $v_4$ to $v_3$. The entry at $(4, 3)$ in the matrix is 2, so the predecessor of $v_3$ in the path is $v_2$. The entry at $(4, 2)$ in the matrix is 1, so the predecessor of $v_2$ in the path is $v_1$. Finally, the entry at $(4, 1)$ in the matrix is 4, so the predecessor of $v_1$ in the path is $v_4$. Since the path starts at $v_4$, we have recovered the path- it is $v_4 - v_1 - v_2 - v_3$.
 
 
 \end{document}
