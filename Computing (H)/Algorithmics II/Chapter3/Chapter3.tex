@@ -1906,7 +1906,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & -1 & 3 & 0
     \end{bmatrix}, \qquad \Pi_0 = \begin{bmatrix}
-        \texttt{null} & 1 & \texttt{null} & 1 \\
+        \texttt{null} & 1 & \texttt{null} & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & 4 & 4 & \texttt{null}
@@ -1934,7 +1934,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & {\color{red} -2} & 3 & 0
     \end{bmatrix}, \qquad \Pi_1 = \begin{bmatrix}
-        \texttt{null} & 1 & \texttt{null} & 1 \\
+        \texttt{null} & 1 & \texttt{null} & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & {\color{red} 1} & 4 & \texttt{null}
@@ -1962,7 +1962,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & -2 & {\color{red} 0} & 0
     \end{bmatrix}, \qquad \Pi_2 = \begin{bmatrix}
-        \texttt{null} & 1 & {\color{red} 2} & 1 \\
+        \texttt{null} & 1 & {\color{red} 2} & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & 1 & {\color{red} 2} & \texttt{null}
@@ -1989,7 +1989,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & -2 & 0 & 0
     \end{bmatrix}, \qquad \Pi_3 = \begin{bmatrix}
-        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & 1 & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & 1 & 2 & \texttt{null}
@@ -2016,7 +2016,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & -2 & 0 & 0
     \end{bmatrix}, \qquad \Pi_4 = \begin{bmatrix}
-        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & 1 & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & 1 & 2 & \texttt{null}
@@ -2028,7 +2028,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \infty & \infty & 0 & \infty \\
         3 & -2 & 0 & 0
     \end{bmatrix}, \qquad \Pi^* = \begin{bmatrix}
-        \texttt{null} & 1 & 2 & 1 \\
+        \texttt{null} & 1 & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & 2 & \texttt{null} \\
         \texttt{null} & \texttt{null} & \texttt{null} & \texttt{null} \\
         4 & 1 & 2 & \texttt{null}
