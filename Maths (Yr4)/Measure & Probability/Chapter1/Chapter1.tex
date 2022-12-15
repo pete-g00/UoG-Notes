@@ -120,9 +120,11 @@
         Let $X$ be a set, and let $\mathcal{R} \subseteq \mathcal{P}(X)$ be a ring. Then, for $A, B \in \mathcal{R}$, the intersection $A \cap B \in \mathcal{R}$.
     \end{proposition}
     \begin{proof}
-        
+        We have
+        \[A \cap B = (A \cup B) \setminus (A \setminus B \cup B \setminus A).\]
+        So, $A \cap B \in \mathcal{R}$.
     \end{proof}
-
+    
     \begin{definition}
         Let $X$ be a set. We say that $\mathcal{A} \subseteq \mathcal{P}(X)$ is an \emph{algebra} (of subsets of $X$) if $\mathcal{A}$ is a ring with $X \in \mathcal{A}$.
     \end{definition}
@@ -135,6 +137,14 @@
             \item for all $A, B \in \mathcal{A}$, the union $A \cup B \in \mathcal{A}$.
         \end{itemize}
     \end{proposition}
+    \begin{proof}
+        \hspace{0pt}
+        \begin{itemize}
+            \item[$\implies$] Since $\mathcal{A}$ is an algebra, we know that $\varnothing \in \mathcal{A}$, and for all $A, B \in \mathcal{A}$, $A \cup B \in \mathcal{A}$. Now, let $A \in \mathcal{A}$. Since $X \in \mathcal{A}$, we find that $A^c = X \setminus A \in \mathcal{A}$.
+            \item[$\impliedby$] We know that $\varnothing \in \mathcal{A}$, and for all $A, B \in \mathcal{A}$, $A \cup B \in \mathcal{A}$. Now, let $A \in \mathcal{A}$. We know that $A \setminus B = A \cap B^c$.
+        \end{itemize}
+        So, the result holds.
+    \end{proof}
 
     \begin{definition}
         Let $X$ be a set. We say that $\mathcal{A} \subseteq \mathcal{P}(X)$ is a \emph{$\sigma$-algebra} (of subsets of $X$) if $\mathcal{A}$ is an algebra such that for all $(A_n)_{n=1}^\infty$ in $\mathcal{A}$, the union
@@ -150,11 +160,25 @@
             \[\bigcup_{n=1}^\infty A_n \in \mathcal{A}.\]
         \end{itemize}
     \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item[$\implies$] 
+            \item[$\impliedby$] 
+        \end{itemize}
+    \end{proof}
 
     \begin{proposition}
         Let $X$ be a set, and $\mathcal{A} \subseteq \mathcal{P}(X)$ be a $\sigma$-algebra. Then, for a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{A}$, the intersection
         \[\bigcap_{n=1}^\infty A_n \in \mathcal{A}.\]
     \end{proposition}
+    \begin{proof}
+        Define the sequence $(B_n)_{n=1}^\infty$ by $B_n = A_n^c$. Since $\mathcal{A}$ is an algebra, $(B_n)$ is in $\mathcal{A}$. Moreover, 
+        \[\bigcup_{n=1}^\infty B_n \in \mathcal{A}.\]
+        Hence,
+        \[\bigcap_{n=1}^\infty A_n = \left(\bigcup_{n=1}^\infty B_n\right)^c \in \mathcal{A}.\]
+    \end{proof}
+    
     \newpage
 
     \section{Borel Sets}
@@ -165,6 +189,9 @@
     \begin{proposition}
         The set $\mathcal{E}(\mathbb{R})$ is a ring.
     \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
 
     \begin{definition}
         Let $n \in \mathbb{Z}_{\geq 1}$. We define $\mathcal{E}(\mathbb{R}^n)$ to be the set containing all finite union of intervals in $\mathbb{R}^n$, where an interval in $\mathbb{R}^n$ is a product of $n$ intervals in $\mathbb{R}$.
@@ -182,6 +209,39 @@
         Let $A \in \mathcal{B}(\mathbb{R})$ and $x \in \mathbb{R}$. Then,
         \[x + A = \{x + a \mid a \in A\} \in \mathcal{B}(\mathbb{R}).\]
     \end{proposition}
+    \begin{proof}
+        Let $x \in \mathbb{R}$. Define the set
+        \[\mathcal{A} = \{A \in \mathcal{B}(\mathbb{R}) \mid x + A \in \mathcal{B}(\mathbb{R})\}.\]
+        We show that $\mathcal{A}$ is a $\sigma$-algebra.
+        \begin{itemize}
+            \item We have $x + \varnothing = \varnothing$, so $\varnothing \in \mathcal{A}$;
+            
+            \item Let $A \in \mathcal{A}$. For $y \in \mathbb{R}$,
+            \begin{align*}
+                y \in x + A^c &\iff y - x \in A^c \\
+                &\iff y - x \not\in A \\
+                &\iff y \not\in x + A \\
+                &\iff y \in (x + A)^c.
+            \end{align*}
+            So, $(x + A)^c = x + A^c$. Since $x + A \in \mathcal{B}(\mathbb{R})$, we have 
+            \[x + A^c = (x + A)^c \in \mathcal{B}(\mathbb{R}).\]
+            Hence, $A^c \in \mathcal{A}$.
+            
+            \item Let $(A_n)_{n=1}^\infty$ be a sequence of disjoint sets in $\mathcal{A}$. For $y \in \mathbb{R}$,
+            \begin{align*}
+                y \in \bigcup_{n=1}^\infty (x + A_n) &\iff \exists n \in \mathbb{Z}_{\geq 1} \textrm{ s.t. } y \in x + A_n \\
+                &\iff y - x \in A_n \\
+                &\iff y - x \in \bigcup_{n=1}^\infty A_n \\
+                &\iff y \in x + \bigcup_{n=1}^\infty A_n.
+            \end{align*}
+            Since $x + A_n \in \mathcal{B}(\mathbb{R})$ for all $n \in \mathbb{Z}_{\geq 1}$,
+            \[x + \bigcup_{n=1}^\infty A_n = \bigcup_{n=1}^\infty (x + A_n) \in \mathcal{B}(\mathbb{R}).\]
+            This implies that
+            \[\bigcup_{n=1}^\infty A_n \in \mathcal{A}.\]
+        \end{itemize}
+        Hence, $\mathcal{A}$ is a $\sigma$-algebra. Moreover, for all interval $I$, $x + I \in \mathcal{B}(\mathbb{R})$. Hence, $\mathcal{A}$ contains all the intervals. Since $\mathcal{A}$ is a $\sigma$-algebra, we find that $\mathcal{A} = \mathcal{B}(\mathbb{R})$. This implies that for all $A \in \mathcal{B}(\mathbb{R})$, $x + A \in \mathcal{B}(\mathbb{R})$.
+    \end{proof}
+    
     \newpage
 
     \section{Measure on Algebra}
@@ -193,6 +253,24 @@
         \end{itemize}
     \end{definition}
 
+    \begin{proposition}
+        Let $X$ be a set and $\mathcal{R}$ be a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty]$ be an additive set function. Then, for $A, B \in \mathcal{R}$,
+        \begin{enumerate}
+            \item if $A \subseteq B$ then $\mu(A) \leq \mu(B)$;
+            \item $\mu(A \cup B) \leq \mu(A) + \mu(B)$.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace{0pt}
+        \begin{enumerate}
+            \item We have
+            \[\mu(B) = \mu(A) + \mu(B \setminus A) \leq \mu(A).\]
+            \item We find that
+            \[\mu(A \cup B) = \mu(A) + \mu(B \setminus A) \leq \mu(A) + \mu(B)\]
+            since $B \setminus A \subseteq B$.
+        \end{enumerate}
+    \end{proof}
+
     \begin{definition}
         Let $X$ be a set and $\mathcal{R}$ be a ring of subsets of $X$. We say that $\mu \colon \mathcal{R} \to [0, \infty]$ is a \emph{measure} if:
         \begin{itemize}
@@ -201,6 +279,20 @@
             \[\mu \left(\bigcup_{n=1}^\infty A_n\right) = \sum_{n=1}^\infty \mu(A_n).\]
         \end{itemize}
     \end{definition}
+    
+    \begin{proposition}
+        Let $X$ be a set, $\mathcal{R}$ be a ring of subsets of $X$ and let $\mu \colon \mathcal{R} \to [0, \infty]$ be a measure. Then, for all sequences $(A_n)_{n=1}^\infty$ in $\mathcal{R}$,
+        \[\mu \left(\bigcup_{n=1}^\infty A_n\right) \leq \sum_{n=1}^\infty \mu(A_n).\]
+    \end{proposition}
+    \begin{proof}
+        Define the sequence $(B_n)_{n=1}^\infty$ inductively by $B_1 = A_1$ and 
+        \[B_n = A_n \setminus \bigcup_{k=1}^{n-1} B_k\]
+        for $n \geq 2$. Then, $(B_n)$ is a sequence of disjoint sets in $\mathcal{R}$ such that 
+        \[\bigcup_{n=1}^\infty A_n = \bigcup_{n=1}^\infty B_n.\]
+        Hence,
+        \[\mu \left(\bigcup_{n=1}^\infty A_n\right) = \mu \left(\bigcup_{n=1}^\infty B_n\right) = \sum_{n=1}^\infty \mu(B_n) \leq \sum_{n=1}^\infty \mu(A_n)\]
+        since $B_n \subseteq A_n$ for all $n \in \mathbb{Z}_{\geq 1}$.
+    \end{proof}
 
     \begin{definition}
         Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty]$ be an additive set function. We say that $\mu$ is \emph{$\sigma$-finite} if there exists a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{R}$ such that $\mu(A_n) < \infty$ for all $n \in \mathbb{Z}_{\geq 1}$, and
@@ -209,8 +301,8 @@
     \end{definition}
 
     \begin{proposition}
-        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty)$ be a measure. Then, the following are equivalent:
-        \begin{itemize}
+        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, and $\mu \colon \mathcal{R} \to [0, \infty)$ be an additive set function. Then, the following are equivalent:
+        \begin{enumerate}
             \item $\mu$ is countably additive (i.e. a measure);
             \item If $(A_n)_{n=1}^\infty$ is a sequence in $\mathcal{R}$ with $A_n \subseteq A_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
             \[A = \bigcup_{n=1}^\infty A_n \in \mathcal{R},\]
@@ -224,20 +316,91 @@
             \[\bigcap_{n=1}^\infty A_n = \varnothing,\]
             then
             \[\lim_{n \to \infty} \mu(A_n) = 0 = \mu(\varnothing).\]
-        \end{itemize}
+        \end{enumerate}
     \end{proposition}
+    \begin{proof}
+        \hspace{0pt}
+        \begin{itemize}
+            \item[$(1) \implies (2)$] Define the sequence $(B_n)_{n=1}^\infty$ in $\mathcal{R}$ inductively by $B_1 = A_1$ and $B_n = A_n \setminus B_{n-1}$ for $n \geq 2$. Then, $(B_n)$ is a sequence of disjoint sets with
+            \[\bigcup_{n=1}^\infty A_n = \bigcup_{n=1}^\infty B_n \qquad \textrm{and} \qquad \bigcup_{n=1}^N A_n = A_N\]
+            for all $N \geq 1$. Hence,
+            \begin{align*}
+                \mu(A) &= \mu \left(\bigcup_{n=1}^\infty A_n\right) \\
+                &= \mu \left(\bigcup_{n=1}^\infty B_n\right) \\
+                &= \sum_{n=1}^\infty \mu(B_n) \\
+                &= \lim_{N \to \infty} \sum_{n=1}^N \mu(B_n) \\
+                &= \lim_{N \to \infty} \mu \left(\bigcup_{n=1}^N B_n\right) \\
+                &= \lim_{N \to \infty} \mu(A_N).
+            \end{align*}
+
+            \item[$(2) \implies (3)$] Define the sequence $(B_n)_{n=1}^\infty$ in $\mathcal{R}$ by $B_1 = A_1^c$. Then, $B_n \subseteq B_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
+            \[\bigcup_{n=1}^\infty B_n = \bigcup_{n=1}^\infty A_n^c = \left(\bigcap_{n=1}^\infty A_n\right)^c = A^c.\]
+            Hence,
+            \[\mu(A^c) = \lim_{n \to \infty} \mu(B_n).\]
+            This implies that
+            \begin{align*}
+                \mu(A) &= \mu(X) - \mu(A^c) \\
+                &= \mu(X) - \lim_{n \to \infty} \mu(A_n^c) \\
+                &= \mu(X) - \lim_{n \to \infty} \mu(X) - \mu(A_n) \\
+                &= \lim_{n \to \infty} \mu(A_n).
+            \end{align*}
+            
+            \item[$(3) \implies (4)$] This follows if we set $A = \varnothing$.
+            
+            \item[$(4) \implies (1)$] Let $(A_n)_{n=1}^\infty$ be a sequence in $\mathcal{R}$ of disjoint sets. Define the sequence $(B_n)_{n=1}^\infty$ in $\mathcal{R}$ by
+            \[B_n = \bigcup_{k=n}^\infty A_k.\]
+            By definition, $B_{n+1} \supset B_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$. Moreover, we claim that
+            \[\bigcap_{n=1}^\infty B_n = \varnothing.\]
+            So, assume for a contradiction, that
+            \[x \in \bigcap_{n=1}^\infty B_n.\]
+            In that case, $x \in B_1$. In particular, there exists an $k \in \mathbb{Z}_{\geq 1}$ such that $x \in A_k$. Since $(A_n)$ is a sequence of disjoint sets, we know that $x \not\in A_n$ for $n \geq k+1$. Hence, $x \not\in B_{k+1}$. This is a contradiction. So, 
+            \[\bigcap_{n=1}^\infty B_n = \varnothing.\]
+            This implies that
+            \[\lim_{n \to \infty} \mu(B_n) = 0.\]
+            Hence,
+            \begin{align*}
+                \sum_{n=1}^\infty \mu(A_n) &= \lim_{N \to \infty} \sum_{n=1}^N \mu(A_n) \\
+                &= \lim_{N \to \infty} \mu \left(\bigcup_{n=1}^N A_n\right) \\
+                &= \lim_{N \to \infty} \mu \left(\bigcup_{n=1}^\infty A_n \setminus B_N\right) \\
+                &= \lim_{N \to \infty} \mu \left(\bigcup_{n=1}^\infty A_n\right) - \mu(B_N) \\
+                &= \mu \left(\bigcup_{n=1}^\infty A_n\right).
+            \end{align*}
+        \end{itemize}
+    \end{proof}
 
     \begin{definition}
-        We define the \emph{Lebesgue measure} $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ as the extension of $\lambda(I) = \sup I - \inf I$, for some interval $I$.
+        We define the \emph{Lebesgue measure} $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ as the extension of $\lambda(I) = \sup I - \inf I$, for some interval $I$. In particular, for disjoint intervals $(I_k)_{k=1}^n$, we define
+        \[\lambda \left(\bigcup_{k=1}^n I_k\right) = \sum_{k=1}^n \lambda (I_k).\]
     \end{definition}
+
+    \begin{lemma}
+        The Lebesgue measure $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ is well-defined.
+    \end{lemma}
+    \begin{proof}
+        % TODO
+        % Let $(I_k)_{k=1}^n$ and $(J_l)_{l=1}^m$ be two sequences of disjoint intervals such that 
+        % \[\bigcup_{k=1}^n I_k = \bigcup_{l=1}^m J_l.\]
+        % Now, for all $1 \leq k \leq n$,
+        % \[I_k = I_k \cap \left(\bigcup_{l=1}^n I_l\right) = I_k \cap \left(\bigcup_{l=1}^m J_l\right) = \bigcup_{l=1}^m (I_k \cap J_l).\]
+        % So,
+        % \[\bigcup_{k=1}^n I_k = \bigcup_{k=1}^n \bigcup_{l=1}^m (I_k \cap J_l).\]
+        % Similarly,
+        % \[\bigcup_{l=1}^n J_l = \bigcup_{l=1}^m \bigcup_{k=1}^n (I_k \cap J_l).\]
+    \end{proof}
 
     \begin{lemma}
         Let $A \in \mathcal{E}(\mathbb{R})$ with $\lambda(A) > 0$. Then, for all $\delta \in (0, 1)$, there exists a closed $A' \in \mathcal{E}(\mathbb{R})$ such that $A' \subseteq A$ and $\lambda(A') = (1 - \delta ) \lambda(A)$. In particular, for every $\varepsilon > 0$, there exists a closed $A' \in \mathcal{E}(\mathbb{R})$ such that $\lambda(A \setminus A') < \varepsilon$.
     \end{lemma}
+    \begin{proof}
+        
+    \end{proof}
 
     \begin{theorem}
         The Lebesgue measure $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ is a measure.
     \end{theorem}
+    \begin{proof}
+        
+    \end{proof}
     \newpage
 
     \section{Outer Measure}
@@ -249,14 +412,43 @@
 
     \begin{lemma}
         Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then,
-        \begin{itemize}
+        \begin{enumerate}
             \item $\mu^*(\varnothing) = 0$;
             \item for $A \subseteq B \subseteq X$, $\mu^*(A) \leq \mu^*(B)$;
             \item for all $A \in \mathcal{R}$, $\mu^*(A) = \mu(A)$;
             \item for a sequence $(A_n)_{n=1}^\infty$ in $X$,
-            \[\mu \left(\bigcup_{n=1}^\infty A_n\right) = \sum_{n=1}^\infty \mu(A_n).\]
-        \end{itemize}
+            \[\mu^* \left(\bigcup_{n=1}^\infty A_n\right) \leq \sum_{n=1}^\infty \mu^* (A_n).\]
+        \end{enumerate}
     \end{lemma}
+    \begin{proof}
+        \hspace{0pt}
+        \begin{enumerate}
+            \item Define the sequence $(E_j)_{j=1}^\infty$ in $\mathcal{R}$ by $E_j = \varnothing$. We know that
+            \[\varnothing \subseteq \bigcup_{j=1}^\infty E_j,\]
+            meaning that 
+            \[\mu^*(\varnothing) \leq \sum_{j=1}^\infty \mu(E_j) = 0.\]
+            We also know that $\mu(E) \geq 0$ for all $E \in \mathcal{R}$, meaning that $\mu^*(A) \geq 0$ for all $A \subseteq X$. Hence, $\mu^*(\varnothing) = 0$.
+
+            \item Let $(E_j)_{j=1}^\infty$ be a sequence in $\mathcal{R}$ such that
+            \[B \subseteq \bigcup_{j=1}^\infty E_j.\]
+            In that case,
+            \[A \subseteq \bigcup_{j=1}^\infty E_j\]
+            as well. Hence, by the infimum property, we find that $\mu^*(A) \leq \mu^*(B)$.
+            
+            \item Define the sequence $(E_j)_{j=1}^\infty$ in $\mathcal{R}$ by $E_1 = A$ and $E_n = \varnothing$ for $n \geq 2$. Then,
+            \[A \subseteq \bigcup_{j=1}^\infty E_j,\]
+            meaning that $\mu^*(A) \leq \mu(A)$. 
+
+            Now, let $(E_j)_{j=1}^\infty$ in $\mathcal{R}$ such that
+            \[A \subseteq \bigcup_{j=1}^\infty E_j.\]
+            In that case,
+            \[\mu(A) \leq \mu \left(\bigcup_{j=1}^\infty E_j\right).\]
+            Hence, $\mu(A) \leq \mu^*(A)$. This implies that $\mu(A) = \mu^*(A)$.
+            
+            \item 
+            % TODO
+        \end{enumerate}
+    \end{proof}
 
     \begin{definition}[Caratheodory's Condition]
         Let $X$ be a set, $\mathcal{R}$ a ring, a measure $\mu \colon \mathcal{R} \to [0, \infty]$, and $A \subseteq X$. We say that $A$ is \emph{$\mu^*$-measurable} if for all $S \subseteq X$,
@@ -265,26 +457,167 @@
     \end{definition}
 
     \begin{proposition}
+        Let $X$ be a set, $\mathcal{R}$ a ring, measure $\mu \colon \mathcal{R} \to [0, \infty]$, and $A \subseteq X$. Then, for all $S \subseteq X$, 
+        \[\mu^*(S \cap A) + \mu^*(S \cap A^c) \geq \mu^*(S).\]
+    \end{proposition}
+    \begin{proof}
+        Define the sequence $(E_j)_{j=1}^\infty$ in $\mathcal{P}(X)$ by $E_1 = S \cap A$, $E_2 = S \cap A^c$, $E_n = \varnothing$ for $n \geq 3$. Then,
+        \[\mu^*(S) = \mu^* \left(\bigcup_{n=1}^\infty E_n\right) \leq \sum_{n=1}^\infty \mu^*(E_n) = \mu^*(S \cap A) + \mu^*(S \cap A^c).\]
+    \end{proof}
+
+    \begin{proposition}
         Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then,
-        \begin{itemize}
+        \begin{enumerate}
             \item $\mathcal{R} \subseteq \mathcal{M}_{\mu^*}$;
             \item $\mathcal{M}_{\mu^*}$ is an algebra;
             \item $\mathcal{M}_{\mu^*}$ is a $\sigma$-algebra;
             \item $\mu^*$ is a measure on $\mathcal{M}_{\mu^*}$.
-        \end{itemize}
+        \end{enumerate}
     \end{proposition}
+    \begin{proof}
+        \hspace{0pt}
+        \begin{enumerate}
+            \item Let $A \in \mathcal{R}$, $S \subseteq X$ and let $\varepsilon > 0$. We show that
+            \[\mu^*(S) > \mu^*(S \cap A) + \mu^*(S \cap A^c) - \varepsilon.\]
+            By definition of infimum, we can find a sequence $(E_j)_{j=1}^\infty$ in $\mathcal{R}$ with 
+            \[S \subseteq \bigcup_{j=1}^\infty E_j \qquad \textrm{ s.t. } \qquad \mu^*(S) \leq \sum_{j=1}^\infty \mu(E_j) < \mu^*(S) + \varepsilon.\]
+            We know that 
+            \[S \cap A \subseteq \bigcup_{j=1}^\infty (E_j \cap A), \qquad S \cap A^c \subseteq \bigcup_{j=1}^\infty (E_j \cap A^c).\]
+            Since rings are closed under intersection, we find that
+            \begin{align*}
+                \mu^*(S \cap A) + \mu^*(S \cap A^c) &\leq \sum_{j=1}^\infty \mu(E_j \cap A) + \sum_{j=1}^\infty \mu(E_j \cap A^c) \\
+                &= \sum_{j=1}^\infty \mu(E_j) \\
+                &< \mu^*(S) + \varepsilon.
+            \end{align*}
+            Hence,
+            \[\mu^*(S) > \mu^*(S \cap A) + \mu^*(S \cap A^c) - \varepsilon\]
+            for all $\varepsilon > 0$. So,
+            \[\mu^*(S) \geq \mu^*(S \cap A) + \mu^*(S \cap A^c).\]
+            This implies that $A \in \mathcal{M}_{\mu^*}$.
+
+            \item \begin{itemize}
+                \item For all $S \subseteq X$, we find that
+                \[\mu^*(S \cap \varnothing) + \mu^*(S \cap \varnothing^c) = \mu^*(\varnothing) + \mu^*(S) = \mu^*(S).\]
+                So, $\varnothing \in S$.
+
+                \item Let $A \in \mathcal{M}_{\mu^*}$. In that case,
+                \[\mu^*(S) = \mu^*(S \cap A) + \mu^*(S \cap A^c).\]
+                Hence, $A^c \in \mathcal{M}_{\mu^*}$.
+
+                \item Let $A, B \in \mathcal{M}_{\mu^*}$. For $S \subseteq X$, we find that
+                \begin{align*}
+                    \mu^*(S) &= \mu^*(S \cap A) + \mu^*(S \cap A^c) \\
+                    &= \mu^*(S \cap A \cap B) + \mu^*(S \cap A \cap B^c) + \mu^*(S \cap A^c \cap B) \\
+                    &+ \mu^*(S \cap A^c \cap B^c) \\
+                    % TODO: Why 
+                    &= \mu^*(S \cap (A \cup B)) + \mu^*(S \cap (A \cup B)^c).
+                \end{align*}
+                So, $A \cup B \in \mathcal{M}_{\mu^*}$.
+            \end{itemize}
+
+            \item Let $(A_n)_{n=1}^\infty$ be a sequence of disjoint sets in $\mathcal{M}_{\mu^*}$.
+            % TODO
+            
+            \item 
+            % TODO: Show additive function
+
+            
+        \end{enumerate}
+    \end{proof}
 
     \begin{proposition}[Caratheodory Extension Theorem]
         Let $X$ be a set, $\mathcal{R}$ a ring, and a measure $\mu \colon \mathcal{R} \to [0, \infty]$. Then, $\mu$ extends to a measure on the $\sigma$-algebra $\mathcal{A}(\mathcal{R})$ generated by $\mathcal{R}$.
     \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
 
     \begin{proposition}
         The Lebesgue measure $\lambda \colon \mathcal{E}(\mathbb{R}) \to [0, \infty]$ extends to a unique measure $\lambda^* \colon \mathcal{B}(\mathbb{R}) \to [0, \infty]$.
     \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
 
     \begin{proposition}
         Let $x \in \mathbb{R}$ and $A \in \mathcal{B}(\mathbb{R})$. Then, 
         \[\lambda(x + A) = \lambda(A).\]
     \end{proposition}
+    \begin{proof}
+        % Let
+        % \[\mathcal{M} = \{A \in \mathcal{B}(\mathbb{R}) \mid \lambda(x + A) = \lambda(A) \ \forall x \in \mathbb{R}\}.\]
+        % We show that $\mathcal{M}$ is a $\sigma$-algebra. 
+        % \begin{itemize}
+        %     \item We have $\varnothing \in \mathcal{B}(\mathbb{R})$ since $\varnothing + A = \varnothing$.
+            
+        %     \item Let $A \in \mathcal{B}(\mathbb{R})$. In that case, $\lambda(x + A) = \lambda(A)$ for all $x \in \mathbb{R}$. Hence,
+        %     \[\lambda(x + A^c) = \]
+        % \end{itemize}
+    \end{proof}
     
+    \newpage
+
+    \section{Probability and Independence}
+    \begin{definition}
+        Let $(\Omega, \mathcal{A}, P)$ be a measure space. We say that it is a \emph{probability space} if $P(\Omega) = 1$.
+    \end{definition}
+
+    \begin{definition}
+        Let $(\Omega, \mathcal{A}, P)$ be a probability space, and let $(\mathcal{A}_i)_{i \in I}$ be a sequence of $\sigma$-algebras in $\mathcal{A}$, for some indexing set $I$. We say that $(\mathcal{A}_i)$ is independent if for any $J \subseteq I$ finite,
+        \[P\left(\bigcap_{j \in J} A_j \right) = \prod_{j \in J} P(A_j).\]
+    \end{definition}
+
+    \begin{definition}
+        Let $(A_n)_{n=1}^\infty$ be a sequence of events in some probability space. Define
+        \[\limsup A_n = \bigcap_{n=1}^\infty \bigcup_{m=n}^\infty A_m, \qquad \liminf A_n = \bigcup_{n=1}^\infty \bigcap_{m=n}^\infty A_m.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $(A_n)_{n=1}^\infty$ be a sequence of events in some probability space. Then,
+        \begin{itemize}
+            \item $(\limsup A_n)^c = \liminf A_n^c$;
+            \item $(\liminf A_n)^c = \limsup A_n^c$;
+            \item $\liminf A_n \subseteq \limsup A_n$.
+        \end{itemize}
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{lemma}[First Borel-Cantelli Lemma]
+        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, $P$ a probability measure on $X$. Then, for a sequence $(A_n)_{n=1}^\infty$ in $\mathcal{R}$ with 
+        \[\sum_{n=1}^\infty P(A_n)\]
+        finite, $P(\liminf A_n) = 0$.
+    \end{lemma}
+    \begin{proof}
+        Define the sequence $(B_n)_{n=1}^\infty$ in $\mathcal{R}$ by
+        \[B_n = \bigcup_{m=n}^\infty A_m.\]
+        We have $B_n \supseteq B_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$ with
+        \[\bigcap_{n=1}^\infty B_n = \varnothing.\]
+        Since $P$ is a measure, this implies that
+        \[P(\liminf A_n) = P \left(\bigcap_{n=1}^\infty B_n\right) = \lim_{n \to \infty} P(B_n).\]
+        We also know that
+        \[P(B_n) = P \left(\bigcup_{m=n}^\infty A_m\right) \leq \sum_{m=n}^\infty A_m \to 0\]
+        by assumption. Hence, $P(\liminf A_n) = 0$.
+    \end{proof}
+
+    \begin{lemma}[Second Borel-Cantelli Lemma]
+        Let $X$ be a set, $\mathcal{R}$ a ring of subsets of $X$, $P$ a probability measure on $X$. Then, for a sequence of independent events $(A_n)_{n=1}^\infty$ in $\mathcal{R}$ with
+        \[\sum_{n=1}^\infty P(A_n) = \infty,\]
+        $P(\limsup A_n) = 1$.
+    \end{lemma}
+    \begin{proof}
+        We know that for all $a \geq 0$, $1 - a \leq e^{-a}$. Now, let $a_n = P(A_n)$. For $N, n \in \mathbb{Z}_{\geq 1}$ with $N \geq n$, we have
+        \[P \left(\bigcap_{m=n}^N A_m^c\right) = \prod_{m=n}^N P(A_m^c)\]
+        since $(A_n)$ is a sequence of independent events. Moreover,
+        \[P(A_m^c) = (1 - a_m) \leq e^{-a_m},\]
+        meaning that
+        \[P \left(\bigcap_{m=n}^N A_m^c\right) \leq \exp \left(- \sum_{m=n}^N a_m\right) \to 0\]
+        as $\sum_{m=n}^N a_m \to \infty$ as $N \to \infty$, by assumption. Hence,
+        \[\lim_{N \to \infty} P \left(\bigcap_{m=n}^N P(A_n^c)\right) = P \left(\bigcap_{m=n}^\infty P(A_n^c)\right) = 0\]
+        for all $n \in \mathbb{Z}_{\geq 1}$. So,
+        \[P(\limsup A_n^c) = P \left(\bigcup_{n=1}^\infty \bigcap_{m=n}^\infty A_m^c\right) \leq \sum_{n=1}^\infty P \left(\bigcap_{m=n}^\infty A_m^c\right) = 0.\]
+        Hence,
+        \[P(\liminf A_n) = 1 - P(\limsup A_n^c) = 1 - 0 = 1.\]
+    \end{proof}
 \end{document}

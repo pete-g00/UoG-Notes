@@ -1,0 +1,684 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Measure \& Probability}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+\chapterstyle{thatcher}
+
+\setcounter{chapter}{1}
+
+\begin{document}
+    \chapter{Integration}
+    \section{Measurable Functions}
+
+    \begin{definition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space. A function $f \colon X \to \mathbb{R} \cup \{\pm \infty\}$ is \emph{measurable} if for all $a \in \mathbb{R}$,
+        \[f^{-1}(a, \infty] \in \mathcal{A}.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $f \colon X \to \mathbb{R} \cup \{\pm \infty\}$ be a function. Then, the following are equivalent:
+        \begin{enumerate}
+            \item $f$ is measurable;
+            \item for all $a \in \mathbb{R}$, $f^{-1}[a, \infty] \in \mathcal{A}$;
+            \item for all $a \in \mathbb{R}$, $f^{-1}[-\infty, a) \in \mathcal{A}$;
+            \item for all $a \in \mathbb{R}$, $f^{-1}[-\infty, a] \in \mathcal{A}$.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        For $a \in \mathbb{R}$, we know that
+        \[f^{-1}[a, \infty] = [f^{-1}[-\infty, a)]^c, \qquad f^{-1}[-\infty, a] = [f^{-1}(a, \infty]]^c.\]
+        So, $1 \iff 4$ and $2 \iff 3$. 
+        \begin{itemize}
+            \item[$1 \implies 2$] We know that
+            \[[a, \infty] = \bigcap_{k=1}^\infty (a - \tfrac{1}{k}, \infty].\]
+            So,
+            \[f^{-1}[a, \infty] = \bigcup_{k=1}^\infty f^{-1} (a - \tfrac{1}{k}, \infty].\]
+
+            \item[$2 \implies 1$] We know that
+            \[(a, \infty] = \bigcup_{k=1}^\infty [a + \tfrac{1}{k}, \infty].\]
+            So,
+            \[f^{-1}(a, \infty] = \bigcup_{k=1}^\infty f^{-1} [a + \tfrac{1}{k}, \infty].\]
+        \end{itemize}
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $f \colon X \to \mathbb{R} \cup \{\pm \infty\}$ be a measurable function. Then, the function $|f| \colon X \to \mathbb{R} \cup \{\pm \infty\}$ is measurable, where $|f|(x) = |f(x)|$.
+    \end{proposition}
+    \begin{proof}
+        Let $a \in \mathbb{R}$. If $a < 0$, then
+        \[|f|^{-1}(a, \infty] = X \in \mathcal{A}.\]
+        If $a \geq 0$, then
+        \[|f|^{-1}(a, \infty) = f^{-1}(a, \infty] \cup f^{-1}[-\infty, -a) \in \mathcal{A}.\]
+        Hence, $|f|$ is measurable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $f \colon X \to \mathbb{R}$ be a constant function. Then, $f$ is measurable.
+    \end{proposition}
+    \begin{proof}
+        Let $x = f(0)$. Then, for all $a \in \mathbb{R}$,
+        \[f^{-1}(a, \infty] = \begin{cases}
+            \varnothing & a \leq x \\
+            X & a > x.
+        \end{cases}\]
+        So, $f^{-1}(a, \infty] \in \mathcal{A}$. This implies that $f$ is measurable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $A \subseteq X$. Define the function $\chi_A \colon X \to \mathbb{R}$ by
+        \[\chi_A = \begin{cases}
+            1 & x \in A \\
+            0 & \textrm{otherwise}.
+        \end{cases}\]
+        Then, $\chi_A$ is measurable if and only if $A$ is measurable.
+    \end{proposition}
+    \begin{proof}
+        Let $a \in \mathbb{R}$. We have
+        \[\chi_A^{-1}(a, \infty] = \begin{cases}
+            \varnothing & a \geq 1 \\
+            A & a \in [0, 1) \\
+            X & a > 0.
+        \end{cases}\]
+        So, $\chi_A$ is measurable if and only if $A$ is measurable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be a continuous function. Then, $f$ is measurable.
+    \end{proposition}
+    \begin{proof}
+        Let $a \in \mathbb{R}$. Since $[-\infty, a)$ is open and $f$ is continuous, we find that
+        \[f^{-1}[-\infty, a)\]
+        is open. Hence, the set $f^{-1}[-\infty, a)$ can be written as a union of (open) intervals, meaning that $f$ is measurable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $f, g \colon \mathcal{A} \to \mathbb{R} \cup \{\pm \infty\}$ be measurable functions. Then, the following functions are measurable:
+        \begin{enumerate}
+            \item $f + g$;
+            \item $\lambda f$ for $\lambda \in \mathbb{R}$;
+            \item $f \cdot g$;
+            \item $f \land g = \max(f, g)$;
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item Let $h = f \land g$. Then, for $a \in \mathbb{R}$ and $x \in \mathbb{R}$,
+            \begin{align*}
+                x \in h^{-1}(a, \infty] &\iff f(x) + g(x) < a \\
+                &\iff f(x) < a - g(x) \\
+                &\iff \exists r \in \mathbb{Q} \textrm{ s.t. } f(x) < r < a - g(x) \\
+                &\iff \exists r \in \mathbb{Q} \textrm{ s.t. } f(x) < r \textrm{ and } g(x) < a - r \\
+                &\iff x \in f^{-1} (r, \infty] \cap g^{-1} (a - r, \infty].
+            \end{align*}
+            Hence,
+            \[h^{-1}(a, \infty] = \bigcup_{r \in \mathbb{Q}} f^{-1} (r, \infty] \cap g^{-1} (a - r, \infty].\]
+            Since this is a countable union of sets in $\mathcal{A}$, we find that $h^{-1}(a, \infty] \in \mathcal{A}$. Hence, $h$ is measurable.
+            
+            \item If $\lambda = 0$, then $\lambda f$ is a constant, meaning that it is measurable. Otherwise, $\lambda \neq 0$. In that case, let $a \in \mathbb{R}$. We find that
+            \begin{align*}
+                (\lambda f)^{-1} (a, \infty] &= \{x \in X \mid \lambda f(x) > a\} \\
+                &= \{x \in X \mid f(x) > \tfrac{a}{\lambda}\} \\
+                &= f^{-1} (\tfrac{a}{\lambda}, \infty].
+            \end{align*}
+            Hence, since $f$ is measurable, we find that $\lambda f$ is measurable.
+
+            \item We first show that $h = f^2$ is measurable. So, let $a \in \mathbb{R}$. If $a < 0$, then $h^{-1}(a, \infty] = X \in \mathcal{A}$. Then,
+            \begin{align*}
+                h^{-1}(a, \infty] &= \{x \in X \mid h(x) > a\} \\
+                &= \{x \in X \mid f(x) > \sqrt{a} \textrm{ or } f(x) < -\sqrt{a}\} \\
+                &= f^{-1}(\sqrt{a}, \infty] \cup f^{-1} [-\infty, -\sqrt{a}).
+            \end{align*}
+            Since $f$ is measurable, we find that $h$ is measurable. Hence,
+            \[f \cdot g = \frac{1}{4} [(f + g)^2 - (f - g)^2]\]
+            is measurable.
+            
+            \item Let $h = f \land g$. Then, for $a \in \mathbb{R}$,
+            \begin{align*}
+                h^{-1}(a, \infty] &= \{x \in X \mid h(x) > a\} \\
+                &= \{x \in X \mid f(x) > a \textrm{ or } g(x) > a\} \\
+                &= f^{-1}(a, \infty] \cup g^{-1}(a, \infty].
+            \end{align*}
+            Since $f$ and $g$ are measurable, we find that $h$ is measurable.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{definition}
+        Let $X$ be a set and $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$. We define the functions $\inf f_n, \sup f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$
+        \[(\inf f_n)(x) = \inf \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\}, \qquad (\sup f_n)(x) = \sup \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\}.\]
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set and $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$. Then, we define the functions $\inf f_n, \sup f_n, \lim f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$ by
+        \begin{align*}
+            (\inf f_n) (x) &= \inf \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\} \\
+            (\sup f_n) (x) &= \sup \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\} \\
+            (\lim f_n) (x) &= \lim_{n \to \infty} f_n(x). 
+        \end{align*}
+        The function $\lim f_n$ need not exist in general.
+    \end{definition}
+
+    \begin{definition}
+        Let $(a_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$. Define
+        \[\liminf a_n = \sup_{n=1}^\infty \inf \{a_m \mid m \geq n\}, \qquad \limsup_{n \to \infty} a_n = \inf_{n=1}^\infty \sup \{a_m \mid m \geq n\}.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $(a_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$. Then,
+        \begin{enumerate}
+            \item The value $\liminf_{n \to \infty} a_n$ is the smallest accumulation point of $(a_n)$;
+            \item The value $\limsup_{n \to \infty} a_n$ is the largest accumulation point of $(a_n)$.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item 
+            
+            \item 
+        \end{enumerate}
+    \end{proof}
+    
+    \begin{proposition}
+        Let $(a_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$. Then,
+        \[\liminf_{n \to \infty} a_n \leq \limsup_{n \to \infty} a_n,\]
+        with
+        \[\liminf_{n \to \infty} a_n = \limsup_{n \to \infty} a_n\]
+        if and only if
+        \[\liminf_{n \to \infty} a_n = \lim_{n \to \infty} a_n = \limsup_{n \to \infty} a_n.\]
+    \end{proposition}
+    
+    \begin{definition}
+        Let $X$ be a set and $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$. We define the functions $\liminf f_n, \limsup f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$
+        \begin{align*}
+            (\liminf f_n)(x) &= \liminf f_n(x) = \sup_{n=1}^\infty \inf \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\}, \\
+            (\limsup f_n)(x) &= \limsup f_n(x) = \inf_{n=1}^\infty \sup \{f_n(x) \mid n \in \mathbb{Z}_{\geq 1}\}.
+        \end{align*}
+    \end{definition}
+
+    \begin{proposition}
+        Let $X$ be a set and $(f_n)_{n=1}^\infty$ be a sequence of measurable functions $f_n \colon X \to \mathbb{R} \cup \{\pm \infty\}$. Then, the following functions are measurable:
+        \begin{enumerate}
+            \item $\inf f_n$ and $\sup f_n$;
+            \item $\liminf f_n$ and $\limsup f_n$;
+            \item the limit $\lim f_n$, if it exists.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item Let $a \in \mathbb{R}$. Then, for $x \in \mathbb{R}$,
+            \begin{align*}
+                x \in (\inf f_n)^{-1}(a, \infty] &\iff (\inf f_n)(x) > a \\
+                &\iff f_n(x) > a \ \forall n \in \mathbb{Z}_{\geq 1} \\
+                &\iff x \in \bigcap_{n=1}^\infty f_n^{-1}(a, \infty].
+            \end{align*}
+            Since $f_n$ is measurable for all $n \in \mathbb{Z}_{\geq 1}$, we find that 
+            \[(\inf f_n)^{-1}(a, \infty] = \bigcap_{n=1}^\infty f_n^{-1}(a, \infty]\]
+            is measurable. Hence, $\inf f_n$ is measurable. We have
+            \[\sup f_n = -\inf (-f_n),\]
+            so $\sup f_n$ is measurable as well.
+
+            \item Define the sequence of functions $(g_n)_{n=1}^\infty$, $g_n \colon X \to \mathbb{R}$ by
+            \[g_n(x) = \inf \{f_m(x) \mid m \geq n\}.\]
+            By the result above, we know that $(g_n)$ is a sequence of measurable functions. We know that
+            \[\liminf f_n = \sup g_n,\]
+            so $\liminf f_n$ is measurable. Similarly, $\limsup f_n$ is measurable.
+            
+            \item If $\lim f_n$ exists, then $\lim f_n = \liminf f_n$. So, $\lim f_n$ is measurable.
+        \end{itemize}
+    \end{proof}
+
+    \begin{definition}
+        Let $X$ be a set and $f \colon X \to \mathbb{R}$ be a function. We say that $f$ is \emph{simple} if the image $f(X)$ is finite.
+    \end{definition}
+
+    \begin{definition}
+        Let $X$ be a set and $(f_n)_{n=1}^\infty$ a sequence of functions $f_n \colon X \to \mathbb{R}$, and let $f \colon X \to \mathbb{R}$ be a function. 
+        \begin{itemize}
+            \item We say that $(f_n)$ \emph{converges pointwise} to $f$ if for every $\varepsilon > 0$ and $x \in X$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
+            \item We say that $(f_n)$ \emph{converges uniformly} to $f$ if for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $x \in X$ and $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{theorem}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $f \colon X \to \mathbb{R}$ be a function. Then, there exists a sequence $(s_n)_{n=1}^\infty$ of simple functions $s_n \colon X \to \mathbb{R}$ such that $s_n \to f$ pointwise. Moreover,
+        \begin{enumerate}
+            \item if $f$ is bounded, then the sequence $(s_n)$ can be chosen such that $s_n \to f$ uniformly.
+            \item if $f \geq 0$, then the sequence $(s_n)$ can be chosen to be positive increasing (i.e. $0 \leq s_1 \leq s_2 \leq \dots$).
+            \item if $f$ is measurable, then the sequence $(s_n)$ can be chosen such that $s_n$ is measurable  for all $n \in \mathbb{Z}_{\geq 1}$.
+        \end{enumerate}
+    \end{theorem}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \setcounter{enumi}{-1}
+            % \item Define the function $s_n \colon X \to \mathbb{R}$ by 
+            % \[s_n(x) = \begin{cases}
+            %     f(y) & x \in [y, y + \tfrac{1}{n}) \\
+            %     0 & \textrm{otherwise},
+            % \end{cases}\]
+            % where $y \in \{-n, -n + \tfrac{1}{n}, -n + \tfrac{2}{n}, \dots, n - \tfrac{1}{n}\}$.
+            \item 
+            
+            \item 
+            
+            \item 
+            
+            \item 
+        \end{enumerate}
+    \end{proof}
+
+    \begin{definition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space, and let $s \colon X \to \mathbb{R}$ be a simple measurable function denoted by
+        \[s = \lambda_1 \chi_{E_1} + \lambda_2 \chi_{E_2} + \dots + \lambda_n \chi_{E_n},\]
+        where $E_k \in \mathcal{A}$ for $1 \leq i \leq n$. We define the \emph{integral of $s$ over $X$} as
+        \[\int_X s \ d\mu = \sum_{k=1}^n \lambda_k \mu(E_k).\]
+        In general, for $A \in \mathcal{A}$, we define the \emph{of $s$ over $A$} to be
+        \[\int_X s \ d\mu = \sum_{k=1}^n \lambda_k \mu(E_k \cap A).\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space, $s, t \colon X \to \mathbb{R}$ be simple and measurable and let $A \in \mathcal{A}$. Then,
+        \begin{enumerate}
+            \item $s + t$ is simple and measurable and
+            \[\int_A s + t \ d\mu = \int_A s \ d\mu + \int_A t \ d\mu.\]
+
+            \item $s \geq t$ implies
+            \[\int_A s \ d\mu \geq \int_A t \ d\mu.\]
+
+            \item for all $\lambda \in \mathbb{R}$, $\lambda s$ is simple and measurable, with
+            \[\int_A \lambda s \ d\mu = \lambda \int_A s \ d\mu.\]
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item 
+            \item 
+            \item 
+        \end{enumerate}
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space, $s \colon X \to \mathbb{R}$ be a simple measurable function. Then, the function $\nu \colon \mathcal{A} \to \mathbb{R}$ given by
+        \[\nu(A) = \int_A s \ d\mu\]
+        is a measure.
+    \end{proposition}
+    \begin{proof}
+        Let
+        \[s = \lambda_1 \chi_{E_1} + \lambda_2 \chi_{E_2} + \dots + \lambda_n \chi_{E_n}.\]
+        We find that
+        \begin{align*}
+            \nu (\varnothing) &= \int_{\varnothing} s \ d\mu \\
+            &= \sum_{k=1}^n \lambda_k \mu (E_k \cap \varnothing) \\
+            &= \sum_{k=1}^n \lambda_k \mu (\varnothing) = 0.
+        \end{align*}
+        Now, let $(A_n)_{n=1}^\infty$ be a sequence of disjoint sets in $\mathcal{A}$. Denote
+        \[A = \bigcup_{j=1}^\infty A_j.\]
+        We find that
+        \begin{align*}
+            \nu (A) &= \int_A s \ d\mu \\
+            &= \sum_{k=1}^n \lambda_k \mu(E_k \cap A) \\
+            &= \sum_{k=1}^n \lambda_k \mu \left(\bigcup_{j=1}^\infty (E_k \cap A_j)\right) \\
+            &= \sum_{k=1}^n \lambda_k \cdot \sum_{j=1}^\infty \mu(E_k \cap A_j) \\
+            &= \sum_{j=1}^\infty \sum_{k=1}^n \lambda_k \mu(E_k \cap A_j) \\
+            &= \sum_{j=1}^\infty \int_{A_j} s \ d\mu = \sum_{j=1}^\infty \nu(A_j).
+        \end{align*}
+        Hence, $\nu$ is a measure.
+    \end{proof}
+
+    \begin{definition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $f \colon X \to \mathbb{R}$ be measurable with $f \geq 0$. The \emph{integral of $f$ over $A$}, for some $A \in \mathcal{A}$, is given by
+        \[\int_A f \ d\mu := \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f \text{ simple measurable} \right\}.\]
+        For $f \colon X \to \mathbb{R}$, define
+        \[f_+ = \max(f(x), 0), \qquad f_- = \max(-f(x), 0).\]
+        We say that \emph{$f$ is integrable over $A$}, for some $A \in \mathcal{A}$, if both
+        \[\int_A f_+ \ d\mu < \infty, \qquad \int_A f_- \ d\mu < \infty.\]
+        In that case, we define the \emph{integral of $f$ over $A$} by
+        \[\int_A f \ d\mu = \int_A f_+ \ d\mu - \int_A f_- \ d\mu.\]
+        If $f$ is integrable, we denote $f \in \mathcal{L}_1(X, \mu) = \mathcal{L}(X, \mu)$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $f \colon X \to \mathbb{R}$ be a simple measurable function. Then,
+        \[\int_A f \ d\mu = \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f \text{ simple measurable} \right\}.\]
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space, $f, g \in \mathcal{L}(X, \mu)$ and $A, B \in \mathcal{A}$. Then, 
+        \begin{enumerate}
+            \item \begin{enumerate}
+                \item $\int_A \lambda f \ d\mu = \lambda \int_A f \ d\mu$ for $\lambda \in \mathbb{R}$;
+                \item $\int_A (f + g) \ d\mu \geq \int_A f \ d\mu + \int_A g \ d\mu$;
+            \end{enumerate}
+            \item if $f \leq g$, then $\int_A f \ d\mu \leq \int_A g \ d\mu$;
+            \item $f \in \mathcal{L}(X, \mu)$ if and only if $|f| \in \mathcal{L}(X, \mu)$, with
+            \[\left|\int_A f \ d\mu\right| \leq \int_A |f| \ d\mu;\]
+            \item \begin{enumerate}
+                \item if $\mu(A) = 0$, then
+                \[\int_A f \ d\mu = 0;\]
+                \item if $A \subseteq B$ and $\mu(B \setminus A) = 0$,
+                \[\int_A f \ d\mu = \int_B f \ d\mu;\]
+                \item If 
+                \[\mu (\{x \in X \mid f(x) \neq g(x)\}) = 0,\]
+                then 
+                \[\int_A f \ d\mu = \int_A g \ d\mu.\]
+            \end{enumerate}
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item \begin{enumerate}
+                \item First, assume that $f \geq 0$. If $\lambda = 0$, then
+                \[\int_A \lambda f \ d\mu = 0 = \lambda \int_A f \ d\mu.\]
+                Otherwise, if $\lambda > 0$, then
+                \begin{align*}
+                    \int_A \lambda f \ d\mu &= \sup \left\{\int_A \lambda s \ d\mu \mid 0 \leq s \leq \lambda f \textrm{ sm}\right\} \\
+                    &= \sup \left\{\lambda \int_A \frac{1}{\lambda}s \ d\mu \mid 0 \leq \frac{1}{\lambda}s \leq f \textrm{ sm}\right\} \\
+                    &= \lambda \sup \left\{\int_A t \ d\mu \mid 0 \leq t \leq f \textrm{ sm}\right\} \\
+                    &= \lambda \int_A f \ d\mu.
+                \end{align*}
+                Now, for a general $f$, we have
+                \begin{align*}
+                    \lambda \int_A f \ d\mu &= \lambda \left(\int_A f_+ \ d\mu - \int_A f_- \ d\mu\right) \\
+                    &= \lambda \int_A f_+ \ d\mu - \lambda \int_A f_- \ d\mu \\
+                    &= \int_A \lambda f_+ \ d\mu - \int_A \lambda f_- \ d\mu \\
+                    &= \int_A \lambda f \ d\mu.
+                \end{align*}
+                
+                \item We find that
+                \begin{align*}
+                    \int_A f \ d\mu + \int_A g \ d\mu &= \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f \textrm{ simple measurable}\right\} \\
+                    &+ \sup \left\{\int_A t \ d\mu \mid 0 \leq t \leq g \textrm{ simple measurable}\right\} \\
+                    &= \sup \left\{\int_A s \ d\mu + \int_A t \ d\mu \mid 0 \leq s \leq f, 0 \leq t \leq g  \textrm{ s.m.}\right\} \\
+                    &= \sup \left\{\int_A (s + t) \ d\mu \mid 0 \leq s + t \leq f + g \textrm{ s.m.} \right\} \\
+                    &\geq \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f + g \textrm{ s.m.}\right\} \\
+                    &= \int_A f + g \ d\mu.
+                \end{align*}
+            \end{enumerate}
+
+            \item For all $0 \leq s \leq f$, we have $0 \leq s \leq g$. Hence, by the supremum property, we find that
+            \[\int_A f \ d\mu \leq \int_A g \ d\mu.\]
+
+            \item We have
+            \begin{align*}
+                \left| \int_A f \ d\mu\right| &= \left|\int_A f_+ \ d\mu - \int_A f_- \ d\mu\right| \\
+                &\leq \int_A f_+ d\mu + \int_A f_- \ d\mu = \int_A |f| \ d\mu.
+            \end{align*}
+            
+            \item \begin{enumerate}
+                \item Let $0 \leq s \leq f$ be simple and measurable. Then,
+                \[\int_A s \ d\mu = \sum_{t \in s(X)} t \cdot \mu(f^{-1}(t) \cap A) = \sum_{t \in s(X)} t \cdot 0 = 0.\]
+                Hence,
+                \[\int_A f \ d\mu = \sup \{0\} = 0.\]
+                
+                \item For any $C \in \mathcal{A}$, we have
+                \[\mu(C \cap B) = \mu(C \cap A) + \mu(C \cap B \setminus A) = \mu(C \cap A)\]
+                since $C \cap B \setminus A \subseteq B \setminus A$. Hence, for any simple measurable function $s \geq 0$,
+                \begin{align*}
+                    \int_B s \ d\mu &= \sum_{t \in s(X)} t \cdot \mu(f^{-1}(t) \cap B) \\
+                    &= \sum_{t \in s(X)} t \cdot \mu(f^{-1}(t) \cap A) \\
+                    &= \int_A s \ d\mu.
+                \end{align*}
+                This implies that for a function $f \geq 0$,
+                \begin{align*}
+                    \int_B f \ d\mu &= \sup \left\{\int_B s \ d\mu \mid 0 \leq s \leq f \textrm{ sm}\right\} \\
+                    &= \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f \textrm{ sm}\right\} \\
+                    &= \int_A f \ d\mu.
+                \end{align*}
+                Hence, for an arbitrary function $f$,
+                \begin{align*}
+                    \int_B f \ d\mu &= \int_B f_+ \ d\mu - \int_B f_- \ d\mu \\
+                    &= \int_A f _+ \ d\mu - \int_A f_- \ d\mu \\
+                    &= \int_A f \ d\mu.
+                \end{align*}
+
+                \item Assume first that $f \geq 0$. Let
+                \[B = \{x \in X \mid f(x) = g(x)\}.\]
+                We know that $\mu(B \setminus A) = 0$. Now, let $0 \leq s \leq f$ be simple measurable. Define the function $s' \colon X \to [0, \infty)$ by
+                \[s'(x) = \begin{cases}
+                    s(x) & x \in B \\
+                    0 & \textrm{otherwise}.
+                \end{cases}\]
+                We have $s'(X) = s(X) \cup \{0\}$, meaning that $s'$ is simple. Moreover, $s'$ is measurable, since 
+                \[(s')^{-1}(a, \infty) = \begin{cases}
+                    X & x < 0 \\
+                    s^{-1}(a, \infty) \cap B & \textrm{otherwise}.
+                \end{cases}\]
+                Moreover, $0 \leq s' \leq g$ by construction with
+                \begin{align*}
+                    \int_B s \ d\mu &= \sum_{t \in s(X)} t \cdot \mu(s^{-1}(t) \cap B) \\
+                    &= \sum_{t \in s'(X)} t \cdot \mu((s')^{-1}(t) \cap B) \\
+                    &= \int_B s' \ d\mu.
+                \end{align*}
+                Hence,
+                \[\left\{\int_B s \ d\mu \mid 0 \leq s \leq f \textrm{ sm}\right\} = \left\{\int_B s \ d\mu \mid 0 \leq s \leq g \textrm{ sm}\right\},\]
+                meaning that
+                \[\int_A f \ d\mu = \int_B f \ d\mu = \int_B g \ d\mu = \int_A g \ d\mu.\]
+                Hence, for an arbitrary measurable $f$,
+                \begin{align*}
+                    \int_A f \ d\mu &= \int_A f_+ \ d\mu - \int_A f_- \ d\mu \\
+                    &= \int_A g_+ \ d\mu - \int_A g_- \ d\mu \\
+                    &= \int_A g \ d\mu.
+                \end{align*}
+            \end{enumerate}
+        \end{enumerate}
+    \end{proof}
+    \newpage
+
+    \section{Convergence Theorems}
+    \begin{theorem}[Lebesgue's Montone Convergence Theorem]
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $(f_n)_{n=1}^\infty$ be a sequence of measurable functions $f_n \colon X \to [0, \infty]$ such that $0 \leq f_1 \leq f_2 \leq \dots$. Define the function $f \colon X \to [0, \infty]$ by $f(x) = \lim_{n \to \infty} f_n(x)$. Then, $f$ is measurable, with
+        \[\lim_{n \to \infty} \int_A f_n \ d\mu = \int_A f \ d\mu = \int_A \lim_{n \to \infty} f_n \ d\mu.\]
+        In particular, if the sequence $(\int_A f_n \ d\mu)$ is bounded above, then $f$ is integrable.
+    \end{theorem}
+    \begin{proof}
+        By monotonicity, we know that $f_n \leq f$. Hence,
+        \[\int_A f_n \ d\mu \leq \int_A f \ d\mu,\]
+        meaning that
+        \[\lim_{n \to \infty} \int_A f_n \ d\mu \leq \int_A f \ d\mu.\]
+        We now show that
+        \[\lim_{n \to \infty} \int_A f_n \ d\mu \geq \int_A f \ d\mu.\]
+        % TODO
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $(f_n)_{n=1}^\infty$ be a sequence of measurable functions $0 \leq f_1 \leq f_2 \leq \dots$ almost everywhere, i.e. for all $i \in \mathbb{Z}_{\geq 1}$,
+        \[\mu (\{x \in X \mid f_i(x) > f_{i+1}(x)\}) = 0.\]
+        Then, $f$ is measurable, with
+        \[\lim_{n \to \infty} \int_A f_n \ d\mu = \int_A f \ d\mu = \int_A \lim_{n \to \infty} f_n \ d\mu.\]
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $(g_n)_{n=1}^\infty$ be a sequence of measurable functions that are non-negative almost everywhere. Then,
+        \[\sum_{n=1}^\infty \int_A g_n \ d\mu = \int_A \sum_{n=1}^\infty g_n \ d\mu.\]
+    \end{proposition}
+    \begin{proof}
+        Define the sequence $(f_n)_{n=1}^\infty$ by
+        \[f_n = \sum_{k=1}^n g_k.\]
+        Since $g_n$ are non-negative, we know that $(f_n)$ is non-decreasing. Hence,
+        \begin{align*}
+            \sum_{n=1}^\infty \int_A g_n \ d\mu &= \lim_{n \to \infty} \sum_{k=1}^n \int_A g_k \ d\mu \\
+            &= \lim_{n \to \infty} \int_A \sum_{k=1}^n g_k \ d\mu \\
+            &= \int_A \lim_{n \to \infty} \sum_{k=1}^n g_k \ d\mu \\
+            &= \int_A \sum_{n=1}^\infty g_n \ d\mu.
+        \end{align*}
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $f \colon X \to [0, \infty]$ be measurable. Then, $f = 0$ almost everywhere if and only if
+        \[\int_A f \ d\mu = 0.\]
+        for all $A \in \mathcal{A}$.
+    \end{proposition}
+    \begin{proof}
+        If $f = 0$ almost everywhere, then for all $A \in \mathcal{A}$,
+        \[\int_A f \ d\mu = \int_A 0 \ d\mu = 0.\]
+        Now, assume that $f \neq 0$ almost everywhere. In that case, let $A = f^{-1}(0, \infty]$, with $\mu(A) = \varepsilon > 0$. Now, define $A_n = f^{-1}(\frac{1}{n}, \infty]$. We know that $A_n \in \mathcal{A}$ for all $n \in \mathbb{Z}_{\geq 1}$, since $f$ is measurable, with
+        \[A = \bigcup_{n=1}^\infty A_n.\]
+        Hence,
+        \[\lim_{n \to \infty} \mu(A_n) = \mu(A) = \varepsilon.\]
+        This implies that there exists an $n \in \mathbb{Z}_{\geq 1}$ such that $\mu(A_n) > \frac{\varepsilon}{2} > 0$. Now, define the function $g \colon X \to [0, \infty)$ by $g = \frac{1}{n} \chi_{A_n}$. For $x \in X$, if $x \not\in A_n$, then $g(x) = 0 \leq f(x)$, and if $x \in A_n$, then $g(x) = \frac{1}{n} < f(x)$. So, $g \leq f$, meaning that
+        \[\int_X f \ d\mu \geq \int_X g \ d\mu = \frac{1}{n} \mu(A_n) > 0.\]
+    \end{proof}
+
+    \begin{lemma}[Fatou's Lemma]
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and let $(f_n)_{n=1}^\infty$ be a sequence on non-negative measurable functions on $X$. Then,
+        \[\int_A \liminf_{n \to \infty} f_n(x) \ d\mu \leq \liminf_{n \to \infty} \left(\int_A f_n \ d\mu\right).\]
+    \end{lemma}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{theorem}[Lebesgue's Dominated Convergence Theorem]
+        Let $(f_n)_{n=1}^\infty$ be a sequence of measurable functions $f_n \colon X \to \mathbb{R}$ such that $f(x) = \lim_{n \to \infty} f_n(x)$ exists for all $x \in X$. If there exists a $g \colon X \to [0, \infty]$ such that $|f_n| \leq g$ for all $n \in \mathbb{Z}_{\geq 1}$, then
+        \begin{enumerate}
+            \item $f_n$ and $f$ are integrable for all $n \in \mathbb{Z}$;
+            \item $\int_X |f_n - f| \ d\mu \to 0$ as $n \to \infty$;
+            \item $\lim_{n \to \infty} \int_X f_n \ d\mu = \int_X \lim_{n \to \infty} f_n \ d\mu = \int_X f \ d\mu$.
+        \end{enumerate}
+    \end{theorem}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item Since $g$ is integrable with $|f_n| \leq g$ for all $n \in \mathbb{Z}_{\geq 1}$, we find that
+            \[\int_X |f_n| \ d\mu \leq \int_X g \ d\mu < \infty.\]
+            So, $|f_n|$ is integrable, meaning that $f_n$ is integrable. Moreover, 
+            \[\int_X f \ d\mu \leq \int_X g \ d\mu < \infty,\]
+            meaning that $f$ is also integrable.
+
+            \item For $n \in \mathbb{Z}_{\geq 1}$, we have
+            \[|f_n - f| \leq |f_n| + |f| \leq g + |f| < 2g,\]
+            meaning that $h := g + |f|$ is integrable. Moreover,
+            \begin{align*}
+                \int_X h \ d\mu &= \int_X \lim_{n \to \infty} h - |f_n - f| \ d\mu \\
+                &= \int_X \liminf_{n \to \infty} h - |f_n - f| \ d\mu \\
+                &\leq \liminf_{n \to \infty} \int_X h - |f_n - f| \ d\mu \\
+                &= \int_X h \ d\mu - \limsup_{n \to \infty} \int_X |f_n - f| \ d\mu.
+            \end{align*}
+            Hence, we find that
+            \[0 \leq \liminf \int_X |f_n - f| \ d\mu \leq \limsup \int_X |f_n - f| \ d\mu \leq 0.\]
+            This implies that $\int_X |f_n - f| \ d\mu \to 0$ as $n \to \infty$.
+
+            \item We find that for all $n \in \mathbb{Z}_{\geq 1}$,
+            \[\left|\int_X f_n \ d\mu - \int_X f \ d\mu\right| \leq \int_X |f_n - f| \ d\mu,\]
+            meaning that
+            \[\lim_{n \to \infty} \int_X f_n \ d\mu - \lim_{n \to \infty} \int_X f \ d\mu = 0.\]
+        \end{enumerate}
+    \end{proof}
+
+    % \begin{proposition}
+    %     Let $f \colon \mathbb{R}^2 \to \mathbb{R}$ be a continuous function such that $\frac{\partial f}{\partial t} (t, x)$ exists for all $(t, x) \in \mathbb{R}^2$ and is continuous. For every 
+    % \end{proposition}
+    % \begin{proof}
+        
+    % \end{proof}
+    
+    \begin{proposition}
+        Let $f \colon [a, b] \to \mathbb{R}$ be Riemann integrable. Then, $f$ is Lebesgue integrable, with
+        \[\int_a^b f(x) \ dx = \int_{[a, b]} f \ d\lambda.\]
+    \end{proposition}
+    \begin{proof}
+        Without loss of generality, assume that $a = 0, b = 1$. Define the sequence of partitions $(P_n)_{n=1}^\infty$ by 
+        \[P_n = \{0, \tfrac{1}{2^n}, \dots, 1 - \tfrac{1}{2^n}, 1\}.\]
+        Define the functions $(g_n)_{n=1}^\infty, (h_n)_{n=1}^\infty$ by
+        \[g_n = \sum_{k=1}^{2^n} m_k \chi_{\left(\tfrac{k-1}{2^n}, \tfrac{k}{2^n}\right]}, \qquad h_n = \sum_{k=1}^{2^n} M_k \chi_{\left(\tfrac{k-1}{2^n}, \tfrac{k}{2^n}\right]},\]
+        where $m_k = \inf f(-\tfrac{k-1}{2^n}, \tfrac{k}{2^n}]$ and $M_k = \sup f(-\tfrac{k-1}{2^n}, \tfrac{k}{2^n}]$. For $n \in \mathbb{Z}_{\geq 1}$, the functions $g_n$ and $h_n$ are simple measurable, with
+        \begin{align*}
+            \int_{[0, 1]} g_n \ d\mu &= \sum_{k=1}^{2^n} m_k \mu \left(\tfrac{k-1}{2^n}, \tfrac{k}{2^n}\right] = L(f, P_n) \\
+            \int_{[0, 1]} h_n \ d\mu &= \sum_{k=1}^{2^n} M_k \mu \left(\tfrac{k-1}{2^n}, \tfrac{k}{2^n}\right] = U(f, P_n).
+        \end{align*}
+        Moreover, for all $n \in \mathbb{Z}_{\geq 1}$, $g_n \leq f \leq h_n$. Since $f$ is Riemann integrable, we find that
+        \[L(f, P_n) \to \int_0^1 f(x) \ dx, \qquad U(f, P_n) \to \int_0^1 g(x) \ dx.\]
+        Since $f$ is Riemann integrable, it is bounded by some $C > 0$. Hence, we find that $|g_n| \leq C$ and $|h_n| \leq C$ for all $n \in \mathbb{Z}_{\geq 1}$. Since the constant function $C$ is measurable, the Dominated Convergence Theorem tells us that 
+        \begin{align*}
+            \lim_{n \to \infty} \int_{[0, 1]} g_n \ d\mu &= \int_{[0, 1]} \lim_{n \to \infty} g_n \ d\mu = \int_0^1 f(x) \ dx, \\
+            \lim_{n \to \infty} \int_{[0, 1]} h_n \ d\mu &= \int_{[0, 1]} \lim_{n \to \infty} h_n \ d\mu = \int_0^1 f(x) \ dx.
+        \end{align*}
+        Since
+        \[\int_{[0, 1]} g \ d\mu = \int_{[0, 1]} h \ d\mu,\]
+        we find that $g = h$ almost everywhere. Since $g \leq f \leq h$, this implies that $f$ is measurable, with $g = f = h$ almost everywhere and
+        \[\int_{[0, 1]} f \ d\mu = \int_{[0, 1]} g \ d\mu = \int_0^1 f(x) \ dx.\]
+    \end{proof}
+    \newpage
+
+    \section{$\mathcal{L}^p$ spaces}
+    
+    \begin{definition}
+        Let $V$ be a real vector space. A map $\lVert . \rVert \colon V \to [0, \infty)$ if for $u, v \in V$ and $\lambda \in \mathbb{R}$,
+        \begin{itemize}
+            \item $\lVert u + v \rVert \leq \lVert u \rVert + \lVert v \rVert$;
+            \item $\lVert \lambda v \rVert = |\lambda| \lVert v \rVert$;
+            \item $\lVert v \rVert = 0$ if and only if $v = 0$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{definition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space. Then,
+        \[\mathcal{L}^p(X, \mu) = \mathcal{L}^p(X) = \left\{f \colon X \to \mathbb{R} \mid f \text{ measurable and } \int_X |f|^p \ d\mu < \infty \right\},\]
+        where $p \in [1, \infty)$. If $f \in \mathcal{L}^p(X)$, we define
+        \[\lVert f \rVert_p = \left(\int_X |f|^p \ d\mu\right)^{1/p}.\]
+    \end{definition}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space and $f, g \in \mathcal{L}^1(X)$. Then,
+        \[\lVert f + g \rVert_1 \leq \lVert f \rVert_1 + \lVert g \rVert_1,\]
+        and
+        \[\lVert f + g \rVert_2 \leq \lVert f \rVert_2 + \lVert g \rVert_2.\]
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{proposition}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space. Define the relation $\sim$ on functions $X \to \mathbb{R}$ by
+        \[f \sim g \iff \mu (\{x \in X \mid f(x) \neq g(x)\}) = 0.\]
+        Then, $\sim$ is an equivalence relation.
+    \end{proposition}
+
+    \begin{theorem}
+        Let $(X, \mathcal{A}, \mu)$ be a measure space. Then, the vector space $\mathcal{L}^p(X)$ is complete.
+    \end{theorem}
+\end{document}
