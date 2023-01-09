@@ -40,542 +40,605 @@
 \chapterstyle{thatcher}
 
 \begin{document}
-\chapter{Normed Vector Spaces}
-\section{Introduction to norms}
-\subsection{Distance in vector spaces}
-In $\mathbb{R}^n$, we have seen the following metrics:
-\begin{itemize}
-    \item $d_1$, which is defined by
-    \[d_1(\bm{x}, \bm{y}) = \sum_{i=1}^n |x_i - y_i|;\]
-    \item $d_2$, which is defined by
-    \[d_1(\bm{x}, \bm{y}) = \left(\sum_{i=1}^n |x_i - y_i|^2\right)^{1/2};\]
-    \item $d_\infty$, which is defined by
-    \[d_\infty(\bm{x}, \bm{y}) = \sup_{i=1}^n |x_i - y_i|;\]
-\end{itemize}
-In general, for $p \in [1, \infty)$, we can define the metric $d_p$, given by
-\[d_p(\bm{x}, \bm{y}) = \left(\sum_{i=1}^n |x_i - y_i|^2\right)^{1/p}.\]
+    \chapter{Normed Vector Spaces}
 
-% TODO: Minkowski inequality to show triangle inequality holds
+    \section{Review of Vector Spaces}
+    In this section, we will review properties of vector spaces with relation to vector spaces.
 
-We can define metrics on other vector spaces, such as the space of sequences in $\mathbb{R}$ (or any field $\mathbb{K}$). The space of sequences in some field $\mathbb{K}$ is denoted by $\operatorname{Seq}(\mathbb{K})$. For each $p \in [1, \infty)$, we define the set $\ell^p$ to be a subspace of $\operatorname{Seq}(\mathbb{R})$ for which the distance function $d_p$ is defined. That is, the set $\ell^p$ contains of all sequences $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ such that the series
-\[\sum_{i=1}^\infty |x_i|^p \]
-converges- if so, we define the distance between $x^{(n)}$ and $y^{(n)}$ in $\ell^p$ to be:
-\[d_p(x^{(n)}, y^{(n)}) = \left(\sum_{i=1}^\infty |x_i - y_i|^p \right)^{1/p}.\]
-% TODO: Prove the series converges
-% The series
-% \[\sum_{i=1}^\infty |x_i - y_i|^p\]
-% converges- for all $i \in \mathbb{Z}_{\geq 1}$,
-% \[|x_i - y_i|^p \leq (|x_i| + |y_i|)^p \leq |x_i|^p + |y_i|^p.\]
-% Since $x^{(n)}$ and $y^{(n)}$ are in $\ell^p$, we find that the series
-% \[\sum_{n=1}^\infty |x_i|^p + |y_i|^p = \sum_{n=1}^\infty |x_i|^p + \sum_{n=1}^\infty |y_i|^p\]
-% converges. That is, the distance function is well-defined. 
-We also define $\ell^\infty$ to be the set of all bounded sequences in $\mathbb{R}$, with
-\[d_\infty(x^{(n)}, y^{(n)}) = \sup_{i=1}^n |x_i - y_i|.\]
+    \begin{definition}
+        A \emph{vector space $(V, +, \cdot)$ (over a field $\mathbb{K}$)} is a set $V$ and functions $(+) \colon V \times V \to V$ and $(\cdot) \colon \mathbb{K} \times V \to V$ such that:
+        \begin{itemize}
+            \item $(V, +)$ is an abelian group;
+            \item $\cdot$ is associative over $+$, i.e. for $a, b \in \mathbb{K}$ and $v \in V$, $a \cdot (b \cdot v) = (ab) \cdot v$;
+            \item $\cdot$ left- and right-distributes over $+$, i.e. for $a \in \mathbb{K}$ and $v, w \in V$, $a \cdot (v + w) = a \cdot v + a \cdot w$.
+        \end{itemize}
+    \end{definition}
+    \noindent In this course, we set $\mathbb{K} = \mathbb{R}$ or $\mathbb{K} = \mathbb{C}$. We are familiar with many vector spaces, e.g. $\mathbb{R}^n$ over $\mathbb{R}$ and $\mathbb{C}^n$ over $\mathbb{C}$ (and $\mathbb{R}$). 
 
-Further, we can define norms on the set of continuous functions $C[0, 1]$. The distance between two functions $f, g \in C[0, 1]$ is defined to be:
-\[d_p(f, g) = \left(\int_0^1 |f(x) - g(x)|^p \ dx\right)^{1/p}.\]
-The value is always finite for $f, g$ continuous, since $|f - g|^p$ is a continuous function.
+    We now review the concept of dimensionality.
+    \begin{definition}
+        Let $V$ be a vector space and let $S \subseteq V$.
+        \begin{itemize}
+            \item We say that $S$ \emph{spans} $V$ if for all $v \in V$, there exists a collection of scalars $(c_{v_i})_{v_i \in S}$ such that 
+            \[v = \sum_{v_i \in S} c_{v_i} \cdot v_i.\]
+            \item We say that $S$ is \emph{linearly independent} if for all linear combinations
+            \[\sum_{v_i \in S} c_{v_i} \cdot v_i = 0,\]
+            we have $c_{v_i} = 0$ for all $v_i \in S$.
+            \item We say that $S$ is a \emph{basis} for $V$ if $S$ spans $V$ and is linearly independent.
+        \end{itemize}
+    \end{definition}
+    \noindent For $\mathbb{R}^n$, a basis is given by $\{e_1, e_2, \dots, e_n\}$,
+    with 
+    \[e_i(j) = \begin{cases}
+        1 & i = j \\
+        0 & \textrm{otherwise}
+    \end{cases}\]
+    for $1 \leq i \leq n$. This basis is not unique, e.g. another basis for $\mathbb{R}^n$ is $\{f_1, f_2, \dots, f_n\}$, with
+    \[f_i = \sum_{j=1}^i e_j.\]
+    Although the basis is not unique, if it is finite, then any other basis will also be finite and have the same number of elements. This value is defined the \emph{dimension} of the vector space. Vector spaces that have a basis with finitely many elements are called \emph{finite-dimensional}. We know that for a field $\mathbb{K}$, if $V$ is an $n$-dimensional vector space over $\mathbb{K}$, then $V$ is isomorphic to $\mathbb{K}^n$. So, these are all the finite-dimensional vector spaces.
 
-\subsection{Norms}
-We now define a norm for vector spaces.
-\begin{definition}
-    Let $V$ be a real vector space and let $\lVert . \rVert: V \to \mathbb{R}$ be a function. We say that $\lVert . \rVert$ is a \emph{norm} if
-    \begin{enumerate}[label=\textbf{N\arabic*.}]
-        \item for all $\bm{v} \in V$, $\lVert \bm{v} \rVert \geq 0$, and $\lVert \bm{v} \rVert = 0$ if and only if $\bm{v} = \bm{0}$;
-        \item for all $c \in \mathbb{R}$ and $\bm{v} \in V$, $\lVert c \bm{v} \rVert = |c| \lVert \bm{v} \rVert$;
-        \item for all $\bm{u}, \bm{v} \in V$, 
-        \[\lVert \bm{u} + \bm{v} \rVert \leq \lVert \bm{u} \rVert + \lVert \bm{v} \rVert.\]
-    \end{enumerate}
-\end{definition}
-
-For every norm, there exists a metric; every norm induces a metric.
-\begin{proposition}
-    Let $V$ be a real vector space and let $\lVert . \rVert$ be a norm. Define the function $d: V \times V \to \mathbb{R}$ by $d(\bm{u}, \bm{v}) = \lVert \bm{u} - \bm{v} \rVert$. Then, $(V, d)$ is a metric space.
-\end{proposition}
-\begin{proof}
-    We check this directly from the axioms of a metric space:
-    \begin{enumerate}[label=\textbf{M\arabic*.}]
-        \item Let $\bm{x}, \bm{y} \in V$. We find that
-        \[d(\bm{x}, \bm{y}) = \lVert \bm{x} - \bm{y} \rVert \geq 0.\]
-        Moreover, $d(\bm{x}, \bm{y}) = 0$ if and only if $\bm{x} - \bm{y} = \bm{0}$, i.e. $\bm{x} = \bm{y}$.
-        \item Let $\bm{x}, \bm{y} \in V$. We find that
-        \[d(\bm{x}, \bm{y}) = \lVert \bm{x} - \bm{y} \rVert = \lVert -(\bm{y} - \bm{x}) \rVert = |-1| \lVert \bm{y} - \bm{x} \rVert = \lVert \bm{y} - \bm{x} \rVert = d(\bm{y}, \bm{x}).\]
-        \item Let $\bm{x}, \bm{y}, \bm{z} \in V$. We find that
-        \begin{align*}
-            d(\bm{x}, \bm{z}) &= \lVert \bm{x} - \bm{z} \rVert \\
-            &= \lVert (\bm{x} - \bm{y}) + (\bm{y} - \bm{z}) \rVert \\
-            &\leq \lVert \bm{x} - \bm{y} \rVert + \lVert \bm{y} - \bm{z} \rVert \\
-            &= d(\bm{x}, \bm{y}) + d(\bm{y}, \bm{z}).
-        \end{align*}
-    \end{enumerate}
-    So, $(V, d)$ is a metric space.
-\end{proof}
-However, the converse is not true- not every distance function corresponds to a norm. Before proving this, we characterise the relationship between the distance and the norm in the other direction.
-\begin{proposition}
-    Let $V$ be a real vector space and let $d$ be a metric induced by some norm $\lVert . \rVert: V \to \mathbb{R}$. Then, for all $\bm{v} \in V$, $\lVert \bm{v} \rVert = d(\bm{0}, \bm{v})$.
-\end{proposition}
-\begin{proof}
-    Since the norm $\lVert . \rVert$ induces the metric $d$, we know that for all $\bm{u}, \bm{v} \in V$, $d(\bm{u}, \bm{v}) = \lVert \bm{u} - \bm{v} \rVert$. In that case, for $\bm{v} \in V$,
-    \[\lVert \bm{v} \rVert = \lVert \bm{v} - \bm{0} \rVert = d(\bm{v}, \bm{0}) = d(\bm{0}, \bm{v}).\]
-\end{proof}
-Now, we give a counterexample to show that not every metric is induced by some norm. Let $d$ be the discrete metric on $\mathbb{R}$. We claim that $(\mathbb{R}, d)$ is not induced by a norm. Assume, for a contradiction, that there exists a norm $\lVert . \rVert: \mathbb{R} \to \mathbb{R}$ such that for all $x, y \in \mathbb{R}$, $d(x, y) = \lVert x - y \rVert$. In that case,
-\[2 = 2d(1, 0) = 2\lVert 1 \rVert = \lVert 2 \rVert = d(2, 0) = 1.\]
-This is a contradiction. So, $(\mathbb{R}, d)$ is not induced by a norm. 
-
-\subsection{Strong equivalence of norms}
-For a real vector space, we say that two norms on it are strongly equivalent if the induced metrics are strongly equivalent. We know that in $\mathbb{R}^n$, all the $\ell^p$ norms are strongly equivalent. However, this is not true for sequence and function spaces.
-
-For sequence spaces, the sets $\ell^p$ are not equal for distinct $p$. In particular, $\ell^1 \neq \ell^2$. To see this, consider the sequence $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ given by $x_n = 1/n$. Since the harmonic series diverges, we know that $(x_n)$ is not in $\ell^1$. However, since the series
-\[\sum_{n=1}^\infty \frac{1}{n^2}\]
-converges, the sequence is in $\ell^2$. So, $\ell^1 \neq \ell^2$. 
-
-Nonetheless, we do have $\ell^1 \subseteq \ell^2$. Let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$ with $(x_n)$ in $\ell^1$. In that case, the series
-\[\sum_{n=1}^\infty x_n\]
-converges. Therefore, we must have that $x_n \to 0$, i.e. $(x_n)$ is convergent. So, there exists a $K > 0$ such that $|x_n| \leq K$ for all $n \in \mathbb{Z}_{\geq 1}$. In that case, for $n \in \mathbb{Z}_{\geq 1}$,
-\[0 \leq |x_n|^2 \leq K|x_n|.\]
-So, the comparison test tells us that the series
-\[\sum_{n=1}^\infty x_n^2\]
-converges. This implies that $(x_n)$ is in $\ell^2$. Therefore, $\ell^1 \subseteq \ell^2$. \sidefootnote{Can we use this approach to show that $\ell^2 \subseteq \ell^3$?}
-
-Using the result above, we show that $\ell_1$ and $\ell_2$ are not equivalent in $\ell^1$.\sidefootnote{We refer to the set of sequences by $\ell^p$, and the corresponding norm by $\ell_p$.} To see this, define the sequence $(x^{(k)})_{k=1}^\infty$ in $\ell^2$ by
-\[x^{(k)} = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots, \tfrac{1}{k}, 0, 0, \dots).\]
-For $k \in \mathbb{Z}_{\geq 1}$, we have
-\[\lVert x^{(k)} \rVert_1 = \sum_{n=1}^k \frac{1}{n}.\]
-Since the sum is finite, we know that $x^{(k)}$ is in $\ell^1$. Now, define also the sequence $(x_n)_{n=1}^\infty$ by $x_n = \frac{1}{n}$. We have $(x_n)$ in $\ell^2$. Moreover, under the $\ell_2$ norm,
-\[\lVert x^{(k)} - x \rVert_2 = \sum_{n=k+1}^\infty \frac{1}{n^2} \to 0\]
-as $k \to \infty$. This implies that $(x^{(k)})$ is Cauchy in $(\ell^1, d_1)$. Now, we show that $(x^{(k)})$ is not Cauchy in $(\ell^1, d_2)$. Let $N \in \mathbb{Z}_{\geq 1}$. Since the harmonic series diverges, we must have
-\[\sum_{n=N}^\infty \frac{1}{n} \to \infty.\]
-So, there exists an $M \in \mathbb{Z}_{> N}$ such that
-\[\sum_{n=N}^M \frac{1}{n} > 1.\]
-In that case,
-\[\lVert x^{(N)}, x^{(M+1)} \rVert_1 = \sum_{n=N}^\infty \frac{1}{n} - \sum_{n=M+1}^\infty \frac{1}{n} = \sum_{n=N}^M \frac{1}{n} \geq 1.\]
-Therefore, $(x^{(k)})$ is not Cauchy in $(\ell^1, d_2)$. This implies that $\ell_1$ and $\ell_2$ are not equivalent in $\ell^1$.
-
-Similarly, the norms on the function space $C[0, 1]$ are not strongly equivalent. For example, consider the sequence $(f_n(x))_{n=1}^\infty$ given by $f_n(x) = x^n$. We know that $x^n$ is increasing on $[0, 1]$. So,
-\[\lVert f_n \rVert_\infty = \sup_{x \in [0, 1]} |f_n(x)| = f_n(1) = 1.\]
-Moreover,
-\[\lVert f_n \rVert_1 = \int_0^1 f_n(x) \ dx = \int_0^1 x^n \ dx = \left[\frac{1}{n+1} x^{n+1}\right]_0^1 = \frac{1}{n + 1} \to 0\]
-as $n \to \infty$. This implies that the two norms are not strongly equivalent.
-
-% TODO: Show d_1 and d_2 aren't strongly equivalent in B[0, 1] with the same example as for sequences f_n(x) = 1/sqrt(x) for [1/n, 1] and 0 otherwise
-\newpage
-
-\section{Introduction to inner products}
-
-\begin{definition}
-    Let $V$ be a real vector space and let $\langle ., . \rangle: V \times V \to \mathbb{R}$ be a function. Then, $\langle ., . \rangle$ is an \emph{inner product} if:
-    \begin{enumerate}[label=\textbf{I\arabic*.}]
-        \item for all $\bm{v} \in V$, $\langle \bm{v}, \bm{v} \rangle \geq 0$, with $\langle \bm{v}, \bm{v} \rangle = 0$ if and only if $\bm{v} = \bm{0}$;
-        \item for all $\lambda \in \mathbb{R}$ and $\bm{v}, \bm{w} \in V$, $\langle \lambda \bm{v}, \bm{w} \rangle = \lambda \langle \bm{v}, \bm{w} \rangle$;
-        \item for all $\bm{v}, \bm{w} \in V$, $\langle \bm{v}, \bm{w} \rangle = \langle \bm{w}, \bm{v} \rangle$;
-        \item for all $\bm{u}, \bm{v}, \bm{w} \in V$,
-        \[\langle \bm{u} + \bm{v}, \bm{w} \rangle = \langle \bm{u}, \bm{w} \rangle + \langle \bm{v}, \bm{w} \rangle.\]
-    \end{enumerate}
-\end{definition}
-
-In $\mathbb{R}^n$, the inner product is the dot product, given by
-\[\langle \bm{x}, \bm{y} \rangle = \sum_{k=1}^n x_k y_k\]
-for $\bm{x}, \bm{y} \in \mathbb{R}^n$. For sequences, the inner product is the generalisation of the dot product, given by
-\[\langle x^{(n)}, y^{(n)} \rangle = \sum_{n=1}^\infty x_ny_n.\]
-The sequence space where this series is convergent is precisely $\ell^2$. In $C[0, 1]$, the inner product is given by
-\[\langle f, g \rangle = \int_0^1 f(x) g(x) \ dx.\]
-We can define this not just on $C[0, 1]$, but also on functions $f$ and $g$ where $fg$ is integrable- this set is called $L^2[0, 1]$. In all cases, this follows from the Cauchy-Schwarz inequality.
-
-\begin{proposition}[Cauchy-Schwarz inequality]
-    Let $V$ be a real vector space and let $\langle ., . \rangle: V \times V \to \mathbb{R}$ be an inner product on $V$. Then, for all $\bm{v}, \bm{w} \in V$,
-    \[|\langle \bm{v}, \bm{w} \rangle|^2 \leq \langle \bm{v}, \bm{v} \rangle \cdot \langle \bm{w}, \bm{w} \rangle.\]
-\end{proposition}
-\begin{proof}
-    Let $\lambda = \frac{\langle \bm{v}, \bm{w} \rangle}{\langle \bm{w}, \bm{w} \rangle}$. We know that
-    \[\langle \bm{v} - \lambda \bm{w}, \bm{v} - \lambda \bm{w} \rangle \geq 0.\]
-    We also have
-    \[\langle \bm{v} - \lambda \bm{w}, \bm{v} - \lambda \bm{w} \rangle = \langle \bm{v}, \bm{v} \rangle - 2\lambda \langle \bm{v}, \bm{w} \rangle + \lambda^2 \langle \bm{w}, \bm{w} \rangle.\]
-    Treating this as a quadratic on $\lambda$, we know that it has at most one real root. So, the discriminant is non-positive. That is,
-    \begin{align*}
-        (2\langle \bm{v}, \bm{w} \rangle)^2 - 4\langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle &\leq 0 \\
-        4\langle \bm{v}, \bm{w} \rangle^2 &\leq 4\langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle \\
-        |\langle \bm{v}, \bm{w} \rangle|^2 &\leq \langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle.
-    \end{align*}
-\end{proof}
-
-An inner product induces a norm.
-\begin{proposition}
-    Let $V$ be a real vector space and let $\langle ., . \rangle: V \times V \to \mathbb{R}$ be an inner product on $V$. Then, define the function $\lVert . \rVert: V \to \mathbb{R}$ by 
-    \[\lVert \bm{v} \rVert = \langle \bm{v}, \bm{v} \rangle^{1/2}.\]
-    Then, $\lVert . \rVert$ defines a norm on $V$.
-\end{proposition}
-\begin{proof}
-    \hspace*{0pt}
-    \begin{enumerate}[label=\textbf{N\arabic*.}]
-        \item Let $\bm{v} \in V$. We know that $\lVert \bm{v} \rVert \geq 0$ for all $\bm{v} \in V$. Moreover, if $\lVert \bm{v} \rVert = \langle \bm{v}, \bm{v} \rangle = 0$, then $\bm{v} = \bm{0}$.
-        \item Let $c \in \mathbb{R}$ and $\bm{v} \in V$. We find that
-        \[\lVert c\bm{v} \rVert^2 = \langle c\bm{v}, c\bm{v} \rangle = c^2 \langle \bm{v}, \bm{v} \rangle = c^2 \lVert \bm{v} \rVert^2.\]
-        So, $\lVert c\bm{v} \rVert = |c| \lVert \bm{v} \rVert$.
-        \item Let $\bm{u}, \bm{v} \in V$. We find that
-        \begin{align*}
-            \lVert \bm{u} + \bm{v} \rVert^2 &= \langle \bm{u} + \bm{v}, \bm{u} + \bm{v} \rangle \\
-            &= \langle \bm{u}, \bm{u} \rangle + 2\langle \bm{v}, \bm{u} \rangle + \langle \bm{v}, \bm{v} \rangle \\
-            &\leq \lVert \bm{u} \rVert^2 + 2\lVert \bm{u} \rVert\lVert \bm{v} \rVert + \lVert \bm{v} \rVert^2 \\
-            &\leq (\lVert \bm{u} \rVert + \lVert \bm{v} \rVert)^2.
-        \end{align*}
-        This implies that $\lVert \bm{u} + \bm{v} \rVert \leq \lVert \bm{u} \rVert + \lVert \bm{v} \rVert$.
-    \end{enumerate}
-    So, $\lVert . \rVert$ is a norm on $V$.
-\end{proof}
-
-\begin{definition}
-    Let $V$ be a real vector space with inner product $\langle ., . \rangle$. Then, for $\bm{v}, \bm{w} \in V$, we say that $\bm{v}$ and $\bm{w}$ are \emph{orthogonal} if $\langle \bm{v}, \bm{w} \rangle = 0$.
-\end{definition}
-
-\begin{proposition}[Pythagoras' Theorem]
-    Let $V$ be a real vector space with inner product $\langle ., . \rangle$, let $\lVert . \rVert$ be the norm induced by the inner product, and let $\bm{v}, \bm{w} \in V$ be orthogonal. Then,
-    \[\lVert \bm{v} + \bm{w} \rVert^2 = \lVert \bm{v} \rVert^2 + \lVert \bm{w} \rVert^2.\]
-\end{proposition}
-\begin{proof}
-    We find that
-    \begin{align*}
-        \lVert \bm{v} + \bm{w} \rVert^2 &= \langle \bm{v} + \bm{w}, \bm{v} + \bm{w} \rangle \\
-        &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{v}, \bm{w} \rangle + \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
-        &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
-        &= \lVert \bm{v} \rVert^2 + \lVert \bm{w} \rVert^2.
-    \end{align*}
-\end{proof}
-
-\begin{proposition}[Parallelogram Law]
-    Let $V$ be a real vector space with inner product $\langle ., \rangle$, and let $\lVert . \rVert$ be the norm induced by the inner product. Then, for all $\bm{v}, \bm{w} \in V$,
-    \[\lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 = 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.\]
-    Conversely, if a norm satisfies the equality above for all $\bm{v}, \bm{w} \in V$, then it is induced by an inner product.
-\end{proposition}
-\begin{proof}
-    \hspace*{0pt}
+    We can represent the vector space $\mathbb{R}^n$ as a function. In particular, for some set $X = \{x_1, x_2, \dots, x_n\}$, let $\operatorname{Fun}(X, \mathbb{R})$ be the set of functions $f \colon X \to \mathbb{R}$. We claim that $\operatorname{Fun}(X, \mathbb{R})$ is isomorphic to $\mathbb{R}^n$, with the isomorphism map $\varphi \colon \operatorname{Fun}(X, \mathbb{R}) \to \mathbb{R}^n$
+    \[\varphi(f) = \begin{bmatrix}
+        f(x_1) \\
+        f(x_2) \\
+        \vdots \\
+        f(x_n)
+    \end{bmatrix}.\]
+    Note however that this format is not limited to finite sets; the space of functions $\operatorname{Fun}(X, \mathbb{R})$ is a vector space even when $X$ is infinite. In particular, we consider the case where $X$ is countable, i.e. $X = \mathbb{Z}_{\geq 1}$. The space $\operatorname{Fun}(X, \mathbb{R})$ in this case is the space of all functions $f \colon \mathbb{Z}_{\geq 1} \to \mathbb{R}$, i.e. sequences in $\mathbb{R}$. We denote this as $\operatorname{Seq}(\mathbb{R})$ as well. The sequences form a vector space with respect to pointwise addition and scalar multiplication. This sequence is infinite-dimensional, i.e. it does not have a finite basis. This is because it has the basis $\{e^{(1)}, e^{(2)}, \dots\}$, with the sequence $(e_n^{(k)})_{n=1}^\infty$ given by
+    \[e_n^{(k)} = \begin{cases}
+        1 & n = k \\
+        0 & \textrm{otherwise}.
+    \end{cases}\]
+    We know that every basis of a finite-dimensional space is finite, so $\operatorname{Seq}(\mathbb{R})$ is infinite-dimensional. This space has many interesting subspaces, including:
     \begin{itemize}
-        \item First, assume that $\lVert . \rVert$ is induced by an inner product. Let $\bm{v}, \bm{w} \in V$. Then,
-        \begin{align*}
-            \lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 &= \langle \bm{v} + \bm{w}, \bm{v} + \bm{w} \rangle + \langle \bm{v} - \bm{w}, \bm{v} - \bm{w} \rangle \\
-            &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{v}, \bm{w} \rangle + \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
-            &+\langle \bm{v}, \bm{v} \rangle - \langle \bm{v}, \bm{w} \rangle - \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
-            &= 2\langle \bm{v}, \bm{v} \rangle + 2\langle \bm{w}, \bm{w} \rangle \\
-            &= 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.
-        \end{align*}
-
-        \item Now, assume that for all $\bm{v}, \bm{w} \in V$, 
-        \[\lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 = 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.\]
-        Define the function $\langle ., . \rangle: V \times V \to \mathbb{R}$ by
-        \[\langle \bm{v}, \bm{w} \rangle = \frac{1}{4} (\lVert \bm{v} + \bm{w} \rVert^2 - \lVert \bm{v} - \bm{w} \rVert^2).\]
-        We claim that $\langle ., . \rangle$ is an inner product on $V$ and that the inner product induces the norm $\lVert . \rVert$.
-        \begin{enumerate}[label=\textbf{I\arabic*.}]
-            \item Let $\bm{v} \in V$. We have
-            \[\langle \bm{v}, \bm{v} \rangle = \frac{1}{4} \cdot \lVert 2\bm{v} \rVert^2 = \lVert \bm{v} \rVert^2 \geq 0.\]
-            Moreover, if $\langle \bm{v}, \bm{v} \rangle = 0$, then $\bm{v} = \bm{0}$.
-            \item Let $\lambda \in \mathbb{R}$ and $\bm{v}, \bm{w} \in V$. Then,
-            \begin{align*}
-                \langle \lambda \bm{v}, \bm{w} \rangle &= \frac{1}{4} (\lVert \lambda \bm{v} - \bm{w} \rVert^2 - \lVert \lambda \bm{v} - \bm{w} \rVert^2) \\
-                &= \frac{1}{4}(2\lVert \lambda \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2 - 2\lVert \lambda \bm{v} - \bm{w} \rVert^2) 
-            \end{align*}
-            % TODO: Finish
-            \item Let $\bm{v}, \bm{w} \in V$. Then,
-            \begin{align*}
-                \langle \bm{v}, \bm{w} \rangle &= \frac{1}{4}(\lVert \bm{v} + \bm{w} \rVert^2 - \lVert \bm{v} - \bm{w} \rVert^2) \\
-                &= \frac{1}{4}(\lVert \bm{w} + \bm{v} \rVert^2 - \lVert \bm{w} - \bm{v} \rVert^2) \\
-                &= \langle \bm{w}, \bm{v} \rangle.
-            \end{align*}
-            \item Let $\bm{u}, \bm{v}, \bm{w} \in V$. Then,
-            \begin{align*}
-                \langle \bm{u} + \bm{v}, \bm{w} \rangle &= 
-            \end{align*}
-            % TODO: Finish
-        \end{enumerate}
-    \end{itemize}
-\end{proof}
-
-Using this result, we can show that the norm $\lVert . \rVert_1$ on $\mathbb{R}^2$ is not induced by a norm. Let $\bm{v} = [1, 0]$ and $\bm{w} = [0, 1]$. Then, we have
-\[\lVert \bm{v} + \bm{w} \rVert_1^2 + \lVert \bm{v} - \bm{w} \rVert_1^2 = \lVert [1, 1] \rVert_1^2 + \lVert [1, -1] \rVert_1^2 = 4 + 4 = 8,\]
-but
-\[2\lVert \bm{v} \rVert_1 + 2\lVert \bm{w} \rVert_1 = 2\lVert [1, 0] \rVert_1^2 + 2\lVert [0, 1] \rVert_1^2 = 2 + 2 = 4.\]
-We can use the same values to show that $\lVert . \rVert_\infty$ on $\mathbb{R}^2$ is not induced by a norm.
-
-\newpage
-
-\section{Sequence spaces}
-In this section, we will have a look at sequence spaces in more detail- we will show that they are vector spaces and characterise the containment of sequence spaces. First, we will consider the sequence spaces:
-\begin{itemize}
-    \item For $p \in [1, \infty)$, the sequence space $\ell^p$ contains sequences $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ such that the series
-    \[\sum_{k=1}^\infty |x_k|^p\]
-    converges. We show that $\ell^p$ is a vector space.
-    \begin{itemize}
-        \item Let $(x_n)_{n=1}^\infty$ be in $\ell^p$ and $\lambda \in \mathbb{R}$. Since $(x_n)$ is in $\ell^p$, the series
+        \item the space of bounded sequences $\ell^\infty$;
+        \item the space of convergent sequences $c$;
+        \item the space of sequences that converge to 0 $c_0$;
+        \item the space of sequences $(x_n)_{n=1}^\infty$ such that the series
         \[\sum_{n=1}^\infty |x_n|^p\]
-        converges. In that case,
-        \[\sum_{n=1}^\infty |\lambda x_n|^p = |\lambda|^p \sum_{n=1}^\infty |x_n|^p.\]
-        So, the series $(\lambda x_n)$ is in $\ell^p$.
-
-        \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $\ell^p$. Since $(x_n)$ and $(y_n)$ are in $\ell^p$, the series
-        \[\sum_{n=1}^\infty |x_n|^p, \qquad \sum_{n=1}^\infty |y_n|^p\]
-        converge. In that case, for all $n \in \mathbb{Z}_{\geq 1}$,
-        % TODO: Show some comparison
-        \[(|x_n| + |y_n|)^p = |x_n|^p + \dots + |y_n|^p \]
-        So, the comparison test tells us that
-        \[\sum_{n=1}^\infty |x_n + y_n|^p \]
-        converges. So, the series $(x_n + y_n)$ is in $\ell^p$.
+        converges, denoted $\ell^p$, for some $p \in [1, \infty)$;
+        \item the space of sequences that are eventually zero $c_{00}$.
     \end{itemize}
+    
+    Also, the space of continuous functions from the compact subset $[0, 1]$ to $\mathbb{R}$, denoted by $C[0, 1]$, is a vector space- it forms a vector space over pointwise addition and scalar multiplication, i.e. for $c \in \mathbb{R}$ and $f \in C[0, 1]$, we define the function $c \cdot f \in C[0, 1]$ by $(c \cdot f)(x) = c \cdot f(x)$    for $x \in [0, 1]$. This is also an infinite-dimensional space- it has a subspace consisting of polynomial functions, whose basis is given by
+    \[\{f_n \mid n \in \mathbb{Z}_{\geq 1}\},\]
+    where $f_n(x) = x^n$ for all $x \in [0, 1]$. Hence, it has an infinite-dimensional subspace, meaning that the entire space must also be infinite-dimensional. We will later see that the space of polynomials is a dense subspace of $C[0, 1]$, i.e. a continuous function can be approximated by a polynomial function arbitrarily well.
 
-    \item The sequence space $\ell^\infty$ is the set where the infinity norm is defined, i.e. for a sequence $(x_n)_{n=1}^\infty$ in $\mathbb{R}$, the supremum
-    \[\sup_{k=1}^\infty |x_n|\]
-    exists. Therefore, the space is precisely the set of all bounded sequences. We show that $\ell^\infty$ is a vector space.
-    \begin{itemize}
-        \item Let $(x_n)_{n=1}^\infty$ be in $\ell^\infty$ and $\lambda \in \mathbb{R}$. Since $(x_n)$ is in $\ell^\infty$, there exists a $K > 0$ such that for all $n \in \mathbb{Z}_{\geq 1}$, $|x_n| \leq K$. In that case, for all $n \in \mathbb{Z}_{\geq 1}$, $|\lambda x_n| \leq |\lambda| K$. So, the sequence $(\lambda x_n)$ is in $\ell^\infty$.
-        \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $\ell^\infty$. In that case, there exist $K_1, K_2 > 0$ such that for all $n \in \mathbb{Z}_{\geq 1}$, $|x_n| \leq K_1$ and $|y_n| \leq K_2$. In that case, for all $n \in \mathbb{Z}_{\geq 1}$, 
-        \[|x_n + y_n| \leq |x_n| + |y_n| \leq K_1 + K_2.\]
-        So, the sequence $(x_n + y_n)$ is in $\ell^\infty$.
-    \end{itemize}
+% \section{Introduction to norms}
+% \subsection{Distance in vector spaces}
+% In $\mathbb{R}^n$, we have seen the following metrics:
+% \begin{itemize}
+%     \item $d_1$, which is defined by
+%     \[d_1(\bm{x}, \bm{y}) = \sum_{i=1}^n |x_i - y_i|;\]
+%     \item $d_2$, which is defined by
+%     \[d_1(\bm{x}, \bm{y}) = \left(\sum_{i=1}^n |x_i - y_i|^2\right)^{1/2};\]
+%     \item $d_\infty$, which is defined by
+%     \[d_\infty(\bm{x}, \bm{y}) = \sup_{i=1}^n |x_i - y_i|;\]
+% \end{itemize}
+% In general, for $p \in [1, \infty)$, we can define the metric $d_p$, given by
+% \[d_p(\bm{x}, \bm{y}) = \left(\sum_{i=1}^n |x_i - y_i|^2\right)^{1/p}.\]
 
-    \item The sequence space $c$ is the set of convergent sequences. We show that $c$ is a vector space.
-    \begin{itemize}
-        \item Let $(x_n)_{n=1}^\infty$ be in $c$ and $\lambda \in \mathbb{R}$. In that case, the sequence $x_n \to L$, for some $L \in \mathbb{R}$. Therefore, $\lambda x_n \to \lambda L$. This implies that $(\lambda x_n)$ is in $c$.
-        \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c$. In that case, we have $x_n \to L_1$ and $y_n \to L_2$, for some $L_1, L_2 \in \mathbb{R}$. Therefore, $x_n + y_n \to L_1 + L_2$. This implies that $(x_n + y_n)$ is in $c$.
-    \end{itemize}
+% % TODO: Minkowski inequality to show triangle inequality holds
 
-    \item The sequence space $c_0$ is the set of convergent sequences that converge to $0$. We show that $c_0$ is a vector space.
-    \begin{itemize}
-        \item Let $(x_n)_{n=1}^\infty$ be in $c_0$ and $\lambda \in \mathbb{R}$. In that case, the sequence $x_n \to 0$. Therefore, $\lambda x_n \to 0$. This implies that $(\lambda x_n)$ is in $c_0$.
-        \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c$. In that case, we have $x_n \to 0$ and $y_n \to 0$. Therefore, $x_n + y_n \to 0$. This implies that $(x_n + y_n)$ is in $c_0$.
-    \end{itemize}
+% We can define metrics on other vector spaces, such as the space of sequences in $\mathbb{R}$ (or any field $\mathbb{K}$). The space of sequences in some field $\mathbb{K}$ is denoted by $\operatorname{Seq}(\mathbb{K})$. For each $p \in [1, \infty)$, we define the set $\ell^p$ to be a subspace of $\operatorname{Seq}(\mathbb{R})$ for which the distance function $d_p$ is defined. That is, the set $\ell^p$ contains of all sequences $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ such that the series
+% \[\sum_{i=1}^\infty |x_i|^p \]
+% converges- if so, we define the distance between $x^{(n)}$ and $y^{(n)}$ in $\ell^p$ to be:
+% \[d_p(x^{(n)}, y^{(n)}) = \left(\sum_{i=1}^\infty |x_i - y_i|^p \right)^{1/p}.\]
+% % TODO: Prove the series converges
+% % The series
+% % \[\sum_{i=1}^\infty |x_i - y_i|^p\]
+% % converges- for all $i \in \mathbb{Z}_{\geq 1}$,
+% % \[|x_i - y_i|^p \leq (|x_i| + |y_i|)^p \leq |x_i|^p + |y_i|^p.\]
+% % Since $x^{(n)}$ and $y^{(n)}$ are in $\ell^p$, we find that the series
+% % \[\sum_{n=1}^\infty |x_i|^p + |y_i|^p = \sum_{n=1}^\infty |x_i|^p + \sum_{n=1}^\infty |y_i|^p\]
+% % converges. That is, the distance function is well-defined. 
+% We also define $\ell^\infty$ to be the set of all bounded sequences in $\mathbb{R}$, with
+% \[d_\infty(x^{(n)}, y^{(n)}) = \sup_{i=1}^n |x_i - y_i|.\]
 
-    \item Finally, the sequence space $c_{00}$ is the set of convergent sequences $(x_n)_{n=1}^\infty$ such that there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n = 0$.\sidefootnote{That is, it is the set of sequences that eventually become 0.} We show that $c_{00}$ is a vector space.
-    \begin{itemize}
-        \item Let $(x_n)_{n=1}^\infty$ be in $c_{00}$ and $\lambda \in \mathbb{R}$. In that case, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n = 0$. So, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lambda x_n = 0$. So, $(\lambda x_n)$ is in $c_{00}$.
-        \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c_{00}$. In that case, there exist $N_1, N_2 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_1$, then $x_n = 0$, and if $n \geq N_2$, then $y_n = 0$. So, set $N = \max(N_1, N_2)$. Then, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n + y_n = 0$. This implies that $(x_n + y_n)$ is in $c_{00}$.
-    \end{itemize}
-\end{itemize}
+% Further, we can define norms on the set of continuous functions $C[0, 1]$. The distance between two functions $f, g \in C[0, 1]$ is defined to be:
+% \[d_p(f, g) = \left(\int_0^1 |f(x) - g(x)|^p \ dx\right)^{1/p}.\]
+% The value is always finite for $f, g$ continuous, since $|f - g|^p$ is a continuous function.
 
-The following is the containment relationship between the sequence spaces:
-\[c_{00} \subseteq c_0 \subseteq c \subseteq \ell^\infty.\]
-Moreover, the quotient vector space $c/c_0$ is isomorphic to $\mathbb{R}$- this is because the relation $\sim$ on $c$ given by 
-\[(x_n) \sim (y_n) \iff (x_n) \text{ and } (y_n) \text{ converge to the same limit}\]
-corresponds to $x_n - y_n \to 0$, i.e. $(x_n - y_n)$ in $c_0$. In other words, it is the kernel of the surjective vector space homomorphism $v: c \to \mathbb{R}$ where $v(x) = L$, with $x_n \to L$. Then, the result follows from the first isomorphism theorem.
+% \subsection{Norms}
+% We now define a norm for vector spaces.
+% \begin{definition}
+%     Let $V$ be a real vector space and let $\lVert . \rVert\colon V \to \mathbb{R}$ be a function. We say that $\lVert . \rVert$ is a \emph{norm} if
+%     \begin{enumerate}[label=\textbf{N\arabic*.}]
+%         \item for all $\bm{v} \in V$, $\lVert \bm{v} \rVert \geq 0$, and $\lVert \bm{v} \rVert = 0$ if and only if $\bm{v} = \bm{0}$;
+%         \item for all $c \in \mathbb{R}$ and $\bm{v} \in V$, $\lVert c \bm{v} \rVert = |c| \lVert \bm{v} \rVert$;
+%         \item for all $\bm{u}, \bm{v} \in V$, 
+%         \[\lVert \bm{u} + \bm{v} \rVert \leq \lVert \bm{u} \rVert + \lVert \bm{v} \rVert.\]
+%     \end{enumerate}
+% \end{definition}
 
-Now, let $p \in [1, \infty)$. We will place $\ell^p$ in the containment relationship. Let $(x_n)_{n=1}^\infty$ be in $\ell^p$. We know that the series
-\[\sum_{n=1}^\infty |x_n|^p\]
-converges. In that case, we have $|x_n|^p \to 0$. Therefore, $x_n \to 0$. So, $\ell^p \subseteq c_0$. However, $\ell^p \not\subseteq c_{00}$ since there are infinite sums that converge. So, we have $c_{00} \subseteq \ell^p \subseteq c_0$.
+% For every norm, there exists a metric; every norm induces a metric.
+% \begin{proposition}
+%     Let $V$ be a real vector space and let $\lVert . \rVert$ be a norm. Define the function $d\colon V \times V \to \mathbb{R}$ by $d(\bm{u}, \bm{v}) = \lVert \bm{u} - \bm{v} \rVert$. Then, $(V, d)$ is a metric space.
+% \end{proposition}
+% \begin{proof}
+%     We check this directly from the axioms of a metric space:
+%     \begin{enumerate}[label=\textbf{M\arabic*.}]
+%         \item Let $\bm{x}, \bm{y} \in V$. We find that
+%         \[d(\bm{x}, \bm{y}) = \lVert \bm{x} - \bm{y} \rVert \geq 0.\]
+%         Moreover, $d(\bm{x}, \bm{y}) = 0$ if and only if $\bm{x} - \bm{y} = \bm{0}$, i.e. $\bm{x} = \bm{y}$.
+%         \item Let $\bm{x}, \bm{y} \in V$. We find that
+%         \[d(\bm{x}, \bm{y}) = \lVert \bm{x} - \bm{y} \rVert = \lVert -(\bm{y} - \bm{x}) \rVert = |-1| \lVert \bm{y} - \bm{x} \rVert = \lVert \bm{y} - \bm{x} \rVert = d(\bm{y}, \bm{x}).\]
+%         \item Let $\bm{x}, \bm{y}, \bm{z} \in V$. We find that
+%         \begin{align*}
+%             d(\bm{x}, \bm{z}) &= \lVert \bm{x} - \bm{z} \rVert \\
+%             &= \lVert (\bm{x} - \bm{y}) + (\bm{y} - \bm{z}) \rVert \\
+%             &\leq \lVert \bm{x} - \bm{y} \rVert + \lVert \bm{y} - \bm{z} \rVert \\
+%             &= d(\bm{x}, \bm{y}) + d(\bm{y}, \bm{z}).
+%         \end{align*}
+%     \end{enumerate}
+%     So, $(V, d)$ is a metric space.
+% \end{proof}
+% However, the converse is not true- not every distance function corresponds to a norm. Before proving this, we characterise the relationship between the distance and the norm in the other direction.
+% \begin{proposition}
+%     Let $V$ be a real vector space and let $d$ be a metric induced by some norm $\lVert . \rVert\colon V \to \mathbb{R}$. Then, for all $\bm{v} \in V$, $\lVert \bm{v} \rVert = d(\bm{0}, \bm{v})$.
+% \end{proposition}
+% \begin{proof}
+%     Since the norm $\lVert . \rVert$ induces the metric $d$, we know that for all $\bm{u}, \bm{v} \in V$, $d(\bm{u}, \bm{v}) = \lVert \bm{u} - \bm{v} \rVert$. In that case, for $\bm{v} \in V$,
+%     \[\lVert \bm{v} \rVert = \lVert \bm{v} - \bm{0} \rVert = d(\bm{v}, \bm{0}) = d(\bm{0}, \bm{v}).\]
+% \end{proof}
+% Now, we give a counterexample to show that not every metric is induced by some norm. Let $d$ be the discrete metric on $\mathbb{R}$. We claim that $(\mathbb{R}, d)$ is not induced by a norm. Assume, for a contradiction, that there exists a norm $\lVert . \rVert\colon \mathbb{R} \to \mathbb{R}$ such that for all $x, y \in \mathbb{R}$, $d(x, y) = \lVert x - y \rVert$. In that case,
+% \[2 = 2d(1, 0) = 2\lVert 1 \rVert = \lVert 2 \rVert = d(2, 0) = 1.\]
+% This is a contradiction. So, $(\mathbb{R}, d)$ is not induced by a norm. 
 
-Next, let $p, q \in [1, \infty)$ with $p < q$. We show that $\ell^p \subseteq \ell^q$. We start with a lemma.
-\begin{lemma}
-    Let $p \in [1, \infty)$, and let $(x_n)_{n=1}^\infty$ be in $\ell^p$. Then, $\lVert x \rVert_\infty \leq \lVert x \rVert_p$.
-\end{lemma}
-\begin{proof}
-    Let $\varepsilon > 0$. Since
-    \[\lVert x \rVert_\infty = \sup_{n=1}^\infty |x_n|,\]
-    we can find a $k \in \mathbb{Z}_{\geq 1}$ such that $|x_k| \geq \lVert x \rVert_\infty - \varepsilon$. In that case,
-    \[\lVert x \rVert_p = \left(\sum_{n=1}^\infty |x_n|^p\right)^{1/p} \geq (|x_k|^p)^{1/p} = |x_k| \geq \lVert x \rVert_\infty - \varepsilon.\]
-    So, for all $\varepsilon > 0$, $\lVert x \rVert_p \geq \lVert x \rVert_\infty - \varepsilon$. In that case, we must have $\lVert x \rVert_\infty \leq \lVert x \rVert_p$.
-\end{proof}
-Now, we prove that $\ell^p \subseteq \ell^q$.
-\begin{proposition}
-    Let $p, q \in [1, \infty)$ with $p < q$. Then, $\ell^p \subseteq \ell^q$.
-\end{proposition}
-\begin{proof}
-    Let $(x_n)_{n=1}^\infty$ be in $\ell^p$. We find that
-    \begin{align*}
-        \lVert x \rVert_q^q &= \sum_{n=1}^\infty |x_n|^q \\
-        &= \sum_{n=1}^\infty |x_k|^p \cdot |x_n|^{q-p} \\
-        &\leq \sum_{n=1}^\infty |x_n|^p \cdot \lVert x \rVert_\infty^{q-p} \\
-        &= \lVert x \rVert_\infty^{q-p} \sum_{n=1}^\infty |x_n|^p \\
-        &= \lVert x \rVert_\infty^{q-p} \lVert x \rVert_p^p \\ 
-        &= \lVert x \rVert_p^{q-p} \lVert x \rVert_p^p \\
-        &= \lVert x \rVert_p^q.
-    \end{align*}
-    This implies that $\lVert x \rVert_q \leq \lVert x \rVert_p$. So, $(x_n)$ is in $\ell^q$. Therefore, $\ell^p \subseteq \ell^q$.
-\end{proof}
-Finally, we have the complete characterisation of the containment:
-\[c_{00} \subseteq \ell^1 \subseteq \ell^2 \subseteq \dots \subseteq c_0 \subseteq c \subseteq \ell^\infty.\]
-At each level, the containment is strict.
-\newpage
+% \subsection{Strong equivalence of norms}
+% For a real vector space, we say that two norms on it are strongly equivalent if the induced metrics are strongly equivalent. We know that in $\mathbb{R}^n$, all the $\ell^p$ norms are strongly equivalent. However, this is not true for sequence and function spaces.
 
-\section{Topology of vector spaces}
-\subsection{Compactness}
-We know that a subspace $A \subseteq \mathbb{R}^n$ is compact if and only if $A$ is closed and bounded. This does not hold in sequence spaces, under any norm. First, we consider the $\ell_\infty$ norm. Let
-\[A = \{(x_n) \in \ell^\infty \mid \lVert x \rVert_\infty \leq 1\}.\]
-This is a closed space since the norm map is continuous. Moreover, it is bounded by the triangle inequality. However, we claim that the space is not compact. To see this, let $(e_k)_{k=1}^\infty$ be a sequence in $\ell^\infty$ given by
-\[e_k = \begin{cases}
-    0 & n \neq k \\
-    1 & n = k
-\end{cases}.\]
-By definition, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m \neq n$, then $\lVert e_m - e_n \rVert_\infty = 1$. This implies that any subsequence cannot be Cauchy, and so is not convergent. Therefore, $A$ is not sequentially compact. Since the topology on $A$ is induced by a metric, this further implies that $A$ is not compact. This is true for other norms as well.
-% TODO: Give counterexample in \ell^p for p \in [1, \infty)
+% For sequence spaces, the sets $\ell^p$ are not equal for distinct $p$. In particular, $\ell^1 \neq \ell^2$. To see this, consider the sequence $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ given by $x_n = 1/n$. Since the harmonic series diverges, we know that $(x_n)$ is not in $\ell^1$. However, since the series
+% \[\sum_{n=1}^\infty \frac{1}{n^2}\]
+% converges, the sequence is in $\ell^2$. So, $\ell^1 \neq \ell^2$. 
 
+% Nonetheless, we do have $\ell^1 \subseteq \ell^2$. Let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$ with $(x_n)$ in $\ell^1$. In that case, the series
+% \[\sum_{n=1}^\infty x_n\]
+% converges. Therefore, we must have that $x_n \to 0$, i.e. $(x_n)$ is convergent. So, there exists a $K > 0$ such that $|x_n| \leq K$ for all $n \in \mathbb{Z}_{\geq 1}$. In that case, for $n \in \mathbb{Z}_{\geq 1}$,
+% \[0 \leq |x_n|^2 \leq K|x_n|.\]
+% So, the comparison test tells us that the series
+% \[\sum_{n=1}^\infty x_n^2\]
+% converges. This implies that $(x_n)$ is in $\ell^2$. Therefore, $\ell^1 \subseteq \ell^2$. \sidefootnote{Can we use this approach to show that $\ell^2 \subseteq \ell^3$?}
 
-\begin{definition}
-    Let $X$ be a real vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n: X \to \mathbb{R}$, and let $f: X \to \mathbb{R}$. We say that \emph{$(f_n)$ converges to $f$ pointwise} if for all $x \in X$, $f_n(x) \to f(x)$. In other words, for every $x \in X$ and $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
-\end{definition}
+% Using the result above, we show that $\ell_1$ and $\ell_2$ are not equivalent in $\ell^1$.\sidefootnote{We refer to the set of sequences by $\ell^p$, and the corresponding norm by $\ell_p$.} To see this, define the sequence $(x^{(k)})_{k=1}^\infty$ in $\ell^2$ by
+% \[x^{(k)} = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots, \tfrac{1}{k}, 0, 0, \dots).\]
+% For $k \in \mathbb{Z}_{\geq 1}$, we have
+% \[\lVert x^{(k)} \rVert_1 = \sum_{n=1}^k \frac{1}{n}.\]
+% Since the sum is finite, we know that $x^{(k)}$ is in $\ell^1$. Now, define also the sequence $(x_n)_{n=1}^\infty$ by $x_n = \frac{1}{n}$. We have $(x_n)$ in $\ell^2$. Moreover, under the $\ell_2$ norm,
+% \[\lVert x^{(k)} - x \rVert_2 = \sum_{n=k+1}^\infty \frac{1}{n^2} \to 0\]
+% as $k \to \infty$. This implies that $(x^{(k)})$ is Cauchy in $(\ell^1, d_1)$. Now, we show that $(x^{(k)})$ is not Cauchy in $(\ell^1, d_2)$. Let $N \in \mathbb{Z}_{\geq 1}$. Since the harmonic series diverges, we must have
+% \[\sum_{n=N}^\infty \frac{1}{n} \to \infty.\]
+% So, there exists an $M \in \mathbb{Z}_{> N}$ such that
+% \[\sum_{n=N}^M \frac{1}{n} > 1.\]
+% In that case,
+% \[\lVert x^{(N)}, x^{(M+1)} \rVert_1 = \sum_{n=N}^\infty \frac{1}{n} - \sum_{n=M+1}^\infty \frac{1}{n} = \sum_{n=N}^M \frac{1}{n} \geq 1.\]
+% Therefore, $(x^{(k)})$ is not Cauchy in $(\ell^1, d_2)$. This implies that $\ell_1$ and $\ell_2$ are not equivalent in $\ell^1$.
 
-\begin{definition}
-    Let $X$ be a real vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n: X \to \mathbb{R}$, and let $f: X \to \mathbb{R}$. We say that \emph{$(f_n)$ converges to $f$ uniformly} if for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $x \in X$ and $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
-\end{definition}
+% Similarly, the norms on the function space $C[0, 1]$ are not strongly equivalent. For example, consider the sequence $(f_n(x))_{n=1}^\infty$ given by $f_n(x) = x^n$. We know that $x^n$ is increasing on $[0, 1]$. So,
+% \[\lVert f_n \rVert_\infty = \sup_{x \in [0, 1]} |f_n(x)| = f_n(1) = 1.\]
+% Moreover,
+% \[\lVert f_n \rVert_1 = \int_0^1 f_n(x) \ dx = \int_0^1 x^n \ dx = \left[\frac{1}{n+1} x^{n+1}\right]_0^1 = \frac{1}{n + 1} \to 0\]
+% as $n \to \infty$. This implies that the two norms are not strongly equivalent.
 
-\begin{proposition}
-    Let $X$ be a normed vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of continuous functions $f_n: X \to \mathbb{R}$, and let $f: X \to \mathbb{R}$ such that $f_n \to f$ uniformly. Then, $f$ is continuous.
-\end{proposition}
-\begin{proof}
-    Let $x \in X$ and $\varepsilon > 0$. Since $f_n \to f$ uniformly, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$ and $a \in X$, if $n \geq N$, then $|f_n(a) - f(a)| < \frac{\varepsilon}{3}$. Moreover, since $f_N$ is continuous, we can find a $\delta > 0$ such that for $y \in X$, if $\lVert x - y \rVert < \delta$, then $|f_N(x) - f_N(y)| < \frac{\varepsilon}{3}$. In that case, for $y \in X$, if $\lVert x - y \rVert < \delta$, then
-    \begin{align*}
-        |f(x) - f(y)| &\leq |f(x) - f_N(x)| + |f_N(x) - f_N(y)| + |f_N(y) - f(y)| \\
-        &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
-    \end{align*}
-    This implies that $f$ is continuous.
-\end{proof}
+% % TODO: Show d_1 and d_2 aren't strongly equivalent in B[0, 1] with the same example as for sequences f_n(x) = 1/sqrt(x) for [1/n, 1] and 0 otherwise
+% \newpage
 
-% TODO: Counterexample for pointwise convergence- f_n(x) = x^n
+% \section{Introduction to inner products}
 
-\begin{definition}
-    Let $K \subseteq C[0, 1]$. We say that $K$ is \emph{equi-continuous} if for all $\varepsilon > 0$, there exists a $\delta > 0$ such that for all $f \in K$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f(s) - f(t)| < \varepsilon$.
-\end{definition}
+% \begin{definition}
+%     Let $V$ be a real vector space and let $\langle ., . \rangle\colon V \times V \to \mathbb{R}$ be a function. Then, $\langle ., . \rangle$ is an \emph{inner product} if:
+%     \begin{enumerate}[label=\textbf{I\arabic*.}]
+%         \item for all $\bm{v} \in V$, $\langle \bm{v}, \bm{v} \rangle \geq 0$, with $\langle \bm{v}, \bm{v} \rangle = 0$ if and only if $\bm{v} = \bm{0}$;
+%         \item for all $\lambda \in \mathbb{R}$ and $\bm{v}, \bm{w} \in V$, $\langle \lambda \bm{v}, \bm{w} \rangle = \lambda \langle \bm{v}, \bm{w} \rangle$;
+%         \item for all $\bm{v}, \bm{w} \in V$, $\langle \bm{v}, \bm{w} \rangle = \langle \bm{w}, \bm{v} \rangle$;
+%         \item for all $\bm{u}, \bm{v}, \bm{w} \in V$,
+%         \[\langle \bm{u} + \bm{v}, \bm{w} \rangle = \langle \bm{u}, \bm{w} \rangle + \langle \bm{v}, \bm{w} \rangle.\]
+%     \end{enumerate}
+% \end{definition}
 
-\begin{theorem}[Arzela-Ascoli]
-    Let $K \subseteq C[0, 1]$. Then, $K$ is compact if and only if $K$ is closed, bounded and equi-continuous, under the $L_\infty$ norm.
-\end{theorem}
-\begin{proof}
-    \hspace*{0pt}
-    \begin{itemize}
-        \item First, assume that $K$ is compact. We know that $K$ is closed and bounded. We show that $K$ is equi-continuous. So, let $\varepsilon > 0$. We know that $(B_K(f, \frac{\varepsilon}{3}))_{f \in K}$ is an open cover of $K$. So, it has a finite subcover $(B_K(f_i, \frac{\varepsilon}{3}))_{i=1}^n$. For $i \in \{1, 2, \dots, n\}$, we can find a $\delta_i > 0$ such that for $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f_i(s) - f_i(t)| < \frac{\varepsilon}{3}$. Set $\delta = \min_{i=1}^n \delta_i$. Now, let $g \in K$. We can find a $j \in \{1, 2, \dots, n\}$ such that
-        \[g \in B_K(f_j, \tfrac{\varepsilon}{3}).\]
-        In that case, $\lVert f_j - g \rVert_\infty < \frac{\varepsilon}{3}$. So, for all $x \in [0, 1]$, $|f_j(x) - g(x)| < \frac{\varepsilon}{3}$. Now, for $s, t \in [0, 1]$, if $|s - t| < \delta$, then
-        \begin{align*}
-            |g(s) - g(t)| &\leq |g(s) - f_j(s)| + |f_j(s) - f_j(t)| + |f_j(t) - g(s)| \\
-            &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
-        \end{align*}
-        So, $K$ is equi-continuous.
-        
-        \item Now, assume that $K$ is closed, bounded and equi-continuous. Let $(f_n)_{n=1}^\infty$ be a sequence in $K$. We show that $(f_n)$ has a convergent subsequence. 
-        % TODO: Write up (at some pt)
-    \end{itemize}
-\end{proof}
+% In $\mathbb{R}^n$, the inner product is the dot product, given by
+% \[\langle \bm{x}, \bm{y} \rangle = \sum_{k=1}^n x_k y_k\]
+% for $\bm{x}, \bm{y} \in \mathbb{R}^n$. For sequences, the inner product is the generalisation of the dot product, given by
+% \[\langle x^{(n)}, y^{(n)} \rangle = \sum_{n=1}^\infty x_ny_n.\]
+% The sequence space where this series is convergent is precisely $\ell^2$. In $C[0, 1]$, the inner product is given by
+% \[\langle f, g \rangle = \int_0^1 f(x) g(x) \ dx.\]
+% We can define this not just on $C[0, 1]$, but also on functions $f$ and $g$ where $fg$ is integrable- this set is called $L^2[0, 1]$. In all cases, this follows from the Cauchy-Schwarz inequality.
 
-\subsection{Separability}
-\begin{definition}
-    Let $X$ be a metric space. We say that $X$ is \emph{separable} if it contains a countable dense subset.
-\end{definition}
-
-We know that $\mathbb{R}$ is separable- $\mathbb{Q}$ is a countable dense subset of $\mathbb{R}$. In general, $\mathbb{Q}^n$ is a countable dense subset of $\mathbb{R}^n$.
-
-\begin{proposition}
-    The sequence space $\ell^\infty$ is not separable.
-\end{proposition}
-\begin{proof}
-    Let $C \subseteq \mathbb{Z}_{\geq 1}$. Define the sequence $(x^C_n)_{n=1}^\infty$ in $\mathbb{R}$ by 
-    \[x^C_n = \begin{cases}
-        1 & n \in C \\
-        0 & n \not\in C
-    \end{cases}.\]
-    We have $(x_n)$ in $\ell^\infty$. Moreover, for $P, Q \subseteq \mathbb{N}$ with $P \neq Q$, $\lVert x^P - x^Q \rVert_\infty = 1$. In that case,
-    \[B_{\ell^\infty}(x^P, \tfrac{1}{2}) \cap B_{\ell^\infty}(x^Q, \tfrac{1}{2}) = \varnothing.\]
-    So, the set
-    \[S = \{x^C \mid C \subseteq \mathbb{Z}_{\geq 1}\}\]
-    is not dense in $\ell^\infty$- 
-    % TODO: Show that there exists an open set in \ell^\infty such that \ell^\infty \cap S is empty- give a sequence that is halfway?
-    % TODO: Understand better the proof
-\end{proof}
-
-% TODO: X_1, X_2 separable => X_1 * X_2 separable 
-% TODO: X countable union of separable spaces => separable (e.g. c00 separable)
-% TODO: Subset of separable metric space => separable (e.g. [0, 1])
-% TODO: Closure of separable is separable (e.g. c0 separable)
-
-% TODO: C[0, 1] is separable
-\begin{proposition}
-    The function space $C[0, 1]$ is separable.
-\end{proposition}
-\begin{proof}
-    We show that polynomials is a countable subset in $C[0, 1]$. The space of polynomials is the union of polynomials of degree $n$, for all $n \in \mathbb{Z}_{\geq 1}$. The polynomials of degree $n$ are isomorphic to $\mathbb{R}^{n+1}$ as vector spaces. So, the space of polynomials is countable. Moreover, the space of polynomials is dense- we will not prove this. For this reason, $C[0, 1]$ is separable.
-\end{proof}
-% \begin{proof}[Alternate Proof]
-    % TODO: ADD
+% \begin{proposition}[Cauchy-Schwarz inequality]
+%     Let $V$ be a real vector space and let $\langle ., . \rangle\colon V \times V \to \mathbb{R}$ be an inner product on $V$. Then, for all $\bm{v}, \bm{w} \in V$,
+%     \[|\langle \bm{v}, \bm{w} \rangle|^2 \leq \langle \bm{v}, \bm{v} \rangle \cdot \langle \bm{w}, \bm{w} \rangle.\]
+% \end{proposition}
+% \begin{proof}
+%     Let $\lambda = \frac{\langle \bm{v}, \bm{w} \rangle}{\langle \bm{w}, \bm{w} \rangle}$. We know that
+%     \[\langle \bm{v} - \lambda \bm{w}, \bm{v} - \lambda \bm{w} \rangle \geq 0.\]
+%     We also have
+%     \[\langle \bm{v} - \lambda \bm{w}, \bm{v} - \lambda \bm{w} \rangle = \langle \bm{v}, \bm{v} \rangle - 2\lambda \langle \bm{v}, \bm{w} \rangle + \lambda^2 \langle \bm{w}, \bm{w} \rangle.\]
+%     Treating this as a quadratic on $\lambda$, we know that it has at most one real root. So, the discriminant is non-positive. That is,
+%     \begin{align*}
+%         (2\langle \bm{v}, \bm{w} \rangle)^2 - 4\langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle &\leq 0 \\
+%         4\langle \bm{v}, \bm{w} \rangle^2 &\leq 4\langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle \\
+%         |\langle \bm{v}, \bm{w} \rangle|^2 &\leq \langle \bm{w}, \bm{w} \rangle \cdot \langle \bm{v}, \bm{v} \rangle.
+%     \end{align*}
 % \end{proof}
 
-\subsection{Completeness}
-\begin{definition}
-    Let $V$ be a normed vector space such that the metric induced by the norm is complete. Then, we say that $V$ is a \emph{Banach space}.
-\end{definition}
+% An inner product induces a norm.
+% \begin{proposition}
+%     Let $V$ be a real vector space and let $\langle ., . \rangle\colon V \times V \to \mathbb{R}$ be an inner product on $V$. Then, define the function $\lVert . \rVert\colon V \to \mathbb{R}$ by 
+%     \[\lVert \bm{v} \rVert = \langle \bm{v}, \bm{v} \rangle^{1/2}.\]
+%     Then, $\lVert . \rVert$ defines a norm on $V$.
+% \end{proposition}
+% \begin{proof}
+%     \hspace*{0pt}
+%     \begin{enumerate}[label=\textbf{N\arabic*.}]
+%         \item Let $\bm{v} \in V$. We know that $\lVert \bm{v} \rVert \geq 0$ for all $\bm{v} \in V$. Moreover, if $\lVert \bm{v} \rVert = \langle \bm{v}, \bm{v} \rangle = 0$, then $\bm{v} = \bm{0}$.
+%         \item Let $c \in \mathbb{R}$ and $\bm{v} \in V$. We find that
+%         \[\lVert c\bm{v} \rVert^2 = \langle c\bm{v}, c\bm{v} \rangle = c^2 \langle \bm{v}, \bm{v} \rangle = c^2 \lVert \bm{v} \rVert^2.\]
+%         So, $\lVert c\bm{v} \rVert = |c| \lVert \bm{v} \rVert$.
+%         \item Let $\bm{u}, \bm{v} \in V$. We find that
+%         \begin{align*}
+%             \lVert \bm{u} + \bm{v} \rVert^2 &= \langle \bm{u} + \bm{v}, \bm{u} + \bm{v} \rangle \\
+%             &= \langle \bm{u}, \bm{u} \rangle + 2\langle \bm{v}, \bm{u} \rangle + \langle \bm{v}, \bm{v} \rangle \\
+%             &\leq \lVert \bm{u} \rVert^2 + 2\lVert \bm{u} \rVert\lVert \bm{v} \rVert + \lVert \bm{v} \rVert^2 \\
+%             &\leq (\lVert \bm{u} \rVert + \lVert \bm{v} \rVert)^2.
+%         \end{align*}
+%         This implies that $\lVert \bm{u} + \bm{v} \rVert \leq \lVert \bm{u} \rVert + \lVert \bm{v} \rVert$.
+%     \end{enumerate}
+%     So, $\lVert . \rVert$ is a norm on $V$.
+% \end{proof}
 
-\begin{definition}
-    Let $V$ be a inner product space such that the metric induced by the norm is complete. Then, we say that $V$ is a \emph{Hilbert space}.
-\end{definition}
+% \begin{definition}
+%     Let $V$ be a real vector space with inner product $\langle ., . \rangle$. Then, for $\bm{v}, \bm{w} \in V$, we say that $\bm{v}$ and $\bm{w}$ are \emph{orthogonal} if $\langle \bm{v}, \bm{w} \rangle = 0$.
+% \end{definition}
 
-The sequence space $c_{00}$ is not complete. Consider the sequence $(x^{(n)})_{n=1}^\infty$ in $c_{00}$, given by
-\[x^{(n)} = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots, \tfrac{1}{n}, 0, 0, \dots).\]
-Under the $\ell_\infty$ norm, this sequence converges to
-\[x = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots)\]
-since
-\[\lVert x^{(n)} - x \rVert_\infty = \lVert (0, 0, \dots, 0, -\tfrac{1}{n+1}, -\tfrac{1}{n+2}, \dots) \rVert_\infty = \tfrac{1}{n+1} \to 0.\]
-But, the sequence $x$ is not in $c_{00}$ since it is not eventually $0$. So, $(x^{(n)})$ is Cauchy in $c_{00}$ but not convergent- it is not complete.
+% \begin{proposition}[Pythagoras' Theorem]
+%     Let $V$ be a real vector space with inner product $\langle ., . \rangle$, let $\lVert . \rVert$ be the norm induced by the inner product, and let $\bm{v}, \bm{w} \in V$ be orthogonal. Then,
+%     \[\lVert \bm{v} + \bm{w} \rVert^2 = \lVert \bm{v} \rVert^2 + \lVert \bm{w} \rVert^2.\]
+% \end{proposition}
+% \begin{proof}
+%     We find that
+%     \begin{align*}
+%         \lVert \bm{v} + \bm{w} \rVert^2 &= \langle \bm{v} + \bm{w}, \bm{v} + \bm{w} \rangle \\
+%         &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{v}, \bm{w} \rangle + \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
+%         &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
+%         &= \lVert \bm{v} \rVert^2 + \lVert \bm{w} \rVert^2.
+%     \end{align*}
+% \end{proof}
 
-However, this is not the case for $\ell^\infty$.
-\begin{proposition}
-    The sequence space $\ell^\infty$ is complete.
-\end{proposition}
-\begin{proof}
-    Let $(x^{(n)})_{n=1}^\infty$ be a Cauchy sequence in $\ell^\infty$. For $k \in \mathbb{Z}_{\geq 1}$, we have the sequence $(x^{(n)}_k)_{n=1}^\infty$ in $\mathbb{R}$. We claim that $(x^{(n)}_k)$ is Cauchy in $\mathbb{R}$. Let $\varepsilon > 0$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then
-    \[\lVert x^{(n)} - x^{(m)} \rVert_\infty < \varepsilon.\]
-    In that case,
-    \[|x_k^{(n)} - x_k^{(m)}| \leq \sup_{i=1}^\infty |x_i^{(n)} - x_i^{(m)}| = \lVert x^{(n)} - x^{(m)} \rVert_\infty < \varepsilon.\]
-    So, $(x_k^{(n)})$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, there exists an $x_k \in \mathbb{R}$ such that $x_k^{(n)} \to x_k$. So, we can construct the sequence $(x_k)_{k=1}^\infty$ in $\mathbb{R}$, where $x_k^{(n)} \to x_k$ for $k \in \mathbb{Z}_{\geq 1}$.
+% \begin{proposition}[Parallelogram Law]
+%     Let $V$ be a real vector space with inner product $\langle ., \rangle$, and let $\lVert . \rVert$ be the norm induced by the inner product. Then, for all $\bm{v}, \bm{w} \in V$,
+%     \[\lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 = 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.\]
+%     Conversely, if a norm satisfies the equality above for all $\bm{v}, \bm{w} \in V$, then it is induced by an inner product.
+% \end{proposition}
+% \begin{proof}
+%     \hspace*{0pt}
+%     \begin{itemize}
+%         \item First, assume that $\lVert . \rVert$ is induced by an inner product. Let $\bm{v}, \bm{w} \in V$. Then,
+%         \begin{align*}
+%             \lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 &= \langle \bm{v} + \bm{w}, \bm{v} + \bm{w} \rangle + \langle \bm{v} - \bm{w}, \bm{v} - \bm{w} \rangle \\
+%             &= \langle \bm{v}, \bm{v} \rangle + \langle \bm{v}, \bm{w} \rangle + \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
+%             &+\langle \bm{v}, \bm{v} \rangle - \langle \bm{v}, \bm{w} \rangle - \langle \bm{w}, \bm{v} \rangle + \langle \bm{w}, \bm{w} \rangle \\
+%             &= 2\langle \bm{v}, \bm{v} \rangle + 2\langle \bm{w}, \bm{w} \rangle \\
+%             &= 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.
+%         \end{align*}
 
-    \noindent First, we claim that $(x_k)$ is in $\ell^\infty$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert x^{(m)} - x^{(n)} \rVert_\infty < 1$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|x^{(m)}_k - x^{(n)}_k| < 1$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $\ell^\infty$, there exists a $K > 0$ such that for all $k \in \mathbb{Z}_{\geq 1}$, $|x_k^{(N)}| \leq K$. Now, let $k \in \mathbb{Z}_{\geq 1}$. Since $x_k^{(n)} \to x_k$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|x_k - x_k^{(n)}| < 1$. Now, fix $n = \max(N, N')$. In that case,
-    \[|x_k| \leq |x_k - x_k^{(n)}| + |x_k^{(n)} - x_k^{(N)}| + |x_k^{(N)}| \leq 2 + K.\]
-    So, $(x_k)$ is in $\ell^\infty$.
+%         \item Now, assume that for all $\bm{v}, \bm{w} \in V$, 
+%         \[\lVert \bm{v} + \bm{w} \rVert^2 + \lVert \bm{v} - \bm{w} \rVert^2 = 2\lVert \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2.\]
+%         Define the function $\langle ., . \rangle\colon V \times V \to \mathbb{R}$ by
+%         \[\langle \bm{v}, \bm{w} \rangle = \frac{1}{4} (\lVert \bm{v} + \bm{w} \rVert^2 - \lVert \bm{v} - \bm{w} \rVert^2).\]
+%         We claim that $\langle ., . \rangle$ is an inner product on $V$ and that the inner product induces the norm $\lVert . \rVert$.
+%         \begin{enumerate}[label=\textbf{I\arabic*.}]
+%             \item Let $\bm{v} \in V$. We have
+%             \[\langle \bm{v}, \bm{v} \rangle = \frac{1}{4} \cdot \lVert 2\bm{v} \rVert^2 = \lVert \bm{v} \rVert^2 \geq 0.\]
+%             Moreover, if $\langle \bm{v}, \bm{v} \rangle = 0$, then $\bm{v} = \bm{0}$.
+%             \item Let $\lambda \in \mathbb{R}$ and $\bm{v}, \bm{w} \in V$. Then,
+%             \begin{align*}
+%                 \langle \lambda \bm{v}, \bm{w} \rangle &= \frac{1}{4} (\lVert \lambda \bm{v} - \bm{w} \rVert^2 - \lVert \lambda \bm{v} - \bm{w} \rVert^2) \\
+%                 &= \frac{1}{4}(2\lVert \lambda \bm{v} \rVert^2 + 2\lVert \bm{w} \rVert^2 - 2\lVert \lambda \bm{v} - \bm{w} \rVert^2) 
+%             \end{align*}
+%             % TODO: Finish
+%             \item Let $\bm{v}, \bm{w} \in V$. Then,
+%             \begin{align*}
+%                 \langle \bm{v}, \bm{w} \rangle &= \frac{1}{4}(\lVert \bm{v} + \bm{w} \rVert^2 - \lVert \bm{v} - \bm{w} \rVert^2) \\
+%                 &= \frac{1}{4}(\lVert \bm{w} + \bm{v} \rVert^2 - \lVert \bm{w} - \bm{v} \rVert^2) \\
+%                 &= \langle \bm{w}, \bm{v} \rangle.
+%             \end{align*}
+%             \item Let $\bm{u}, \bm{v}, \bm{w} \in V$. Then,
+%             \begin{align*}
+%                 \langle \bm{u} + \bm{v}, \bm{w} \rangle &= 
+%             \end{align*}
+%             % TODO: Finish
+%         \end{enumerate}
+%     \end{itemize}
+% \end{proof}
 
-    \noindent Now, we claim that $x^{(n)} \to x$ under the $\ell_\infty$ metric. Let $\varepsilon > 0$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert x^{(m)} - x^{(n)} \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|x^{(m)}_k - x^{(n)}_k| < \frac{\varepsilon}{3}$ for all $k \in \mathbb{Z}_{\geq 1}$. Now, let $n \in \mathbb{Z}_{\geq 1}$ with $n \geq N$. Moreover, let $k \in \mathbb{Z}_{\geq 1}$. Since $x_k^{(n)} \to x_k$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|x_k^{(n)} - x_k| < \frac{\varepsilon}{3}$. Now, fix $m = \max(N, N')$. Then, 
-    \[|x_k^{(n)} - x_k| \leq |x_k^{(n)} - x_k^{(m)}| + |x_k^{(m)} - x_k| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \frac{2}{3}\varepsilon.\]
-    Therefore, for all $k \in \mathbb{Z}_{\geq 1}$, $|x_k^{(n)} - x_k| < \frac{2}{3}\varepsilon$. By the supremum property, this implies that
-    \[\lVert x^{(n)} - x \rVert_\infty \leq \frac{2}{3}\varepsilon < \varepsilon.\]
-    So, for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then
-    \[\lVert x^{(n)} - x \rVert_\infty < \varepsilon.\]
-    This implies that $x^{(n)} \to x$. Therefore, $\ell^\infty$ is complete.
-\end{proof}
-\noindent Using this, we can show that $c$ is complete.
-\begin{proposition}
-    The sequence space $c \subseteq \ell^\infty$ is closed.
-\end{proposition}
-\begin{proof}
-    Let $(x^{(n)})_{n=1}^\infty$ be a convergent sequence in $c$ with $x^{(n)} \to x$, for some $x$ in $\ell^\infty$. We show that $x$ is Cauchy. Let $\varepsilon > 0$. Since $x^{(n)} \to x$, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lVert x^{(n)} - x \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|x^{(n)}_k - x_k| < \frac{\varepsilon}{3}$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $c$, we know that $x^{(N)}$ is Cauchy. In that case, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N'$, then $|x^{(N)}_m - x^{(N)}_n| < \frac{\varepsilon}{3}$. Therefore, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N'$, then 
-    \[|x_m - x_n| \leq |x_m - x_m^{(N)}| + |x_m^{(N)} - x_n^{(N)}| + |x_n^{(N)} - x_n| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.\]
-    This implies that $x$ is Cauchy. Since $x$ is a sequence in $\mathbb{R}$, we find that $x$ is in $c$. So, $c$ is closed.
-\end{proof}
-\noindent This shows that $c$ is complete- it is a closed subset of a complete space. 
+% Using this result, we can show that the norm $\lVert . \rVert_1$ on $\mathbb{R}^2$ is not induced by a norm. Let $\bm{v} = [1, 0]$ and $\bm{w} = [0, 1]$. Then, we have
+% \[\lVert \bm{v} + \bm{w} \rVert_1^2 + \lVert \bm{v} - \bm{w} \rVert_1^2 = \lVert [1, 1] \rVert_1^2 + \lVert [1, -1] \rVert_1^2 = 4 + 4 = 8,\]
+% but
+% \[2\lVert \bm{v} \rVert_1 + 2\lVert \bm{w} \rVert_1 = 2\lVert [1, 0] \rVert_1^2 + 2\lVert [0, 1] \rVert_1^2 = 2 + 2 = 4.\]
+% We can use the same values to show that $\lVert . \rVert_\infty$ on $\mathbb{R}^2$ is not induced by a norm.
 
-We use a similar approach to show that $c_0$ is complete.
-\begin{proposition}
-    The sequence space $c_0 \subseteq c$ is closed.
-\end{proposition}
-\begin{proof}
-    Let $(x^{(n)})_{n=1}^\infty$ be a convergent sequence in $c_0$ with $x^{(n)} \to x$, for some $x$ in $c$. We show that $x_k \to 0$. Let $\varepsilon > 0$. Since $x^{(n)} \to x$, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lVert x^{(n)} - x \rVert_\infty < \frac{\varepsilon}{2}$. In particular, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|x^{(n)}_k - x_k| < \frac{\varepsilon}{2}$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $c_0$, we find that $x^{(N)} \to 0$. In that case, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq N'$, then $|x^{(N)}_k| < \frac{\varepsilon}{2}$. In that case, for all $k \in \mathbb{Z}_{\geq 1}$, if $k \geq N'$, then
-    \[|x_k| \leq |x_k - x_k^{(N)}| + |x_k^{(N)}| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.\]
-    This implies that $x_k \to 0$. So, $x$ is in $c_0$, i.e. $c_0$ is closed.
-\end{proof}
+% \newpage
 
-Finally, we show that $C[0, 1]$ is complete.
-\begin{proposition}
-    The function space $C[0, 1]$ is complete.
-\end{proposition}
-\begin{proof}
-    Let $(f_n)_{n=1}^\infty$ be a Cauchy sequence in $C[0, 1]$. For $x \in [0, 1]$, the sequence $(f_n(x))_{n=1}^\infty$ is a sequence in $\mathbb{R}$. We show that $(f_n(x))$ is Cauchy. Let $\varepsilon > 0$. Since $(f_n)$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert f_m - f_n \rVert_\infty < \varepsilon$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then 
-    \[|f_m(x) - f_n(x)| \leq \sup_{y \in [0, 1]} |f_m(y) - f_n(y)| = \lVert f_m - f_n \rVert_\infty < \varepsilon.\]
-    This implies that $(f_n(x))$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, there exists an $f_x \in \mathbb{R}$ such that $f_n(x) \to f_x$. So, we can construct the function $f: [0, 1] \to \mathbb{R}$ by $f(x) = f_x$.
+% \section{Sequence spaces}
+% In this section, we will have a look at sequence spaces in more detail- we will show that they are vector spaces and characterise the containment of sequence spaces. First, we will consider the sequence spaces:
+% \begin{itemize}
+%     \item For $p \in [1, \infty)$, the sequence space $\ell^p$ contains sequences $(x_n)_{n=1}^\infty$ in $\mathbb{R}$ such that the series
+%     \[\sum_{k=1}^\infty |x_k|^p\]
+%     converges. We show that $\ell^p$ is a vector space.
+%     \begin{itemize}
+%         \item Let $(x_n)_{n=1}^\infty$ be in $\ell^p$ and $\lambda \in \mathbb{R}$. Since $(x_n)$ is in $\ell^p$, the series
+%         \[\sum_{n=1}^\infty |x_n|^p\]
+%         converges. In that case,
+%         \[\sum_{n=1}^\infty |\lambda x_n|^p = |\lambda|^p \sum_{n=1}^\infty |x_n|^p.\]
+%         So, the series $(\lambda x_n)$ is in $\ell^p$.
 
-    \noindent First, we claim that $f$ is in $C[0, 1]$. Let $x \in [0, 1]$, and $\varepsilon > 0$. Since $(f_n)$ is Cauchy, we can find an $K \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq K$, then $\lVert f_m - f_n \rVert_\infty < \frac{\varepsilon}{5}$. In particular, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq K$, then $|f_m(y) - f_n(y)| < \frac{\varepsilon}{5}$ for all $y \in [0, 1]$. Since $f_K$ is in $C[0, 1]$, we can find a $\delta > 0$ such that for $y \in [0, 1]$, if $|x - y| < \delta$, then $|f_K(x) - f_K(y)| < \frac{\varepsilon}{5}$. Since $f_n(x) \to f(x)$, we can find an $N_2 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_2$, then $|f_n(x) - f(x)| < \frac{\varepsilon}{5}$. Set $N = \max(N_1, N_2)$. Next, let $y \in [0, 1]$ with $|x - y| < \delta$. Since $f_n(y) \to f(y)$, we can find an $N_3 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_3$, then $|f_n(y) - f(y)| < \frac{\varepsilon}{5}$. Set $M = \max(N_1, N_3)$. Therefore,
-    \begin{align*}
-        |f(x) - f(y)| &\leq |f(x) - f_N(x)| + |f_N(x) - f_K(x)| + |f_K(x) - f_K(y)| \\
-        &+ |f_K(y) - f_M(y)| + |f_M(y) - f(y)| \\
-        &< \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} = \varepsilon.
-    \end{align*}
-    That is, for all $y \in [0, 1]$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \varepsilon$. This implies that $f$ is in $C[0, 1]$.
+%         \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $\ell^p$. Since $(x_n)$ and $(y_n)$ are in $\ell^p$, the series
+%         \[\sum_{n=1}^\infty |x_n|^p, \qquad \sum_{n=1}^\infty |y_n|^p\]
+%         converge. In that case, for all $n \in \mathbb{Z}_{\geq 1}$,
+%         % TODO: Show some comparison
+%         \[(|x_n| + |y_n|)^p = |x_n|^p + \dots + |y_n|^p \]
+%         So, the comparison test tells us that
+%         \[\sum_{n=1}^\infty |x_n + y_n|^p \]
+%         converges. So, the series $(x_n + y_n)$ is in $\ell^p$.
+%     \end{itemize}
 
-    \noindent Now, we claim that $f_n \to f$ under the $\ell_\infty$ metric. Let $\varepsilon > 0$. Since $(f_n)$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, then $\lVert f_m - f_n \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|f_m(x) - f_n(x)| < \frac{\varepsilon}{3}$ for all $x \in [0, 1]$. Now, let $n \in \mathbb{Z}_{\geq 1}$ with $n \geq N$. Moreover, let $x \in [0, 1]$. Since $f_n(x) \to f(x)$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|f_n(x) - f(x)| < \frac{\varepsilon}{3}$. Now, fix $m = \max(N, N')$. Then,
-    \[|f_n(x) - f(x)| \leq |f_n(x) - f_m(x)| + |f_m(x) - f(x)| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \frac{2}{3} \varepsilon.\]
-    Therefore, for all $x \in [0, 1]$, $|f_n(x) - f(x)| < \frac{2}{3} \varepsilon$. By the supremum property, this implies that
-    \[\lVert f_n - f \rVert_\infty \leq \frac{2}{3} \varepsilon < \varepsilon.\]
-    So, for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then
-    \[\lVert f_n - f \rVert_\infty < \varepsilon.\]
-    This implies that $f_n \to f$. Therefore, $C[0, 1]$ is complete.
-\end{proof}
+%     \item The sequence space $\ell^\infty$ is the set where the infinity norm is defined, i.e. for a sequence $(x_n)_{n=1}^\infty$ in $\mathbb{R}$, the supremum
+%     \[\sup_{k=1}^\infty |x_n|\]
+%     exists. Therefore, the space is precisely the set of all bounded sequences. We show that $\ell^\infty$ is a vector space.
+%     \begin{itemize}
+%         \item Let $(x_n)_{n=1}^\infty$ be in $\ell^\infty$ and $\lambda \in \mathbb{R}$. Since $(x_n)$ is in $\ell^\infty$, there exists a $K > 0$ such that for all $n \in \mathbb{Z}_{\geq 1}$, $|x_n| \leq K$. In that case, for all $n \in \mathbb{Z}_{\geq 1}$, $|\lambda x_n| \leq |\lambda| K$. So, the sequence $(\lambda x_n)$ is in $\ell^\infty$.
+%         \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $\ell^\infty$. In that case, there exist $K_1, K_2 > 0$ such that for all $n \in \mathbb{Z}_{\geq 1}$, $|x_n| \leq K_1$ and $|y_n| \leq K_2$. In that case, for all $n \in \mathbb{Z}_{\geq 1}$, 
+%         \[|x_n + y_n| \leq |x_n| + |y_n| \leq K_1 + K_2.\]
+%         So, the sequence $(x_n + y_n)$ is in $\ell^\infty$.
+%     \end{itemize}
+
+%     \item The sequence space $c$ is the set of convergent sequences. We show that $c$ is a vector space.
+%     \begin{itemize}
+%         \item Let $(x_n)_{n=1}^\infty$ be in $c$ and $\lambda \in \mathbb{R}$. In that case, the sequence $x_n \to L$, for some $L \in \mathbb{R}$. Therefore, $\lambda x_n \to \lambda L$. This implies that $(\lambda x_n)$ is in $c$.
+%         \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c$. In that case, we have $x_n \to L_1$ and $y_n \to L_2$, for some $L_1, L_2 \in \mathbb{R}$. Therefore, $x_n + y_n \to L_1 + L_2$. This implies that $(x_n + y_n)$ is in $c$.
+%     \end{itemize}
+
+%     \item The sequence space $c_0$ is the set of convergent sequences that converge to $0$. We show that $c_0$ is a vector space.
+%     \begin{itemize}
+%         \item Let $(x_n)_{n=1}^\infty$ be in $c_0$ and $\lambda \in \mathbb{R}$. In that case, the sequence $x_n \to 0$. Therefore, $\lambda x_n \to 0$. This implies that $(\lambda x_n)$ is in $c_0$.
+%         \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c$. In that case, we have $x_n \to 0$ and $y_n \to 0$. Therefore, $x_n + y_n \to 0$. This implies that $(x_n + y_n)$ is in $c_0$.
+%     \end{itemize}
+
+%     \item Finally, the sequence space $c_{00}$ is the set of convergent sequences $(x_n)_{n=1}^\infty$ such that there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n = 0$.\sidefootnote{That is, it is the set of sequences that eventually become 0.} We show that $c_{00}$ is a vector space.
+%     \begin{itemize}
+%         \item Let $(x_n)_{n=1}^\infty$ be in $c_{00}$ and $\lambda \in \mathbb{R}$. In that case, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n = 0$. So, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lambda x_n = 0$. So, $(\lambda x_n)$ is in $c_{00}$.
+%         \item Let $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ be in $c_{00}$. In that case, there exist $N_1, N_2 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_1$, then $x_n = 0$, and if $n \geq N_2$, then $y_n = 0$. So, set $N = \max(N_1, N_2)$. Then, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n + y_n = 0$. This implies that $(x_n + y_n)$ is in $c_{00}$.
+%     \end{itemize}
+% \end{itemize}
+
+% The following is the containment relationship between the sequence spaces:
+% \[c_{00} \subseteq c_0 \subseteq c \subseteq \ell^\infty.\]
+% Moreover, the quotient vector space $c/c_0$ is isomorphic to $\mathbb{R}$- this is because the relation $\sim$ on $c$ given by 
+% \[(x_n) \sim (y_n) \iff (x_n) \text{ and } (y_n) \text{ converge to the same limit}\]
+% corresponds to $x_n - y_n \to 0$, i.e. $(x_n - y_n)$ in $c_0$. In other words, it is the kernel of the surjective vector space homomorphism $v\colon c \to \mathbb{R}$ where $v(x) = L$, with $x_n \to L$. Then, the result follows from the first isomorphism theorem.
+
+% Now, let $p \in [1, \infty)$. We will place $\ell^p$ in the containment relationship. Let $(x_n)_{n=1}^\infty$ be in $\ell^p$. We know that the series
+% \[\sum_{n=1}^\infty |x_n|^p\]
+% converges. In that case, we have $|x_n|^p \to 0$. Therefore, $x_n \to 0$. So, $\ell^p \subseteq c_0$. However, $\ell^p \not\subseteq c_{00}$ since there are infinite sums that converge. So, we have $c_{00} \subseteq \ell^p \subseteq c_0$.
+
+% Next, let $p, q \in [1, \infty)$ with $p < q$. We show that $\ell^p \subseteq \ell^q$. We start with a lemma.
+% \begin{lemma}
+%     Let $p \in [1, \infty)$, and let $(x_n)_{n=1}^\infty$ be in $\ell^p$. Then, $\lVert x \rVert_\infty \leq \lVert x \rVert_p$.
+% \end{lemma}
+% \begin{proof}
+%     Let $\varepsilon > 0$. Since
+%     \[\lVert x \rVert_\infty = \sup_{n=1}^\infty |x_n|,\]
+%     we can find a $k \in \mathbb{Z}_{\geq 1}$ such that $|x_k| \geq \lVert x \rVert_\infty - \varepsilon$. In that case,
+%     \[\lVert x \rVert_p = \left(\sum_{n=1}^\infty |x_n|^p\right)^{1/p} \geq (|x_k|^p)^{1/p} = |x_k| \geq \lVert x \rVert_\infty - \varepsilon.\]
+%     So, for all $\varepsilon > 0$, $\lVert x \rVert_p \geq \lVert x \rVert_\infty - \varepsilon$. In that case, we must have $\lVert x \rVert_\infty \leq \lVert x \rVert_p$.
+% \end{proof}
+% Now, we prove that $\ell^p \subseteq \ell^q$.
+% \begin{proposition}
+%     Let $p, q \in [1, \infty)$ with $p < q$. Then, $\ell^p \subseteq \ell^q$.
+% \end{proposition}
+% \begin{proof}
+%     Let $(x_n)_{n=1}^\infty$ be in $\ell^p$. We find that
+%     \begin{align*}
+%         \lVert x \rVert_q^q &= \sum_{n=1}^\infty |x_n|^q \\
+%         &= \sum_{n=1}^\infty |x_k|^p \cdot |x_n|^{q-p} \\
+%         &\leq \sum_{n=1}^\infty |x_n|^p \cdot \lVert x \rVert_\infty^{q-p} \\
+%         &= \lVert x \rVert_\infty^{q-p} \sum_{n=1}^\infty |x_n|^p \\
+%         &= \lVert x \rVert_\infty^{q-p} \lVert x \rVert_p^p \\ 
+%         &= \lVert x \rVert_p^{q-p} \lVert x \rVert_p^p \\
+%         &= \lVert x \rVert_p^q.
+%     \end{align*}
+%     This implies that $\lVert x \rVert_q \leq \lVert x \rVert_p$. So, $(x_n)$ is in $\ell^q$. Therefore, $\ell^p \subseteq \ell^q$.
+% \end{proof}
+% Finally, we have the complete characterisation of the containment:
+% \[c_{00} \subseteq \ell^1 \subseteq \ell^2 \subseteq \dots \subseteq c_0 \subseteq c \subseteq \ell^\infty.\]
+% At each level, the containment is strict.
+% \newpage
+
+% \section{Topology of vector spaces}
+% \subsection{Compactness}
+% We know that a subspace $A \subseteq \mathbb{R}^n$ is compact if and only if $A$ is closed and bounded. This does not hold in sequence spaces, under any norm. First, we consider the $\ell_\infty$ norm. Let
+% \[A = \{(x_n) \in \ell^\infty \mid \lVert x \rVert_\infty \leq 1\}.\]
+% This is a closed space since the norm map is continuous. Moreover, it is bounded by the triangle inequality. However, we claim that the space is not compact. To see this, let $(e_k)_{k=1}^\infty$ be a sequence in $\ell^\infty$ given by
+% \[e_k = \begin{cases}
+%     0 & n \neq k \\
+%     1 & n = k
+% \end{cases}.\]
+% By definition, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m \neq n$, then $\lVert e_m - e_n \rVert_\infty = 1$. This implies that any subsequence cannot be Cauchy, and so is not convergent. Therefore, $A$ is not sequentially compact. Since the topology on $A$ is induced by a metric, this further implies that $A$ is not compact. This is true for other norms as well.
+% % TODO: Give counterexample in \ell^p for p \in [1, \infty)
+
+
+% \begin{definition}
+%     Let $X$ be a real vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n\colon X \to \mathbb{R}$, and let $f\colon X \to \mathbb{R}$. We say that \emph{$(f_n)$ converges to $f$ pointwise} if for all $x \in X$, $f_n(x) \to f(x)$. In other words, for every $x \in X$ and $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
+% \end{definition}
+
+% \begin{definition}
+%     Let $X$ be a real vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of functions $f_n\colon X \to \mathbb{R}$, and let $f\colon X \to \mathbb{R}$. We say that \emph{$(f_n)$ converges to $f$ uniformly} if for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $x \in X$ and $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(x) - f(x)| < \varepsilon$.
+% \end{definition}
+
+% \begin{proposition}
+%     Let $X$ be a normed vector space, and let $(f_n)_{n=1}^\infty$ be a sequence of continuous functions $f_n\colon X \to \mathbb{R}$, and let $f\colon X \to \mathbb{R}$ such that $f_n \to f$ uniformly. Then, $f$ is continuous.
+% \end{proposition}
+% \begin{proof}
+%     Let $x \in X$ and $\varepsilon > 0$. Since $f_n \to f$ uniformly, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$ and $a \in X$, if $n \geq N$, then $|f_n(a) - f(a)| < \frac{\varepsilon}{3}$. Moreover, since $f_N$ is continuous, we can find a $\delta > 0$ such that for $y \in X$, if $\lVert x - y \rVert < \delta$, then $|f_N(x) - f_N(y)| < \frac{\varepsilon}{3}$. In that case, for $y \in X$, if $\lVert x - y \rVert < \delta$, then
+%     \begin{align*}
+%         |f(x) - f(y)| &\leq |f(x) - f_N(x)| + |f_N(x) - f_N(y)| + |f_N(y) - f(y)| \\
+%         &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+%     \end{align*}
+%     This implies that $f$ is continuous.
+% \end{proof}
+
+% % TODO: Counterexample for pointwise convergence- f_n(x) = x^n
+
+% \begin{definition}
+%     Let $K \subseteq C[0, 1]$. We say that $K$ is \emph{equi-continuous} if for all $\varepsilon > 0$, there exists a $\delta > 0$ such that for all $f \in K$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f(s) - f(t)| < \varepsilon$.
+% \end{definition}
+
+% \begin{theorem}[Arzela-Ascoli]
+%     Let $K \subseteq C[0, 1]$. Then, $K$ is compact if and only if $K$ is closed, bounded and equi-continuous, under the $L_\infty$ norm.
+% \end{theorem}
+% \begin{proof}
+%     \hspace*{0pt}
+%     \begin{itemize}
+%         \item First, assume that $K$ is compact. We know that $K$ is closed and bounded. We show that $K$ is equi-continuous. So, let $\varepsilon > 0$. We know that $(B_K(f, \frac{\varepsilon}{3}))_{f \in K}$ is an open cover of $K$. So, it has a finite subcover $(B_K(f_i, \frac{\varepsilon}{3}))_{i=1}^n$. For $i \in \{1, 2, \dots, n\}$, we can find a $\delta_i > 0$ such that for $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f_i(s) - f_i(t)| < \frac{\varepsilon}{3}$. Set $\delta = \min_{i=1}^n \delta_i$. Now, let $g \in K$. We can find a $j \in \{1, 2, \dots, n\}$ such that
+%         \[g \in B_K(f_j, \tfrac{\varepsilon}{3}).\]
+%         In that case, $\lVert f_j - g \rVert_\infty < \frac{\varepsilon}{3}$. So, for all $x \in [0, 1]$, $|f_j(x) - g(x)| < \frac{\varepsilon}{3}$. Now, for $s, t \in [0, 1]$, if $|s - t| < \delta$, then
+%         \begin{align*}
+%             |g(s) - g(t)| &\leq |g(s) - f_j(s)| + |f_j(s) - f_j(t)| + |f_j(t) - g(s)| \\
+%             &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+%         \end{align*}
+%         So, $K$ is equi-continuous.
+        
+%         \item Now, assume that $K$ is closed, bounded and equi-continuous. Let $(f_n)_{n=1}^\infty$ be a sequence in $K$. We show that $(f_n)$ has a convergent subsequence. 
+%         % TODO: Write up (at some pt)
+%     \end{itemize}
+% \end{proof}
+
+% \subsection{Separability}
+% \begin{definition}
+%     Let $X$ be a metric space. We say that $X$ is \emph{separable} if it contains a countable dense subset.
+% \end{definition}
+
+% We know that $\mathbb{R}$ is separable- $\mathbb{Q}$ is a countable dense subset of $\mathbb{R}$. In general, $\mathbb{Q}^n$ is a countable dense subset of $\mathbb{R}^n$.
+
+% \begin{proposition}
+%     The sequence space $\ell^\infty$ is not separable.
+% \end{proposition}
+% \begin{proof}
+%     Let $C \subseteq \mathbb{Z}_{\geq 1}$. Define the sequence $(x^C_n)_{n=1}^\infty$ in $\mathbb{R}$ by 
+%     \[x^C_n = \begin{cases}
+%         1 & n \in C \\
+%         0 & n \not\in C
+%     \end{cases}.\]
+%     We have $(x_n)$ in $\ell^\infty$. Moreover, for $P, Q \subseteq \mathbb{N}$ with $P \neq Q$, $\lVert x^P - x^Q \rVert_\infty = 1$. In that case,
+%     \[B_{\ell^\infty}(x^P, \tfrac{1}{2}) \cap B_{\ell^\infty}(x^Q, \tfrac{1}{2}) = \varnothing.\]
+%     So, the set
+%     \[S = \{x^C \mid C \subseteq \mathbb{Z}_{\geq 1}\}\]
+%     is not dense in $\ell^\infty$- 
+%     % TODO: Show that there exists an open set in \ell^\infty such that \ell^\infty \cap S is empty- give a sequence that is halfway?
+%     % TODO: Understand better the proof
+% \end{proof}
+
+% % TODO: X_1, X_2 separable => X_1 * X_2 separable 
+% % TODO: X countable union of separable spaces => separable (e.g. c00 separable)
+% % TODO: Subset of separable metric space => separable (e.g. [0, 1])
+% % TODO: Closure of separable is separable (e.g. c0 separable)
+
+% % TODO: C[0, 1] is separable
+% \begin{proposition}
+%     The function space $C[0, 1]$ is separable.
+% \end{proposition}
+% \begin{proof}
+%     We show that polynomials is a countable subset in $C[0, 1]$. The space of polynomials is the union of polynomials of degree $n$, for all $n \in \mathbb{Z}_{\geq 1}$. The polynomials of degree $n$ are isomorphic to $\mathbb{R}^{n+1}$ as vector spaces. So, the space of polynomials is countable. Moreover, the space of polynomials is dense- we will not prove this. For this reason, $C[0, 1]$ is separable.
+% \end{proof}
+% % \begin{proof}[Alternate Proof]
+%     % TODO: ADD
+% % \end{proof}
+
+% \subsection{Completeness}
+% \begin{definition}
+%     Let $V$ be a normed vector space such that the metric induced by the norm is complete. Then, we say that $V$ is a \emph{Banach space}.
+% \end{definition}
+
+% \begin{definition}
+%     Let $V$ be a inner product space such that the metric induced by the norm is complete. Then, we say that $V$ is a \emph{Hilbert space}.
+% \end{definition}
+
+% The sequence space $c_{00}$ is not complete. Consider the sequence $(x^{(n)})_{n=1}^\infty$ in $c_{00}$, given by
+% \[x^{(n)} = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots, \tfrac{1}{n}, 0, 0, \dots).\]
+% Under the $\ell_\infty$ norm, this sequence converges to
+% \[x = (1, \tfrac{1}{2}, \tfrac{1}{3}, \dots)\]
+% since
+% \[\lVert x^{(n)} - x \rVert_\infty = \lVert (0, 0, \dots, 0, -\tfrac{1}{n+1}, -\tfrac{1}{n+2}, \dots) \rVert_\infty = \tfrac{1}{n+1} \to 0.\]
+% But, the sequence $x$ is not in $c_{00}$ since it is not eventually $0$. So, $(x^{(n)})$ is Cauchy in $c_{00}$ but not convergent- it is not complete.
+
+% However, this is not the case for $\ell^\infty$.
+% \begin{proposition}
+%     The sequence space $\ell^\infty$ is complete.
+% \end{proposition}
+% \begin{proof}
+%     Let $(x^{(n)})_{n=1}^\infty$ be a Cauchy sequence in $\ell^\infty$. For $k \in \mathbb{Z}_{\geq 1}$, we have the sequence $(x^{(n)}_k)_{n=1}^\infty$ in $\mathbb{R}$. We claim that $(x^{(n)}_k)$ is Cauchy in $\mathbb{R}$. Let $\varepsilon > 0$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then
+%     \[\lVert x^{(n)} - x^{(m)} \rVert_\infty < \varepsilon.\]
+%     In that case,
+%     \[|x_k^{(n)} - x_k^{(m)}| \leq \sup_{i=1}^\infty |x_i^{(n)} - x_i^{(m)}| = \lVert x^{(n)} - x^{(m)} \rVert_\infty < \varepsilon.\]
+%     So, $(x_k^{(n)})$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, there exists an $x_k \in \mathbb{R}$ such that $x_k^{(n)} \to x_k$. So, we can construct the sequence $(x_k)_{k=1}^\infty$ in $\mathbb{R}$, where $x_k^{(n)} \to x_k$ for $k \in \mathbb{Z}_{\geq 1}$.
+
+%     \noindent First, we claim that $(x_k)$ is in $\ell^\infty$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert x^{(m)} - x^{(n)} \rVert_\infty < 1$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|x^{(m)}_k - x^{(n)}_k| < 1$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $\ell^\infty$, there exists a $K > 0$ such that for all $k \in \mathbb{Z}_{\geq 1}$, $|x_k^{(N)}| \leq K$. Now, let $k \in \mathbb{Z}_{\geq 1}$. Since $x_k^{(n)} \to x_k$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|x_k - x_k^{(n)}| < 1$. Now, fix $n = \max(N, N')$. In that case,
+%     \[|x_k| \leq |x_k - x_k^{(n)}| + |x_k^{(n)} - x_k^{(N)}| + |x_k^{(N)}| \leq 2 + K.\]
+%     So, $(x_k)$ is in $\ell^\infty$.
+
+%     \noindent Now, we claim that $x^{(n)} \to x$ under the $\ell_\infty$ metric. Let $\varepsilon > 0$. Since $(x^{(n)})$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert x^{(m)} - x^{(n)} \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|x^{(m)}_k - x^{(n)}_k| < \frac{\varepsilon}{3}$ for all $k \in \mathbb{Z}_{\geq 1}$. Now, let $n \in \mathbb{Z}_{\geq 1}$ with $n \geq N$. Moreover, let $k \in \mathbb{Z}_{\geq 1}$. Since $x_k^{(n)} \to x_k$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|x_k^{(n)} - x_k| < \frac{\varepsilon}{3}$. Now, fix $m = \max(N, N')$. Then, 
+%     \[|x_k^{(n)} - x_k| \leq |x_k^{(n)} - x_k^{(m)}| + |x_k^{(m)} - x_k| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \frac{2}{3}\varepsilon.\]
+%     Therefore, for all $k \in \mathbb{Z}_{\geq 1}$, $|x_k^{(n)} - x_k| < \frac{2}{3}\varepsilon$. By the supremum property, this implies that
+%     \[\lVert x^{(n)} - x \rVert_\infty \leq \frac{2}{3}\varepsilon < \varepsilon.\]
+%     So, for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then
+%     \[\lVert x^{(n)} - x \rVert_\infty < \varepsilon.\]
+%     This implies that $x^{(n)} \to x$. Therefore, $\ell^\infty$ is complete.
+% \end{proof}
+% \noindent Using this, we can show that $c$ is complete.
+% \begin{proposition}
+%     The sequence space $c \subseteq \ell^\infty$ is closed.
+% \end{proposition}
+% \begin{proof}
+%     Let $(x^{(n)})_{n=1}^\infty$ be a convergent sequence in $c$ with $x^{(n)} \to x$, for some $x$ in $\ell^\infty$. We show that $x$ is Cauchy. Let $\varepsilon > 0$. Since $x^{(n)} \to x$, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lVert x^{(n)} - x \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|x^{(n)}_k - x_k| < \frac{\varepsilon}{3}$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $c$, we know that $x^{(N)}$ is Cauchy. In that case, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N'$, then $|x^{(N)}_m - x^{(N)}_n| < \frac{\varepsilon}{3}$. Therefore, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N'$, then 
+%     \[|x_m - x_n| \leq |x_m - x_m^{(N)}| + |x_m^{(N)} - x_n^{(N)}| + |x_n^{(N)} - x_n| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.\]
+%     This implies that $x$ is Cauchy. Since $x$ is a sequence in $\mathbb{R}$, we find that $x$ is in $c$. So, $c$ is closed.
+% \end{proof}
+% \noindent This shows that $c$ is complete- it is a closed subset of a complete space. 
+
+% We use a similar approach to show that $c_0$ is complete.
+% \begin{proposition}
+%     The sequence space $c_0 \subseteq c$ is closed.
+% \end{proposition}
+% \begin{proof}
+%     Let $(x^{(n)})_{n=1}^\infty$ be a convergent sequence in $c_0$ with $x^{(n)} \to x$, for some $x$ in $c$. We show that $x_k \to 0$. Let $\varepsilon > 0$. Since $x^{(n)} \to x$, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\lVert x^{(n)} - x \rVert_\infty < \frac{\varepsilon}{2}$. In particular, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|x^{(n)}_k - x_k| < \frac{\varepsilon}{2}$ for all $k \in \mathbb{Z}_{\geq 1}$. Since $x^{(N)}$ is in $c_0$, we find that $x^{(N)} \to 0$. In that case, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq N'$, then $|x^{(N)}_k| < \frac{\varepsilon}{2}$. In that case, for all $k \in \mathbb{Z}_{\geq 1}$, if $k \geq N'$, then
+%     \[|x_k| \leq |x_k - x_k^{(N)}| + |x_k^{(N)}| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.\]
+%     This implies that $x_k \to 0$. So, $x$ is in $c_0$, i.e. $c_0$ is closed.
+% \end{proof}
+
+% Finally, we show that $C[0, 1]$ is complete.
+% \begin{proposition}
+%     The function space $C[0, 1]$ is complete.
+% \end{proposition}
+% \begin{proof}
+%     Let $(f_n)_{n=1}^\infty$ be a Cauchy sequence in $C[0, 1]$. For $x \in [0, 1]$, the sequence $(f_n(x))_{n=1}^\infty$ is a sequence in $\mathbb{R}$. We show that $(f_n(x))$ is Cauchy. Let $\varepsilon > 0$. Since $(f_n)$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $\lVert f_m - f_n \rVert_\infty < \varepsilon$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then 
+%     \[|f_m(x) - f_n(x)| \leq \sup_{y \in [0, 1]} |f_m(y) - f_n(y)| = \lVert f_m - f_n \rVert_\infty < \varepsilon.\]
+%     This implies that $(f_n(x))$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, there exists an $f_x \in \mathbb{R}$ such that $f_n(x) \to f_x$. So, we can construct the function $f\colon [0, 1] \to \mathbb{R}$ by $f(x) = f_x$.
+
+%     \noindent First, we claim that $f$ is in $C[0, 1]$. Let $x \in [0, 1]$, and $\varepsilon > 0$. Since $(f_n)$ is Cauchy, we can find an $N_1 \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N_1$, then $\lVert f_m - f_n \rVert_\infty < \frac{\varepsilon}{5}$. In particular, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N_1$, then $|f_m(y) - f_n(y)| < \frac{\varepsilon}{5}$ for all $y \in [0, 1]$. Since $f_{N_1}$ is in $C[0, 1]$, we can find a $\delta > 0$ such that for $y \in [0, 1]$, if $|x - y| < \delta$, then $|f_{N_1}(x) - f_{N_1}(y)| < \frac{\varepsilon}{5}$. Since $f_n(x) \to f(x)$, we can find an $N_2 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_2$, then $|f_n(x) - f(x)| < \frac{\varepsilon}{5}$. Set $N = \max(N_1, N_2)$. Next, let $y \in [0, 1]$ with $|x - y| < \delta$. Since $f_n(y) \to f(y)$, we can find an $N_3 \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N_3$, then $|f_n(y) - f(y)| < \frac{\varepsilon}{5}$. Set $M = \max(N_1, N_3)$. Therefore,
+%     \begin{align*}
+%         |f(x) - f(y)| &\leq |f(x) - f_N(x)| + |f_N(x) - f_{N_1}(x)| + |f_{N_1}(x) - f_{N_1}(y)| \\
+%         &+ |f_{N_1}(y) - f_M(y)| + |f_M(y) - f(y)| \\
+%         &< \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} + \frac{\varepsilon}{5} = \varepsilon.
+%     \end{align*}
+%     That is, for all $y \in [0, 1]$, if $|x - y| < \delta$, then $|f(x) - f(y)| < \varepsilon$. This implies that $f$ is in $C[0, 1]$.
+
+%     \noindent Now, we claim that $f_n \to f$ under the $\ell_\infty$ metric. Let $\varepsilon > 0$. Since $(f_n)$ is Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, then $\lVert f_m - f_n \rVert_\infty < \frac{\varepsilon}{3}$. In particular, for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|f_m(x) - f_n(x)| < \frac{\varepsilon}{3}$ for all $x \in [0, 1]$. Now, let $n \in \mathbb{Z}_{\geq 1}$ with $n \geq N$. Moreover, let $x \in [0, 1]$. Since $f_n(x) \to f(x)$, there exists an $N' \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N'$, then $|f_n(x) - f(x)| < \frac{\varepsilon}{3}$. Now, fix $m = \max(N, N')$. Then,
+%     \[|f_n(x) - f(x)| \leq |f_n(x) - f_m(x)| + |f_m(x) - f(x)| < \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \frac{2}{3} \varepsilon.\]
+%     Therefore, for all $x \in [0, 1]$, $|f_n(x) - f(x)| < \frac{2}{3} \varepsilon$. By the supremum property, this implies that
+%     \[\lVert f_n - f \rVert_\infty \leq \frac{2}{3} \varepsilon < \varepsilon.\]
+%     So, for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then
+%     \[\lVert f_n - f \rVert_\infty < \varepsilon.\]
+%     This implies that $f_n \to f$ in $\ell^\infty$. Therefore, $C[0, 1]$ is complete.
+% \end{proof}
 
 \end{document}
