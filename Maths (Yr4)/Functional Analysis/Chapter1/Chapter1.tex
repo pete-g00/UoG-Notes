@@ -89,20 +89,167 @@
         1 & n = k \\
         0 & \textrm{otherwise}.
     \end{cases}\]
-    We know that every basis of a finite-dimensional space is finite, so $\operatorname{Seq}(\mathbb{R})$ is infinite-dimensional. This space has many interesting subspaces, including:
-    \begin{itemize}
-        \item the space of bounded sequences $\ell^\infty$;
-        \item the space of convergent sequences $c$;
-        \item the space of sequences that converge to 0 $c_0$;
-        \item the space of sequences $(x_n)_{n=1}^\infty$ such that the series
-        \[\sum_{n=1}^\infty |x_n|^p\]
-        converges, denoted $\ell^p$, for some $p \in [1, \infty)$;
-        \item the space of sequences that are eventually zero $c_{00}$.
-    \end{itemize}
+    We know that every basis of a finite-dimensional space is finite, so $\operatorname{Seq}(\mathbb{R})$ is infinite-dimensional.
+    %  This space has many interesting subspaces, including:
+    % \begin{itemize}
+    %     \item the space of bounded sequences $\ell^\infty$;
+    %     \item the space of convergent sequences $c$;
+    %     \item the space of sequences that converge to 0 $c_0$;
+    %     \item the space of sequences $(x_n)_{n=1}^\infty$ such that the series
+    %     \[\sum_{n=1}^\infty |x_n|^p\]
+    %     converges, denoted $\ell^p$, for some $p \in [1, \infty)$;
+    %     \item the space of sequences that are eventually zero $c_{00}$.
+    % \end{itemize}
     
     Also, the space of continuous functions from the compact subset $[0, 1]$ to $\mathbb{R}$, denoted by $C[0, 1]$, is a vector space- it forms a vector space over pointwise addition and scalar multiplication, i.e. for $c \in \mathbb{R}$ and $f \in C[0, 1]$, we define the function $c \cdot f \in C[0, 1]$ by $(c \cdot f)(x) = c \cdot f(x)$    for $x \in [0, 1]$. This is also an infinite-dimensional space- it has a subspace consisting of polynomial functions, whose basis is given by
     \[\{f_n \mid n \in \mathbb{Z}_{\geq 1}\},\]
     where $f_n(x) = x^n$ for all $x \in [0, 1]$. Hence, it has an infinite-dimensional subspace, meaning that the entire space must also be infinite-dimensional. We will later see that the space of polynomials is a dense subspace of $C[0, 1]$, i.e. a continuous function can be approximated by a polynomial function arbitrarily well.
+    \newpage
+
+    \section{Metrics, Norms and Inner Products}
+    In this section, we will expand the algebraic vector space properties and connect them with analytic ones. In particular, we will look at metrics in vector spaces, and then a stronger concept of norms, and finally inner product spaces.
+
+    \begin{definition}[Metric spaces]
+        Let $V$ be a set and let $d \colon V \times V \to \mathbb{R}_{\geq 0}$ be a function. We say that $(V, d)$ is a \emph{metric space} if:
+        \begin{itemize}
+            \item for all $u, v \in V$, $d(u, v) = 0$ if and only if $u = v$;
+            \item for all $u, v \in V$, $d(u, v) = d(v, u)$;
+            \item for all $u, v, w \in V$, $d(u, w) \leq d(u, v) + d(v, w)$.
+        \end{itemize}
+        If $(V, d)$ is a metric space, we call $d$ a \emph{metric}.
+    \end{definition}
+    \noindent The function $d$ represents a distance function; it allows us to measure distance between two values in $V$.
+
+    There are many examples of metric spaces. In $\mathbb{R}^n$, the following are 3 different norms:
+    \begin{align*}
+        d_1(x, y) &= \sum_{i=1}^n |x_i - y_i| \\
+        d_2(x, y) &= \left(\sum_{i=1}^n (x_i - y_i)^2\right)^{1/2} \\
+        d_\infty(x, y) &= \max_{i=1}^n |x_i - y_i|.
+    \end{align*}
+    In general, we can define the $d_p$-metric for $p \in [1, \infty)$ as follows:
+    \[d_p(x, y) = \left(\sum_{i=1}^n |x_i - y_i|^p \right)^{1/p}.\]
+    We can define a lot more metrics on $\mathbb{R}^n$, such as the discrete metric:
+    \[d(x, y) = \begin{cases}
+        0 & x = y \\
+        1 & \textrm{otherwise}.
+    \end{cases}\]
+    We would like to consider a structure that behaves better with the structure of a vector space, like the $d_p$-metrics. This gives rise to a norm.
+    \begin{definition}[Normed Vector Space]
+        Let $V$ be a vector space and let $\lVert \cdot \rVert \colon V \times V \to \mathbb{R}_{\geq 0}$ be a function. We say that $(V, \lVert \cdot \rVert)$ is a \emph{normed vector space} if:
+        \begin{itemize}
+            \item for all $v \in V$, $\lVert v \rVert = 0$ if and only if $v = 0$;
+            \item for all $v \in V$ and $\lambda \in \mathbb{C}$, $\lVert \lambda v \rVert = |\lambda| \lVert v \rVert$;
+            \item for all $u, v \in V$, $\lVert u + v \rVert \leq \lVert u \rVert + \lVert v \rVert$.
+        \end{itemize}
+        If $(V, \lVert \cdot \rVert)$ is a normed vector space, we call $\lVert \cdot \rVert$ a \emph{norm}.
+    \end{definition}
+    \noindent The norm function allows us to measure the magnitude of a vector.
+
+    In $\mathbb{R}^n$, we have many norms, such as $\lVert \cdot \rVert_1$, $\lVert \cdot \rVert_2$ and $\lVert \cdot \rVert_\infty$ given as follows:
+    \begin{align*}
+        \lVert x \rVert_1 &= \sum_{i=1}^n |x_i| \\
+        \lVert x \rVert_2 &= \left(\sum_{i=1}^n |x_i|^2 \right)^{1/2} \\
+        \lVert x \rVert_\infty &= \max_{i=1}^n |x_i|.
+a    \end{align*}
+    These norms are quite closely related to the $d_1$, $d_2$ and $d_\infty$-metrics respectively. It turns out that every norm induces a metric, given by
+    \[d(x, y) = \lVert x - y \rVert.\]
+    However, it is not the case that every metric is induced by a metric, e.g. the discrete metric is not induced by a norm.
+
+    We will now look at some norms in infinite-dimensional vector spaces. In particular, if we look at the space of sequences $\operatorname{Seq}(\mathbb{R})$, we can define the norms in a similar manner as above, i.e.
+    \begin{align*}
+        \lVert (x_n) \rVert_1 &= \sum_{n=1}^\infty |x_n| \\
+        \lVert (x_n) \rVert_2 &= \left(\sum_{n=1}^\infty x_n^2\right)^{1/2} \\
+        \lVert (x_n) \rVert_\infty &= \sup_{n=1}^\infty |x_n|.
+    \end{align*}
+    These norms are not defined for all sequences, e.g. the sequence of positive integers has infinite norm with respect to all 3 norms. So, we restrict the norm to those sequences that have a finite value. In particular, we define the following sequence spaces:
+    \begin{itemize}
+        \item the sequence space $\ell^1$, composed of sequences that converge absolutely;
+        \item the sequence space $\ell^2$, composed of sequences $(x_n)_{n=1}^\infty$ such that the series
+        \[\sum_{n=1}^\infty x_n^2\]
+        converges;
+        \item the sequence space $\ell^p$, composed of sequences $(x_n)_{n=1}^\infty$ such that the series
+        \[\sum_{n=1}^\infty |x_n|^p\]
+        converges;
+        \item the sequence space $\ell^\infty$, composed of bounded sequences.
+    \end{itemize}
+    Note the following relations between the sequence spaces:
+    \begin{itemize}
+        \item the space $\ell^\infty$ contains all convergent sequences, i.e. a convergent sequence is bounded;
+        \item the space $\ell^\infty$ contains $\ell^p$ for all $p \in [1, \infty)$\sidefootnote{In fact, we know that a sequence in $\ell^p$ converges to 0.};
+        \item the space $\ell^p \subseteq \ell^q$ if $p < q$.
+    \end{itemize}
+
+    We can also define norms in $C[0, 1]$, given as follows:
+    \begin{align*}
+        \lVert f \rVert_1 &= \int_0^1 |f(t)| \ dt \\
+        \lVert f \rVert_2 &= \left(\int_0^1 (f(t))^2 \ dt\right)^{1/2} \\
+        \lVert f \rVert_\infty &= \sup_0^1 |f(t)|.
+    \end{align*}
+    
+    We will now add even more structure to a vector space, by defining an inner product.
+    \begin{definition}[Inner Product Space]
+        Let $V$ be a vector space and let $\langle \cdot, \cdot \rangle \colon V \times V \to \mathbb{C}$ be a function. We say that $(V, \langle \cdot, \cdot \rangle)$ is an \emph{inner product space} if:
+        \begin{itemize}
+            \item for all $v \in V$, $\langle v, v \rangle \in [0, \infty)$ and $\langle v, v \rangle = 0$ if and only if $v = 0$;
+            \item for all $u, v \in V$ and $\lambda \in \mathbb{C}$, $\langle \lambda u, v \rangle = \lambda \langle u, v \rangle$;
+            \item for all $v, w \in V$, $\langle v, w \rangle = \overline{\langle w, v \rangle}$;
+            \item for all $u, v, w \in V$, $\langle u, v + w \rangle = \langle u, v \rangle + \langle u, w \rangle$.
+        \end{itemize}
+        If $(V, \langle \cdot, \cdot, \rangle)$ is an inner product space, we call $\langle \cdot, \cdot \rangle$ is an \emph{inner product}.
+    \end{definition}
+    \noindent The inner product allows us to measure angles between two vectors. In particular, the concept of orthogonality gives rise to many powerful results for Hilbert spaces (complete inner product spaces) that do not necessarily hold in Banach spaces (complete normed vector spaces).
+
+    In $\mathbb{R}^n$ and $\mathbb{C}^n$, the dot product is an example of an inner product, which is given by
+    \[\langle x, y \rangle = \sum_{i=1}^n x_i \overline{y_i}.\]
+    This inner product induces the $\lVert \cdot \rVert_2$ norm. In particular, an inner product induces a metric, given by
+    \[\lVert x\rVert = \langle x, x \rangle^{1/2}.\]
+    To prove this, we require the Cauchy-Schwartz Inequality.
+    \begin{theorem}[Cauchy-Schwartz Inequality]
+        Let $(V, \langle \cdot, \cdot \rangle)$ be an inner product space. Then, for all $v, w \in V$, $|\langle v, w \rangle|^2 \leq \langle v, v \rangle \cdot \langle w, w \rangle$.
+    \end{theorem}
+    \begin{proof}
+        Let $v, w \in V$. If $w = 0$, then the statement is trivial. Otherwise,
+        \begin{align*}
+            \langle v, v \rangle - \frac{|\langle v, w\rangle|^2}{\langle w, w \rangle} &= \langle v, v \rangle - \frac{\langle v, w \rangle \overline{\langle v, w \rangle}}{\langle w, w \rangle} \\
+            &= \langle v, v \rangle - \frac{\langle v, w \rangle^2}{\langle w, w \rangle} - \frac{\langle v, w \rangle \langle w, v \rangle}{\langle w, w \rangle} + \frac{\langle v, w \rangle^2}{\langle w, w \rangle} \\
+            &= \left\langle v, v - \frac{\langle v, w \rangle}{\langle w, w \rangle} w \right\rangle - \left(\frac{\langle v, w \rangle}{\langle w, w \rangle} \langle w, v \rangle - \frac{\langle v, w \rangle^2}{\langle w, w \rangle^2} \langle w, w \rangle \right) \\
+            &= \left\langle v, v - \frac{\langle v, w \rangle}{\langle w, w \rangle} w \right\rangle - \left\langle \frac{\langle v, w \rangle}{\langle w, w \rangle} w, v - \frac{\langle v, w \rangle}{\langle w, w \rangle} w \right\rangle \\
+            &= \left\langle v - \frac{\langle v, v\rangle}{\langle w, w \rangle} w, v - \frac{\langle v, v\rangle}{\langle w, w \rangle} w \right\rangle \geq 0.
+        \end{align*}
+        Hence,
+        \[|\langle v, w \rangle|^2 \leq \langle v, v \rangle \cdot \langle w, w \rangle.\]
+    \end{proof}
+    \noindent It is not the case that every inner product is induced by a norm; this is only true for norms that satisfy the Parallelogram identity.
+    \begin{proposition}
+        Let $(V, \lVert \cdot \rVert)$ be a normed vector space that satisfies the Parallelogram identity, i.e. for all $u, v \in V$,
+        \[2\lVert u \rVert^2 + 2\lVert v \rVert^2 = \lVert u + v \rVert^2 - \lVert u - v \rVert^2.\]
+    \end{proposition}
+    % \begin{proof}
+    %     \hspace*{0pt}
+    %     \begin{itemize}
+    %         \item Let $v \in V$. We find that
+    %         \[\langle v, v \rangle = \lVert 2v \rVert^2 + \lVert 0 \rVert^2 = 4\lVert v \rVert^2 \geq 0.\]
+    %         Moreover, $\langle 0, 0 \rangle = 0$, and if $\langle v, v \rangle = 4\lVert v \rVert^2 = 0$, then $v = 0$.
+
+    %         \item Let $u, v \in V$ and $\lambda \in \mathbb{R}$. We find that
+    %         \begin{align*}
+    %             \lambda \langle u, v \rangle &= \lambda (\lVert u + v \rVert^2 + \lVert u - v \rVert^2) \\
+    %             &= 
+    %         \end{align*}
+            
+    %         \item 
+            
+    %         \item 
+    %     \end{itemize}
+    % \end{proof}
+
+    For $\operatorname{Seq}(\mathbb{R})$, an inner product is given by
+    \[\langle (x_n), (y_n) \rangle = \sum_{n=1}^\infty x_i \overline{y_i}.\]
+    In $C[0, 1]$, we have
+    \[\langle f, g \rangle = \int_0^1 |f(t) g(t)| \ dt.\]
+    
+
+
 
 % \section{Introduction to norms}
 % \subsection{Distance in vector spaces}
