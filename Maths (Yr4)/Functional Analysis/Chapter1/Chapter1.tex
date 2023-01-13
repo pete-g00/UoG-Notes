@@ -169,15 +169,15 @@ a    \end{align*}
         converges;
         \item the sequence space $\ell^p$, composed of sequences $(x_n)_{n=1}^\infty$ such that the series
         \[\sum_{n=1}^\infty |x_n|^p\]
-        converges;
+        converges (for $p \in [1, \infty)$);
         \item the sequence space $\ell^\infty$, composed of bounded sequences.
     \end{itemize}
-    Note the following relations between the sequence spaces:
-    \begin{itemize}
-        \item the space $\ell^\infty$ contains all convergent sequences, i.e. a convergent sequence is bounded;
-        \item the space $\ell^\infty$ contains $\ell^p$ for all $p \in [1, \infty)$\sidefootnote{In fact, we know that a sequence in $\ell^p$ converges to 0.};
-        \item the space $\ell^p \subseteq \ell^q$ if $p < q$.
-    \end{itemize}
+    % Note the following relations between the sequence spaces:
+    % \begin{itemize}
+    %     \item the space $\ell^\infty$ contains all convergent sequences, i.e. a convergent sequence is bounded;
+    %     \item the space $\ell^\infty$ contains $\ell^p$ for all $p \in [1, \infty)$\sidefootnote{In fact, we know that a sequence in $\ell^p$ converges to 0.};
+    %     \item the space $\ell^p \subseteq \ell^q$ if $p < q$.
+    % \end{itemize}
 
     We can also define norms in $C[0, 1]$, given as follows:
     \begin{align*}
@@ -247,8 +247,116 @@ a    \end{align*}
     \[\langle (x_n), (y_n) \rangle = \sum_{n=1}^\infty x_i \overline{y_i}.\]
     In $C[0, 1]$, we have
     \[\langle f, g \rangle = \int_0^1 |f(t) g(t)| \ dt.\]
-    
 
+    We will now highlight the difference in metrics/norms for finite- and infinite-dimensional vector spaces. To do so, we will compare equivalence of metrics.
+    \begin{definition}
+        Let $(V, d)$ and $(V, d')$ be metric spaces. We say that the metrics $d$ and $d'$ are \emph{equivalent} if there exist $c, C > 0$ such that for all $x, y \in V$,
+        \[cd'(x, y) \leq d(x, y) \leq Cd'(x, y).\]
+        If $V$ is a vector space with two norms $\lVert \cdot \rVert$ and $\lVert \cdot \rVert'$, we say that the norms are \emph{equivalent} if the induced metrics are equivalent.
+    \end{definition}
+    
+    It turns out that in finite-dimensional vector spaces, all norms are equivalent. We will show that the $p$-norms and the $\infty$-norm are equivalent.
+    \begin{proposition}
+        Let $n \in \mathbb{Z}_{\geq 1}$, $p \in [1, \infty)$ and $x \in \mathbb{R}^n$. Then,
+        \[\lVert x \rVert_\infty \leq \lVert x \rVert_p \leq n^{1/p} \lVert x \rVert_\infty.\]
+        In particular, all these norms are equivalent.
+    \end{proposition}
+    \begin{proof}
+        Let $x = [x_1, \dots, x_n]$. So, we have $\lVert x \rVert_\infty = |x_i|$, for some $i \in \{1, \dots, n\}$. Then,
+        \[\lVert x \rVert_\infty = |x_i| = \left(|x_i|^p\right)^{1/p} \leq \left(\sum_{i=1}^n |x_i|^p\right)^{1/p} = \lVert x \rVert_p.\]
+        Moreover,
+        \[\lVert x \rVert_p = \left(\sum_{i=1}^n |x_i|^p \right)^{1/p} \leq \left(\sum_{i=1}^n \lVert x \rVert_\infty^p \right)^{1/p} = n^{1/p} \lVert x \rVert_\infty.\]
+        So,
+        \[\lVert x \rVert_\infty \leq \lVert x \rVert_p \leq n^{1/p} \lVert x \rVert_\infty.\]
+        Hence, for $x, y \in \mathbb{R}^n$, we find that
+        \[d_\infty(x, y) \leq d_p(x, y) \leq n^{1/p} d_\infty(x, y).\]
+        So, $d_p$ and $d_\infty$ are equivalent norms. Since metric equivalence is an equivalence relation, this implies that $d_p$ and $d_q$ norms are also equivalent. So, all the norms are equivalent.
+    \end{proof}
+
+    However, in infinite-dimensional vector spaces, the norms are not equivalent. In fact, in sequence spaces, we know that $\ell^1$, $\ell^2$ and $\ell^\infty$ are different sequence spaces. So, we will focus on $L_1$ and $L_\infty$ norms in $C[0, 1]$, and show that they are not equivalent. To see this, consider the sequence of functions $f_n(x) = t^n$. Then,
+    \begin{align*}
+        \lVert f_n \rVert_1 &= \int_0^1 |f_n(t)| \ dt = \int_0^1 t^n \ dt = \frac{1}{n+1} \\
+        \lVert f_n \rVert_\infty &= \sup_{t \in [0, 1]} |f_n(t)| = 1.
+    \end{align*}
+    So,
+    \[\frac{\lVert f_n \rVert_1}{\lVert f_n \rVert_\infty} = \frac{1}{n+1} \to 0.\]
+    This implies that the norms are not equivalent.
+    
+    \newpage
+
+    \section{Sequence Spaces}
+    In this section, we will study sequence spaces in more detail. First, we define more sequence spaces:
+    \begin{itemize}
+        \item The sequence space $c$ contains all convergent sequences in $\mathbb{R}$;
+        \item The sequence space $c_0$ contains all sequences in $\mathbb{R}^n$ that converge to $0$;
+        \item The sequence space $c_{00}$ contains all sequences that are eventually zero, i.e. $(x_n)_{n=1}^\infty$ is in $c_{00}$ if and only if there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \geq N$, $x_n = 0$.
+    \end{itemize}
+    We will now prove some containment relations between the sequence spaces.
+    \begin{proposition}
+        We have
+        \[c \subsetneq \ell^\infty.\]
+        That is, every convergent sequence is bounded but not every bounded sequence is convergent.
+    \end{proposition}
+    \begin{proof}
+        We first show that $c \subseteq \ell^\infty$. So, let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$, with $x_n \to L$. In that case, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \geq N$, $|x_n - L| < 1$, i.e. $|x_n| < |L| + 1$. So, set 
+        \[K = \max(|x_1|, \dots, |x_{N-1}|, |L| + 1) > 0.\]
+        By construction, $|x_n| \leq K$ for all $n < N$. Moreover, for $n \geq N$, $|x_n| < |L| + 1 \leq K$. So, $K$ is a bound for $(x_n)$. That is, $(x_n)$ is bounded. Hence, $c \subseteq \ell^\infty$.
+
+        Now, consider the sequence $(x_n)_{n=1}^\infty$ given by $x_n = (-1)^n$. Although the sequence $(x_n)$ is bounded, it does not converge. Hence, $c \subsetneq \ell^\infty$.
+    \end{proof}
+
+    \begin{proposition}
+        We have
+        \[c_{00} \subsetneq \ell^1.\]
+    \end{proposition}
+    \begin{proof}
+        We first show that $c_{00} \subseteq \ell^1$. So, let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$ such that there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \geq N$, $x_n = 0$. In that case, the series
+        \[\sum_{n=1}^\infty |x_n| = \sum_{n=1}^N |x_n|\]
+        converges- it is a finite sum. Hence, $c_{00} \subseteq \ell^1$.
+
+        Now, consider the sequence $(x_n)_{n=1}^\infty$ given by $x_n = \frac{1}{n^2}$. Although the sequence $(x_n)$ is in $\ell^1$, it is not in $c_{00}$ (i.e. for all $n \in \mathbb{Z}_{\geq 1}$, $x_n > 0$). So, $c_{00} \subsetneq \ell^1$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $p \in [1, \infty)$. Then, $\ell^p \subsetneq c_0$.
+    \end{proposition}
+    \begin{proof}
+        We first show that $\ell^p \subseteq c_0$. So, let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$ such that
+        \[\sum_{n=1}^\infty |x_n|^p < \infty.\]
+        In that case, we find that $|x_n|^p \to 0$ as $n \to \infty$. Hence, $|x_n| \to 0$ as $n \to \infty$, meaning that $x_n \to 0$. So, $\ell^p \subseteq c_0$.
+
+        Now, consider the sequence $(x_n)_{n=1}^\infty$ given by $x_n = \frac{1}{n^p}$. Although the sequence $x_n \to 0$, we find that
+        \[\sum_{n=1}^\infty |x_n|^p = \sum_{n=1}^\infty \frac{1}{n}\]
+        diverges. Hence, $\ell^p \subsetneq c_0$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $1 \leq q < p$. Then, $\ell^p \subsetneq \ell^q$.
+    \end{proposition}
+    \begin{proof}
+        We first show that $\ell^p \subseteq \ell^q$. So, let $(x_n)_{n=1}^\infty$ be a sequence in $\mathbb{R}$ such that
+        \[\sum_{n=1}^\infty |x_n|^p < \infty.\]
+        In that case, for all $n \in \mathbb{Z}_{\geq 1}$, we find that
+        \begin{align*}
+            \sum_{n=1}^\infty |x_n|^q &= \sum_{n=1}^\infty |x_n|^{q-p} |x_n|^{p} \\
+            &\leq \sum_{n=1}^\infty \lVert x \rVert_\infty^{q-p} |x_n|^p \\
+            &= \lVert x \rVert_\infty^{q-p} \sum_{n=1}^\infty |x_n|^p.
+        \end{align*}
+        Since $\ell^p \subseteq \ell^\infty$, we know that $\lVert x \rVert_\infty < \infty$. Hence, 
+        \[\sum_{n=1}^\infty |x_n|^q < \infty.\]
+        So, $\ell^p \subseteq \ell^q$.
+
+        Now, consider the sequence $(x_n)_{n=1}^\infty$ given by $x_n = \frac{1}{n^{2/q}}$. Then, we have
+        \[\sum_{n=1}^\infty |x_n|^q = \sum_{n=1}^\infty \frac{1}{n^2} < \infty,\]
+        but
+        \[\sum_{n=1}^\infty |x_n|^p = \sum_{n=1}^\infty \frac{1}{n^{2p/q}}\]
+        diverges since $2p/q < 2$. So, $\ell^p \subsetneq \ell^q$.
+    \end{proof}
+    
+    In summary, we have the following containment:
+    \[c_{00} \subsetneq \ell^1 \subsetneq \ell^2 \subsetneq \dots \subsetneq c_0 \subsetneq c \subsetneq \ell^\infty.\]
+    Note that each containment is strict.
+    
 
 
 % \section{Introduction to norms}
