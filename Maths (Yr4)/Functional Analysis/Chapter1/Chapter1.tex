@@ -356,7 +356,98 @@ a    \end{align*}
     In summary, we have the following containment:
     \[c_{00} \subsetneq \ell^1 \subsetneq \ell^2 \subsetneq \dots \subsetneq c_0 \subsetneq c \subsetneq \ell^\infty.\]
     Note that each containment is strict.
+    \newpage
+
+    \section{Topology}
+    In this section, we will review some topological properties and related them to vector spaces. As we know, the concept of a topological space generalises metric spaces, while preserving open and closed sets.
+    \begin{definition}[Open sets]
+        Let $(X, d)$ be a metric space and let $U \subseteq X$. We say that $U$ is \emph{open} if for all $x \in U$, there exists an $\varepsilon > 0$ such that for $y \in X$, if $d(x, y) < \varepsilon$, then $y \in U$, i.e. $B_\varepsilon(y) \subseteq U$. We say that $U$ is \emph{closed} if its complement is open.
+    \end{definition}
+    \begin{definition}[Topological space]
+        Let $X$ be a set and let $\mathcal{T} \subseteq \mathbb{P}(X)$. We say that $(X, \mathcal{T})$ is a \emph{topological space} if:
+        \begin{itemize}
+            \item $\varnothing, X \in \mathcal{T}$;
+            \item if $(U_i)_{i \in I}$ is a collection of subsets in $\mathcal{T}$, then its union
+            \[\bigcup_{i \in I} U_i \in \mathcal{T}.\]
+            \item if $(U_i)_{i=1}^n$ is a finite collection of subsets in $\mathcal{T}$, then its intersection
+            \[\bigcap_{i=1}^n U_i \in \mathcal{T}.\]
+        \end{itemize}
+        If $(X, \mathcal{T})$ is a topological space, then we denote $U \in \mathcal{T}$ by an \emph{open set}.
+    \end{definition}
+    \noindent These topological axioms are satisfied by open sets in a metric space. We can define convergence in a topological space.
+    \begin{definition}
+        Let $X$ be a topological space, $(x_n)_{n=1}^\infty$ be a sequence in $X$ and $x \in X$. We say that $x_n \to x$ if for all $U \subseteq X$ open, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n \in U$.
+    \end{definition}
+    \noindent Next, we define the closure of a set.
+    \begin{definition}
+        Let $X$ be a topological space and let $W \subseteq X$. The \emph{closure of $W$}, denoted $\overline{W}$, is the set
+        \[\{x \in X \mid \exists (x_n)_{n=1}^\infty \textrm{ in } W \textrm{ s.t. } x_n \to x\}.\]
+        That is, the closure contains all the limit points of $W$ in $X$.
+    \end{definition}
+    \noindent By construction, the closure of a set is closed. We will now define compactness.
+    \begin{definition}[Compact Sets]
+        Let $X$ be a topological space and let $C \subseteq X$. We say that $C$ is \emph{compact} if for any open cover of $C$ admits a finite subcover.
+    \end{definition}
+    \noindent There is another type of compactness- sequential compactness.
+    \begin{definition}[Sequentially Compact Sets]
+        Let $X$ be a topological space and let $C \subseteq X$. We say that $C$ is \emph{sequentially compact} if any sequence $(x_n)_{n=1}^\infty$ in $C$ has a convergent subsequence.
+    \end{definition}
+    \noindent For metric spaces, compact and sequentially compact sets are equivalent. Moreover, in $\mathbb{R}^n$, the Heine-Borel theorem characterises compactness.
+    \begin{theorem}[Heine-Borel Theorem]
+        Let $K \subseteq \mathbb{R}^n$. Then, $J$ is compact if and only if it is closed and bounded.
+    \end{theorem}
     
+    The Heine-Borel theorem does not hold in infinite-dimensional vector spaces. We know that in a metric space, compactness implies closed and bounded. We will illustrate the converse is not true in infinite-dimensional vector spaces. In particular, we will show that the unit ball in $\ell^\infty$ is not compact. This set is by definition closed, and bounded since it has sequences with norm at most 1. To do so, we will construct a sequence which has no convergent subsequence. So, define the sequence $(e^{(i)})_{i=1}^n$ in the unit ball given by
+    \[e^{(i)}_n = \begin{cases}
+        1 & n = i \\
+        0 & \textrm{otherwise}.
+    \end{cases}\]
+    We know that for any $i, j \in \mathbb{Z}_{\geq 1}$, with $i \neq j$, $\lVert e^{(i)} - e^{(j)} \rVert_\infty = 1$. Hence, the sequence cannot have a convergent subsequence- the distance is always bounded above by $1$. So, the unit ball cannot be (sequentially) compact.
+    % TODO: Example in $C[0, 1]$
+
+    We aim to characterise compact sets in $C[0, 1]$. To do so, we first consider pointwise and uniform convergence.
+    \begin{definition}
+        Let $(f_n)_{n=1}^\infty$ be a sequence of functions in $f \colon [0, 1] \to \mathbb{R}$, and let $f \colon [0, 1] \to \mathbb{R}$. 
+        \begin{itemize}
+            \item We say that $f_n \to f$ pointwise if for any $\varepsilon > 0$ and $t \in [0, 1]$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(t) - f(t)| < \varepsilon$;
+            \item We say that $f_n \to f$ uniformly if for any $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $t \in [0, 1]$ and $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(t) - f(t)| < \varepsilon$.
+        \end{itemize}
+    \end{definition}
+    \noindent The difference between pointwise and uniform convergence is the choice of $N$- in pointwise convergence, the value $N$ can depend on $t \in [0, 1]$, but in uniform convergence, the value $N$ cannot. Hence, if $(f_n)_{n=1}^\infty$ is a sequence of functions that converge uniformly to some function $f$, then it also converges pointwise to the same function $f$.
+    % In particular, the sequence of functions $f_n(x) = x^n$ in $C[0, 1]$ converges pointwise to some limit function $f$, but does not in 
+
+    Uniform convergence in $C[0, 1]$ implies that the limit also lies in $C[0, 1]$.
+    \begin{proposition}
+        Let $(f_n)_{n=1}^\infty$ be a sequence of functions in $C[0, 1]$ that converge uniformly to the function $f \colon [0, 1] \to \mathbb{R}$. Then, $f \in C[0, 1]$.
+    \end{proposition}
+    \begin{proof}
+        Let $\varepsilon > 0$. Since $f_n \to f$ uniformly, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $t \in [0, 1]$ and $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|f_n(t) - f(t)| < \frac{\varepsilon}{3}$. Set $N = n$. Since $f_n$ is continuous, there exists a $\delta > 0$ such that for $s, t \in [0, 1]$ if $|s - t| < \delta$, then $|f_n(s) - f_n(t)| < \frac{\varepsilon}{3}$. Then, for $s, t \in [0, 1]$, if $|s - t| < \delta$, then
+        \begin{align*}
+            |f(s) - f(t)| &\leq |f(s) - f_n(s)| + |f_n(s) - f_n(t)| + |f_n(t) - f(t)| \\
+            &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+        \end{align*}
+    \end{proof}
+
+    Now, we consider the concept of equi-continuity, which will allow us to characterise compactness in $C[0, 1]$.
+    \begin{definition}
+        Let $K \subseteq C[0, 1]$. We say that $K$ is \emph{equi-continuous} if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for $f \in K$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f(s) - f(t)| < \varepsilon$.
+    \end{definition}
+    \noindent The concept of equi-continuous functions is a generalisation of continuity- it establishes that functions in $K$ are continuous in a `similar' manner. We will now characterise compactness in $C[0, 1]$.
+    \begin{theorem}[Arzela-Ascoli Theorem]
+        Let $K \subseteq C[0, 1]$. Then, $K$ is compact if and only if $K$ is closed, bounded and equi-continuous.
+    \end{theorem}
+    \begin{proof}
+        Assume that $K$ is compact. We know that $K$ is closed and bounded. So, we show that $K$ is equi-continuous. Let $\varepsilon > 0$. We know that $(B_{\varepsilon/3}(f))_{f \in K}$ is an open cover of $K$, so it has a finite subcover $(B_{\varepsilon/3}(f_i))_{i=1}^n$. Now, let $\delta > 0$ such that for $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f_i(s) - f_i(t)| < \frac{\varepsilon}{3}$ for $i \in \{1, \dots, n\}$. Now, let $f \in K$. Let $i \in \{1, \dots, n\}$ such that $\lVert f - f_i \rVert_\infty < \frac{\varepsilon}{3}$. Then, for $s, t \in [0, 1]$ with $|s - t| < \delta$, then
+        \begin{align*}
+            |f(s) - f(t)| &\leq |f(s) - f_i(s)| + |f_i(s) - f_i(t)| + |f_i(t) - f(t)| \\
+            &\leq \lVert f - f_i \rVert_\infty + |f_i(s) - f_i(t)| + \lVert f_i - f \rVert_\infty \\
+            &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+        \end{align*}
+        Hence, $K$ is equi-continuous.
+
+        Now, assume that $K$ is closed, bounded and equi-continuous.
+        % TODO: Finish
+    \end{proof}
 
 
 % \section{Introduction to norms}
