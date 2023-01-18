@@ -427,12 +427,27 @@ a    \end{align*}
             &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
         \end{align*}
     \end{proof}
+    \noindent Moreover, we can define the concept of uniform Cauchy, which we shall use in the proof.
+    \begin{definition}
+        Let $(g_n)_{n=1}^\infty$ be a sequence in $C[0, 1]$. We say that $(g_n)$ is \emph{uniformly Cauchy} if for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$ and $t \in [0, 1]$, if $m, n \geq N$, then $|g_m(t) - g_n(t)| < \varepsilon$.
+    \end{definition}
+    \begin{lemma}
+        Let $(g_n)_{n=1}^\infty$ be a sequence in $C[0, 1]$ that is uniformly Cauchy. Then, $(g_n)_{n=1}^\infty$ is uniformly convergent.
+    \end{lemma}
+    \begin{proof}
+        Let $t \in [0, 1]$ and $\varepsilon > 0$. Since $(g_n)$ is uniformly Cauchy, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then $|g_m(t) - g_n(t)| < \varepsilon$. Hence, the sequence $(g_n(t))_{n=1}^\infty$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, there exists a $g_t \in \mathbb{R}$ such that $g_n(t) \to g_t$. So, define the function $g \colon [0, 1] \to \mathbb{R}$ by $g(t) = g_t$. We show that $g_n \to g$ uniformly.
 
-    Now, we consider the concept of equi-continuity, which will allow us to characterise compactness in $C[0, 1]$.
+        Let $\varepsilon > 0$. Since $(g_n)$ is uniformly Cauchy, there exists a $K \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$ and $t \in [0, 1]$, if $m, n \geq K$, then $|g_m(t) - g_n(t)| < \frac{\varepsilon}{2}$. Now let $t \in [0, 1]$. Since $g_k(t) \to g(t)$, there exists a $K' \in \mathbb{Z}_{\geq 1}$ such that for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq K'$, then $|g_k(t) - g(t)| < \frac{\varepsilon}{2}$. Now, fix $N = \max(K, K')$. Hence, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq K$, then
+        \[|g_n(t) - g(t)| \leq |g_n(t) - g_N(t)| + |g_N(t) - g(t)| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.\]
+        Hence, $g_n \to g$ uniformly.
+    \end{proof}
+
+    Now, we consider the concept of equi-continuity, which will allow us to characterise compactness in $C[0, 1]$. 
     \begin{definition}
         Let $K \subseteq C[0, 1]$. We say that $K$ is \emph{equi-continuous} if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for $f \in K$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|f(s) - f(t)| < \varepsilon$.
     \end{definition}
     \noindent The concept of equi-continuous functions is a generalisation of continuity- it establishes that functions in $K$ are continuous in a `similar' manner. We will now characterise compactness in $C[0, 1]$.
+
     \begin{theorem}[Arzela-Ascoli Theorem]
         Let $K \subseteq C[0, 1]$. Then, $K$ is compact if and only if $K$ is closed, bounded and equi-continuous.
     \end{theorem}
@@ -445,8 +460,16 @@ a    \end{align*}
         \end{align*}
         Hence, $K$ is equi-continuous.
 
-        Now, assume that $K$ is closed, bounded and equi-continuous.
-        % TODO: Finish
+        Now, assume that $K$ is closed, bounded and equi-continuous. We show that $K$ is (sequentially) compact. So, let $(f_n)_{n=1}^\infty$ be a sequence in $K$. Enumerate 
+        \[\mathbb{Q} = \{r_1, r_2, \dots\}.\]
+        Consider the sequence $(f_n(r_1))_{n=1}^\infty$ in $[0, 1]$. By Bolzano-Weierstrass, we know that the sequence has a convergent subsequence $(f_{1, n}(r_1))_{n=1}^\infty$. Now, consider the sequence $(f_{1, n}(r_2))_{n=1}^\infty$ in $[0, 1]$. By Bolzano-Weierstrass again, we know that the sequence has a convergent subsequence $(f_{2, n}(r_2))_{n=1}^\infty$. Since $(f_2)$ is a subsequence of $(f_1)$, we know that $(f_2(r_1))_{n=1}^\infty$ is still convergent. We can continue this for every $k \in \mathbb{Z}_{\geq 1}$, to define the sequences $(f_{k, n})_{n=1}^\infty$. Now, define the sequence $(g_n)_{n=1}^\infty$ in $K$ by $g_n = f_{n, n}$. This is a subsequence of $(f_n)_{n=1}^\infty$ by construction. Moreover, for $r_j \in \mathbb{Q}$, the sequence $(f_{j, n}(r_j))_{n=1}^\infty$ is convergent, and since $(g_n)_{n=j}^\infty$ is a subsequence of $(f_{j, n})_{n=1}^\infty$, we find that $(g_n(r_j))_{n=1}^\infty$ is convergent. 
+
+        Next, we show that $(g_n)$ is uniformly Cauchy. Let $\varepsilon > 0$. Since $K$ is equi-continuous, there exists a $\delta > 0$ such that for all $k \in \{1, \dots, n\}$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|g_k(s) - g_k(t)| < \frac{\varepsilon}{3}$. Now, partition $[0, 1]$ into intervals $(I_k)_{k=1}^n$ of length $< \delta$. For each $k \in \{1, \dots, n\}$, there exists an $N_k \in \mathbb{Z}_{\geq 1}$ such that for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N_k$, then $|g_m(r_k) - g_n(r_k)| < \frac{\varepsilon}{3}$. Now, let $N = \max(N_1, \dots, N_n)$. Now, let $t \in [0, 1]$ and $m, n \in \mathbb{Z}_{\geq 1}$. We have $t \in I_k$ for some $k \in \{1, \dots, n\}$. Moreover, since $\mathbb{Q}$ is dense, there exists an $r_k \in I_k$ with $r_k \in \mathbb{Q}$. By construction, we have $|r_k - t| < \delta$. Hence, if $m, n \geq N$, then
+        \begin{align*}
+            |g_m(t) - g_n(t)| &\leq |g_m(t) - g_m(r_k)| + |g_m(r_k) - g_n(r_k)| + |g_n(r_k) - g_n(t)| \\
+            &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+        \end{align*}
+        So, $(g_n)$ is uniformly Cauchy. This implies that $(g_n)$ is uniformly convergent. This means that $g_n \to g$, for some $g \in C[0, 1]$. Since $K$ is closed, we have $g \in K$. Therefore, $(f_n)_{n=1}^\infty$ has a subsequence $(g_n)_{n=1}^\infty$ such that $g_n \to g$. Hence, $K$ is compact.
     \end{proof}
 
 
