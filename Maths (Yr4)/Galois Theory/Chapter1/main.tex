@@ -1,0 +1,681 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Galois Theory}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+\chapterstyle{thatcher}
+
+\begin{document}
+    \chapter{Review of Rings and Fields}
+    \section{Rings and Ideals}
+    \begin{definition}[Rings]
+        Let $R$ be a set and let $(+), (\cdot) \colon R \times R \to R$ be functions. We say that $(R, +, \cdot)$ is a \emph{ring} if:
+        \begin{itemize}
+            \item $(R, +)$ is an abelian group;
+            \item for all $a, b, c \in R$, $a \cdot (b \cdot c) = (a \cdot b) \cdot c$;
+            \item there exists a $1 \in R$ such that $1 \cdot a = a = a \cdot 1$ for all $a \in R$;
+            \item for all $a, b, c \in R$,
+            \[a \cdot (b + c) = a \cdot b + a \cdot c, \qquad (b + c) \cdot a = b \cdot a + c \cdot a.\]
+        \end{itemize}
+        The ring is \emph{commutative} if for all $a, b \in R$, $a \cdot b = b \cdot a$.
+    \end{definition}
+
+    \begin{definition}[Ring Homomorphisms]
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a map. We say that $\varphi$ is a \emph{ring homomorphism} if:
+        \begin{itemize}
+            \item $\varphi(1_R) = 1_S$;
+            \item $f(a + b) = f(a) + f(b)$ for all $a, b \in R$;
+            \item $f(ab) = f(a) f(b)$ for all $a, b \in R$.
+        \end{itemize}
+        Further, if $\varphi$ is bijective, we say that $\varphi$ is a \emph{ring isomorphism}.
+    \end{definition}
+
+    \begin{proposition}
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a ring isomorphism. Then, $\varphi^{-1}$ is a ring isomorphism.
+    \end{proposition}
+    \begin{proof}
+        Let $s_1, s_2 \in S$. We can find an $r_1, r_2 \in R$ such that $\varphi(r_1) = s_1$ and $\varphi(r_2) = s_2$. Since $\varphi$ is a ring homomorphism, we have $\varphi(r_1 + r_2) = s_1 + s_2$. Hence,
+        \[\varphi^{-1}(s_1) + \varphi^{-1}(s_2) = r_1 + r_2 = \varphi^{-1}(s_1 + s_2).\]
+        Moreover, $\varphi(r_1 \cdot r_2) = s_1 \cdot s_2$. Hence,
+        \[\varphi^{-1}(s_1) \cdot \varphi^{-1}(s_2) = r_1 \cdot r_2 = \varphi^{-1}(s_1 \cdot s_2).\]
+        So, $\varphi^{-1}$ is a ring homomorphism.
+    \end{proof}
+
+    \begin{definition}
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a ring homomorphism. We define the \emph{kernel of $\varphi$} to be the set
+        \[\ker \varphi = \varphi^{-1}(0) = \{r \in R \mid \varphi(r) = 0\}.\]
+    \end{definition}
+
+    \begin{definition}
+        Let $R$ be a ring and let $I \subseteq R$. We say that $I$ is an \emph{ideal} of $R$ if:
+        \begin{itemize}
+            \item $I$ is a subgroup of $(R, +)$; and 
+            \item for all $r \in R$ and $i \in I$, $ri \in I$ and $ir \in I$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be a ring and let $I \subseteq R$ be an ideal. Then, $R/I$ is an ideal with addition
+        \[(a + I) + (b + I) = (a + b) + I\]
+        and multiplication
+        \[(a + I) \cdot (b + I) = ab + I,\]
+        with additive identity $0 + I$ and multiplicative identity $1 + I$.
+    \end{proposition}
+
+    \begin{definition}
+        Let $R$ be a ring and $I \subseteq R$ be an ideal. We say that $R/I$ is a \emph{quotient ring}.
+    \end{definition}
+    
+    \begin{proposition}
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a ring homomorphism. Then, $\varphi$ is injective if and only if $\ker \varphi$ is trivial.
+    \end{proposition}
+    \begin{proof}
+        First, assume that $\varphi$ is injective. Since $\varphi(0) = 0$, we must have that $\ker \varphi = \{0\}$.
+
+        Next, assume that $\ker \varphi = \{0\}$. Let $r_1, r_2 \in R$ such that $\varphi(r_1) = \varphi(r_2)$. So, $\varphi(r_1 - r_2) = 0$, meaning that $r_1 - r_2 \in \ker \varphi$. Hence, $r_1 = r_2$. This implies that $\varphi$ is injective.
+    \end{proof}
+
+    \begin{lemma}
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a ring homomorphism. Then, $\ker \varphi$ is an ideal of $R$.
+    \end{lemma}
+    \begin{proof}
+        Let $a \in R$ and $i \in \ker \varphi$. Then,
+        \begin{align*}
+            \varphi(ai) &= \varphi(a) \cdot \varphi(i) = \varphi(a) \cdot 0 = 0 \\
+            \varphi(ia) &= \varphi(i) \cdot \varphi(a) = 0 \cdot \varphi(a) = 0.
+        \end{align*}
+        Hence, $ai, ia \in \ker \varphi$. So, $\ker \varphi$ is an ideal in $R$.
+    \end{proof}
+
+    \begin{theorem}[First Isomorphism Theorem]
+        Let $R, S$ be rings and let $\varphi \colon R \to S$ be a ring homomorphism. Then, 
+        \[R/\ker \varphi \cong \operatorname{Im} \varphi.\]
+    \end{theorem}
+    \begin{proof}
+        Define the map $\psi \colon R/\ker \varphi \to S$ given by $\psi(r + \ker \varphi) = \varphi(r)$. We will show that $\psi$ is a ring isomorphism.
+        \begin{itemize}
+            \item First, we show that $\psi$ is well-defined. So, let $r + \ker \varphi = s + \ker \varphi$. Then, $r - s \in \ker \varphi$, meaning that $\varphi(r - s) = 0$. Hence, 
+            \[\psi(r + \ker \varphi) = \varphi(r) = \varphi(s) = \psi(s + \ker \varphi).\]
+            So, the map is well-defined.
+
+            \item Next, we show that $\psi$ is a ring homomorphism. So, let $r, s \in R$. Then, 
+            \begin{align*}
+                \psi((r + \ker \varphi) + (s + \ker \varphi)) &= \psi((r + s) + \ker \varphi) \\
+                &= \varphi(r + s) \\
+                &= \varphi(r) + \varphi(s) \\
+                &= \psi(r + \ker \varphi) + \psi(s + \ker \varphi).
+            \end{align*}
+            Moreover,
+            \begin{align*}
+                \psi((r + \ker \varphi) \cdot (s + \ker \varphi)) &= \psi(rs + \ker \varphi) \\
+                &= \varphi(rs) \\
+                &= \varphi(r) \varphi(s) \\
+                &= \psi(r + \ker \varphi) \psi(s + \ker \varphi).
+            \end{align*}
+            So, $\psi$ is a ring homomorphism.
+
+            \item Now, we find that 
+            \begin{align*}
+                \ker \psi &= \{r + \ker \varphi \in R/\ker \varphi \mid \psi(r + \ker \varphi) = 0\} \\
+                &= \{r + \ker \varphi \in R/\ker \varphi \mid \varphi(r) = 0\} \\
+                &= \{r + \ker \varphi \in R/\ker \varphi \mid r \in \ker \varphi\} = \{\ker \varphi\}.
+            \end{align*}
+            So, $\psi$ is injective.
+        \end{itemize}
+        Hence, we have a ring isomorphism 
+        \[R/\ker \varphi \cong \operatorname{Im} \varphi.\]
+    \end{proof}
+
+    \begin{theorem}[Correspondence Theorem]
+        Let $R$ be a ring, $I$ be an ideal of $R$. Then,
+        \begin{itemize}
+            \item for an ideal $I \subseteq J \subseteq R$, 
+            \[J/I := \{j + I \mid j \in J\}\]
+            is an ideal of $R/I$;
+            \item for an ideal $K$ of $R/I$, the set
+            \[J = \bigcup_{a + I \in K} \{a + i \mid i \in I\}\]
+            is an ideal of $R$ containing $I$;
+            \item there is a bijection between ideals of $R/I$ and ideals of $R$ containing $I$, given by $J \mapsto J/I$.
+        \end{itemize}
+    \end{theorem}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item Let $I \subseteq J \subseteq R$ be an ideal. By the correspondence theorem for groups, we know that $J/I$ is a subgroup of $R/I$. Now, let $j + I \in J/I$ and $r + I \in R/I$. Then,
+            \[(j + I) (r + I) = jr + I \in J/I, \qquad (r + I) (j + I) = rj + I \in J/I\]
+            since $jr, rj \in J$. Hence, $J/I$ is an ideal of $R/I$.
+
+            \item Let $K \subseteq R/I$ be an ideal. By the correspondence theorem for groups, we know that $J$ is a subgroup of $R$. Now, let $j \in J$ and $r \in R$. Since $K$ is an ideal, we find that
+            \[(j + I) (r + I) = jr + I \in K, \qquad (r + I)(j + I) = rj + I \in K.\]
+            So, $jr, rj \in J$. Hence, $J$ is an ideal of $R$.
+
+            \item This follows from the results above.
+        \end{itemize}
+    \end{proof}
+
+    \begin{definition}
+        Let $R$ be a ring and let $X \subseteq R$. We define the \emph{ideal generated by $X$}, denoted $(X)$, by the intersection of all ideals of $R$ containing $X$.
+    \end{definition}
+    
+    \begin{proposition}
+        Let $R$ be a ring and let $X \subseteq R$. Then, the ideal $(X)$ is composed of finite sums of the form
+        \[\sum_{i=1}^n a_i x_i b_i,\]
+        where $a_i, b_i \in R$ and $x_i \in X$ for all $1 \leq i \leq n$.
+    \end{proposition}
+    \begin{proof}
+        Let $[X]$ denote all finite sums of the form 
+        \[\sum_{i=1}^n a_i x_i b_i,\]
+        where $a_i, b_i \in R$ and $x_i \in X$ for all $1 \leq i \leq n$. For all $x \in X$, we have $x = 1x1 \in [X]$, so $X \subseteq [X]$. By construction, the set $[X]$ is closed under addition. Moreover, we have
+        \[-\left(\sum_{i=1}^n a_i x_i b_i\right) = \sum_{i=1}^n (-a_i) x_i b_i \in [X]\]
+        with $a_i, b_i \in R$ and $x_i \in X$ for all $1 \leq i \leq n$, so $[X]$ is an additive subgroup. Also, 
+        \[a \left(\sum_{i=1}^n a_i x_i b_i\right) = \sum_{i=1}^n (a a_i) x_i b_i \in [X], \qquad \left(\sum_{i=1}^n a_i x_i b_i\right)b = \sum_{i=1}^n a_i x_i (b_i b) \in [X],\]
+        meaning that $[X]$ is an ideal of $R$ containing $X$.
+
+        Now, let $I \subseteq R$ be an ideal of $R$ containing $X$. We show that $[X] \subseteq I$. Since $X \subseteq I$, we find that for all $a, b \in R$ and $x \in X$, $abx \in I$. Moreover, since $I$ is closed under addition, we have
+        \[\sum_{i=1}^n a_i x_i b_i \in I.\]
+        Hence, $[X] \subseteq I$. Since $[X]$ is an ideal of $R$ containing $X$, we find that
+        \[(X) = \bigcap_{\substack{I \subseteq R \textrm{ ideal} \\ X \subseteq I}} I = [X].\]
+    \end{proof}
+    \noindent Using this result, we find that in a commutative ring $R$, the ideal generated by $\{x\}$, for some $x \in R$ is given by
+    \[(x) = \{rx \mid r \in R\}.\]
+    \newpage
+
+    \section{Integral Domains and Fields}
+    \begin{definition}
+        Let $R$ be a ring and let $u \in R$. We say that $u$ is a \emph{ring} there exists a $v \in R$ such that $uv = 1 = vu$. We say that $v$ is a \emph{multiplicative inverse} of $u$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be a ring and let $u \in R$ with multiplicative inverses $v_1$ and $v_2$. Then, $v_1 = v_2$.
+    \end{proposition}
+    \begin{proof}
+        We know that $uv_1 = 1 = v_1 u$ and $uv_2 = 1 = v_2 u$. So,
+        \[v_1 = v_1 \cdot 1 = v_1 (u v_2) = (v_1 u) v_2 = 1 \cdot v_2 = v_2.\]
+    \end{proof}
+
+    \begin{definition}
+        Let $K$ be a non-zero ring (i.e. $K \neq \{0\}$). We say that $K$ is a \emph{field} if for all $x \in K$ with $x \neq 0$, $x$ is a unit.
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be a commutative ring. Then, $R$ is a field if and only if it has no non-trivial proper ideals.
+    \end{proposition}
+    \begin{proof}
+        Assume first that $R$ is a field, and let $I \subseteq R$ be a non-trivial ideal. In that case, there exists a $u \in I$ such that $u \neq 0$. Since $R$ is a field, we find that $u$ is a unit. Hence, for all $a \in R$,
+        \[a = au^{-1} \cdot u \in I.\]
+        So, $I = R$. That is, $R$ has no non-trivial proper ideals.
+
+        Now, assume that $R$ has no non-trivial proper ideals, and let $u \in R$ be non-zero. We know that $(u)$ is a non-trivial ideal of $R$. Hence, $(u) = R$. In particular, there exists a $v \in R$ such that $uv = 1$. So, $u$ is a unit.
+    \end{proof}
+
+    \begin{corollary}
+        Let $K$ be a field, $R$ a non-zero ring and let $\varphi \colon K \to R$ be a ring homomorphism. Then, $\varphi$ is injective.
+    \end{corollary}
+    \begin{proof}
+        We know that $\ker \varphi$ is an ideal of $K$. Moreover, since $\varphi(1) = 1$, we know that $\ker \varphi \neq R$. Hence, $\ker \varphi$ is trivial, meaning that $\varphi$ is injective.
+    \end{proof}
+
+    \begin{definition}
+        Let $R$ be a commutative ring and let $r \in R$ be non-zero. We say that $r$ is a \emph{zero divisor} if there exists a non-zero $s \in R$ such that $rs = 0$. We say that $R$ is an \emph{integral domain} if it is non-zero and has it has no zero divisors.
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be an integral domain and let $r, a, b \in R$ such that $ra = rb$. Then, either $r = 0$ or $a = b$.
+    \end{proposition}
+    \begin{proof}
+        We know that $r(a - b) = 0$. Now, if $r \neq 0$, then since $r$ cannot be a zero divisor, we must have that $a - b = 0$. So, either $r = 0$ or $a = b$.
+    \end{proof}
+
+    \begin{lemma}
+        Let $K$ be a field. Then, $K$ is an integral domain.
+    \end{lemma}
+    \begin{proof}
+        Let $a \in K$ be non-zero and let $b \in K$ such that $ab = 0$. Since $K$ is a field, we know that $a$ is a unit. Hence,
+        \[b = a^{-1} \cdot (ab) = 0.\]
+        So, $a$ is not a zero divisor. Hence, $K$ is an integral domain.
+    \end{proof}
+
+    \begin{definition}
+        Let $R$ be a commutative ring and let $I \subseteq R$ be an ideal. We say that $I$ is \emph{principal} if there exists a $p \in R$ such that
+        \[I = (p) = \{rp \mid r \in R\}.\]
+        We say that $R$ is a \emph{principal ring} if all its ideals are principal. If $R$ is an integral domain, we further say that $R$ is a \emph{principal ideal domain}.
+    \end{definition}
+
+    \begin{proposition}
+        The set $\mathbb{Z}$ is a principal ideal domain.
+    \end{proposition}
+    \begin{proof}
+        Let $I \subseteq \mathbb{Z}$ be an ideal. If $I = \{0\}$, then $I = (0)$. Otherwise, let $n \in I$ be the smallest positive integer. Now, let $m \in I$. By the division algorithm, there exist $q, r \in \mathbb{Z}$ such that
+        \[m = qn + r,\]
+        with $0 \leq r < n$. We have
+        \[r = m - qn \in I\]
+        since $I$ is an ideal. By the minimality of $n$, we must have that $r = 0$. That is, $m = qn \in (n)$. By the definition of ideal, we have $(n) \subseteq I$, meaning that $I = (n)$.
+    \end{proof}
+    \newpage
+
+    \section{Maximal and prime ideals}
+    \begin{definition}
+        Let $R$ be a ring and let $I \subseteq R$ be an ideal.
+        \begin{itemize}
+            \item We say that $I$ is \emph{prime} if for all $a, b \in R$ with $ab \in I$, either $a \in I$ or $b \in I$;
+            \item We say that $I$ is \emph{maximal} if for all ideals $I \subseteq J \subseteq R$, either $J = I$ or $J = R$.
+        \end{itemize}
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be a commutative ring and let $M$ be a maximal ideal of $R$. Then, $M$ is a prime ideal.
+    \end{proposition}
+    \begin{proof}
+        Let $a, b \in R$ with $a \not\in M$ such that $ab \in M$. We know that
+        \[J = M + (a) = \{m + ar \mid m \in M, r \in R\}\]
+        is an ideal in $R$ containing $a$. Since $a \not\in M$ and $M \subseteq J$, we find that $J = R$. In particular, $1 = m + ar$, for some $m \in M$ and $r \in R$. Hence,
+        \[b = b \cdot 1 = b \cdot (m + ar) = mb + abr \in M\]
+        since $m, ab \in M$. So, $M$ is a prime ideal.
+    \end{proof}
+
+    \begin{theorem}
+        Let $R$ be a commutative ring and let $I \subseteq R$ be an ideal. Then, $I$ is prime if and only if $R/I$ is an integral domain.
+    \end{theorem}
+    \begin{proof}
+        Assume first that $I$ is a prime ideal. Let $a + I, b + I \in R/I$ such that $(a + I) (b + I) = 0 + I$. In that case, $ab + I = 0 + I$, meaning that $ab \in I$. Since $I$ is a prime ideal, we know that either $a \in I$ or $b \in I$. That is, either $a + I = 0 + I$ and $b + I = 0 + I$. So, $R/I$ is an integral domain.
+
+        Assume now that $R/I$ is an integral domain. Let $a, b \in R$ such that $ab \in I$. In that case,
+        \[(a + I) (b + I) = ab + I = 0 + I.\]
+        Since $R/I$ is an integral domain, we find that $a + I = 0 + I$ or $b + I = 0 + I$. Hence, either $a \in I$ or $b \in I$. So, $I$ is a prime ideal.
+    \end{proof}
+
+    \begin{theorem}
+        Let $R$ be a commutative ring and let $I \subseteq R$ be an ideal. Then, $I$ is maximal if and only if $R/I$ is a field.
+    \end{theorem}
+    \begin{proof}
+        Assume first that $I$ is a maximal ideal. Let $a + I \in R/I$ be non-zero. In that case, $a \not\in I$. Now, let
+        \[J = I + (a) = \{i + ar \mid i \in I, r \in R\}.\]
+        We know that $J$ is an ideal of $R$. Moreover, since $a \not\in I$ and $I$ maximal, we find that $J = R$. In particular, there exists an $i \in I$ and a $r \in R$ such that $1 = i + ar$. Hence,
+        \[(a + I) (r + I) = ar + I = (ar + i) + I = 1 + I.\]
+        So, $a + I$ is a unit. This implies that $R/I$ is a field.
+
+        Assume now that $R/I$ is a field, and let $I \subsetneq J \subseteq R$ be an ideal. By the correspondence theorem, we know that $J/I$ is an ideal of $R/I$. Moreover, it is non-trivial. Since $R/I$ is a field, we find that $J/I = R/I$. That is, $J = R$. So, $I$ is a maximal ideal.
+    \end{proof}
+
+    \begin{definition}
+        Let $R$ be an integral domain and $a \in R$. We say that $a$ is \emph{reducible} if it is not a unit and $a = bc$, for $b, c \in R$ not units. If $a$ is not reducible, then $a$ is \emph{irreducible}.
+    \end{definition}
+
+    \begin{proposition}
+        Let $R$ be a principal ideal domain and let $r \in R$ not a unit and non-zero. Denote $I = (r)$. Then, $I$ is a non-trivial proper ideal, and the following are equivalent:
+        \begin{enumerate}
+            \item The element $r$ is irreducible;
+            \item The ideal $I$ is a prime ideal;
+            \item The ideal $I$ is a maximal ideal;
+            \item The quotient $R/I$ is an integral domain;
+            \item The quotient ring $R/I$ is a field.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        We have already shown that $(3) \implies (2), (2) \iff (4), (3) \iff (5)$. So, we show that $(2) \implies (1)$ and $(1) \implies (3)$:
+        \begin{itemize}
+            \item[$(2) \implies (1)$] Assume that $r$ is reducible. So, $r = ab$, for $a, b \in R$ not units. We claim that $a \not\in (r)$. Assume, for a contradiction, that $a \in (r)$. In that case, $a = rx$, for some $x \in R$. Hence,
+            \[r = ab = rbx \iff r (1 - bx) = 0.\]
+            We know that $r \neq 0$, so we must have $bx = 1$. So, $b$ is a unit- this is a contradiction. So, $a \not\in (r)$. Similarly, $b \not\in (r)$. We have $ab = r \in (r)$, so $I$ cannot be a prime ideal.
+
+            \item[$(1) \implies (3)$] Assume that $r$ is irreducible, and let $I \subseteq J \subsetneq R$ be ideals. Since $R$ is a principal ideal domain, we know that $J = (k)$, for some $k \in R$. Moreover, since $J \neq R$, we know that $k$ is not a unit. Since $r \in J$, we find that $r = kx$, for some $x \in R$. Since $k$ is not a unit and $r$ is irreducible, we must have that $x$ is a unit. So, $k = x^{-1} r \in (r)$. Hence, $J = I$. So, $I$ is a maximal ideal.
+        \end{itemize}
+    \end{proof}
+
+    \begin{definition}
+        Let $K$ be a field and let $L \subseteq K$ be a subring. If $L$ is a field, we say that $L$ is a \emph{subfield} of $K$.
+    \end{definition}
+
+    \begin{definition}
+        Let $K$ be a field. Then, the intersection of all subfields of $K$ is called the \emph{prime subfield} of $K$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $K$ be a field. Then, the prime subfield of $K$ is either isomorphic to $\mathbb{Q}$ or $\mathbb{F}_p$, for a unique prime $p$.
+    \end{proposition}
+    \begin{proof}
+        Let $P \subseteq K$ be the prime subfield. Define the map $f \colon \mathbb{Z} \to K$ by $f(n) = n \cdot 1$. Since $P = (1)$, we find that $\operatorname{Im}(f) \subseteq P$. Moreover, by the First Isomorphism Theorem, we know that
+        \[\mathbb{Z}/\ker f \cong \operatorname{Im} (f).\]
+        Since $\operatorname{Im}(f)$ is an integral domain, we must have that $\ker f$ is a prime ideal. If $\ker f$ is zero, then $\mathbb{Z} \cong \operatorname{Im}(f)$. Since every non-zero element in $\operatorname{Im}(f)$ has an inverse, we can extend the map to $g \colon \mathbb{Q} \to P$ by $g(0) = 0$ and
+        \[g(p/q) = f(p) f(q)^{-1}\]
+        otherwise. Then, $\ker g$ is zero, meaning that the map is injective. So, $\mathbb{Q} \cong \operatorname{Im} (f)$. In particular, it is a field. Since $P$ is the prime subfield, we must therefore have $P = \operatorname{Im}(g) \cong \mathbb{Q}$.
+
+        Now, assume that $\ker f$ is non-zero. In that case, $\ker f = (p)$, for prime $p$. Hence,
+        \[\operatorname{Im}(f) \cong \mathbb{F}_p\]
+        is a field. Since $P$ is the prime subfield, we must therefore have $P = \operatorname{Im}(f) \cong \mathbb{F}_p$. Since $\mathbb{F}_p \cong \mathbb{F}_q$ if and only if $p = q$, the prime $p$ is unique.
+    \end{proof}
+
+    \begin{lemma}
+        Let $R$ be an integral domain, and let $\sim$ be the relation on $R \times R \setminus \{0\}$ be given by 
+        \[(a, b) \sim (c, d) \iff ad = bc.\]
+        Then, $\sim$ is an equivalence relation.
+    \end{lemma}
+    \begin{proof}
+        Let $(a, b) \in R \times R \setminus \{0\}$. We trivially have $(a, b) \sim (a, b)$ since $ab = ab$. Now, let $(a, b), (c, d) \in R \times R \setminus \{0\}$ such that $(a, b) \sim (c, d)$. Hence, $ad = bc$, meaning that $cb = da$ as well. Therefore, $(c, d) \sim (a, b)$. Finally, let $(a, b), (c, d), (e, f) \in R \times R \setminus \{0\}$ such that $(a, b) \sim (c, d)$ and $(c, d) \sim (e, f)$. In that case, we know that $ad - bc = 0$ and $cf - de$. Moreover,
+        \[d \cdot (af - be) = ad \cdot f - b \cdot de = bc \cdot f - b \cdot de = b \cdot (cf - de) = b \cdot 0 = 0.\]
+        Since $d \neq 0$, we find that $af = be$. So, $(a, b) \sim (e, f)$. This implies that $\sim$ is an equivalence relation.
+    \end{proof}
+
+    \begin{lemma}
+        Let $R$ be an integral domain, and let $\sim$ be the equivalence relation on $R \times R \setminus \{0\}$ given by 
+        \[(a, b) \sim (c, d) \iff ad = bc.\]
+        We denote the equivalence class of $(a, b)$ by $\frac{a}{b}$. Then, the quotient $R \times R \setminus \{0\} / {\sim}$ forms a field under the following operations:
+        \begin{align*}
+            \frac{a}{b} + \frac{c}{d} &= \frac{ad + bc}{bd} \\
+            \frac{a}{b} \cdot \frac{c}{d} &= \frac{ac}{bd}.
+        \end{align*}
+    \end{lemma}
+    \begin{proof}
+        We first show that the operations are well-defined. So, let $(a_1, b_1), (a_2, b_2)$, $(c_1, d_1), (c_2, d_2) \in R \times R \setminus \{0\}$ such that $(a_1, b_1) \sim (a_2, b_2)$ and $(c_1, d_1) \sim (c_1, d_2)$. In that case, $a_1b_2 = b_1a_2$ and $c_1d_2 = d_1c_2$. Hence,
+        \begin{align*}
+            (a_1 d_1 + b_1 c_1) \cdot b_2 d_2 &= a_1b_2 \cdot d_1d_2 + c_1d_2 \cdot b_1b_2 \\
+            &= b_1a_2 \cdot d_1 d_2 + d_1c_2 \cdot b_1b_2 \\
+            &= (a_2b_2 + c_2d_2) b_1d_1.
+        \end{align*}
+        So, $(a_1d_1 + b_1c_1, b_1d_1) \sim (a_2d_2 + b_2c_2, b_2d_2)$. Similarly, 
+        \[a_1c_1 \cdot b_2d_2 = a_1 b_2 \cdot c_1d_2 = b_1a_2 \cdot d_1c_2 = a_2c_2 \cdot b_1d_1.\]
+        This implies that $(a_1c_1, b_1d_1) \sim (a_2c_2, b_2d_2)$. So, the operations are well-defined.
+
+        Now, we show that the operations are associative. So, let $\frac{a}{b}, \frac{c}{d}, \frac{e}{f} \in R \times R \setminus \{0\}$. Then,
+        \begin{align*}
+            \frac{a}{b} + \left(\frac{c}{d} + \frac{e}{f}\right) &= \frac{a}{b} + \frac{cf + de}{df} & \left(\frac{a}{b} + \frac{c}{d}\right) + \frac{e}{f} &= \frac{ad + bc}{bd} + \frac{e}{f} \\
+            &= \frac{adf + b(cf + de)}{bdf} & &= \frac{(ad + bc)f + bde}{bdf} \\
+            &= \frac{adf + bcf + bde}{bdf} & &= \frac{adf + bcf + bde}{bdf}.
+        \end{align*}
+        So, the addition operation is associative. Moreover,
+        \[\frac{a}{b} \cdot \left(\frac{c}{d} \cdot \frac{e}{f}\right) = \frac{a}{b} \cdot \frac{ce}{df} = \frac{ace}{bdf} = \frac{ac}{bd} \cdot \frac{e}{f} = \left(\frac{a}{b} \cdot \frac{c}{d}\right) \cdot \frac{e}{f}.\]
+        So, the multiplication operation is associative.
+
+        Next, let $\frac{a}{b} \in R \times R \setminus \{0\} / {\sim}$. Then,
+        \[\frac{a}{b} + \frac{0}{1} = \frac{a \cdot 1 + b \cdot 0}{b \cdot 1} = \frac{a}{b}, \qquad \frac{a}{b} \cdot \frac{1}{1} = \frac{a \cdot 1}{b \cdot 1} = \frac{a}{b}.\]
+        So, both operations have an identity. Moreover, 
+        \[\frac{a}{b} + \frac{-a}{b} = \frac{ab - ab}{b^2} = \frac{0}{b^2} = \frac{0}{1},\]
+        and if $a \neq 0$, then
+        \[\frac{a}{b} \cdot \frac{b}{a} = \frac{a \cdot b}{a \cdot b} = \frac{1}{1}.\]
+        So, both operations have an inverse. 
+
+        Finally, let $\frac{a}{b}, \frac{c}{d}, \frac{e}{f} \in R \times R \setminus \{0\} / {\sim}$. We know that
+        \[\frac{a}{b} \cdot \frac{c}{d} = \frac{ac}{bd} = \frac{ca}{db} = \frac{c}{b} \cdot \frac{a}{b},\]
+        so the multiplication operation is commutative. Moreover,
+        \begin{align*}
+            \frac{a}{b} \cdot \left(\frac{c}{d} + \frac{e}{f}\right) &= \frac{a}{b} \cdot \frac{cf + de}{df} \\
+            &= \frac{acf + ade}{bdf} \\
+            &= \frac{abcf + abde}{b^2df} \\
+            &= \frac{ac}{bd} + \frac{ae}{bf} \\
+            &= \frac{a}{b} \cdot \frac{c}{d} + \frac{a}{b} \cdot \frac{e}{f}.
+        \end{align*}
+        Hence, the operation is distributive. This implies that the quotient is a field.
+    \end{proof}
+
+    \begin{theorem}
+        Let $R$ be an integral domain. Then, there exists a field $\operatorname{Quot}(R)$ and an injective ring homomorphism $\iota \colon R \to \operatorname{Quot}(R)$ such that for any injective ring homomorphism $f \colon R \to K$ into a field $K$, there exists a unique field homomorphism $F \colon \operatorname{Quot}(R) \to K$ such that $F \circ \iota = f$.
+    \end{theorem}
+    \begin{proof}
+        Let $\operatorname{Quot}(R) = R \times R \setminus \{0\} / {\sim}$. Define the map $\iota \colon R \to \operatorname{Quot}(R)$ by $\iota(r) = \frac{r}{1}$. For $r_1, r_2 \in R$, we have
+        \begin{align*}
+            \iota(r_1) + \iota(r_2) &= \frac{r_1}{1} + \frac{r_2}{1} = \frac{r_1 \cdot 1 + 1 \cdot r_2}{1 \cdot 1} = \frac{r_1 + r_2}{1} = \iota(r_1 + r_2) \\
+            \iota(r_1) \cdot \iota(r_2) &= \frac{r_1}{1} \cdot \frac{r_2}{1} = \frac{r_1 r_2}{1} = \iota(r_1 r_2).
+        \end{align*}
+        Moreover, $\iota(1) = \frac{1}{1}$, meaning that $\iota$ is a ring homomorphism. Now, let $r \in \ker \iota$. In that case, 
+        \[\iota(r) = \frac{r}{1} = \frac{0}{1}.\]
+        So, $(r, 1) \sim (0, 1)$, meaning that $r = 0$. So, $\ker \iota$ is trivial, which implies that $\iota$ is injective.
+
+        Now, let $f \colon R \to K$ be an injective ring homomorphism. Define the map $F \colon \operatorname{Quot}(R) \to K$ by
+        \[F(\tfrac{a}{b}) = f(a) f(b)^{-1}.\]
+        The map is well-defined- we have $b \neq 0$, and since $f$ is injective, we must have $f(b) \neq 0$, i.e. it is a unit. Now, for $\frac{a}{b}, \frac{c}{d} \in \operatorname{Quot}(R)$,
+        \begin{align*}
+            F(\tfrac{a}{b} + \tfrac{c}{d}) &= F(\tfrac{ad + bc}{bd}) \\
+            &= f(ad + bc) f(bd)^{-1} \\
+            &= [f(a)f(d) + f(b)f(c)] \cdot f(b)^{-1} f(d)^{-1} \\
+            &= f(a)f(b)^{-1} + f(c)f(d)^{-1} \\
+            &= F(\tfrac{a}{b}) + F(\tfrac{c}{d}),
+        \end{align*}
+        and
+        \begin{align*}
+            F(\tfrac{a}{b} \cdot \tfrac{c}{d}) &= F(\tfrac{ac}{bd}) \\
+            &= f(ac) f(bd)^{-1} \\
+            &= [f(a) f(b)^{-1}] \cdot [f(c) f(d)^{-1}] \\
+            &= F(\tfrac{a}{b}) F(\tfrac{c}{d}).
+        \end{align*}
+        So, $F$ is a ring homomorphism. Moreover, for all $r \in R$, 
+        \[F(\iota(r)) = F(\tfrac{r}{1}) = f(r) f(1)^{-1} = f(r) \cdot 1 = f(r),\]
+        meaning that $F \circ \iota = f$.
+
+        Next, we show that the field homomorphism is unique. So, let $G \colon \operatorname{Quot}(R) \to K$ such that $G \circ \iota = f$. In that case, for $\frac{a}{b} \in \operatorname{Quot}(R)$,
+        \[G(\tfrac{a}{b}) = G(\tfrac{a}{1} \cdot \tfrac{1}{b}) = G(\tfrac{a}{1}) G(\tfrac{b}{1})^{-1} = f(a) f(b)^{-1} = F(\tfrac{a}{b}).\]
+        This implies that $G = F$, meaning that $F$ is unique.
+    \end{proof}
+
+    \begin{definition}
+        Let $R$ be an integral domain. Then, the field $\operatorname{Quot}(R)$ is the \emph{field of fractions} in $R$, or the \emph{quotient field} of $R$.
+    \end{definition}
+
+    \newpage
+
+    \section{Polynomial Rings}
+    \begin{proposition}
+        Let $R$ be a commutative ring. Then, $R$ is an integral domain if and only if $R[x]$ is an integral domain.
+    \end{proposition}
+    \begin{proof}
+        First, assume that $R$ is not an integral domain. In that case, there exist $a, b \in R$ non-zero such that $ab = 0$. Hence, $a, b \in R[x]$ still satisfy $ab = 0$. So, $R[x]$ is not an integral domain.
+
+        Now, assume that $R[x]$ is not an integral domain. In that case, there exist $f, g \in R[x]$ non-zero such that $fg = 0$. Without loss of generality, assume that $f$ and $g$ are not constant\sidefootnote{If either function is a constant, we can multiply by $x$ and we still have $fg = 0$.}. Now, denote
+        \[f(x) = a_n x^n + \dots + a_1 x + a_0, \qquad g(x) = b_m x^m + \dots + b_1 x + b_0,\]
+        for $m, n \geq 1$ and $a_n, b_m \neq 0$. In that case, since $fg = 0$, we must have $a_n b_n = 0$. So, $a_n \in R$ is a zero divisor, meaning that $R$ is not an integral domain.
+    \end{proof}
+
+    \begin{proposition}[Division Algorithm]
+        Let $K$ be a field and let $f, g \in K[x]$ with $g \neq 0$. Then, there exist unique $q, r \in K[x]$ such that 
+        \[f(x) = g(x) q(x) + r(x)\]
+        with $r = 0$ or $\deg r < \deg g$.
+    \end{proposition}
+    
+    \begin{proposition}
+        Let $R$ be a field, and let $a \in R$. Then, the map $ev_a \colon R[x] \to R$ given by $ev_a(f) = f(a)$ is a ring homomorphism, with kernel $\ker ev_a = (x - a)$.
+    \end{proposition}
+    \begin{proof}
+        Let $f, g \in R[x]$. Then,
+        \[ev_a(f + g) = (f + g)(a) = f(a) + g(a) = ev_a(f) + ev_a(g)\]
+        and
+        \[ev_a(f \cdot g) = (f \cdot g)(a) = f(a) \cdot g(a) = ev_a(f) \cdot ev_a(g).\]
+        So, $ev_a$ is a ring homomorphism.
+
+        Now, we show that $\ker ev_a = (x - a)$. So, let $f \in (x - a)$. By definition, we can find a $g \in R[x]$ such that $f(x) = (x - a)g(x)$. In that case,
+        \[ev_a(f) = f(a) = 0 \cdot g(a) = 0,\]
+        meaning that $f \in \ker ev_a$. Next, let $f \in \ker ev_a$. By the division algorithm, we can find $q, r \in R[x]$ such that 
+        \[f(x) = (x - a) q(x) + r(x),\]
+        where $r = 0$ or $\deg r < 1$. So, $r$ is a constant. Since 
+        \[f(a) = (a - a) q(a) + r(a) \iff 0 = r(a),\]
+        meaning that $r = 0$. Hence, $f \in (x - a)$. So, $\ker ev_a = (x - a)$.
+    \end{proof}
+    
+    \begin{corollary}
+        Let $K$ be a field. Then, $K[x]$ is a principal ideal domain.
+    \end{corollary}
+    \begin{proof}
+        Let $I \subseteq K[x]$ be an ideal. If $I = \{0\}$, then $I = (0)$. Otherwise, let $f \in I$ be a polynomial of minimal degree. Now, let $g \in I$. By the division algorithm, there exist $q, r \in K[x]$ such that
+        \[g = qf + r,\]
+        with $r = 0$ or $\deg r < \deg f$. We have
+        \[r = g - qf \in I\]
+        since $I$ is an ideal. By the minimality of the degree of $f$, we must have that $r = 0$. That is, $g = qf \in (f)$. Hence, $I = (f)$.
+    \end{proof}
+
+    \begin{definition}
+        Let $K$ be a field. We say that the polynomial ring $K$ is \emph{algebraically closed} if every non-constant polynomial in $K[x]$ has a root in $K$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $K$ be a field. Then, the following are equivalent:
+        \begin{enumerate}
+            \item A non-constant polynomial in $K[x]$ of degree $n$ has $n$ roots in $K$;
+            \item $K$ is algebraically closed;
+            \item Every non-constant polynomial in $K[x]$ splits into linear factors in $K[x]$.
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        Trivially, we have $(1) \implies (2)$.
+        \begin{enumerate}
+            \item[$(2) \implies (3)$] We prove this by the order of the polynomial $f \in K[x]$. So, if $f \in K[x]$ is (monic) of degree $1$, then $f(x) = ax + b$, which is trivially split into linear factors in $K[x]$. Now, assume that $f \in K[x]$ has degree $n$, for some $n > 1$. Since $K$ is algebraically closed, it has a root $\alpha_1 \in K$. We apply the division algorithm to find $q, r \in K[x]$ such that
+            \[f(x) = q(x) (x - \alpha_1) + r(x),\]
+            with $r$ a constant function. We find that $r(\alpha_1) = 0$, so $r = 0$. Hence, $f(x) = q(x) (x - \alpha_1)$, so $\deg q = n - 1$. By induction, $q$ factors into linear factors in $K[x]$, i.e.
+            \[q(x) = (x - \alpha_2) \dots (x - \alpha_n).\]
+            Hence,
+            \[f(x) = (x - \alpha_1) (x - \alpha_2) \dots (x - \alpha_n).\]
+            So, the result follows.
+            
+            \item[$(3) \implies (1)$] Let $f \in K[x]$ be of degree $n$. We know that
+            \[f(x) = (x - \alpha_1) (x - \alpha_2) \dots (x - \alpha_n).\]
+            So, $f$ has $n$ roots- $\alpha_1, \alpha_2, \dots, \alpha_n \in K$.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{theorem}[Fundamental Theorem of Algebra]
+        The field $\mathbb{C}$ is algebraically closed.
+    \end{theorem}
+
+    \begin{proposition}
+        Let $R$ and $S$ be rings, $s \in S$ and let $f \colon R \to S$ be a ring homomorphism. Then, there exists a unique ring homomorphism $F \colon R[x] \to S$ such that $F(a) = f(a)$ for all $a \in R$ and $F(x) = s$.
+    \end{proposition}
+    \begin{proof}
+        Define the map $F$ as follows: for 
+        \[g(x) = a_n x^n + \dots + a_1 x + a_0,\]
+        define 
+        \[F(g) = f(a_n) s^n + \dots + f(a_1) s + f(a_0).\]
+        Clearly, $F$ is a ring homomorphism with $F(x) = s$, and $F(a) = f(a)$ for all $a \in R$.
+
+        Now, let $F' \colon R[x] \to S$ be a ring homomorphism such that $F'(a) = f(a)$ for all $a \in R$ and $F(x) = s$. In that case, for $g \in R[x]$ satisfying
+        \[g(x) = a_n x^n + \dots + a_1 x + a_0,\]
+        we have
+        \begin{align*}
+            F'(g) &= F'(a_n x^n + \dots + a_1 x + a_0) \\
+            &= F'(a_n) F'(x)^n + \dots + F'(a_1) F'(x) + F'(a_0) \\
+            &= f(a_n) s^n + \dots + f(a_1) s + a_0 = F(g).
+        \end{align*}
+        So, $F$ is unique.
+    \end{proof}
+
+    \begin{definition}
+        Let $K$ be a field. The field of fractions $\operatorname{Quot}(K[x])$ is called the \emph{field of rational fractions over $K$}.
+    \end{definition}
+
+    \begin{definition}
+        Let $K$ be a field, and let $f, g \in K[x]$. We say that \emph{$g$ divides $f$} if there exists a $q \in K[x]$ such that $f = gq$. If so, we write $g \mid f$.
+    \end{definition}
+
+    \begin{definition}
+        Let $K$ be a field and let $f, g \in K[x]$. The \emph{greatest common divisor} (gcd) of $f$ and $g$ is a polynomial $d \in K[x]$ such that:
+        \begin{itemize}
+            \item $d \mid f$ and $d \mid g$;
+            \item if $e \mid f$ and $e \mid g$, then $e \mid d$.
+        \end{itemize}
+        We denote $\gcd(f, g) = d$.
+    \end{definition}
+
+    \begin{theorem}
+        Let $K$ be a field and let $f, g \in K[x]$ be non-zero. Then, there exist $a, b \in K[x]$ such that $af + bg = \gcd(f, g)$.
+    \end{theorem}
+
+    \begin{definition}
+        Let $R$ be an integral domain and let $f \in R[x]$ be a non-constant polynomial. We say that $f$ is \emph{irreducible over $R$} if $f \in R[x]$ is irreducible.
+    \end{definition}
+
+    \begin{theorem}
+        Let $K$ be a field. Then, $f \in K[x]$ factorises into irreducible factors, and the factorisation is unique up to reorder and multiplication by non-zero constants.
+    \end{theorem}
+    
+    \begin{proposition}
+        Let $K$ be a field and let $f \in K[x]$ be a non-constant polynomial. If $\alpha_1, \dots, \alpha_k$ are the roots of $f$ in $K$, with multiplicities $m_1, \dots, m_k$, then
+        \[f(x) = (x - \alpha_1)^{m_1} (x - \alpha_2)^{m_2} \dots (x - \alpha_k)^{m_k} q(x),\]
+        where $q \in K[x]$ has no roots. In particular, a polynomial of degree $n$ has at most $n$ roots in $K$, counted with multiplicities.
+    \end{proposition}
+
+    \begin{lemma}[Gauss' Lemma]
+        Let $f \in \mathbb{Z}[x]$ be a polynomial that is irreducible over $\mathbb{Z}$. Then, $f$ is irreducible over $\mathbb{Q}$.
+    \end{lemma}
+    \begin{proof}
+        Let $f$ be reducible over $\mathbb{Q}$. In that case, $f = gh$, for $g, h \in \mathbb{Q}[x]$. Since $g, h \in \mathbb{Q}[x]$, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that $Nf = g' h'$, for $g', h' \in \mathbb{Z}[x]$. Now, denote
+        \begin{align*}
+            f(x) &= a_n x^n + \dots + a_1 x + a_0 \\
+            g'(x) &= b_s x^s + \dots + b_1 x + b_0 \\
+            h'(x) &= c_t x^t + \dots + c_1 x + c_0.
+        \end{align*}
+        We claim that for any prime $p$ dividing $N$, either $p \mid b_i$ for all $0 \leq i \leq s$ or $p \mid c_j$ for all $0 \leq j \leq t$. Assume, for a contradiction, that this is not the case. In that case, there exist minimal $0 \leq i \leq s$ and $0 \leq j \leq t$ such that $p \nmid b_i c_j$. Then,
+        \[N \cdot a_{i+j} = (b_0 c_{i+j} + \dots + b_{i-1} c_{j+1}) + b_i c_j + (b_{i+1} c_{j-1} + \dots + b_{i+j} c_0).\]
+        By the minimality of $N$, we find that $p \mid b_k$ for $0 \leq k \leq i-1$ and $p \mid c_l$ for $0 \leq l \leq j-1$. Since $p \nmid b_i c_j$, we must have that $p \nmid N \cdot a_{i+j}$, meaning that $p \nmid N$. This is a contradiction. So, either $p \mid b_i$ for all $0 \leq i \leq s$ or $p \mid c_j$ for all $0 \leq j \leq t$. So, we can go through the prime factorisation of $N$ to cancel each prime number from the factorisation, and still find either $f = gh$ or $f = (-g)h$. Either way, $f$ is reducible in $\mathbb{Z}$.
+    \end{proof}
+
+    \begin{proposition}[Eisenstein's Criterion]
+        Let 
+        \[f(x) = a_n x^n + \dots + a_1 x + a_0 \in \mathbb{Z}[x]\]
+        be a polynomial of degree $n$. If there exists a prime $p$ such that:
+        \begin{itemize}
+            \item $a_0, a_1, \dots, a_{n-1}$ are divisible by $p$;
+            \item $a_n$ is not divisible by $p$;
+            \item $a_0$ is not divisible by $p^2$.
+        \end{itemize}
+        Then, $f$ is irreducible over $\mathbb{Q}$.
+    \end{proposition}
+    \begin{proof}
+        Let $f$ be of degree $n > 1$, with $f = gh$, where
+        \begin{align*}
+            g(x) &= b_r x^r + b_{r-1} x^{r-1} + \dots + b_0 \in \mathbb{Z}[x], \\
+            h(x) &= c_s x^s + c_{s-1} x^{s-1} + \dots + c_0 \in \mathbb{Z}[x].
+        \end{align*}
+        We have $p \mid a_0$ and $p^2 \nmid a_0$, with $a_0 = b_0 c_0$, $p$ must divide precisely one of $b_0$ and $c_0$. Without loss of generality, assume that $p \nmid b_0$ and $b \mid c_0$. Similarly, since $p \nmid a_n = b_r c_s$, we have $p \nmid b_r$ and $p \nmid c_s$. So, there exists a minimal $m \leq s$ such that $p \mid c_m$, and $p \mid c_k$ for $0 \leq k < m$. In that case,
+        \[a_m = b_0 c_m + (b_1 c_{m-1} + \dots + b_m c_0).\]
+        We know that $p \nmid b_0$ and $p \nmid c_m$, so $p \nmid b_0 c_m$. Hence, $p \nmid a_m$. So, we find that $m = n$. Therefore, $\deg g = 0$, meaning that $f$ is irreducible over $\mathbb{Z}$. So, Gauss' Lemma tells us that $f$ is irreducible over $\mathbb{Q}$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $R$ be an integral domain, $f \in R[x]$ and let $a \in R$. Then, $f(x)$ is irreducible over $R$ if and only if $f(x + a)$ is irreducible over $R$.
+    \end{proposition}
+    \begin{proof}
+        Assume that $f(x)$ is reducible over $R$. In that case, there exist non-constant polynomials $g, h \in R[x]$ such that $f(x) = g(x) h(x)$. In that case, $f(x + a) = g(x + a) h(x + a)$. Since $\deg (g(x  + a)) = \deg (g(x))$ and $\deg (h(x + a)) = \deg (h(x))$, we find that $f(x + a)$ is reducible over $R$. Similarly, if $f(x + a)$ is reducible over $R$, then $f(x + a) = f((x + a) - a)$ is reducible over $R$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $f(x) = a_n x^n + \dots + a_1 x + a_0 \in \mathbb{Z}[x]$ and let $p$ be a prime not dividing $a_n$. Let $f + p\mathbb{Z} \in \mathbb{F}_p[x]$ be given by
+        \[(f + p\mathbb{Z})(x) + (a_n + p\mathbb{Z}) x^n + \dots + (a_1 + p\mathbb{Z}) x + (a_0 + p \mathbb{Z}).\]
+        If $f + p\mathbb{Z}$ is irreducible over $\mathbb{F}_p$, then $f$ is irreducible over $\mathbb{Q}$.
+    \end{proposition}
+    \begin{proof}
+        Assume that $f$ is reducible over $\mathbb{Q}$. In that case, $f = gh$, for non-constant polynomials $g$ and $h$ such that $\deg f = \deg g + \deg h$. Now, denote
+        \[g(x) = b_p x^p + \dots + b_1 x + b_0, \qquad h(x) = c_q x^q + \dots + c_1 x + c_0.\]
+        Since $p$ does not divide $a_n$, and $a_n = b_p c_q$, $p$ does not divide $b_p$ and $c_q$. So, we have $f + p\mathbb{Z} = (g + p\mathbb{Z})(h + p\mathbb{Z})$, for $g + p\mathbb{Z}$ and $h + p\mathbb{Z}$ are non-constant polynomials. Hence, $f + p\mathbb{Z}$ is reducible over $\mathbb{F}_p$.
+    \end{proof}
+
+\end{document}
