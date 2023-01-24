@@ -150,7 +150,7 @@
         \lVert x \rVert_1 &= \sum_{i=1}^n |x_i| \\
         \lVert x \rVert_2 &= \left(\sum_{i=1}^n |x_i|^2 \right)^{1/2} \\
         \lVert x \rVert_\infty &= \max_{i=1}^n |x_i|.
-a    \end{align*}
+    \end{align*}
     These norms are quite closely related to the $d_1$, $d_2$ and $d_\infty$-metrics respectively. It turns out that every norm induces a metric, given by
     \[d(x, y) = \lVert x - y \rVert.\]
     However, it is not the case that every metric is induced by a metric, e.g. the discrete metric is not induced by a norm.
@@ -355,7 +355,9 @@ a    \end{align*}
     
     In summary, we have the following containment:
     \[c_{00} \subsetneq \ell^1 \subsetneq \ell^2 \subsetneq \dots \subsetneq c_0 \subsetneq c \subsetneq \ell^\infty.\]
-    Note that each containment is strict.
+    Note that each containment is strict. Also,
+    \[\bigcup_{p \in [1, \infty)} \ell^p \subsetneq c_0\]
+    since the series $\sum \frac{1}{(\log n)^p}$ diverges for all $p \in [1, \infty)$.
     \newpage
 
     \section{Topology}
@@ -462,16 +464,211 @@ a    \end{align*}
 
         Now, assume that $K$ is closed, bounded and equi-continuous. We show that $K$ is (sequentially) compact. So, let $(f_n)_{n=1}^\infty$ be a sequence in $K$. Enumerate 
         \[\mathbb{Q} = \{r_1, r_2, \dots\}.\]
-        Consider the sequence $(f_n(r_1))_{n=1}^\infty$ in $[0, 1]$. By Bolzano-Weierstrass, we know that the sequence has a convergent subsequence $(f_{1, n}(r_1))_{n=1}^\infty$. Now, consider the sequence $(f_{1, n}(r_2))_{n=1}^\infty$ in $[0, 1]$. By Bolzano-Weierstrass again, we know that the sequence has a convergent subsequence $(f_{2, n}(r_2))_{n=1}^\infty$. Since $(f_2)$ is a subsequence of $(f_1)$, we know that $(f_2(r_1))_{n=1}^\infty$ is still convergent. We can continue this for every $k \in \mathbb{Z}_{\geq 1}$, to define the sequences $(f_{k, n})_{n=1}^\infty$. Now, define the sequence $(g_n)_{n=1}^\infty$ in $K$ by $g_n = f_{n, n}$. This is a subsequence of $(f_n)_{n=1}^\infty$ by construction. Moreover, for $r_j \in \mathbb{Q}$, the sequence $(f_{j, n}(r_j))_{n=1}^\infty$ is convergent, and since $(g_n)_{n=j}^\infty$ is a subsequence of $(f_{j, n})_{n=1}^\infty$, we find that $(g_n(r_j))_{n=1}^\infty$ is convergent. 
+        Consider the sequence $(f_n(r_1))_{n=1}^\infty$ in $\mathbb{R}$. Since $K$ is bounded, the sequence $(f_n(r_1))_{n=1}^\infty$ is bounded. So, by Bolzano-Weierstrass, we know that the sequence has a convergent subsequence $(f_{1, n}(r_1))_{n=1}^\infty$ in $\mathbb{R}$. Now, consider the sequence $(f_{1, n}(r_2))_{n=1}^\infty$ in $\mathbb{R}$. By Bolzano-Weierstrass again, we know that the sequence has a convergent subsequence $(f_{2, n}(r_2))_{n=1}^\infty$. Since $(f_{2, n})$ is a subsequence of $(f_{1, n})$, we know that $(f_{2, n}(r_1))_{n=1}^\infty$ is still convergent. We can continue this for every $k \in \mathbb{Z}_{\geq 1}$, to define the sequences $(f_{k, n})_{n=1}^\infty$. Now, define the sequence $(g_n)_{n=1}^\infty$ in $K$ by $g_n = f_{n, n}$. This is a subsequence of $(f_n)_{n=1}^\infty$ by construction. Moreover, for $r_j \in \mathbb{Q}$, the sequence $(f_{j, n}(r_j))_{n=1}^\infty$ is convergent, and since $(g_n)_{n=j}^\infty$ is a subsequence of $(f_{j, n})_{n=1}^\infty$, we find that $(g_n(r_j))_{n=1}^\infty$ is convergent. 
 
-        Next, we show that $(g_n)$ is uniformly Cauchy. Let $\varepsilon > 0$. Since $K$ is equi-continuous, there exists a $\delta > 0$ such that for all $k \in \{1, \dots, n\}$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|g_k(s) - g_k(t)| < \frac{\varepsilon}{3}$. Now, partition $[0, 1]$ into intervals $(I_k)_{k=1}^n$ of length $< \delta$. For each $k \in \{1, \dots, n\}$, there exists an $N_k \in \mathbb{Z}_{\geq 1}$ such that for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N_k$, then $|g_m(r_k) - g_n(r_k)| < \frac{\varepsilon}{3}$. Now, let $N = \max(N_1, \dots, N_n)$. Now, let $t \in [0, 1]$ and $m, n \in \mathbb{Z}_{\geq 1}$. We have $t \in I_k$ for some $k \in \{1, \dots, n\}$. Moreover, since $\mathbb{Q}$ is dense, there exists an $r_k \in I_k$ with $r_k \in \mathbb{Q}$. By construction, we have $|r_k - t| < \delta$. Hence, if $m, n \geq N$, then
+        Next, we show that $(g_n)$ is uniformly Cauchy. Let $\varepsilon > 0$. Since $K$ is equi-continuous, there exists a $\delta > 0$ such that for all $k \in \{1, \dots, n\}$ and $s, t \in [0, 1]$, if $|s - t| < \delta$, then $|g_k(s) - g_k(t)| < \frac{\varepsilon}{3}$. Now, partition $[0, 1]$ into intervals $(I_k)_{k=1}^n$ of length $< \delta$, and fix $r_k \in I_k$ with $r_k \in \mathbb{Q}$. For each $k \in \{1, \dots, n\}$, there exists an $N_k \in \mathbb{Z}_{\geq 1}$ such that for all $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N_k$, then $|g_m(r_k) - g_n(r_k)| < \frac{\varepsilon}{3}$. Now, let $N = \max(N_1, \dots, N_n)$, and let $t \in [0, 1], m, n \in \mathbb{Z}_{\geq 1}$. We have $t \in I_k$ for some $k \in \{1, \dots, n\}$. By construction, we have $|r_k - t| < \delta$. Hence, if $m, n \geq N$, then
         \begin{align*}
             |g_m(t) - g_n(t)| &\leq |g_m(t) - g_m(r_k)| + |g_m(r_k) - g_n(r_k)| + |g_n(r_k) - g_n(t)| \\
             &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
         \end{align*}
         So, $(g_n)$ is uniformly Cauchy. This implies that $(g_n)$ is uniformly convergent. This means that $g_n \to g$, for some $g \in C[0, 1]$. Since $K$ is closed, we have $g \in K$. Therefore, $(f_n)_{n=1}^\infty$ has a subsequence $(g_n)_{n=1}^\infty$ such that $g_n \to g$. Hence, $K$ is compact.
     \end{proof}
+    \newpage
+    
+    \section{Separability}
+    In this section, we will look at the concept of separablility.
+    \begin{definition}
+        Let $X$ be a topological space and let $V \subseteq X$.
+        \begin{itemize}
+            \item We say that $V$ is \emph{dense} in $X$ if for any $x \in X$, there exists a sequence $(v_n)_{n=1}^\infty$ in $V$ such that $v_n \to x$.
+            \item We say that $X$ is \emph{separable} if there exists a countable dense set $V \subseteq X$.
+        \end{itemize}
+    \end{definition}
+    \noindent We know that $\mathbb{R}^n$ and $\mathbb{C}^n$ are measurable, since $\mathbb{Q}^n \subseteq \mathbb{R}^n$ and $\mathbb{Q}[i]^n \subseteq \mathbb{R}^n$ are dense and countable. It is a measurable of the size of the space- even though the space might be uncountable, it can still have a countable dense set.
 
+    We can characterise denseness in metric spaces in terms of non-empty intersection of open balls.
+    \begin{lemma}
+        Let $X$ be a metric space and let $V \subseteq X$. Then, $V$ is dense in $X$ if and only if for any non-empty open set $U \subseteq X$, $U \cap V$ is not empty.
+    \end{lemma}
+    \begin{proof}
+        Assume that $V$ is dense in $X$, and let $U \subseteq X$ be non-empty. So, there exists a $x \in U$. Since $V$ is dense, there exists a sequence $(x_n)_{n=1}^\infty$ such that $x_n \to x$. In that case, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $x_n \in U$. So, we have $x_N \in U \cap V$, meaning that $U \cap V$ is not empty.
+
+        Now, assume that for any non-empty open set $U \subseteq X$, $U \cap V$ is not empty. Let $x \in X$. For $n \in \mathbb{Z}_{\geq 1}$, we know that $B_{1/n}(x)$ is a non-empty open set, so $B_{1/n}(x) \cap V$ is not empty. So, define the sequence $(x_n)_{n=1}^\infty$ by $x_n \in B_{1/n}(x) \cap V$. By construction, we have $d(x_n, x) < \frac{1}{n}$, so $x_n \to x$. Moreover, $(x_n)$ is a sequence in $V$. Hence, $V$ is dense in $X$.
+    \end{proof}
+
+    We will now show some properties about separable spaces.
+    \begin{proposition}
+        Let $X, W$ be separable topological spaces. Then, $X \times W$ is a separable topological space. In particular, a finite product of separable topological spaces is still separable.
+    \end{proposition}
+    \begin{proof}
+        Since $X$ and $Y$ are separable, there exist subsets $A \subseteq X$ and $B \subseteq Y$ that are countable and dense. Then, $A \times B$ is countable. Moreover, let $(x, y) \in X \times Y$. We can find sequences $(x_n)_{n=1}^\infty$ in $A$ and $(y_n)_{n=1}^\infty$ in $B$ such that $x_n \to x$ and $y_n \to y$. Hence, $(x_n, y_n) \to (x, y)$ in the product topology. This implies that $A \times B$ is dense. So, $X \times W$ is separable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $X$ be a topological space and let $(X_n)_{n=1}^\infty$ be a sequence of separable subsets of $X$. Then, the union
+        \[Y = \bigcup_{n=1}^\infty X_n\]
+        is separable.
+    \end{proposition}
+    \begin{proof}
+        For each $n \in \mathbb{Z}_{\geq 1}$, since $X_n$ is separable, we can find a countable dense set $V_n \subseteq X_n$. Then, the union
+        \[V = \bigcup_{n=1}^\infty V_n\]
+        is countable. We claim that $V$ is also dense in $Y$. So, let $y \in Y$. By definition, we can find an $i \in \mathbb{Z}_{\geq 1}$ such that $y \in X_i$. Since $V_i \subseteq X_i$ is dense, there exists a sequence $(v_n)_{n=1}^\infty$ in $V_i \subseteq V$ such that $v_n \to y$. Hence, $V$ is dense in $X$. So, $X$ is separable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $X$ be a separable metric space, and let $V \subseteq X$. Then, $V$ is separable.
+    \end{proposition}
+    \begin{proof}
+        Since $X$ is separable, it has a countable dense set $D \subseteq V$. So, for all $U \subseteq X$ non-empty, $D \cap X$ is not empty. We show that $D \cap V$ is dense in $V$. So, let $U \cap V \subseteq V$ be open and non-empty, for $U \subseteq X$ open. Then, we know that $U$ is not empty, meaning that $U \cap D$ is not empty.
+        % TODO: Finish
+    \end{proof}
+
+    \begin{proposition}
+        Let $X$ be a metric space and let $V \subseteq X$ be separable. Then, its closure $\overline{V} \subseteq X$ is separable.
+    \end{proposition}
+    \begin{proof}
+        Since $V$ is separable, it has a countable dense set $D \subseteq V$. So, for all $U \subseteq V$ non-empty, $D \cap U$ is not empty. Now, let $U \subseteq \overline{V}$ be open and non-empty. In that case, there exists $x \in U$. Since $x \in \overline{V}$, we know that $U \cap V$ is not empty. Now, since $U \cap V$ is open in $V$ and $D$ dense in $V$, we know that $(U \cap V) \cap D$ is not empty. Hence,
+        \[U \cap D = U \cap (V \cap D) = (U \cap V) \cap D = \varnothing.\]
+        So $D$ is dense in $\overline{V}$. Since $D$ is countable, $\overline{V}$ is separable.
+    \end{proof}
+
+    Using these properties, we will show that $\ell^p$ is separable for $p \in [1, \infty)$.
+    \begin{proposition}
+        Let $p \in [1, \infty)$. Then, the sequence space $\ell^p$ is separable.
+    \end{proposition}
+    \begin{proof}
+        We show that $c_{00} \subseteq \ell^p$ is dense in $\ell^p$. So, let $x \in \ell^p$. Define the sequence $(x^{(k)})_{k=1}^\infty$ in $c_{00}$ by
+        \[x^{(k)}_n = \begin{cases}
+            x_n & n \leq k \\
+            0 & \textrm{otherwise}.
+        \end{cases}\]
+        Moreover, we know that $x^{(k)} \to x$ in $\ell^\infty$, so $x^{(k)} \to x$ in $\ell^p$ as well.
+        % TODO: Show that $\lVert x \rVert_p \leq \lVert x \rVert_q \leq \lVert x \rVert_\infty$ for $p \leq q$.
+        Hence, $c_{00} \subseteq \ell^p$ is dense in $\ell^p$. Now, for $n \in \mathbb{Z}_{\geq 1}$, define the sequence space $c_{0n}$ by
+        \[c_{0n} = \{x \in c_{00} \mid x_k = 0 \ \forall k \geq n\}.\]
+        There exists a canonical isomorphism $c_{0n} \to \mathbb{R}^n$. Since $\mathbb{R}^n$ is separable, $c_{0n}$ must also be separable. Hence, the countable union
+        \[c_{00} = \bigcup_{n=1}^\infty c_{0n}\]
+        is also separable. So, $c_{00} \subseteq \ell^p$ is countable and dense in $\ell^p$- $\ell^p$ is separable.
+    \end{proof}
+    
+    We shall now show that $\ell^\infty$ is not separable. To do so, we require another characterisation of dense sets in metric spaces.
+    \begin{lemma}
+        Let $X$ be a metric space and let $V \subseteq X$. Then, $V$ is dense in $X$ if and only if for any $x \in X$ and $\varepsilon > 0$, the intersection $V \cap B_{\varepsilon}(x)$ is not empty.
+    \end{lemma}
+    \begin{proof}
+        First, assume that $V$ is dense in $X$, and let $x \in X$ and $\varepsilon > 0$. Since $V$ is dense, there exists a sequence $(v_n)_{n=1}^\infty$ in $V$ such that $v_n \to x$. In that case, we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $d(v_n, x) < \varepsilon$. Hence, we have $x_N \in V \cap B_{\varepsilon}(x)$- it is not empty.
+
+        Now, assume that for any $x \in X$ and $\varepsilon > 0$, the intersection $V \cap B_{\varepsilon}(x)$ is not empty, and let $x \in X$. Define the sequence $(v_n)_{n=1}^\infty$ by $v_n \in B_{\frac{1}{n}}(x) \cap V$. By definition, this is a sequence in $V$. Moreover, since $d(v_n, x) \to 0$ as $n \to \infty$, we find that $v_n \to x$. So, there exists a sequence $(v_n)_{n=1}^\infty$ in $V$ such that $v_n \to x$- $V$ is dense in $X$.
+    \end{proof}
+    \begin{proposition}
+        The space $\ell^\infty$ is not separable.
+    \end{proposition}
+    \begin{proof}
+        For every $S \subseteq \mathbb{Z}_{\geq 1}$, define the sequence $x^{(S)}$ in $\ell^\infty$ by
+        \[x^{(S)}_n = \chi_S := \begin{cases}
+            1 & n \in S \\
+            0 & n \not\in S
+        \end{cases}.\]
+        For $S, T \subseteq \mathbb{Z}_{\geq 1}$ distinct, we find that
+        \[\lVert x^{(S)} - x^{(T)} \rVert_\infty = 1.\]
+        So, if we have $x \in B_{1/2}(x^{(S)}) \cap B_{1/2}(x^{(T)})$, 
+        \[\lVert x^{(S)} - x^{(T)} \rVert_\infty \leq \lVert x^{(S)} - x \rVert_\infty + \lVert x - x^{(T)} \rVert_\infty < \frac{1}{2} + \frac{1}{2} = 1,\]
+        which is not possible. Hence, for $S, T \subseteq \mathbb{Z}_{\geq 1}$ distinct, we have $B_{1/2}(x^{(S)}) \cap B_{1/2}(x^{(T)}) = \varnothing$.
+
+        Now, assume that $V \subseteq \ell^\infty$ is dense. We show that $V$ is not countable. Since $V$ is dense, we know that for any $x \in X$, the intersection $V \cap B_{1/2}(x)$ is not empty. Hence, for every $S \subseteq \mathbb{Z}_{\geq 1}$, there exists a $y^{(S)} \in B_{1/2}(x^{(S)})$. For $S, T \subseteq \mathbb{Z}_{\geq 1}$ distinct, we know that $B_{1/2}(x^{(S)}) \cap B_{1/2}(x^{(T)}) = \varnothing$, so $y^{(S)} \neq y^{(T)}$. Since there are uncountably many subsets of $\mathbb{Z}_{\geq 1}$, we know that the collection of sequences $(x^{(S)})_{S \subseteq \mathbb{Z}_{\geq 1}}$ in $V$ is uncountable. Hence, $V$ is uncountable. This implies that $\ell^\infty$ is not separable.
+    \end{proof}
+    
+    Although $\ell^\infty$ is not separable, it turns out that $C[0, 1]$ under the $L^\infty$-norm is separable.
+    \begin{proposition}
+        The space $C[0, 1]$ under the $L^\infty$-norm is separable.
+    \end{proposition}
+    \begin{proof}
+        The Weierstrass Theorem tells us that polynomials in $\mathbb{R}$ are dense in $L^\infty$, so their closure is $L^\infty$. Hence, we shall show that the (single-variable) polynomials in $\mathbb{R}$, $\mathbb{R}[x]$, are separable.
+
+        We claim that the polynomials in $\mathbb{Q}$, $\mathbb{Q}[x]$, is a countable dense subset of $\mathbb{R}[x]$. Since $\mathbb{Q}$ is countable, we find that $\mathbb{Q}[x]$ is countable- it is the countable union of polynomials in $\mathbb{Q}$ of degree $n \in \mathbb{Z}_{\geq 1}$. Now, let $f \in \mathbb{R}[x]$ be given by
+        \[f(x) = a_n x^n + a_{n-1} x^{n-1} + \dots + a_0.\]
+        Since $\mathbb{Q} \subseteq \mathbb{R}$ is dense, we can find a sequence $(a^{(k)}_n)_{n=1}^\infty$ for every $k \in \{0, 1, \dots, n\}$ such that $a^{(k)} \to a_k$. So, define the sequence $(f_s)_{s=1}^\infty$ in $\mathbb{Q}[x]$ by
+        \[f_s(x) = a^{(n)}_s x^n + a^{(n-1)}_s x^{n-1} + \dots + a^{(0)}_s.\]
+        By construction, we have $f_s \to f$, so $\mathbb{Q}[x] \subseteq \mathbb{R}[x]$ is countable and dense, so $\mathbb{R}[x]$ is separable. Hence, its closure, $C[0, 1]$, under the $L^\infty$-norm is separable.
+    \end{proof}
+    \newpage
+
+    \section{Completeness}
+    In this section, we consider the concept of completeness.
+    \begin{definition}
+        Let $V$ be a metric space.
+        \begin{itemize}
+            \item We say that $V$ is \emph{complete} if every Cauchy sequence in $V$ is convergent.
+            \item We say that $V$ is a \emph{Banach space} if it is a complete normed vector space.
+            \item We say that $V$ is a \emph{Hilbert space} if it is a complete inner product space.
+        \end{itemize}
+    \end{definition}
+    \noindent We show that $(C[0, 1], \lVert . \rVert_\infty)$ is complete.
+    \begin{proposition}
+        The space $(C[0, 1], \lVert . \rVert_\infty)$ is complete.
+    \end{proposition}
+    \begin{proof}
+        Let $(f_n)_{n=1}^\infty$ be a Cauchy sequence in $C[0, 1]$. In that case, for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then 
+        \[\lVert f_m - f_n \rVert_\infty < \varepsilon.\]
+        Hence, for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$ and $t \in [0, 1]$, if $m, n \geq N$, then $|f_m(t) - f_n(t)| < \varepsilon$. So, $(f_n)$ is uniformly Cauchy. This implies that $(f_n)$ is uniformly convergent, which implies that $f_n \to f$, for some $f \in C[0, 1]$. Hence, $C[0, 1]$ is complete.
+    \end{proof}
+
+    Completeness can be inherited by subsets, but only if they are closed.
+    \begin{lemma}
+        Let $X$ be a complete metric space and let $V \subseteq X$. Then, $V$ is complete if and only if $V$ is closed.
+    \end{lemma}
+    \begin{proof}
+        First, assume that $V$ is complete, and let $(x_n)_{n=1}^\infty$ be a sequence in $V$ that converges in $X$. In that case, $(x_n)$ must be a Cauchy sequence in $V$. Since $V$ is complete, this implies that $(x_n)$ has a limit in $V$. Hence, $V$ is closed.
+
+        Now, assume that $V$ is closed, and let $(x_n)_{n=1}^\infty$ be a Cauchy sequence in $V$. Since $(x_n)$ is a Cauchy sequence in $X$, and $X$ is complete, it must be convergent in $X$. Furthermore, since $V$ is closed, we find that the limit lies in $V$. Hence, $V$ is complete.
+    \end{proof}
+
+    Now, we will look at some examples of complete and non-complete spaces.
+    \begin{proposition}
+        The sequence space $(\ell^\infty, \lVert \cdot \rVert_\infty)$ is complete.
+    \end{proposition}
+    \begin{proof}
+        Let $(x^{(k)})_{k=1}^\infty$ be a Cauchy sequence in $\ell^\infty$. That is, for all $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $k, l \in \mathbb{Z}_{\geq 1}$, if $k, l \geq N$, then $\lVert x^{(k)} - x^{(l)} \rVert_\infty < \varepsilon$. Hence, for all $n \in \mathbb{Z}_{\geq 1}$, $|x^{(k)}_n - x^{(l)}_n| < \varepsilon$, meaning that the sequence $(x^{(k)}_n)_{k=1}^\infty$ is Cauchy in $\mathbb{R}$. Since $\mathbb{R}$ is complete, we can define a sequence $x = (x_n)_{n=1}^\infty$ in $\mathbb{R}$ with $x^{(k)}_n \to x_n$. We show that $x^{(k)} \to x$ in $\ell^\infty$.
+
+        First, we show that $(x_n)$ is in $\ell^\infty$. Since $(x^{(k)})$ is a Cauchy sequence, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $k, l \in \mathbb{Z}_{\geq 1}$, if $k, l \geq N$, then $\lVert x^{(k)} - x^{(l)} \rVert_\infty < 1$. We know that the sequence $x^{(N)}$ is in $\ell^\infty$, so there exists an $L > 0$ such that $\lVert x^{(N)} \rVert_\infty < L$. Now, let $n \in \mathbb{Z}_{\geq 1}$. Since $x^{(k)}_n \to x_n$, we can find a $K \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $k \geq K$, then $|x^{(k)}_n - x_n| < 1$. Now, set $k = \max(N, K)$. Then,
+        \[|x_n| \leq |x_n - x_n^{(k)}| + |x_n^{(k)} - x_n^{(N)}| + |x_n^{(N)}| < L + 2.\]
+        Hence, $(x_n)$ is in $\ell^\infty$.
+    
+        Finally, we show that $x^{(k)} \to x$. Let $\varepsilon > 0$. Since $(x^{(k)})$ is Cauchy, there exists an $K \in \mathbb{Z}_{\geq 1}$ such that for $k, l \in \mathbb{Z}_{\geq 1}$, if $k, l \geq K$, then $\lVert x^{(k)} - x^{(l)} \rVert_\infty < \frac{\varepsilon}{2}$. Now, let $n \in \mathbb{Z}_{\geq 1}$. Since $x^{(k)}_n \to x_n$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq N$, then $|x^{(k)}_n - x_n| < \frac{\varepsilon}{2}$. Set $M = \max(K, N)$. In that case, for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq K$, then
+        \[|x^{(k)}_n - x_n| \leq |x^{(k)}_n - x^{(M)}_n| + |x^{(M)}_n - x_n| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.\]
+        So, $x^{(k)} \to x$.
+    \end{proof}
+    \begin{proposition}
+        The sequence space $(c_{00}, \lVert \cdot \rVert_\infty)$ is not complete.
+    \end{proposition}
+    \begin{proof}
+        Consider the sequence $(x^{(k)})_{k=1}^\infty$ in $c_{00}$ by
+        \[x^{(k)}_n = \begin{cases}
+            1/n & n \leq k \\
+            0 & \textrm{otherwise}.
+        \end{cases}\]
+        Moreover, define the sequence $x = (x_n)_{n=1}^\infty$ by $x_n = \frac{1}{n}$. We have
+        \[\lVert x^{(k)} - x \rVert_\infty = \frac{1}{n+1} \to 0\]
+        as $n \to \infty$, meaning that $x^{(k)} \to x$. However, $x \not\in c_{00}$, meaning that $c_{00}$ is not a closed subspace of $\ell^\infty$. This implies that $c_{00}$ is not complete.
+    \end{proof}
+    \begin{proposition}
+        The sequence space $(c_0, \lVert \cdot \rVert_\infty)$ is complete.
+    \end{proposition}
+    \begin{proof}
+        We show that $c_0 \subseteq \ell^\infty$ is closed. Let $(x^{(k)})_{k=1}^\infty$ be a sequence in $c_0$ that converges to $x = (x_n)_{n=1}^\infty$ in $\ell^\infty$. We show that $x \in c_0$. Let $\varepsilon > 0$. Since $(x^{(k)})$ is Cauchy, there exists a $K \in \mathbb{Z}_{\geq 1}$ such that for $k, l \in \mathbb{Z}_{\geq 1}$, if $k, l \geq K$, then $\lVert x^{(k)} - x^{(l)} \rVert_\infty < \frac{\varepsilon}{3}$. Moreover, since $x^{(K)} \in c_0$, there exists a $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $|x^{(K)}_n| < \frac{\varepsilon}{3}$. Finally, since $x^{(k)} \to x$, there exists an $L \in \mathbb{Z}_{\geq 1}$ such that for $k \in \mathbb{Z}_{\geq 1}$, if $k \geq L$, then $\lVert x^{(k)} - x \rVert_\infty < \frac{\varepsilon}{3}$. Now, set $K = \max(K, L)$. Then, for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then
+        \begin{align*}
+            |x_n| &\leq |x_n - x^{(k)}_n| + |x^{(k)}_n - x^{(K)}_n| + |x^{(K)}_n| \\
+            &\leq \lVert x - x^{(k)} \rVert_\infty + \lVert x^{(k)} - x^{(K)} \rVert_\infty + |x^{(K)}_n| \\
+            &< \frac{\varepsilon}{3} + \frac{\varepsilon}{3} + \frac{\varepsilon}{3} = \varepsilon.
+        \end{align*}
+        This implies that $x \in c_0$. So, $c_0$ is closed in $\ell^\infty$. Since $\ell^\infty$ is complete, this implies that $c_0$ is complete.
+    \end{proof}
+    % \begin{proposition}
+    %     Let $p \in [1, \infty)$. Then, the space $(C[0, 1], \lVert \cdot \rVert_p)$ is not complete.
+    % \end{proposition}
+    % \begin{proof}
+        
+    % \end{proof}
 
 % \section{Introduction to norms}
 % \subsection{Distance in vector spaces}
