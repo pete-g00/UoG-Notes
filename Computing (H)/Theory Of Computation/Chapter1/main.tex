@@ -28,6 +28,7 @@
 
 \newtheorem{proposition}{Proposition}[section]
 \newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
 
 \theoremstyle{definition}
 \newtheorem{definition}[proposition]{Definition}
@@ -343,6 +344,244 @@
         \end{itemize}
         So, the result follows from structural induction.
     \end{proof}
+    \newpage
 
+    \section{Theory of Equality}
+    In this section, we will define the theory of equality between $\lambda$-terms. $\beta$-reduction is part of the equality, e.g. we say
+    \[(\lambda x.x + 1) 1 = 2.\]
+    We assume that mathematical computations are part of the $\lambda$-calculus. Unlike $\beta$-reduction, we also have
+    \[(\lambda x.x + 1) 2 = (\lambda x.x + 2) 1\]
 
+    We denote the $\lambda$ formal theory $\lambda \vdash M = N$. This is a collection of axioms and inference rules. The theory of equality must satisfy the following:
+    \begin{itemize}
+        \item an application term must be equal to the result obtained by applying the function part of the term to the argument.
+        \item equality must be an equivalence relation.
+        \item equal terms should be equal in any context.
+    \end{itemize}
+    
+    We will now go through the rules of $\lambda$-theory. The first axiom is $\beta$-reduction:
+    \[\frac{}{(\lambda x.M)N = M[x := N]}.\]
+    Now, we have reflexivity axiom, and the symmetry and the transitivity inference rules to make equality an equivalence relation.
+    \[\frac{}{M = M} \qquad \frac{M = N}{N = M} \qquad \frac{M = N \qquad N = L}{M = L}.\]
+    The remaining rules cover reduction in applications and abstractions.
+    \[\frac{M = N}{MZ = NZ} \qquad \frac{M = N}{ZM = ZN} \qquad \frac{M = N}{\lambda x.M = \lambda x.N}.\]
+
+    If $M = N$ can be derived from the axioms and the inference rules of $\lambda$-theory, then we write $\lambda \vdash M = N$. The \emph{true statements} derived from applying axioms and inference rules of $\lambda$, are called \emph{theorems}. In this case, $M = N$ is a \emph{theorem}, and we say that $M$ and $N$ are \emph{convertible}. Note that if $M \equiv N$, then $M = N$, but not the other way around, e.g. $(\lambda x.x) y = y$, but they are not syntactically equivalent.
+
+    We will now show that equal terms are equal in any context.
+    \begin{theorem}
+        Let $C[]$ be a context and $M, N$ be terms. If $\lambda \vdash M = N$, then $\lambda \vdash C[M] = C[N]$.
+    \end{theorem}
+    \begin{proof}
+        We show this by structural induction:
+        \begin{itemize}
+            \item If $C[] = x$, then
+            \[x[M] \equiv x \equiv x[N].\]
+
+            \item If $C[] = []$, then
+            \[C[M] \equiv M = N \equiv C[N].\]
+
+            \item Now, let $C[] = \lambda x.C'[]$, where $C'[]$ is a context satisfying $C'[M] = C'[N]$. Hence,
+            \[C[M] \equiv \lambda x.C'[M] = \lambda x.C'[N] \equiv C[N],\]
+            applying the rule
+           \[\frac{C'[M] = C'[N]}{\lambda x.C'[M] = \lambda x.C'[N]}\] 
+
+           \item Finally, let $C[] = C_1[] C_2[]$, where $C_1[]$ and $C_2[]$ are contexts satisfying $C_1[M] = C_1[N]$ and $C_2[M] = C_2[N]$. Then,
+           \[C[M] \equiv C_1[M] C_2[M] = C_1[N] C_2[M] = C_1[N] C_2[N] \equiv C[N].\]
+           We apply the following rules:
+           \[\frac{M = N}{C_1[M] C_2[M] = C_1[N] C_2[M]} \qquad \frac{M = N}{C_1[N] C_2[M] = C_1[N] C_2[N]}\]
+           and
+           \[\frac{C_1[M] C_2[M] = C_1[N] C_2[M] \qquad C_1[N] C_2[M] = C_1[N] C_2[N]}{C_1[M] C_2[M] = C_1[N] C_2[N]}.\]
+        \end{itemize}
+    \end{proof}
+    \noindent This property is called \emph{referential transparency}. This is an advantage of functional languages that states that the value of the expression is the only thing that matters; not the way it is computed. This property does not hold if expressions have side effects (e.g. changing state or performing input/output).
+
+    We now establish the relationship between equality and substitution.
+    \begin{theorem}
+        Let $M, M', N, N'$ be terms.
+        \begin{itemize}
+            \item If $M = M'$ then $M[x := N] = M'[x := N]$.
+            \item If $N = N'$, then $M[x := N] = M[x := N']$.
+            \item If $M = M'$ and $N = N'$, then $M[x := N] = M'[x := N']$.
+        \end{itemize}
+    \end{theorem}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item By definition, we have
+            \[M[x := N] \equiv (\lambda x.M)N.\]
+            Since $M = M'$, we have $\lambda x.M = \lambda x.M'$. Moreover, since $\lambda x.M = \lambda x.M'$, we find that $(\lambda x.M)N = (\lambda x.M')N$ . Hence,
+            \[M[x := N] \equiv (\lambda x.M)N = (\lambda x.M')N \equiv M'[x := N].\]
+
+            \item We show this by structural induction on substitution.
+            \begin{itemize}
+                \item First, let $M = x$. Then,
+                \[x[x := N] \equiv N = N' \equiv x[x := N'].\]
+
+                \item Now, let $M = y$, where $y$ is distinct from $x$. Then,
+                \[y[x := N] \equiv y \equiv y[x := N'].\]
+
+                \item Next, let $M = (\lambda x.M')$, where $M'[x := N] = M'[x := N']$. Then, we know that
+                \begin{align*}
+                    M[x := N] &\equiv (\lambda y.M')[x := N] \\
+                    &\equiv \lambda y.(M'[x := N]) \\
+                    &= \lambda y.(M'[x := N']) \\
+                    &\equiv (\lambda y.M')[x := N'] \equiv M[x := N'].
+                \end{align*}
+
+                \item Finally, let $M = M_1 M_2$, where $M_1[x := N] = M_1[x := N']$ and $M_2[x := N] = M_2[x := N']$. Then, we know that
+                \begin{align*}
+                    M[x := N] &\equiv (M_1 M_2)[x := N] \\
+                    &\equiv (M_1[x := N]) (M_2[x := N]) \\
+                    &= (M_1[x := N']) (M_2[x := N]) \\
+                    &= (M_1[x := N']) (M_2[x := N']) \\
+                    &\equiv (M_1 M_2)[x := N'] \equiv M[x := N'].
+                \end{align*}
+            \end{itemize}
+            So, the result follows from induction.
+            
+            \item Since $M[x := N] = M'[x := N]$ and $M'[x := N] = M'[x := N']$, this follows from transitivity.
+        \end{itemize}
+    \end{proof}
+
+    \begin{theorem}[Fixed Point Theorem]
+        Let $F \in \Lambda$ be a term. Then, there exists a term $X \in \Lambda$ such that $FX = X$.
+    \end{theorem}
+    \begin{proof}
+        Let $W \equiv \lambda x.F(xx)$ and $X \equiv WW$. Then,
+        \[X \equiv WW \equiv (\lambda x.F(xx)) W = F(WW) \equiv FX.\]
+    \end{proof}
+    \noindent We say that $X$ is a \emph{fixed point} of $X$. The identity function $I \equiv \lambda x.x$ fixes every term, i.e. $IM \equiv (\lambda x.x)M = M$. We will now use the theorem to find a fixed point for the term $F = \lambda xy.xy$. We define
+    \[W \equiv \lambda x.F(xx) \equiv \lambda x.((\lambda xy.xy)(xx)) = \lambda x.\lambda y.(xx)y \equiv \lambda xy.(xx)y\]
+    So, the fixed point is
+    \[X \equiv WW \equiv (\lambda xy.(xx)y)(\lambda xy.(xx)y)\]
+    We can directly verify if $X$ is a fixed point of $F$:
+    \begin{align*}
+        FX &\equiv (\lambda xy.xy)((\lambda xy.(xx)y)(\lambda xy.(xx)y)) \\
+        &= \lambda y.((\lambda xy.(xx)y)(\lambda xy.(xx)y))y \\
+        &= (\lambda xy.(xx)y)(\lambda xy.(xx)y) \equiv X.
+    \end{align*}
+    
+    The fixed point for the identity function is $(\lambda x.xx)(\lambda x.xx)$. We will see this term later. In the fixed point theorem, we have self-application, i.e. subterms of the form $xx$. This is not typically seen in programming languages, but has huge consequences in $\lambda$-calculus.
+
+    Now, we will see an application of the fixed point theorem-defining recursive functions. The normal definition of the factorial function is the following:
+    \[\texttt{fac(n) = if n == 0 then 1 else n*fac(n-1)}\]
+    Since $\lambda$-terms do not have the concept of recursion, we will have to implement this algorithm using the fixed point theorem. To do so, define the term
+    \[F = \lambda f.\lambda n.\texttt{if} (\texttt{eq} \ n \ 0) 1 (\texttt{mul} \ n \ (f(n-1))).\]
+    In this term, assume that the $\lambda$-calculus has the terms \texttt{if}, \texttt{eq} and \texttt{mul} with their expected meaning. Then, let \texttt{fac} be a fixed point of $F$. We can evaluate factorial of 1 using this term:
+    \begin{align*}
+        \texttt{fac}(1) &= F(\texttt{fac})(1) \\
+        &\equiv (\lambda f.\lambda n.\texttt{if} (\texttt{eq} \ n \ 0) 1 (\texttt{mul} \ n (f(n-1))))(\texttt{fac})(1) \\
+        &= \texttt{if} (\texttt{eq} \ 1 \ 0) 1 (\texttt{mul} \ 1 (\texttt{fac}(0))) \\
+        &= \texttt{fac}(0) \\
+        &= F(\texttt{fac})(0) \\
+        &\equiv (\lambda f.\lambda n.\texttt{if} (\texttt{eq} \ n \ 0) 1 (\texttt{mul} \ n (f(n-1))))(\texttt{fac})(0) \\
+        &= \texttt{if} (\texttt{eq} \ 0 \ 0) 1 (\texttt{mul} \ 1 (\texttt{fac}(-1)))  \\
+        &= 1.
+    \end{align*}
+    \noindent Clearly, this formula can be used to evaluate higher factorials as well.
+    
+    \subsection{Extensionality}
+    The concept of equality we have defined is the convertibility relationship. It says that two terms are equal if they encode the same algorithm. However, there are some terms we would naturally consider to be equal, but we cannot prove that they are equal in $\lambda$-theory. For instance, $\lambda x.Mx = M$ cannot be shown in $\lambda$. In the extensionality relationship, two terms are considered equal if they give equal results to equal arguments.
+
+    We can extend the $\lambda$-theory to derive $\lambda x.Mx = M$. We can directly add it as a new axiom, called the $\eta$-axiom- it states that $\lambda x.Mx = M$ if $x$ is not free in $M$. This is the $\lambda \eta$ theory. Another way of doing this is using the $ext$ rule:
+    \[\frac{Mx = Nx}{M = N}\]
+    if $x$ is not free in $M$ and $N$. This is the $\lambda + ext$ theory. We will show that the two theories are equivalent.
+    \begin{theorem}
+        $\lambda \eta$ and $\lambda + ext$ are equivalent.
+    \end{theorem}
+    \begin{proof}
+        Since $\lambda \eta$ and $\lambda + ext$ both extend $\lambda$, it suffices to show that their extensions are equivalent.
+
+        We first show that $\lambda \eta \vdash Mx = Nx \implies M = N$ if $x$ is not free in $M$ and $N$. So, let $M, N$ be terms and $x$ a variable not free in $M$ such that $Mx = Nx$. This implies that $\lambda x.Mx = \lambda x.Nx$. Hence, by $\lambda \eta$, we find that
+        \[M = \lambda x.Mx = \lambda x.Nx = N.\]
+        So, $\lambda \eta \vdash \lambda + ext$.
+
+        Now, we show that $\lambda + ext \vdash \lambda x.Mx = M$ if $x$ is not free in $M$. So, let $M$ be a term and let $x$ be a variable not free in $M$. We know that $(\lambda x.Mx)x = Mx$. Hence, by $ext$, we find that $\lambda x.Mx = M$. So, $\lambda + ext \vdash \lambda \eta$.
+    \end{proof}
+
+    \subsection{Consistency}
+    For a theory to be useful, nothing every equation can hold- there must be theorems (satisfied equations) and non-theorems (equations not satisfied).
+    \begin{definition}
+        An \emph{equation} is a formula of the form $M = N$, for terms $M$ and $N$. It is \emph{closed} if it has no free variables.
+    \end{definition}
+    \begin{definition}
+        Let $\mathcal{T}$ be a theory with equations as formulae. We say that $\mathcal{T}$ is \emph{consistent}, denoted by $\operatorname{Con}(\mathcal{T})$, if it does not prove every closed equation. If $\mathcal{T}$ is a set of equations, then $\lambda + \mathcal{T}$ is formed by adding the equations of $\mathcal{T}$ as axioms to $\lambda$, denoted bt $\operatorname{Con}(\lambda + \mathcal{T})$. 
+    \end{definition}
+
+    The theories $\lambda$ and $\lambda \eta$ are consistent. It is quite easily possible to lose consistency, e.g. by adding just a single equation. For instance, define
+    \begin{align*}
+        S &\equiv \lambda xyz.xz(yz) \\
+        K &\equiv \lambda xy.x \\
+        I &\equiv \lambda x.x
+    \end{align*}
+    If we add the equation $S = K$ to $\lambda$ or $\lambda \eta$, we get an inconsistent theory. To show this, let $D$ be an arbitrary term. We note that
+    \begin{align*}
+        SMNO &\equiv MO(NO) \\
+        KMN &\equiv M \\
+        IM &\equiv M
+    \end{align*}
+    for all terms $M, N, O$. So,
+    \[S = K \implies SABC = KABC \implies AC(BC) = AC\]
+    for all terms $A, B, C$. Now, if $A = C = I$, then
+    \[AC(BC) = AC \implies BI = I.\]
+    Finally, if $B = KD$, then
+    \[BI = I \implies KDI = I \implies D = I.\]
+    Hence, we have shown that any arbitrary term $D$ is equal to the identity term $I$. So, the theory is inconsistent.
+
+    \begin{definition}
+        We say that the terms $M$ and $N$ are \emph{incompatible}, denoted $M\#N$, if $\lnot \operatorname{Con}(M = N)$, i.e. $\lambda + M = N$ is not consistent.
+    \end{definition}
+    \noindent Note that this is different to $M = N$ not being derivable- this means that adding $M = N$ makes the theory inconsistent. From the example we considered above, $S$ and $K$ are incompatible.
+
+    We will now show that the terms $xx$ and $xy$ are incompatible. So, assume that $xx = xy$. In that case,
+    \begin{align*}
+        \lambda xy.xx &= \lambda xy.xy \\
+        (\lambda xy.xx)MN &= (\lambda xy.xx)MN \\
+        MM &= MN
+    \end{align*}
+    for any terms $M$ and $N$. Now, if $M = I$, then we find that $N = I$, so this theory is also inconsistent.
+
+    Next, we show that $x(yz)$ and $(xy)z$ are inconsistent. To see this, assume $x(yz) = (xy)z$. Then,
+    \begin{align*}
+        \lambda xyz.x(yz) &= \lambda xyz.(xy)z \\
+        (\lambda xyz.x(yz)) MNO &= (\lambda xyz.(xy)z) MNO \\
+        M(NO) &= (MN)O
+    \end{align*}
+    for any terms $M, N$ and $O$. Now, let $M = \lambda xy.y$. Then,
+    \[P = M(NO)P = (MN)OP = OP.\]
+    So, if $P = N = I$ and $O$ arbitrary, we find that $O = I$. So, this theory is inconsistent.
+
+    We will now look at normal forms.
+    \begin{definition}
+        Let $M$ be a term.
+        \begin{itemize}
+            \item We say that $M$ is a $\beta$-normal form, denoted $\beta$-nf. or nf, if $M$ has no subterms of the form $(\lambda x.R)S$.
+            \item We say that $M$ has a $\beta$-normal form if there exists an $N = M$ such that $N$ is $\beta$-nf.
+            \item We say that $M$ is a $\beta \eta$-normal form if $M$ is a $\beta$-n.f. with no subterms of the form $(\lambda x.Rx)$ where $x$ is free in $R$.
+            \item We say that $M$ has a $\beta \eta$-normal form if there exists an $N = M$ such that $N$ is $\beta \eta$-nf.
+        \end{itemize}
+    \end{definition}
+    The basic idea of $\lambda$-calculus as a programming language is that computation consists of applying the $\beta$-rule from left to right and converting $(\lambda x.M)N$ to $M[x := N]$ until we reach a $\beta$-nf, which is the result. We show this with some examples:
+    \begin{itemize}
+        \item The term $\lambda x.x$ is a normal form;
+        \item The term $(\lambda xy.x)(\lambda x.x)$ has a normal form- $\lambda yx.x$;
+        \item The term $(\lambda x.xx)(\lambda x.xx)$ does not have a normal form since it $\beta$-reduces to itself.
+    \end{itemize}
+    As we just saw, it might be that a term does not have a normal form.
+
+    We will now look at some properties for normal forms.
+    \begin{proposition}
+        Let $M$ be a term.
+        \begin{itemize}
+            \item $M$ has a $\beta$-nf if and only if $M$ has a $\beta \eta$-nf;
+            \item If $M$ and $N$ are distinct $\beta$-nfs, then $M = N$ is not a theorem of $\lambda$ (and similarly for $\lambda \eta$ with $\beta \eta$-nfs);
+            \item If $M$ and $N$ are distinct $\beta \eta$-nfs, then $M \# N$.
+        \end{itemize}
+    \end{proposition}
+    \noindent Note the final equation states that any two distinct $\beta \eta$-nfs cannot be set equal without making the theory inconsistent. Hence, $\beta \eta$ is the weakest consistent form of equality. This is the property of completeness, given below.
+    \begin{proposition}
+        Let $M$ and $N$ be $\lambda$-terms. Then, either $\lambda \eta \vdash M = N$ or $\lambda \eta + (M = N)$ is inconsistent.
+    \end{proposition}
+    
 \end{document}
