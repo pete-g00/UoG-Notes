@@ -160,7 +160,387 @@
     \begin{definition}
         Let $(X, \mathcal{A}, \mu)$ and $(X, \mathcal{B}, \nu)$ be measure spaces, and let $f \colon X \to Y$ be a function. Then, $f$ is \emph{measurable} if $f^{-1}(B) \in \mathcal{A}$ for all $B \in \mathcal{B}$.
     \end{definition}
-    \noindent If $X = Y = \mathbb{R}$, then this definition is equivalent to asking that $f^{-1}(-\infty, a)$ is measurable for all $a \in \mathbb{R}$. By definition, all continuous functions are measurable- the preimage of an open set is open, which is measurable.
+    \noindent If $X = Y = \mathbb{R}$, then this definition is equivalent to asking that $f^{-1}(-\infty, a)$ is measurable for all $a \in \mathbb{R}$. We can even generalise this to other similar preimages.
+    \begin{proposition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be a function. Then, the following are equivalent:
+        \begin{enumerate}
+            \item $f^{-1}(-\infty, a)$ is measurable for all $a \in \mathbb{R}$
+            \item $f^{-1}(a, \infty)$ is measurable for all $a \in \mathbb{R}$
+            \item $f^{-1}(-\infty, a]$ is measurable for all $a \in \mathbb{R}$
+            \item $f^{-1}[a, \infty)$ is measurable for all $a \in \mathbb{R}$
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        Since measurable sets form a $\sigma$-algebra, we know that it is closed under complements. Hence, we know that $f^{-1}(-\infty, a)$ is measurable if and only if $f^{-1}[a, \infty)$ is measurable, and similarly $f^{-1}(-\infty, a]$ is measurable if and only if $f^{-1}(a, \infty)$ is measurable. So, we show $(1) \implies (3)$ and $(3) \implies (1)$.
+        \begin{enumerate}
+            \item[$(1) \implies (3)$] Assume that for all $a \in \mathbb{R}$, $f^{-1}(-\infty, a)$ is measurable. Now, for $a \in \mathbb{R}$, we claim that
+            \[(-\infty, a] = \bigcap_{n=1}^\infty (-\infty, a + 1/n)\]
+            We have $(-\infty, a) \subseteq (-\infty, a + 1/n)$ for all $n \in \mathbb{Z}_{\geq 1}$, meaning that
+            \[(-\infty, a] \subseteq \bigcap_{n=1}^\infty (-\infty, a + 1/n).\]
+            Next, let $x \in (a, \infty)$. Define $\varepsilon = x - a > 0$. We can find an $n \in \mathbb{Z}_{\geq 1}$ such that $n > \frac{1}{\varepsilon}$. Hence, 
+            \[a + \frac{1}{n} < a + \varepsilon = x,\]
+            meaning that $x \not\in (-\infty, a + 1/n)$. This implies that
+            \[x \not\in \bigcap_{n=1}^\infty (-\infty, a + 1/n).\]
+            Hence,
+            \[(-\infty, a] = \bigcap_{n=1}^\infty (-\infty, a + 1/n).\]
+            So, 
+            \[f^{-1}(-\infty, a] = f^{-1} \left(\bigcap_{n=1}^\infty (-\infty, a + 1/n)\right) = \bigcap_{n=1}^\infty f^{-1} (-\infty, a + 1/n).\]
+            We know that $(-\infty, a+1/n)$ is measurable for all $n \in \mathbb{Z}_{\geq 1}$. Since a $\sigma$-algebra is closed under countable intersection, it follows that $f^{-1}(-\infty, a]$ is measurable.
+            
+            \item[$(3) \implies (1)$] Now, assume that for all $a \in \mathbb{R}$, $f^{-1} (-\infty, a]$ is measurable. Then, for $a \in \mathbb{R}$, we claim that
+            \[(-\infty, a) = \bigcup_{n=1}^\infty (-\infty, a - 1/n].\]
+            We know that $(-\infty, a-1/n] \subseteq (-\infty, a)$ for all $a \in \mathbb{R}$, meaning that
+            \[(-\infty, a) \supseteq \bigcup_{n=1}^\infty (-\infty, a - 1/n].\]
+            Now, let $x \in (-\infty, a)$. Let $\varepsilon = a - x > 0$. We can find an $n \in \mathbb{Z}_{\geq 1}$ such that $n > \frac{1}{\varepsilon}$. In that case,
+            \[a - \frac{1}{n} > a - \varepsilon = x,\]
+            which implies that $x \in (-\infty, a - 1/n]$. Hence,
+            \[x \in \bigcup_{n=1}^\infty (-\infty, a - 1/n].\]
+            So,
+            \[(-\infty, a) = \bigcup_{n=1}^\infty (-\infty, a - 1/n].\]
+            Using the same argument as above, we find that $f^{-1}(-\infty, a)$ is measurable.
+        \end{enumerate}
+    \end{proof}
+    \noindent Using this result, we find that a continuous function is measurable- since $(-\infty, a)$ is open for all $a \in \mathbb{R}$, its preimage $f^{-1}(-\infty, a)$ is open, meaning that it is measurable.
 
+    We will now look at some simple results about measurable functions.
+    \begin{proposition}
+        Let $f, g \colon \mathbb{R} \to \mathbb{R}$ be measurable functions. Then,
+        \begin{itemize}
+            \item $f + g$ is measurable;
+            \item $fg$ is measurable; and
+            \item $cf$ is measurable for all $c \in \mathbb{R}$.
+        \end{itemize}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item Let $a \in \mathbb{R}$. We claim that
+            \[(f + g)^{-1} (-\infty, a) = \bigcup_{r \in \mathbb{Q}} (f^{-1}(-\infty, r) \cap g^{-1}(-\infty, a - r)).\]
+            First, let $x \in (f + g)^{-1} (-\infty, a)$. In that case, $f(x) + g(x) < a$, meaning that $f(x) < a - g(x)$. Since $\mathbb{Q}$ is dense in $\mathbb{R}$, we can find an $r \in \mathbb{Q}$ such that $f(x) < r < a - g(x)$, i.e. $f(x) < r$ and $g(x) < a - r$. That is, $x \in f^{-1}(-\infty, r) \cap g^{-1}(-\infty, a -r)$. Hence,
+            \[(f + g)^{-1} (-\infty, a) \subseteq \bigcup_{r \in \mathbb{Q}} (f^{-1}(-\infty, r) \cap g^{-1}(-\infty, a - r)).\]
+            Now, let $x \in f^{-1}(-\infty, r) \cap g^{-1}(-\infty, a - r)$. In that case, $f(x) < r$ and $g(x) < a - r$, meaning that $f(x) + g(x) < a$. So, $(f + g)^{-1}(x) \in (-\infty, a)$. This implies that 
+            \[(f + g)^{-1} (-\infty, a) \subseteq \bigcup_{r \in \mathbb{Q}} (f^{-1}(-\infty, r) \cap g^{-1}(-\infty, a - r)).\]
+            Next, since $f$ and $g$ are measurable, and $\sigma$-algebras are closed under intersections and countable unions, we find that $f + g$ is measurable.
+
+            \item We first show that $f^2$ is measurable. So, let $a \in \mathbb{R}$. If $a < 0$, then $(f^2)^{-1}(a, \infty) = \mathbb{R}$ is measurable. Otherwise,
+            \begin{align*}
+                (f^2)^{-1}(a, \infty) &= \{x \in \mathbb{R} \mid f(x)^2 > a\} \\
+                &= \{x \in \mathbb{R} \mid f(x) < -\sqrt{a} \textrm{ or } f(x) > \sqrt{a}\} \\
+                &= f^{-1}(-\infty, -\sqrt{a}) \cup f^{-1}(\sqrt{a}, \infty).
+            \end{align*}
+            Since $f$ is measurable, we find that $f^2$ is measurable. Now, 
+            \[4fg = (f + g)^2 - (f - g)^2,\]
+            and since $(f + g)^2$ and $(f - g)^2$ are measurable, we find that $fg$ is measurable.
+
+            \item If $c = 0$, then $cf(x) = 0$ for all $x \in \mathbb{R}$, meaning that
+            \[(cf)^{-1}(-\infty, a) = \begin{cases}
+                \varnothing & a \leq 0 \\
+                \mathbb{R} & \textrm{otherwise}.
+            \end{cases}\]
+            Hence, $cf$ is measurable. Otherwise, if $c > 0$, then
+            \begin{align*}
+                (cf)^{-1}(-\infty, a) &= \{x \in \mathbb{R} \mid cf(x) < a\} \\
+                &= \{x \in \mathbb{R} \mid f(x) < a/c\} \\
+                &= f^{-1}(-\infty, a/c).
+            \end{align*}
+            Since $f$ is measurable, we find that $f^{-1}(-\infty, a/c)$ is measurable. Hence, $cf$ is measurable. Finally, if $c < 0$, then
+            \begin{align*}
+                (cf)^{-1}(-\infty, a) &= \{x \in \mathbb{R} \mid cf(x) < a\} \\
+                &= \{x \in \mathbb{R} \mid -cf(x) > -a\} \\
+                &= (-cf)^{-1}(-a, \infty).
+            \end{align*}
+            Since $-cf$ is measurable, we conclude that $cf$ is measurable.
+        \end{itemize}
+    \end{proof}
+    \begin{proposition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be measurable. Then,
+        \begin{itemize}
+            \item the function $f^+ = \max(0, f)$ is measurable;
+            \item the function $f^- = \max(0, -f)$ is measurable; and
+            \item the function $|f|$ is measurable.
+        \end{itemize}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item By construction $f^+(x) \geq 0$ for all $x \in \mathbb{R}$. Hence, for $a \in (-\infty, 0)$, $(f^+)^{-1}(-\infty, a) = \varnothing$ is measurable. Now, for $a \in [0, \infty)$, we find that $f^+(x) = a$ if and only if $f(x) \leq a$, meaning that 
+            \[(f^+)^{-1}(-\infty, a) = f^{-1}(-\infty, a)\]
+            is measurable. Hence, $f^+$ is measurable.
+
+            \item Since $f^- = (-f)^+$, we find that $f^-$ is measurable.
+            
+            \item Let $a \in \mathbb{R}$. Since $|f(x)| \geq 0$ for all $x \in \mathbb{R}$, we find that $f^{-1}(a, \infty) = \mathbb{R}$ if $a \leq 0$. Now, if $a > 0$, then
+            \begin{align*}
+                |f|^{-1}(a, \infty) &= \{x \in \mathbb{R} \mid |f(x)| > a\} \\
+                &= \{x \in \mathbb{R} \mid f(x) < -a \textrm{ or } f(x) > a\} \\
+                &= f^{-1}(-\infty, -a) \cup f^{-1}(a, \infty).
+            \end{align*}
+            Since $f$ is measurable, both $f^{-1}(-\infty, a)$ and $f^{-1}(a, \infty)$ are measurable. Hence, $|f|^{-1}(a, \infty)$ is measurable.
+        \end{itemize}
+    \end{proof}
+
+    We now define $\inf$ and $\sup$ for a sequence of functions $(f_n)_{n=1}^\infty$, $f_n \colon \mathbb{R} \to \mathbb{R}$:
+    \begin{align*}
+        (\inf f_n)(x) &= \inf_{n=1}^\infty f_n(x) & (\sup f_n)(x) &= \sup_{n=1}^\infty f_n(x).
+    \end{align*}
+    It turns out that if $(f_n)$ is a sequence of measurable functions, then $\inf f_n$ and $\sup f_n$ are measurable. In particular, the functions
+    \begin{align*}
+        (\limsup f_n)(x) &= \sup_{n=1}^\infty \inf_{k=n}^\infty f_k(x) & (\liminf f_n)(x) &= \inf_{n=1}^\infty \sup_{k=n}^\infty f_k(x)
+    \end{align*}
+    are measurable.
+    \newpage
+
+    \section{Simple Functions and Integration}
+    In this section, we will cover simple functions and define integration for simple functions. Since simple functions can be used to approximate any measurable function, we will use this to define integration for measurable functions later.
+
+    \begin{definition}
+        Let $E \subseteq \mathbb{R}$. The \emph{characteristic function} $\chi_E \colon \mathbb{R} \to \mathbb{R}$ is given by
+        \[\chi_E(x) = \begin{cases}
+            1 & x \in E \\
+            0 & x \not\in E.
+        \end{cases}\]
+    \end{definition}
+    \noindent For $a \in \mathbb{R}$, we have
+    \[(\chi_E)^{-1}(a, \infty) = \begin{cases}
+        \mathbb{R} & a < 0 \\
+        E & 0 \leq a < 1 \\
+        \varnothing & \textrm{otherwise}.
+    \end{cases}\]
+    Hence, $\chi_E$ is measurable if and only if $E$ is measurable. 
+    
+    We now define simple functions.
+    \begin{definition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be a function. We say that $f$ is \emph{simple} if there exists a sequence of pairwise disjoint sets $(E_j)_{j=1}^n$ and $c_j \in \mathbb{R}$ such that
+        \[f(x) = \sum_{j=1}^n c_j \chi_{E_j}(x)\]
+        for all $x \in \mathbb{R}$. 
+    \end{definition}
+    \noindent It turns out that a simple function is measurable if and only if each $E_j$ is measurable.
+    \begin{proposition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be a simple function, with
+        \[f(x) = \sum_{j=1}^n c_j \chi_{E_j}(x)\]
+        for all $x \in \mathbb{R}$, with $c_i = c_j$ if and only if $i = j$. Then, $f$ is measurable if and only if $E_j$ is measurable for all $1 \leq j \leq n$.
+    \end{proposition}
+    \begin{proof}
+        Assume that $E_j$ is measurable for all $1 \leq j \leq n$. In that case, we know that $\chi_{E_j}$ is measurable for all $1 \leq j \leq n$. Since scalar products and finite sums of measurable functions is measurable, we conclude that $f$ is measurable.
+
+        Now, assume that $E_j$ isn't measurable for some $1 \leq j \leq n$. In that case, we know that
+        \[f^{-1}(c_j) = E_j\]
+        isn't measurable. We have
+        \[f^{-1}(-\infty, c_j] \setminus f^{-1}(-\infty, c_j) = f^{-1}(c_j),\]
+        so if $f$ was measurable, then $f^{-1}(c_j)$ would also be measurable. Hence, $f$ cannot be measurable.
+    \end{proof}
+    
+    Also, every (measurable) function $f \colon \mathbb{R} \to \mathbb{R}$ can be approximated pointwise by a sequence of simple (measurable) functions.
+    \begin{proposition}
+        Let $f \colon \mathbb{R} \to \mathbb{R}$ be a function. Then, there exists a sequence of simple measurable functions $(s_k)_{k=1}^\infty$ such that $s_k \to f$ pointwise.
+    \end{proposition}
+    \begin{proof}
+        Without loss of generality, assume that $f \geq 0$, i.e. $f(x) \geq 0$ for all $x \in \mathbb{R}$. For $k \in \mathbb{Z}_{\geq 1}$, define the set
+        \[E_j^k = f^{-1} [\tfrac{j-1}{2^k}, \tfrac{j}{2^k}]\]
+        for $1 \leq k \leq 2^{2k}$, and let $E = f^{-1}(2^k, \infty)$. Then, define the function
+        \[s_k = \sum_{j=1}^{2^{2k}} \frac{j-1}{2^k} \chi_{E_j^k} + 2^k f^{-1} (E).\]
+        Since the intervals are getting finer and spanning a larger interval (without bound), we find that $s_k \to f$ pointwise. Moreover, since open sets are Borel, we find that $E_j$ and $E$ are measurable for $1 \leq j \leq 2^{2k}$. So, $s_k$ are simple measurable for $k \in \mathbb{Z}_{\geq 1}$.
+    \end{proof}
+    % TODO: Illustrate with an example
+
+    We now define integration.
+    \begin{definition}
+        Let $s$ be a simple function and $A$ a measurable function, with
+        \[s = \sum_{i=1}^n c_i \chi_{E_i},\]
+        for $1 \leq i \leq j$. We define the \emph{integral of $s$ over $A$} by
+        \[\int_A s \ d\mu := \sum_{i=1}^n c_i \cdot \mu(A \cap E_i).\]
+        For a measurable function $f \geq 0$, we define the \emph{integral}
+        \[\int_A f \ d\mu := \sup \left\{\int_A s \ d\mu \mid 0 \leq s \leq f \textrm{ simple measurable}\right\}.\]
+        If the value is finite, we say that $f$ is \emph{integrable}. For a measurable function $f$, we say that $f$ is \emph{integrable} if $f^+ = \max(0, f)$ and $f^- = \max(0, -f)$ are both integrable, with integral
+        \[\int_A f \ d\mu := \int_A f^+ \ d\mu - \int_A f^- \ d\mu.\]
+        The set $L^1(\mathbb{R}, \mu) = L^1$ the collection of \emph{Lebesgue-integrable} functions.
+    \end{definition}
+
+    We will now show some properties about integration.
+    \begin{proposition}
+        Let $A \subseteq \mathbb{R}$. Then, the integral
+        \[\int_{A} f \ d\mu = 0\]
+        for every $f \in L^1$ if and only if $\mu(A) = 0$.
+    \end{proposition}
+    \begin{proof}
+        First, assume that $\mu(A) = 0$. In that case, for $0 \leq s \leq f$ simple measurable, with
+        \[s = \sum_{i=1}^{n} c_i \chi_{E_i},\]
+        we know that $\mu(A \cap E_i) \leq \mu(A) = 0$ for all $0 \leq i \leq n$, and so
+        \[\int_A s \ d\mu = \sum_{i=1}^{n} c_i \cdot \mu(A \cap E_i) = 0.\]
+        Hence,
+        \[\int_A f \ d\mu = \sup \{0\} = 0.\]
+
+        Now, assume that the integral
+        \[\int_A f \ d\mu = 0\]
+        for every $f \in L^1$. In that case, let $f$ be the constant 1 function. Since this is simple measurable, we find that
+        \[0 = \int_A f \ d\mu = 1 \cdot \mu(A \cap \mathbb{R}) = \mu(A).\]
+    \end{proof}
+    \begin{proposition}
+        Let $f, g \in L^1$.
+        \begin{enumerate}
+            \item Then, $f + g \in L^1$, with
+            \[\int_{\mathbb{R}} f + g \ d\mu = \int_{\mathbb{R}} f \ d\mu + \int_{\mathbb{R}} g \ d\mu.\]
+            
+            \item If $f \leq g$, then 
+            \[\int_{\mathbb{R}} f \ d\mu \leq \int_{\mathbb{R}} g \ d\mu.\]
+            
+            \item The function $|f| \in L^1$, with 
+            \[\left|\int_{\mathbb{R}} f \ d\mu\right| \leq \int_{\mathbb{R}} |f| \ d\mu.\]
+            
+            \item If 
+            \[\mu(\{x \in \mathbb{R} \mid f(x) \neq g(x)\}) = 0,\]
+            then 
+            \[\int_{\mathbb{R}} f \ d\mu = \int_{\mathbb{R}} g \ d\mu.\]
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        We will not prove (1) yet.
+        \begin{enumerate}
+            \addtocounter{enumi}{1}
+            \item First, assume that $0 \leq f \leq g$. In that case, for $0 \leq s \leq f$ simple measurable, we also have $0 \leq s \leq g$. Hence, by the supremum property, we find that
+            \[\int_{\mathbb{R}} f \ d\mu \leq \int_{\mathbb{R}} g \ d\mu.\]
+            Now, if $f \leq g$, then we have $f^+ \leq g^+$ and $f^- \geq g^-$, meaning that
+            \[\int_{\mathbb{R}} f \ d\mu = \int_{\mathbb{R}} f^+ \ d\mu - \int_{\mathbb{R}} f^- \ d\mu \leq \int_{\mathbb{R}} g^+ \ d\mu - \int_{\mathbb{R}} g^- = \int_{\mathbb{R}} g \ d\mu.\]
+            
+            \item By definition, if $f \in L^1$, then $f^+, f^- \in L^1$, meaning that $|f| = f^+ + f^- \in L^1$. Moreover,
+            \begin{align*}
+                \left|\int_{\mathbb{R}} f \ d\mu\right| &= \left|\int_{\mathbb{R}} f^+ \ d\mu - \int_{\mathbb{R}} f^- \ d\mu \right| \\
+                &\leq \int_{\mathbb{R}} f^+ \ d\mu + \int_{\mathbb{R}} f^- \ d\mu \\
+                &= \int_{\mathbb{R}} |f| \ d\mu.
+            \end{align*}
+            
+            \item Let
+            \[E = \mu(\{x \in \mathbb{R} \mid f(x) \neq g(x)\}).\]
+            In that case, $(f - g)^{-1}(\mathbb{R} \setminus \{0\}) = E$. Hence, for $0 \leq s \leq |f - g|$, we also have $s^{-1}(\mathbb{R} \setminus \{0\}) \subseteq E$, i.e. $\mu(s^{-1}(\mathbb{R} \setminus \{0\})) = 0$. This implies that for $t \in \mathbb{R} \setminus \{0\}$, $\mu(s^{-1}(t)) = 0$. So,
+            \[\int_{\mathbb{R}} s \ d\mu = \sum_{t \in s(\mathbb{R})} t \cdot s^{-1}(t) = \sum_{t \in s(\mathbb{R} \setminus \{0\})} t \cdot s^{-1}(t) = \sum_{t \in s(\mathbb{R} \setminus \{0\})} 0 = 0.\]
+            Hence,
+            \[\int_{\mathbb{R}} |f - g| \ d\mu = \sup \{0\} = 0.\]
+            This implies that
+            \[0 \leq \left|\int_{\mathbb{R}} f - g \ d\mu \right| \leq \int_{\mathbb{R}} |f - g| \ d\mu = 0,\]
+            meaning that
+            \[\int_{\mathbb{R}} f - g \ d\mu = 0.\]
+            So,
+            \[\int_{\mathbb{R}} f \ d\mu = \int_{\mathbb{R}} g \ d\mu.\]
+        \end{enumerate}
+    \end{proof}
+    \newpage
+
+    \section{Convergence Theorems}
+    In this section, we will cover some convergence theorems. They tell us when, given a sequence of measurable functions $(f_k)_{k=1}^\infty$, do we have
+    \[\int_{\mathbb{R}}\lim_{k \to \infty} f_k \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu?\]
+    It turns out that Lebesgue integration is more flexible than Riemann integration- the equality above holds in more cases for Lebesgue integration than in Riemann integration. To see this, enumerate $\mathbb{Q} = \{r_1, r_2, \dots\}$. Define the functions $(f_k)_{k=1}^\infty$ by $f_k = \chi_{E_k}$, where 
+    \[E_k = \{r_1, r_2, \dots, r_k\}.\]
+    Then, 
+    \[\int_{-\infty}^\infty f_k(x) \ dx = 0\]
+    since $E_k$ is finite. Now, we have $f_k \to f$ pointwise, where $f = \chi_{\mathbb{Q}}$. However, the integral
+    \[\int_{-\infty}^{\infty} f(x) \ dx \]
+    does not exist. On the other hand, since $\mu(\mathbb{Q}) = 0$, we find that
+    \[\int_{\mathbb{R}} f \ d\mu = 0,\]
+    so the limit of the integrals is the integral of the limit.
+
+    We will now consider the convergence theorems, starting with the Monotone Convergence Theorem.
+    \begin{theorem}[Monotone Convergence Theorem]
+        Let $(f_k)_{k=1}^\infty$ be an increasing sequence of non-negative measurable functions, i.e. $f_{k+1} \geq f_k$ for all $k \in \mathbb{Z}_{\geq 1}$ (almost everywhere). Then, the limit function $f = \sup_{k=1}^\infty f_k$ is non-negative and measurable, with
+        \[\int_{\mathbb{R}} f \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{theorem}
+    \begin{proof}
+        We know that the supremum of a sequence of measurable functions is measurable, so $f$ is measurable. Moreover, the supremum of non-negative functions is still non-negative. We know that $f_k \leq f$ for all $k \in \mathbb{Z}_{\geq 1}$ (almost everywhere). Hence,
+        \[\int_{\mathbb{R}} f_k \ d\mu \leq \int_{\mathbb{R}} f \ d\mu.\]
+        So,
+        \[\lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu \leq \int_{\mathbb{R}} f \ d\mu.\]
+
+        Now, let $\alpha \in (0, 1)$ and a simple measurable function $0 \leq s \leq f$. For $k \in \mathbb{Z}_{\geq 1}$, define the set
+        \[E_k = \{t \in \mathbb{R} \mid f_k(t) \geq \alpha s(t)\}.\]
+        Since $f_k$ and $\alpha s$ are measurable functions, $E_k$ is measurable. Since $f_k$ is an increasing sequence of functions, we have $E_k \supseteq E_{k+1}$ for all $k \in \mathbb{Z}_{\geq 1}$. Moreover, we claim that
+        \[\bigcup_{k=1}^\infty E_k = \mathbb{R}.\]
+        So, let $t \in \mathbb{R}$. Since $f_k(t) \to f(t)$, we can find a $k \in \mathbb{Z}_{\geq 1}$ such that 
+        \[\alpha s(t) \leq \alpha f(t) < f_k(t) \leq f(t),\]
+        meaning that $f_k(t) \geq \alpha s(t)$. This implies that
+        \[\int_{\mathbb{R}} f_k \ d\mu \geq \int_{E_k} f_k \ d\mu \geq \alpha \int_{E_k} s \ d\mu\]
+        for every $k \in \mathbb{Z}_{\geq 1}$. So, as $k \to \infty$, we find that
+        \[\int_{\mathbb{R}} f_k \ d\mu \geq \alpha \int_{\mathbb{R}} s \ d\mu.\]
+        Since this holds for every $\alpha \in (0, 1)$, we conclude that
+        \[\int_{\mathbb{R}} f_k \ d\mu \geq \int_{\mathbb{R}} s \ d\mu\]
+        for all $k \in \mathbb{Z}_{\geq 1}$, meaning that
+        \[\lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu \geq \int_{\mathbb{R}} s \ d\mu.\]
+        Hence,
+        \[\int_{\mathbb{R}} f \ d\mu = \sup \left\{\int_{\mathbb{R}} s \ d\mu \mid 0 \leq s \leq f \textrm{ simple measurable}\right\} \leq \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{proof}
+    \noindent We can use this result to show that integral is linear.
+    \begin{corollary}
+        Let $f, g \colon \mathbb{R} \to \mathbb{R}$ be integrable functions. Then, $f + g$ is integrable, with
+        \[\int_{\mathbb{R}} f + g \ d\mu = \int_{\mathbb{R}} f \ d\mu + \int_{\mathbb{R}} g \ d\mu.\]
+    \end{corollary}
+    \begin{proof}
+        Without loss of generality, assume that $f, g \geq 0$. We can find an increasing sequence of simple measurable functions $(s_k)_{k=1}^\infty$ and $(t_k)_{k=1}^\infty$ such that $s_k \to f$ and $t_k \to g$ pointwise. By Monotone Convergence Theorem, we know that
+        \[\int_{\mathbb{R}} f \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} s_k \ d\mu, \qquad \int_{\mathbb{R}} g \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} t_k \ d\mu.\]
+        Now, for $k \in \mathbb{Z}_{\geq 1}$, we know that
+        \[\int_{\mathbb{R}} s_k + t_k \ d\mu = \int_{\mathbb{R}} s_k \ d\mu + \int_{\mathbb{R}} t_k \ d\mu.\]
+        Hence, applying Monotone Convergence Theorem yet again, we find that
+        \begin{align*}
+            \int_{\mathbb{R}} f + g \ d\mu &= \lim_{k \to \infty} \int_{\mathbb{R}} s_k + t_k \ d\mu \\
+            &= \lim_{k \to \infty} \int_{\mathbb{R}} s_k \ d\mu + \lim_{k \to \infty} \int_{\mathbb{R}} t_k \ d\mu \\
+            &= \int_{\mathbb{R}} f \ d\mu + \int_{\mathbb{R}} g \ d\mu.
+        \end{align*}
+    \end{proof}
+    \noindent We can also extend the Monotone Convergence Theorem to series.
+    \begin{corollary}
+        Let $(f_k)_{k=1}^\infty$ be a sequence of positive measurable functions. Then, the series $\sum_{k=1}^{\infty} f_k$ is measurable, with
+        \[\int_{\mathbb{R}} \sum_{k=1}^{\infty} f_k \ d\mu = \sum_{k=1}^{\infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{corollary}
+    \begin{proof}
+        The sequence of partial sums is an increasing sequence of positive measurable functions, so applying the Monotone Convergence Theorem gives us the result.
+    \end{proof}
+
+    We now prove Fatou's Lemma.
+    \begin{lemma}[Fatou's Lemma]
+        Let $(f_k)_{k=1}^\infty$ be a sequence of non-negative measurable functions. Then,
+        \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{lemma}
+    \begin{proof}
+        Since $(\inf_{n=k}^\infty f_n)_{k=1}^\infty$ is an increasing sequence of non-negative measurable functions, the Monotone Convergence Theorem tells us that 
+        \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu.\]
+        By the infimum property, we know that for all $k \in \mathbb{Z}_{\geq 1}$, $\inf_{n=k}^\infty f_n \leq f_k$. Hence,
+        \[\int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \int_{\mathbb{R}} f_k \ d\mu.\]
+        So, we find that
+        \[\lim_{k \to \infty} \int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+        Hence,
+        \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu \leq \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{proof}
+    \noindent This result can be extended to limit inferior of $f_k$.
+    \begin{corollary}
+        Let $(f_k)_{k=1}^\infty$ be a sequence of non-negative measurable functions, with $f_k \to f$ pointwise. Then,
+        \[\int_{\mathbb{R}} f \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{corollary}
+    \begin{proof}
+        Since $f_k \to f$, we find that
+        \[\liminf_{k \to \infty} f_k = f.\]
+        Hence,
+        \[\int_{\mathbb{R}} f \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{proof}
+
+    We now show the Dominated Convergence Theorem.
+    \begin{theorem}[Dominated Convergence Theorem]
+        Let $(f_k)_{k=1}^\infty$ be a sequence of integrable functions and let $f$ be a function with $f_k \to f$ pointwise almost everywhere. If there exists an integrable function $g$ such that $|f_k| \leq g$ for all $k \in \mathbb{Z}_{\geq 1}$, then $f$ is integrable, with
+        \[\int_{\mathbb{R}} f \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+    \end{theorem}
+    \begin{proof}
+        Since $|f_k| \leq g$ for all $k \in \mathbb{Z}_{\geq 1}$, we find that
+        \[|f| = \lim_{k \to \infty} |f_k| \leq g.\]
+        Hence,
+        \[\left|\int_{\mathbb{R}} f \ d\mu\right| \leq \int_{\mathbb{R}} |f| \ d\mu \leq \int_{\mathbb{R}} g \ d\mu.\]
+        Since $g$ is integrable, this implies that $f$ is integrable.
+
+        Now, let $k \in \mathbb{Z}_{\geq 1}$. Since $|f_k| \leq g$, we know that $g + f_k \geq 0$ and $g - f_k \geq 0$. Hence, Fatou's Lemma tells us that
+        \begin{align*}
+            \int_{\mathbb{R}} g \ d\mu + \int_{\mathbb{R}} f \ d\mu = \int_{\mathbb{R}} \liminf_{k \to \infty} g + f_k \ d\mu &\leq \int_{\mathbb{R}} g \ d\mu + \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu \\
+            \int_{\mathbb{R}} g \ d\mu - \int_{\mathbb{R}} f \ d\mu = \int_{\mathbb{R}} \liminf_{k \to \infty} g - f_k \ d\mu &\leq \int_{\mathbb{R}} g \ d\mu - \limsup_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.
+        \end{align*}
+        This implies that
+        \[\limsup_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu \leq \int_{\mathbb{R}} f \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+        Hence,
+        \[\lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu = \int_{\mathbb{R}} f \ d\mu.\]
+    \end{proof}
+    
 
 \end{document}
