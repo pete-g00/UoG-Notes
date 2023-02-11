@@ -500,12 +500,14 @@
     \begin{proof}
         Since $(\inf_{n=k}^\infty f_n)_{k=1}^\infty$ is an increasing sequence of non-negative measurable functions, the Monotone Convergence Theorem tells us that 
         \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu = \lim_{k \to \infty} \int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu.\]
-        By the infimum property, we know that for all $k \in \mathbb{Z}_{\geq 1}$, $\inf_{n=k}^\infty f_n \leq f_k$. Hence,
-        \[\int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \int_{\mathbb{R}} f_k \ d\mu.\]
-        So, we find that
-        \[\lim_{k \to \infty} \int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+        By the infimum property, we know that for all $k \in \mathbb{Z}_{\geq 1}$, $\inf_{n=k}^\infty f_n \leq f_n$ for all $n \geq k$. Hence,
+        \[\int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \int_{\mathbb{R}} f_n \ d\mu\]
+        for all $n \geq k$, meaning that
+        \[\int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \inf \int_{\mathbb{R}} f_n \ d\mu\]
+        by the lower bound property. So, we find that
+        \[\lim_{k \to \infty} \int_{\mathbb{R}} \inf_{n=k}^\infty f_n \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
         Hence,
-        \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu \leq \lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
+        \[\int_{\mathbb{R}} \liminf_{k \to \infty} f_k \ d\mu \leq \liminf_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu.\]
     \end{proof}
     \noindent This result can be extended to limit inferior of $f_k$.
     \begin{corollary}
@@ -541,6 +543,98 @@
         Hence,
         \[\lim_{k \to \infty} \int_{\mathbb{R}} f_k \ d\mu = \int_{\mathbb{R}} f \ d\mu.\]
     \end{proof}
-    
+
+    Using the Dominated Convergence Theorem, we can show that Riemann and Lebesgue integration are equal whenever possible.
+    \begin{proposition}
+        Let $f \colon [a, b] \to \mathbb{R}$ be Riemann integrable. Then, $f$ is Lebesgue integrable, with 
+        \[ \int_{a}^{b} f(t) \ dt = \int_{[a, b]} f \ d\mu.\]
+    \end{proposition}
+    \begin{proof}
+        Without loss of generality, assume that $f \geq 0$. We can find a sequence of simple measurable functions $(s_k)_{k=1}^\infty$ such that $0 \leq s_k \leq f$ and $s_k \to f$. Since $f$ is Riemann integrable, it is bounded. So, there exists an $L > 0$ such that $0 \leq f(t) < L$ for all $t \in [a, b]$. In particular, $0 \leq s_k < L$ for all $k \in \mathbb{Z}_{\geq 1}$. Since the constant function $L$ is Lebesgue integrable, we can apply Dominated Convergence Theorem to conclude that $f$ is measurable, with
+        \[\lim_{k \to \infty} \int_{[a, b]} s_k \ d\mu = \int_{[a, b]} f \ d\mu.\]
+        Since $s_k$ is simple, we know that its integral is equal a finite sum, and so
+        \[\lim_{k \to \infty} \int_{[a, b]} s_k \ d\mu = \int_{a}^{b} f(t) \ dt.\]
+        Hence,
+        \[ \int_{a}^{b} f(t) \ dt = \int_{[a, b]} f \ d\mu.\]
+    \end{proof}
+    \noindent We can extend this result to infinite integrals- if $f$ is Riemann integrable on $[a, b]$ for all $b > a$, then $f$ is Lebesgue integrable on $[a, \infty)$, with
+    \[\int_{a}^{\infty} f(t) \ dt = \int_{[a, \infty)} f  d\mu.\]
+    \newpage
+
+    \section{Function Spaces}
+    In this section, we define function spaces. We shall connect sequence and function spaces.
+
+    \begin{definition}
+        The function space $L^1(X)$ is the set of integrable functions $X \to \mathbb{R}$.
+    \end{definition}
+    \noindent Since $L^1(X)$ is closed under addition and scalar multiplication, it is a vector space. Moreover, it is a normed vector space, with
+    \[\lVert f \rVert_1 = \int_{X} |f| \ d\mu.\]
+    However, this is not a norm on the set of integrable functions- we know that if $f$ is zero almost everywhere, then $\int_X f = 0$, even if $f \neq 0$. So, to make it a normed vector space, we quotient by functions that are equal almost everywhere. In general, the function space $L^p(X)$ is the set of functions $f \colon X \to \mathbb{R}$ such that $|f|^p$ are integrable, with norm
+    \[\lVert f \rVert_p = \left(\int_X |f|^p \ d\mu\right)^{1/p}.\]
+    We know that $C[0, 1] \subseteq L^p(X)$ for $p \in [1, \infty)$. Moreover, the space $L^p(X)$ is complete (if $X$ is complete).
+
+    In the set of natural numbers $\mathbb{Z}_{\geq 1}$, we define the counting measure $\tau$ on $\mathcal{P}(\mathbb{Z}_{\geq 1})$ by $\tau(X) = |X|$. It turns out that $L^p(\mathbb{Z}_{\geq 1}) = \ell^p$ for all $p \in [1, \infty)$. To see this, let $f \colon \mathbb{Z}_{\geq 1} \to \mathbb{R}$ be measurable. In that case, define the sequence of functions $(f_k)_{k=1}^\infty$ by 
+    \[f_k(n) = \begin{cases}
+        f(n) & n = k \\
+        0 & \textrm{otherwise}.
+    \end{cases}\]
+    Since $f_k \geq 0$ are also measurable, we find that
+    \[\int_{\mathbb{Z}_{\geq 1}} f \ d\tau = \sum_{k=1}^\infty \int_{\mathbb{Z}_{\geq 1}} f_k \ d\tau.\]
+    Since $f_k$ is also simple, we find that
+    \[\int_{\mathbb{Z}_{\geq 1}} f_k \ d\tau = f(n) \cdot \tau(\{k\}) = f(k)\]
+    for all $k \in \mathbb{Z}_{\geq 1}$. Hence,
+    \[\int_{\mathbb{Z}_{\geq 1}} f \ d\tau = \sum_{k=1}^\infty f(k).\]
+    So, if we write $f$ as a sequence $(x_k)_{k=1}^\infty$, we find that the integral corresponds to the series. Hence, $L^p(\mathbb{Z}_{\geq 1}) = \ell^p$ for all $p \in [1, \infty)$.
+
+    To show that $L^p$ space is a norm, we need to show that it satisfies the triangle inequality. We do this in many steps.
+    \begin{lemma}
+        Let $a, b \geq 0$ and $\lambda \in (0, 1)$. Then,
+        \[a^\lambda b^{1 - \lambda} \leq \lambda a + (1 - \lambda) b,\]
+        with equality if and only if $a = b$.
+    \end{lemma}
+    \begin{proposition}[Holder's Inequality]
+        Let $p \in [1, \infty)$ and let $q > 0$ such that 
+        \[\frac{1}{p} + \frac{1}{q} = 1.\]
+        Then, for $f, g$ measurable,
+        \[\lVert f g \rVert_1 \leq \lVert f \rVert_p \lVert g \rVert_q.\]
+        In particular, if $f \in L^p$ and $g \in L^q$, then $fg \in L^1$, with equality if and only if $\alpha |f|^p = \beta |g|^q$ for $\alpha, \beta > 0$.
+    \end{proposition}
+    \begin{proof}
+        If $\lVert f \rVert_p = 0$, then $f$ is zero almost everywhere, meaning that $fg$ is zero almost everywhere. Hence, $\lVert fg \rVert_1 = 0$ as well. The same holds if $\lVert g \rVert_q = 0$. Now, if $\lVert f \rVert_p = \infty$ or $\lVert g \rVert_q = \infty$, then the result holds trivially. Otherwise, we have $\lVert f \rVert_p, \lVert g \rVert_q \in (0, \infty)$. Without loss of generality, we can assume that $\lVert f \rVert_p = \lVert g \rVert_q = 1$ \sidefootnote{We know that $\lVert . \rVert_p$ respects scalar multiplication, so we can rescale as necessary.}. Now, let $x \in \mathbb{R}$. Let $a = |f(x)|^p, b = |g(x)|^q$ and $\lambda = 1/p$. By the lemma, we find that
+        \begin{align*}
+            a^\lambda b^{1 - \lambda} &\leq \lambda a + (1 - \lambda) b \\
+            a^{1/p} b^{1/q} &\leq \frac{a}{p} + \frac{b}{q} \\
+            |f(x) g(x)| &\leq \frac{|f(x)|^p}{p} + \frac{|g(x)|^q}{q}.
+        \end{align*}
+        Hence,
+        \begin{align*}
+            \lVert f g \rVert_1 &= \int_{\mathbb{R}} |f(x) g(x)| \ d\mu \\
+            &\leq \frac{1}{p} \int_{\mathbb{R}} |f(x)|^p \ d\mu + \frac{1}{q} \int_{\mathbb{R}} |g(x)|^q \ d\mu \\
+            &= \frac{1}{p} \lVert f \rVert_p^p + \frac{1}{q} \lVert g \rVert_q^q \\
+            &= \frac{1}{p} + \frac{1}{q} \\
+            &= 1 = \lVert f \rVert_p \lVert g \rVert_q.
+        \end{align*}
+        Note that we have equality if $|f|^p = |g|^q$.
+    \end{proof}
+    \begin{proposition}[Minkowski's Inequality]
+        Let $p \in [1, \infty)$, and let $f, g \in L^p$. Then,
+        \[\lVert f  + g \rVert_p \leq \lVert f \rVert_p + \lVert g \rVert_p.\]
+    \end{proposition}
+    \begin{proof}
+        First, let $p = 1$. By Triangle Inequality on $\mathbb{R}$, we know that $|f + g| \leq |f| + |g|$. Hence,
+        \[\lVert f + g \rVert_1 = \int_{\mathbb{R}} |f + g| \ d\mu \leq \int_{\mathbb{R}} |f| \ d\mu + \int_{\mathbb{R}} |g| \ d\mu = \lVert f \rVert_1 + \lVert g \rVert_1.\]
+        Now, let $p > 1$. We know that
+        \[|f + g|^p \leq (|f| + |g|)|f + g|^{p-1}\]
+        by Triangle Inequality on $\mathbb{R}$. Let $q > 1$ such that $1/p + 1/q = 1$. In that case,
+        \begin{align*}
+            \int_{\mathbb{R}} |f + g|^p \ d\mu &\leq \int_{\mathbb{R}} |f| \cdot |f + g|^{p-1} \ d\mu + \int_{\mathbb{R}} |g| \cdot |f + g|^{p - 1} \ d\mu \\
+            &\leq \lVert f \rVert_p \lVert |f + g|^{p-1} \rVert_q + \lVert g \rVert_p \lVert |f + g|^{p-1} \rVert_q \\
+            &= (\lVert f \rVert_p + \lVert g \rVert_q) \left(\int_{\mathbb{R}} |f + g|^{(p-1)q} \ d\mu \right)^{1/q} \\
+            &= (\lVert f \rVert_p + \lVert g \rVert_q) \left(\int_{\mathbb{R}} |f + g|^p \ d\mu \right)^{1/q}.
+        \end{align*}
+        Hence,
+        \[\lVert f + g \rVert_p = \left(\int_{\mathbb{R}} |f + g|^p \ d\mu \right)^{1/p} = \left(\int_{\mathbb{R}} |f + g|^p \ d\mu\right)^{1 - 1/q} \leq \lVert f \rVert_p + \lVert g \rVert_q.\]
+    \end{proof}
+    \noindent Hence, $L^p$ is a normed vector space. 
 
 \end{document}

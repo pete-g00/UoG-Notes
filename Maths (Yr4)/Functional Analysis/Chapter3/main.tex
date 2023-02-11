@@ -1,0 +1,96 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{bm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[bookmarksopen=true,bookmarksopenlevel=2]{hyperref}
+\usepackage{tikz}
+\usepackage{indentfirst}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{Functional Analysis}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{example}[definition]{Example}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{2}
+
+
+\begin{document}
+    \chapter{Functional Analysis Proper}
+    \section{More on $L^p$ spaces}
+    In this section, we will consider $L^p$ spaces again and show that they are Banach spaces. Moreover, we show that $L^2$ is a Hilbert space.
+
+    First, we characterise completeness in terms of absolute convergence.
+    \begin{definition}
+        Let $(V, \lVert \cdot \rVert)$ be a normed vector space, and let $(x_n)_{n=1}^\infty$ be a sequence in $V$. We say that the series $\sum x_n$ is \emph{absolutely convergent} if the series $\sum \lVert x_n \rVert$ converges.
+    \end{definition}
+    \begin{proposition}
+        Let $(V, \lVert \cdot \rVert)$ be a normed vector space. Then, $V$ is complete if and only if every absolutely convergent series $\sum x_n$ in $V$ is convergent.
+    \end{proposition}
+    \begin{proof}
+        First, assume that $V$ is complete. Let $(x_n)_{n=1}^\infty$ be a sequence in $V$ such that the series $\sum x_n$ is absolutely convergent. We show that the series $\sum x_n$ is Cauchy. Let $\varepsilon > 0$. Since the series $\sum \lVert x_n \rVert$ is convergent, it is Cauchy. Hence, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m \geq n \geq N$, then
+        \[\left|\sum_{k=1}^{m} \lVert x_k \rVert - \sum_{k=1}^{n} \lVert x_k \rVert \right| = \sum_{n=k}^{l} \lVert x_n \rVert < \varepsilon.\]
+        So, for $k, l \in \mathbb{Z}_{\geq 1}$, if $m \geq n \geq N$, then
+        \[\left\lVert\sum_{k=1}^{m} x_k - \sum_{k=1}^{n} x_k\right\rVert = \left\lVert \sum_{k=m}^{n} x_k \right\rVert \leq \sum_{k=m}^{n} \lVert x_n \rVert < \varepsilon.\]
+        Hence, the series $\sum x_n$ is Cauchy. Since $V$ is complete, this implies that $\sum x_n$ is convergent.
+
+        Now, assume that every absolutely convergent series is convergent. Let $(x_n)_{n=1}^\infty$ be a Cauchy sequence in $V$. We show that $(x_n)$ has a convergent subsequence. Since $(x_n)$ is Cauchy, for each $j \in \mathbb{Z}_{\geq 0}$, we can find an $n_j \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m \geq n \geq n_j$, then 
+        \[\lVert x_m - x_n \rVert < 2^{-j}.\]
+        We can choose $n_{j+1} > n_j$ for all $j \in \mathbb{Z}_{\geq 1}$. Then, $(x_{n_j})_{j=1}^\infty$ is a subsequence of $(x_n)$. Next, define the sequence $(y_k)_{k=1}^\infty$ in $V$ by $y_1 = x_{n_1}$ and $y_k = x_{n_k} - x_{n_{k-1}}$ for $k \geq 2$. Then, for $l \in \mathbb{Z}_{\geq 1}$, we have
+        \[\sum_{k=1}^l y_k = x_{n_1} + (x_{n_2} - x_{n_1}) + \dots + (x_{n_l} - x_{n_l-1}) = x_{n_l}.\]
+        Moreover,
+        \[\left\lVert \sum_{k=1}^\infty y_k \right\rVert = \lVert x_1 \rVert + \sum_{j=1}^\infty \lVert x_{n_j} - x_{n_{j-1}} \rVert \leq \lVert x_1 \rVert + \sum_{j=1}^{\infty} 2^{-j} = 1 + \lVert x_1 \rVert,\]
+        meaning that $\sum y_k$ is absolutely convergent. By assumption, this implies that $\sum y_k$ is convergent. Hence, the subsequence $(x_{n_j})_{j=1}^\infty$ is convergent. Since the sequence $(x_n)$ is Cauchy, we conclude that $(x_n)$ converges. Hence, $V$ is complete.
+    \end{proof}
+    \begin{proposition}
+        Let $p \in [1, \infty)$. Then, the $L^p$ space is complete.
+    \end{proposition}
+    \begin{proof}
+        Let $(f_n)_{n=1}^\infty$ be sequence in $L^p$ such that the series $\sum f_n$ is absolutely convergent, to some $B \in \mathbb{R}$. Define the sequence of functions $(F_n)_{n=1}^\infty$ in $L^p$ by
+        \[G_n = \sum_{k=1}^n |f_k|,\]
+        and let $G = \sum_{k=1}^{\infty} |f_k|$. We have $G_n \geq 0$ and measurable since $f_k$ are measurable, with $G_n \to G$ pointwise. Moreover,
+        \[\lVert G_n \rVert_p^p = \sum_{k=1}^\infty |f|^p \leq \sum_{k=1}^n \lVert f_k \rVert_p^p \leq B^p < \infty.\]
+        This implies that $G_n \in L^p$. Now, Monotone Convergence Theorem tells us that 
+        \[\int_{\mathbb{R}} |G|^p \ d\mu = \lim_{n \to \infty} \int_{\mathbb{R}} |G_n|^p \ d\mu \leq B^p < \infty.\]
+        Hence, $G \in L^p$. So, $G(x)$ is finite for almost all $x \in \mathbb{R}$. That is, the series
+        \[\sum_{k=1}^\infty f_k(x) = G(x)\]
+        converges for almost all $x \in \mathbb{R}$. Since $\mathbb{R}$ is complete, we can find a function $F$ such that $\sum_{k=1}^\infty f_k \to F$ pointwise. Since $|F| \leq G$ and $G \in L^p$, we find that $F \in L^p$.
+
+        Now, we note that $|F| \leq G^p$ and $\sum_{k=1}^{n} f_k \leq G^p$, meaning that
+        \[\left|F - \sum_{k=1}^{n} f_k\right|^p \leq (2G)^p\]
+        for all $n \in \mathbb{Z}_{\geq 1}$. We know that $G \in L^p$, meaning that
+        \[\int_{\mathbb{R}} G^p \ d\mu < \infty.\]
+        So, $G^p \in L^1$. So, we can apply Dominated Convergence Theorem to conclude that
+        \[\lim_{n \to \infty} \int_{\mathbb{R}} \left|F - \sum_{k=1}^{n} f_k\right|^p \ d\mu = \int_{\mathbb{R}} \lim_{n \to \infty} \left|F - \sum_{k=1}^{n} f_k\right|^p \ d\mu.\]
+        By construction, we have $\sum_{k=1}^\infty f_k \to F$ pointwise, so
+        \[\int_{\mathbb{R}} \lim_{n \to \infty} \left|F - \sum_{k=1}^{n} f_k\right|^p \ d\mu = 0.\]
+        This means that $\sum_{k=1}^\infty f_k \to F$ in $L^p$. Hence, every absolutely convergent sequence is convergent. We conclude that $L^p$ space is complete.
+    \end{proof}
+    
+\end{document}
