@@ -1,0 +1,236 @@
+\documentclass[a4paper, openany]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[linewidth=1pt]{mdframed}
+\usepackage{multicol}
+\usepackage{fancyvrb}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyhead[RE, LO]{ToC}
+\fancyfoot[LE, RO]{\thepage}
+\fancyfoot[RE, LO]{Pete Gautam}
+
+\renewcommand{\headrulewidth}{1.5pt}
+
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[proposition]{Definition}
+
+\chapterstyle{thatcher}
+\setcounter{chapter}{1}
+
+\begin{document}
+    \chapter{$\pi$-calculus}
+    \section{Introduction to $\pi$-calculus}
+    We saw that $\lambda$-calculus is a theory of \emph{sequential computation}. Here, we are interested in the results of functions applied to data. In $\pi$-calculus, we are interested in concurrent and parallel computation, communication between computing agents and continuous exchanges of input and output. There are many theories for \emph{concurrent computation} including $\pi$-calculus, and are described as \emph{process calculus} or algebra, where \emph{process} means an identifiable computing agent that can interact with the environment. So, $\pi$-calculus is a process calculus. Moreover, unlike other process calculi, it has \emph{mobility}- we can send a communication link (channel) as data that can be sent across another link.
+
+    A \emph{process} is a computing agent that can interact with other processes by sending and receiving messages. Messages can be sent on \emph{channels} (or \emph{names}). There can be several senders and receivers on a single channel, but each message is sent by one process and received by one process. Communication is \emph{synchronous}- both sender and receiver block until the message is exchanged. There is no concept of \emph{location}. If we define a system by two processes in parallel, we don't care about whether they are on the same CPU or at different places in a distributed system. Nonetheless, these concepts can be used to extend $\pi$-calculus.
+
+    Before defining the syntax, we will first consider $\pi$-calculus using some examples. These will involve numbers and arithmetic operations, which are not natively present in $\pi$-calculus, but still can be expressed by some $\pi$-calculus terms. This holds since $\pi$-calculus is a Turing-complete model of computation. 
+
+    Consider the following term in $\pi$-calculus:
+    \[a(x).a(y).\overline{a}\langle x + y \rangle.0\]
+    In this term:
+    \begin{itemize}
+        \item the expression $a(x)$ means that we receive a message on some channel $a$, and refer to it using $x$- $x$ is like a function parameter, and is a bound variable.
+        \item the dot means sequencing, and the sequences are left-to-right, i.e. first receive $x$ on $a$, then receive $y$ on $b$.
+        \item $\overline{a} \langle x + y \rangle$ means that we are sending a message on channel $a$, and this is the result of the computation $x + y$.
+        \item $0$ is the process that does nothing, and represents termination.
+    \end{itemize}
+    We can think of this term as some server- it receives 2 numbers from some client and sends back the sum of these two numbers.
+
+    We can define a process that \emph{communicates} on $a$ in a dual way, i.e. a client for a server. So, consider the following term:
+    \[\overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z)\]
+    In this case, we send the numbers 2 and 3 on the channel $a$ and await its output. Then, we process the message in some way using the call $P(z)$.
+
+    We can now put the two process in parallel so that they can communicate with each on the channel $a$. This is done by \emph{reduction}:
+    \begin{align*}
+        a(x).a(y).\overline{a} \langle x + y \rangle.0 &\mid \overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z) \\
+        &\downarrow \\
+        a(y).\overline{a} \langle 2 + y \rangle.0 &\mid \overline{a} \langle 3 \rangle.a(z).P(z) \\
+        &\downarrow \\
+        \overline{a} \langle 2 + 3 \rangle.0 &\mid a(z).P(z) \\
+        &\downarrow \\
+        \overline{a} \langle 5 \rangle.0 &\mid a(z).P(z) \\
+        &\downarrow \\
+        0 &\mid P(5)
+    \end{align*}
+
+    We will now look at some more operations in $\pi$-calculus. The choice operation $+$ gives us a choice between two different ways of communication. For instance, consider the following term:
+    \[a(x).a(y).\overline{a} \langle x + y \rangle.0 + b(x).b\langle x^2 \rangle.0\]
+    We can think of this as the server providing multiple functionalities, and we can choose the one we want based on the channel name ($a$ or $b$). The choice is non-deterministic and part of reduction. This means that the expression 
+    \[a(x).a(y).\overline{a} \langle x + y \rangle.0 + b(x).b\langle x^2 \rangle.0 \mid \overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z)\]
+    reduces in one step to
+    \[a(y).\overline{a} \langle 2 + y \rangle.0 \mid \overline{a} \langle 3 \rangle.a(z).P(z)\]
+
+    We illustrate the choice operation for the following process:
+    \begin{align*}
+        a(x).a(y).\overline{a} \langle x + y \rangle.0 + b(x).\overline{b}\langle x^2 \rangle.0 &\mid \overline{b} \langle 3 \rangle.b(z).P(z) \\
+        &\downarrow \\
+        \overline{b}\langle3^2\rangle.0 &\mid b(z).P(z) \\
+        &\downarrow \\
+        \overline{b}\langle 9 \rangle.0 &\mid b(z).P(z) \\
+        &\downarrow \\
+        0 &\mid P(9)
+    \end{align*}
+
+    We can add recursive definitions to the syntax. For instance, consider the following term:
+    \[A = b(x).\overline{b}\langle x^2 \rangle.A\]
+    Then, the following illustrates how we can reduce recursively:
+    \begin{align*}
+        b(x).\overline{b} \langle x^2 \rangle.A &\mid \overline{b} \langle 2 \rangle.b(z).\overline{b} \langle 3 \rangle.b(w).P(z, w) \\
+        &\downarrow \\
+        \overline{b}(2^2).A &\mid b(z).\overline{b} \langle 3 \rangle.b(w).P(z, w) \\
+        &\downarrow \\
+        A &\mid \overline{b} \langle 3 \rangle.b(w).P(4, w) \\
+        &= \\
+        b(x).\overline{b} \langle x^2 \rangle.A &\mid \overline{b} \langle 3 \rangle.b(w).P(4, w) \\
+        &\downarrow \\ 
+        \overline{b} \langle 3^2 \rangle.A &\mid b(w).P(4, w) \\
+        &\downarrow \\
+        A &\mid P(4, 9)
+    \end{align*}
+    
+    Instead of adding recursion, we can introduce \emph{replication} to get a simpler theory. For a process $P$, the term $!P$ represents a potentially unlimited number of copies of $P$ in parallel. We can pull another copy out whenever we need to. For instance, the process
+    \[!(b(x).\overline{b} \langle x^2 \rangle.0) \mid \overline{b} \langle 2 \rangle.b(z).\overline{b} \langle 3 \rangle.b(w).P(z, w)\]
+    is equal to
+    \[b(x).\overline{b} \langle x^2 \rangle.0 \mid !(b(x).\overline{b} \langle x^2 \rangle.0) \mid \overline{b} \langle 2 \rangle.b(z).\overline{b} \langle 3 \rangle.b(w).P(z, w)\]
+    which reduces (eventually) to 
+    \[0 \mid !(b(x).\overline{b} \langle x^2 \rangle.0) \mid \overline{b} \langle 3 \rangle.b(w).P(4, w)\]
+    At this point, we can pull out another copy, to get the equivalent process
+    \[0 \mid b(x).\overline{b} \langle x^2 \rangle.0 \mid !(b(x).\overline{b} \langle x^2 \rangle.0) \mid \overline{b} \langle 3 \rangle.b(w).P(4, w)\]
+    and continue reduction.
+
+    The $\pi$-calculus is based on non-determinism, which can lead to some issues. For instance, there can be several senders and receivers on the same channel in parallel. Consider the following term:
+    \[a(x).a(y).\overline{a}\langle x + y \rangle.0 \mid \overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z) \mid \overline{a} \langle 4 \rangle.\overline{a} \langle 5 \rangle.a(w).Q(w)\]
+    Then, this process can reduce to either 
+    \[a(y).\overline{a}\langle 2 + y \rangle.0 \mid \overline{a} \langle 3 \rangle.a(z).P(z) \mid \overline{a} \langle 4 \rangle.\overline{a} \langle 5 \rangle.a(w).Q(w)\]
+    or 
+    \[a(y).\overline{a}\langle 3 + y \rangle.0 \mid \overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z) \mid \overline{a} \langle 3 \rangle.a(w).Q(w)\]
+    Now, for the process to not get stuck, we need to ensure that the channel $a$ receives the second message from the same channel.
+
+    To avoid the issue above of getting stuck, we can make use of the restriction operator $\nu$. The restriction operator defines a local scope for a channel. It is a binder, and we can use $\alpha$-equivalence to rename a local channel, e.g. the channel
+    \[(\nu \ a)\textbf{(}a(x).a(y).\overline{a} \langle x + y \rangle.0 \mid \overline{a} \langle 2 \rangle.\overline{a} \langle 3 \rangle.a(z).P(z) \textbf{)}\]
+    is $\alpha$-equivalent to
+    \[(\nu \ b)\textbf{(}b(x).b(y).\overline{b} \langle x + y \rangle.0 \mid \overline{b} \langle 2 \rangle.\overline{b} \langle 3 \rangle.b(z).P(z) \textbf{)}\]
+    Note that the channel also leads to a bound variable, i.e. $x$ is bound in $(\nu \ x)\textbf{(}\dots\textbf{)}$. Bound variables can be renamed using $\alpha$-equivalence.
+
+    Using restriction, we can share private channels to ensure complete interaction. This is done using scope extrusion, which is shown in the reduction below:
+    \begin{align*}
+        r(a).a(x).a(y).\overline{a} \langle x + y \rangle.0 &\mid (\nu \ b)\textbf{(}\overline{r}\langle b \rangle.\overline{b} \langle 2 \rangle.\overline{b} \langle 3 \rangle.b(z).P(z) \textbf{)} \\
+        &= \\
+        (\nu \ b)\textbf{(}r(a).a(x).a(y).\overline{a} \langle x + y \rangle.0 &\mid \overline{r}\langle b \rangle.\overline{b} \langle 2 \rangle.\overline{b} \langle 3 \rangle.b(z).P(z) \textbf{)} \\
+        &\downarrow \\
+        (\nu \ b)\textbf{(}b(x).b(y).\overline{b} \langle x + y \rangle.0 &\mid \overline{b} \langle 2 \rangle.\overline{b} \langle 3 \rangle.b(z).P(z) \textbf{)} 
+    \end{align*}
+    At the first step, we expand the scope to include both processes, and is called \emph{scope expansion}. Then, we send in the channel that will be used in communication. The two steps are referred to as \emph{scope extrusion}. The output $\overline{r} \langle b \rangle$ carries the scope of $b$ with it, which allows us to create a private channel for the rest of the communication.
+    
+    We will now illustrate how we can combine replication and restriction:
+    \begin{align*}
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) &\mid (\nu \ b) \textbf{(} \overline{r} \langle b \rangle.\overline{b} \langle 2 \rangle.b(z).P(z) \textbf{)} \\
+        &= \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid r(a).a(x).\overline{a} \langle x^2 \rangle.0 \mid &\mid (\nu \ b) \textbf{(} \overline{r} \langle b \rangle.\overline{b} \langle 2 \rangle.b(z).P(z) \textbf{)} \\
+        &= \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid (\nu \ b) \textbf{(} r(a).a(x).\overline{a} \langle x^2 \rangle.0 \mid &\mid \overline{r} \langle b \rangle.\overline{b} \langle 2 \rangle.b(z).P(z) \textbf{)} \\
+        &\downarrow \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid (\nu \ b) \textbf{(} b(x).\overline{b} \langle x^2 \rangle.0 &\mid \overline{b} \langle 2 \rangle.b(z).P(z) \textbf{)} \\
+        &\downarrow \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid (\nu \ b) \textbf{(} \overline{b} \langle 2^2 \rangle.0 &\mid b(z).P(z) \textbf{)} \\
+        &\downarrow \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid (\nu \ b) \textbf{(} 0 &\mid P(4) \textbf{)} \\
+        &= \\
+        !(r(a).a(x).\overline{a} \langle x^2 \rangle.0) \mid 0 &\mid P(4) 
+    \end{align*}
+
+    The ability to send a channel as a message is called \emph{mobility}. This was the key advance of $\pi$-calculus in comparison with previous process calculi such as CCS and CSP. $\pi$-calculus is called a theory of mobile processes, although actually it is the channels that are mobile. Moving a process around a network can be modelled- instead of process moving, a channel that gives access to it can move. There are extensions of $\pi$-calculus in which \emph{processes} can be sent as messages. This is called \emph{higher-order} communication.
+
+    We will now define $\pi$-calculus formally. Let $x, y, \dots$ denote channel \emph{names} or \emph{variables}, and $P, Q, \dots$ denote \emph{processes}. Then, the syntax of processes is defined by the BNF below:
+    \begin{align*}
+        P, Q &:= 0 & \textrm{terminated process} \\
+        &\mid x(y).P & \textrm{input/receive} \\
+        &\mid \overline{x}(y).P & \textrm{output/send} \\
+        &\mid \tau.P & \textrm{silent action} \\
+        &\mid P + Q & \textrm{choice} \\
+        &\mid (\nu \ x) P & \textrm{scope/restriction} \\
+        &\mid !P & \textrm{replication} \\
+        &\mid P \mid Q & \textrm{parallel composition}
+    \end{align*}
+    Other process constructions, like conditions, case, etc. can be added to the syntax of processes, but they are not in the core.
+
+    Now, we want to define the \emph{semantics} by \emph{reduction relation} on processes. The main rule of communication is:
+    \[a(x).P \mid \overline{a} \langle y \rangle.Q \to P[x := y] \mid Q\]
+    We want to be able to apply this rule in the presence of other parallel processes, i.e. in bigger \emph{contexts}, e.g.
+    \[a(x).P \mid \textbf{R} \mid \overline{a} \langle y \rangle.Q \to P[x := y] \mid \textbf{R} \mid Q\]
+    We have to dom something about the fact that communicating parts of the process might not be written next to each other. Syntax is all in a line, but we want to think of parallel processes in a space where any process can interact with any other.
+
+    To do so, we define \emph{structural congruence} ($\equiv$) on processes; it compensates for inessential syntactic details, as well as defining some important aspects of the behaviour of processes. It is defined by several axioms, and is also a \emph{congruence}, meaning that it is preserved by all the syntactic constructs, i.e. we can apply reduction in bigger contexts, and it is an equivalence relation. In particular, congruence means that:
+    \begin{itemize}
+        \item if $P \equiv Q$, then $P \mid R \equiv Q \mid R$;
+        \item if $P \equiv Q$, then $P + R \equiv Q + R$;
+        \item if $P \equiv Q$, then $x(y).P \equiv x(y).Q$;
+        \item if $P \equiv Q$, then $\overline{x}\langle y\rangle.P \equiv \overline{x}\langle y\rangle.Q$;
+        \item if $P \equiv Q$, then $(\nu \ x)P \equiv (\nu \ x)Q$; and
+        \item if $P \equiv Q$, then $!P \equiv \ !Q$.
+    \end{itemize}
+    And, equivalence relation means that:
+    \begin{itemize}
+        \item $P \equiv P$;
+        \item if $P \equiv Q$ then $Q \equiv P$; and 
+        \item if $P \equiv Q$ and $Q \equiv R$, then $P \equiv R$.
+    \end{itemize}
+    The full definition of structural congruence is given below:
+    \begin{align*}
+        P \mid Q &\equiv Q \mid P & \textrm{parallel is commutative} \\
+        P \mid (Q \mid R) &\equiv (P \mid Q) \mid R & \textrm{parallel is associative} \\
+        P \mid 0 &\equiv P & \textrm{garbage collection} \\
+        P + Q &\equiv Q + P & \textrm{choice is commutative} \\
+        P + (Q \mid R) &\equiv (P + Q) + R & \textrm{choice is associative} \\
+        P + 0 &\equiv P & \textrm{garbage collection} \\
+        (\nu \ x)(\nu \ y)P &\equiv (\nu \ y)(\nu \ x)P & \textrm{reordering } \nu \\
+        (\nu \ x)0 &\equiv 0 & \textrm{garbage collection} \\
+        !P &\equiv P \mid !P & \textrm{replication} \\
+        P \mid (\nu \ x) Q &\equiv (\nu \ x)(P \mid Q) \textrm{ if } x \not\in FV(P) & \textrm{scope expansion}
+    \end{align*}
+    It also includes $\alpha$-equivalence. Informally, the definition states that:
+    \begin{itemize}
+        \item we can ignore the order of processes in parallel and choice constructs;
+        \item we do not need to write brackets in parallel and choice constructs;
+        \item we can reorder $\nu$ binders;
+        \item we can remove $0$ and $(\nu \  x) 0$ from parallel and choice constructs;
+        \item we can pull out a copy of $P$ from $!P$ if necessary; and
+        \item we can expand the scope of $(\nu \ x)$ whenever necessary, and rename $x$ if we need to, so as to avoid a variable capture.
+    \end{itemize}
+
+    We can now define the reduction relation. Before doing so, there are two things to consider:
+    \begin{itemize}
+        \item substitution is defined in a similar way to $\lambda$-calculus, but we only substitute variables; and
+        \item bound variables can be renamed if necessary to avoid variable capture. This can be done using Barendregt convention.
+    \end{itemize}
+    Now, these are the reduction axioms:
+    \begin{align*}
+        (\overline{a} \langle x \rangle.P + \dots) \mid (a \langle y \rangle.Q + \dots) &\to P \mid Q[ y:= x] & \textrm{RCom} \\
+        \tau.P + \dots &\to P & \textrm{RTau}.
+    \end{align*}
+    The first one allows us to substitute via communication, while the second one takes the $\tau$ choice (which can always be chosen). We extend these using the following inference rules:
+    \[\frac{P \to Q}{(\nu \ x)P \to (\nu \ x)Q} \textrm{RNew} \qquad \frac{P \to Q}{P \mid R \to Q \mid R} \textrm{RPar}\]
+    \[\frac{P' \equiv P \quad P \to R \quad Q \equiv Q'}{P' \equiv Q'} \textrm{RStruct}\]
+
+\end{document}

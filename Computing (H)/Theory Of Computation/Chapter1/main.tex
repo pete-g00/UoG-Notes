@@ -962,14 +962,14 @@
     \end{theorem}
     \noindent We say that the term \textit{wrong} is untypable, i.e. if $\Gamma \vdash M \colon T$, then we cannot have $M \twoheadrightarrow_\beta \textit{wrong}$.
 
-    Unfortunately, simply-typed $\lambda$-calculus does not support recursion. This is because any $fix$ term isn't typable. For instance, consider the following
-    \[fix = \lambda f.(\lambda y.f(\lambda z.yyz))(\lambda y.f(\lambda z.yyz))\]
+    Unfortunately, simply-typed $\lambda$-calculus does not support recursion. This is because any $\operatorname{fix}$ term isn't typable. For instance, consider the following
+    \[\operatorname{fix} = \lambda f.(\lambda y.f(\lambda z.yyz))(\lambda y.f(\lambda z.yyz))\]
     The term $yyz$ is not typable since that implies $y$ is of the form $A \to A \to A$ and $A$ at the same time. Hence, we cannot define recursive functions.
 
-    So, in a typed functional programming, we have to add a built-in construct, by either adding the $fix$ term to have type
-    \[fix \colon (T \to T) \to T\]
+    So, in a typed functional programming, we have to add a built-in construct, by either adding the $\operatorname{fix}$ term to have type
+    \[\operatorname{fix} \colon (T \to T) \to T\]
     for every type $T$, or by supporting recursive functions, e.g.
-    \[fac(n \colon \texttt{int}) \colon \texttt{int} = \texttt{if } n == 0 \texttt{ then } 1 \texttt{ else } n * fac(n-1).\]
+    \[\operatorname{fac}(n \colon \texttt{int}) \colon \texttt{int} = \texttt{if } n == 0 \texttt{ then } 1 \texttt{ else } n * \operatorname{fac}(n-1).\]
     Adding recursion this way maintains the property that well-typed programs do not contain runtime type errors.
 
     The simply-typed $\lambda$-calculus has an important property of \emph{strong normalisation}. This means that every typable term has a normal form, which can be reached by $\beta$-reduction. Because of the Church-Rosser Theorem, it doesn't matter which reduction strategy is used; we no longer have to worry about non-termination, so any strategy will eventually produce the unique normal form of a term. This is another way to see why $fix$ is untypable- if we could type $fix$, then we would be able to define recursive functions that fail to terminate, which contradicts the strong normalisation property.
