@@ -513,8 +513,8 @@ void simplePolygon(List<Point> points) {
     points[i] = points[0];
     points[0] = pivot;
     
-    Map<Point, double> angles = {};
-    Map<Point, double> distances = {};
+    // list of angles and distances from the starting point
+    List<double> angles = List.filled(points.length, null);
     
     // sort the points wrt angle it makes with the pivot
     points.sort((p1, p2) {

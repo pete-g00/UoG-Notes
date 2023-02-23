@@ -58,7 +58,7 @@
 
 \lstdefinelanguage{pseudocode}{ 
     keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, max},
-    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
+    ndkeywords={int, char, bool, String, NDFA, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
     sensitive=true,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
@@ -1532,7 +1532,9 @@
             \draw[-stealth] (q8) edge node[below] {$\epsilon$} (q9);
         \end{tikzpicture}
     \end{figure}
-    \noindent We are at the same state when we match the \texttt{a} again. When we match \texttt{b}, we get the same state as above. Finally, we match \texttt{d}. In that case, the state of the NDFA is the following:
+    \noindent We are at the same state when we match the \texttt{a} again. 
+    % TODO: Wrong!
+    When we match \texttt{b}, we get the same state as above. Finally, we match \texttt{d}. In that case, the state of the NDFA is the following:
     \begin{figure}[H]
         \centering
         \begin{tikzpicture}
@@ -1821,6 +1823,7 @@ int lcs(String s1, String s2, int i, int j,
 }
 \end{lstlisting}
     Although this algorithm takes more space, it avoids initialising the table of values- it is truly lazy. This technique is called \emph{virtual initialisation} (inserting values at unpredictable positions and deciding whether an entry is garbage).
+    % TODO: Example?
     \newpage
 
     \section{Local Similarity in Strings}

@@ -40,52 +40,77 @@
 \chapterstyle{thatcher}
 
 \begin{document}
-    \chapter{Review of 3H}
+    \chapter{Holomorphic Functions}
     \section{Complex Numbers}
 
     We define
     \[\mathbb{C} := \{x + iy \mid x, y \in \mathbb{R}\}\]
     where $i^2 := -1$. As a vector space (over $\mathbb{R}$), it is isomorphic to $\mathbb{R}^2$. For $z \in \mathbb{C}$ with $z = x + iy$, we defined its conjugate $\overline{z} = x - iy$ and argument 
-    \[\arg z = \tan^{-1} \frac{y}{x}.\]
-    Its absolute value is given by $|z| = \sqrt{x^2 + y^2}$. We can represent a complex number in polar form, given by $z = |z| e^{i \arg z}$.
+    \[\arg z = \tan^{-1} (y/x).\]
+    Its absolute value is given by $|z| = \sqrt{x^2 + y^2}$. We can represent a complex number in polar form, given by $z = |z| e^{i \arg z}$. Note that for all $z, w \in \mathbb{C}$, $\overline{z + w} = \overline{z} + \overline{w}$ and $\overline{zw} = \overline{z}\overline{w}$, and $z = \overline{z}$ if and only if $z \in \mathbb{R}$. Using Euler's Formula
+    \[e^{i\theta} = \cos \theta + i \sin \theta,\]
+    we can write
+    \[z = |z|e^{i \arg z} = |z| (\cos (\arg z) + i \sin (\arg z)).\]
+    This is the polar representation of a complex number. From this formula, if follows that $e^{i \pi} = -1$. Moreover, for $z, w \in \mathbb{C}$ with $z = re^{i\theta
+    }$ and $w = se^{i\phi}$, 
+    \[zw = rs e^{i(\theta + \phi)}\].
 
     For $z, w \in \mathbb{C}$, we define the distance between them by $d(z, w) = |z - w|$. This gives rise to a metric on $\mathbb{C}$. We define an \emph{open disc} of radius $r > 0$ centered at $z \in \mathbb{C}$ by
     \[D_r(z) := \{w \in \mathbb{C} \mid |z - w| < r\}.\]
     Similarly, the \emph{closed disc} is given by
     \[\overline{D}_r(z) := \{w \in \mathbb{C} \mid |z -  w| \leq r\}.\]
+    
     A set $U \subseteq \mathbb{C}$ is \emph{open} if for any $z \in U$, there exists a radius $r_z > 0$ such that the open disc $D_{r_z}(z) \subseteq U$. We note that $U$ is open if and only if $U$ is a union of open discs. A set $E \subseteq \mathbb{C}$ is \emph{closed} if its complement $E^c = \mathbb{C} \setminus E$ is open. Equivalently, $E$ is closed if and only if for any $\mathbb{C}$-convergent sequence $(z_n)_{n=1}^\infty$ in $E$, the limit lies in $E$.
 
     For a sequence $(z_n)_{n=1}^\infty$ in $\mathbb{C}$, we say that $(z_n)$ \emph{converges} to $z \in \mathbb{C}$ if $|z_n - z| \to 0$ as $n \to \infty$. The convergence of a sequence $(z_n)_{n=1}^\infty$ in $\mathbb{C}$ can be reduced to convergence of the sequence of its real part $(x_n)_{n=1}^\infty$ and the imaginary part $(y_n)_{n=1}^\infty$. Hence, it follows that $\mathbb{C}$ is complete. That is, for every Cauchy sequence $(z_n)_{n=1}^\infty$ in $\mathbb{C}$, $(z_n)$ is convergent.
 
-    For a sequence $(z_n)_{n=1}^\infty$ in $\mathbb{C}$, the corresponding series $\sum z_n$ \emph{converges} if the sequence of partial sums $(s_n)_{n=1}^\infty$ $s_n = \sum_{k=1}^n z_n$ converges. The series $\sum z_n$ \emph{converges absolutely} if the series $\sum |z_n|$ converges. We know that if a series is absolutely convergent, then it is convergent. For instance, for $z \in \mathbb{C}$, the series $\sum_{n=0}^\infty \frac{z^n}{n!}$ converges absolutely, to the value $e^z$. Similarly, the series $\cos z = \sum_{n=0}^\infty (-1)^n \frac{z^{2n}}{(2n)!}$ and $\sin z = \sum_{n=0}^\infty (-1)^n \frac{z^{2n+1}}{(2n+1)!}$ converge, with
-    \[\cos z = \frac{e^{iz} + e^{-iz}}{2}, \qquad \sin z = \frac{e^{iz} - e^{-iz}}{2i}, \qquad e^{iz} = \cos z + i \sin z.\]
-
-    A subset $K \subseteq \mathbb{C}$ is \emph{compact} if for every open covering $(K_i)_{i \in I}$ of $K$ has a finite subcovering $(K_{i_n})_{n=1}^k$. By Heine-Borel, we know that $K$ is compact in $\mathbb{C}$ if and only if it is closed and bounded. Moreover, by Bolzano-Weierstrass, we know that $K$ is compact if and only if every sequence in $K$ has a convergent subsequence in $K$. Hence, the open disc $D_1(0)$ is not compact, but the closed disc $\overline{}{D}_1(0)$ is.
-
-    We will now look at a property of a sequence of compact sets in $\mathbb{C}$.
+    For a sequence $(z_n)_{n=1}^\infty$ in $\mathbb{C}$, the corresponding series $\sum z_n$ \emph{converges} if the sequence of partial sums $(s_n)_{n=1}^\infty$ $s_n = \sum_{k=1}^n z_n$ converges. The series $\sum z_n$ \emph{converges absolutely} if the series $\sum |z_n|$ converges. We claim that a series that is absolutely convergent converges.
     \begin{proposition}
-        Let $(\Omega_n)_{n=1}^\infty$ be a sequence of non-empty compact sets in $\mathbb{C}$ with $\Omega_n \subseteq \Omega_{n+1}$ such that 
-        \[\operatorname{diam}(\Omega_n) = \sup_{z, w \in \Omega_n} |z - w| \to 0\]
-        as $n \to \infty$. Then, there exists a unique $w \in \mathbb{C}$ with $w \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$.
+        Let $(z_n)_{n=1}^\infty$ be a sequence in $\mathbb{C}$ such that the series $\sum z_n$ is absolutely convergent. Then, the series is convergent.
     \end{proposition}
     \begin{proof}
-        Define the sequence $(z_n)_{n=1}^\infty$ by $z_n \in \Omega_n$- this is possible since $\Omega_n$ is not empty. We show that $(z_n)$ is Cauchy. Let $\varepsilon > 0$. Since $\operatorname{diam}(\Omega_n) \to 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\operatorname{diam}(\Omega_n) \in [0, \varepsilon)$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$ with $m, n \geq N$, we have $z_m, z_n \in \Omega_N$, meaning that
-        \[|z_m - z_n| \leq \operatorname{diam}(\Omega_N) < \varepsilon.\]
-        Hence, $(z_n)$ is Cauchy. Moreover, for all $n \in \mathbb{Z}_{\geq 1}$, the sequence $(z_m)_{m=n}^\infty$ is Cauchy in $\Omega_n$. Since $\Omega_n$ is complete, we find that $z_m \to w$, for some $w \in \Omega_n$. That is, there exists a $w \in \mathbb{C}$ with $w \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$.
-
-        We now show that the value $w$ is unique. So, let $z \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$. In that case, we find that for all $n \in \mathbb{Z}_{\geq 1}$,
-        \[|z - w| \leq \operatorname{diam}(\Omega_n).\]
-        Since $\operatorname{diam}(\Omega_n) \to 0$ as $n \to \infty$, we find that $z = w$. So, the value $w$ is unique.
+        Let $\varepsilon > 0$. Since the series $\sum z_n$ is absolutely convergent, the series $\sum |z_n|$ is Cauchy. Hence, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m \geq n \geq N$, then
+        \[\left|\sum_{k=1}^m |z_k| - \sum_{k=1}^n |z_k|\right| = \sum_{k=n}^m |z_k|  < \varepsilon.\]
+        Hence,
+        \[\left|\sum_{k=1}^m z_k - \sum_{k=1}^n z_k\right| = \left|\sum_{k=n}^m z_k\right| \leq \sum_{k=n}^m |z_k| < \varepsilon.\]
+        So, the series is Cauchy, meaning that it is convergent.
     \end{proof}
+    
+    Now, for $z \in \mathbb{C}$, the series $\sum_{n=0}^\infty \frac{z^n}{n!}$ converges absolutely, to the value $e^z$. Similarly, the series $\cos z = \sum_{n=0}^\infty (-1)^n \frac{z^{2n}}{(2n)!}$ and $\sin z = \sum_{n=0}^\infty (-1)^n \frac{z^{2n+1}}{(2n+1)!}$ converge, with
+    \[\cos z = \frac{e^{iz} + e^{-iz}}{2}, \qquad \sin z = \frac{e^{iz} - e^{-iz}}{2i}, \qquad e^{iz} = \cos z + i \sin z.\]
+
+    % A subset $K \subseteq \mathbb{C}$ is \emph{compact} if for every open covering $(K_i)_{i \in I}$ of $K$ has a finite subcovering $(K_{i_n})_{n=1}^k$. By Heine-Borel, we know that $K$ is compact in $\mathbb{C}$ if and only if it is closed and bounded. Moreover, by Bolzano-Weierstrass, we know that $K$ is compact if and only if every sequence in $K$ has a convergent subsequence in $K$. Hence, the open disc $D_1(0)$ is not compact, but the closed disc $\overline{D}_1(0)$ is.
+
+    % We will now look at a property of a sequence of compact sets in $\mathbb{C}$.
+    % \begin{proposition}
+    %     Let $(\Omega_n)_{n=1}^\infty$ be a sequence of non-empty compact sets in $\mathbb{C}$ with $\Omega_n \subseteq \Omega_{n+1}$ such that 
+    %     \[\operatorname{diam}(\Omega_n) = \sup_{z, w \in \Omega_n} |z - w| \to 0\]
+    %     as $n \to \infty$. Then, there exists a unique $w \in \mathbb{C}$ with $w \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$.
+    % \end{proposition}
+    % \begin{proof}
+    %     Define the sequence $(z_n)_{n=1}^\infty$ by $z_n \in \Omega_n$- this is possible since $\Omega_n$ is not empty. We show that $(z_n)$ is Cauchy. Let $\varepsilon > 0$. Since $\operatorname{diam}(\Omega_n) \to 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $\operatorname{diam}(\Omega_n) \in [0, \varepsilon)$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$ with $m, n \geq N$, we have $z_m, z_n \in \Omega_N$, meaning that
+    %     \[|z_m - z_n| \leq \operatorname{diam}(\Omega_N) < \varepsilon.\]
+    %     Hence, $(z_n)$ is Cauchy. Moreover, for all $n \in \mathbb{Z}_{\geq 1}$, the sequence $(z_m)_{m=n}^\infty$ is Cauchy in $\Omega_n$. Since $\Omega_n$ is complete, we find that $z_m \to w$, for some $w \in \Omega_n$. That is, there exists a $w \in \mathbb{C}$ with $w \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$.
+
+    %     We now show that the value $w$ is unique. So, let $z \in \Omega_n$ for all $n \in \mathbb{Z}_{\geq 1}$. In that case, we find that for all $n \in \mathbb{Z}_{\geq 1}$,
+    %     \[|z - w| \leq \operatorname{diam}(\Omega_n).\]
+    %     Since $\operatorname{diam}(\Omega_n) \to 0$ as $n \to \infty$, we find that $z = w$. So, the value $w$ is unique.
+    % \end{proof}
     \newpage
 
     \section{Holomorphic Functions}
     Let $U \subseteq \mathbb{C}$ be open, $f \colon U \to \mathbb{C}$ be a function and let $c \in U$. We say that $f$ is \emph{holomorphic at $c$} if the limit
     \[\lim_{z \to c} \frac{f(z) - f(c)}{z - c}= \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}\]
-    exists. If so, we denote the limit by $f'(c)$. It is called \emph{the derivative of $f$ at $c$}. We say that $f$ is \emph{holomorphic on $U$} if for all $c \in U$, $f$ is holomorphic at $c$. For $A \subseteq \mathbb{C}$, we say that $f$ is holomorphic on $A$ if there exists an open set $U \subseteq \mathbb{C}$ with $A \subseteq U$ such that $f$ is holomorphic on $U$.
+    exists. If so, we denote the limit by $f'(c)$, and call it \emph{the derivative of $f$ at $c$}. We say that $f$ is \emph{holomorphic on $U$} if for all $c \in U$, $f$ is holomorphic at $c$. For $A \subseteq \mathbb{C}$, we say that $f$ is holomorphic on $A$ if there exists an open set $U \subseteq \mathbb{C}$ with $A \subseteq U$ such that $f$ is holomorphic on $U$.
 
-    We will now look at some examples. For $c \in \mathbb{C}$, the constant function $f \colon \mathbb{C} \to \mathbb{C}$ given by $f(z) = c$ is holomorphic, with $f'(z) = 0$. A holomorphic function $f \colon \mathbb{C} \to \mathbb{C}$ is called \emph{entire}. Also, the identity function $f \colon \mathbb{C} \to \mathbb{C}$ is entire, with derivative $f'(z) = 1$. On the other hand, the conjugate function $f(z) = \overline{z}$ is not holomorphic. 
-    % TODO: Prove using sequences
+    We will now look at some examples. For $c \in \mathbb{C}$, the constant function $f \colon \mathbb{C} \to \mathbb{C}$ given by $f(z) = c$ is holomorphic, with $f'(z) = 0$. A holomorphic function $f \colon \mathbb{C} \to \mathbb{C}$ is called \emph{entire}. Also, the identity function $f \colon \mathbb{C} \to \mathbb{C}$ is entire, with derivative $f'(z) = 1$. On the other hand, the conjugate function $f(z) = \overline{z}$ is not holomorphic. To see this, define the sequences $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ by $x_n = \frac{1}{n}$ and $y_n = \frac{i}{n}$. Then, we have
+    \begin{align*}
+        \frac{f(z + x_n) - f(z)}{x_n} = \frac{\overline{z} + x_n - \overline{z}}{x_n} = \frac{x_n}{x_n} &= 1, \\
+        \frac{f(z + y_n) - f(z)}{y_n} = \frac{\overline{z} - y_n - \overline{z}}{y_n} = \frac{-y_n}{y_n} &= -1.
+    \end{align*}
+    Since we have $x_n \to 0$ and $y_n \to 0$, the limit
+    \[\lim_{h \to 0} \frac{f(z + h) - f(z)}{h}\]
+    cannot exist for any $z \in \mathbb{C}$.
     
     Given two holomorphic functions $f$ and $g$ on some set $\Omega \subseteq \mathbb{C}$, we know that the following functions are holomorphic:
     \begin{itemize}
@@ -95,6 +120,105 @@
         \[(f/g)' = \frac{f'g - fg'}{g^2}.\]
     \end{itemize}
     Moreover, if $f \colon \Omega \to U$ and $g \colon U \to \mathbb{C}$ are holomorphic, then their composition is holomorphic with $(g \circ f)'(z) = g'(f(z)) f'(z)$. Hence, every rational function $p/q$ is holomorphic on $\mathbb{C} \setminus q^{-1}(0)$.
+
+    We now aim to connect differentiability in $\mathbb{R}^2$ with differentiability in $\mathbb{C}$. We know that a function $f \colon \mathbb{R}^2 \to \mathbb{R}^2$ is differentiable at some $x \in \mathbb{R}^2$ if there exists a linear map $L \colon \mathbb{R}^2 \to \mathbb{R}^2$ such that
+    \[\frac{\lVert f(x + h) - f(x) - L(h) \rVert}{\lVert h \rVert} \to 0\]
+    as $h \to 0$ in $\mathbb{R}^2$. This matrix $L$ is unique, if it exists. In particular, it is the Jacobian:
+    \[L = \begin{bmatrix}
+        \frac{\partial f_2}{\partial x} & \frac{\partial f_1}{\partial y} \\
+        \frac{\partial f_2}{\partial x} & \frac{\partial f_2}{\partial y}
+    \end{bmatrix},\]
+    where $f(x, y) = (f_1(x, y), f_2(x, y))$. 
+    
+    We will now characterise differentiability in $\mathbb{C}$ using this notion of differentiability in $\mathbb{R}^2$.
+    \begin{proposition}
+        Let $U \subseteq \mathbb{C}$ be an open set and let $f \colon U \to \mathbb{C}$ be a function that is complex-differentiable at $x \in U$. Then, it is $\mathbb{R}$-differentiable at $x$, and if $u = \operatorname{Re}(f)$ and $v = \operatorname{Im}(f)$, then the Cauchy-Riemann equations are satisfied:
+        \[\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y} \qquad \frac{\partial u}{\partial y} = -\frac{\partial u}{\partial x}.\]
+    \end{proposition}
+    \begin{proof}
+        Since $f$ is differentiable at $x$, we know that
+        \[\frac{f(x + h) - f(x)}{h} \to f'(x)\]
+        as $h \to 0$. In that case,
+        \[\frac{|f(x + h) - f(x) - f'(x)h|}{|h|} \to 0\]
+        as $h \to 0$. To show that the function is $\mathbb{R}$-differentiable, it suffices to show that $h \mapsto f'(x)h$ is $\mathbb{R}$-linear.
+
+        Let $h = s + it$ and $f'(x) = a + ib$. Then, $h \mapsto f'(x)h$, in $\mathbb{R}^2$, is given by
+        \[\begin{bmatrix}
+            s \\ t
+        \end{bmatrix} \mapsto \begin{bmatrix}
+            \operatorname{Re}[(a + ib)(s + it)] \\
+            \operatorname{Im}[(a + ib)(s + it)]
+        \end{bmatrix} = \begin{bmatrix}
+            as - bt \\
+            at + bs
+        \end{bmatrix} = \begin{bmatrix}
+            a & -b \\
+            b & a
+        \end{bmatrix} \begin{bmatrix}
+            s \\ t
+        \end{bmatrix}.\]
+        So, the map $h \mapsto f'(x)h$ is $\mathbb{R}$-linear. Moreover, since the linear matrix represents the Jacobian, we find that
+        \[\begin{bmatrix}
+            \frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} \\
+            \frac{\partial v}{\partial x} & \frac{\partial v}{\partial y}
+        \end{bmatrix} = \begin{bmatrix}
+            a & -b \\
+            b & a
+        \end{bmatrix}.\]
+        Hence, the Cauchy-Riemann equations are satisfied:
+        \begin{align*}
+            \frac{\partial u}{\partial x} &= \frac{\partial v}{\partial y} = a \\
+            \frac{\partial u}{\partial y} &= -\frac{\partial u}{\partial x} = b.
+        \end{align*}
+    \end{proof}
+    If $f'(x) \neq 0$, then we can write $f'(x) = a + ib$ by $a = r \cos \theta$ and $b = r \sin \theta$. Then,
+    \[\begin{bmatrix}
+        a & -b \\
+        b & a
+    \end{bmatrix} = r \begin{bmatrix}
+        \cos \theta & -\sin \theta \\
+        \sin \theta & \cos \theta
+    \end{bmatrix}.\]
+    So, the matrix just rotates the coordinate by $\theta$ and scales it by $r$. In particular, the angles between two points with non-zero derivatives gets preserved. This is called \emph{conformality}.
+
+    Note that the converse of the theorem is not true- we need to add a further assumption to make it true.
+    \begin{lemma}
+        Let $U \subseteq \mathbb{C}$ be open, and let $f \colon U \to \mathbb{R}$ have continuous partial derivatives. Then, $f$ is $\mathbb{R}$-differentiable.
+    \end{lemma}
+    \begin{proposition}
+        Let $U \subseteq \mathbb{C}$ be an oepn set and let $f \colon U \to \mathbb{C}$ be a function. Denote by $u$ and $v$ the real and the imaginary parts of $f$, as functions $\mathbb{R}^2 \to \mathbb{R}^2$. If $u$ and $v$ have continuous first partial derivatives on $U$ and satisfy the Cauchy-Riemann equations, then $f$ is holomorphic on $U$, with
+        \[f' = \frac{\partial u}{\partial x} + i \frac{\partial v}{\partial x}.\]
+    \end{proposition}
+    \begin{proof}
+        We know that $u = \operatorname{Re}(f)$ and $v = \operatorname{Im}(f)$ are $\mathbb{R}$-differentiable. Hence, $f \colon U \to \mathbb{C}$ is $\mathbb{R}$-differentiable. We know that the total derivative of $f$ is given by
+        \[L = \begin{bmatrix}
+            \frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} \\
+            \frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} 
+        \end{bmatrix} = \begin{bmatrix}
+            a & -b \\
+            b & a
+        \end{bmatrix} = r \begin{bmatrix}
+            \cos \theta & -\sin \theta \\
+            \sin \theta & \cos \theta
+        \end{bmatrix}.\]
+        Let $x \in U$ and let $h = [s, t] \in \mathbb{R}^2$ small enough such that 
+        % TODO: The diagram
+        By the Mean Value Theorem, we can find $\alpha, \beta \in \mathbb{R}^2$ such that
+        \[f(x + s) - f(x) = \frac{\partial f}{\partial x}(\alpha) \cdot s, \qquad f(x + h) - f(x + s) = \frac{\partial f}{\partial y}(\beta) \cdot t.\]
+        Hence,
+        \[f(x + h) - f(x) = \frac{\partial f}{\partial x}(\alpha) \cdot s + \frac{\partial f}{\partial y}(\beta) \cdot t.\]
+        We also have
+        \begin{align*}
+            \frac{\partial f}{\partial x}(\alpha) \cdot s &= \frac{\partial f}{\partial x}(x) \cdot s + \left(\frac{\partial f}{\partial x}(\alpha) - \frac{\partial f}{\partial x} (x)\right) \cdot s \\
+            \frac{\partial f}{\partial y}(\beta) \cdot t &= \frac{\partial f}{\partial y}(x) \cdot t + \left(\frac{\partial f}{\partial y}(\beta) - \frac{\partial f}{\partial y}(x)\right) \cdot t.
+        \end{align*}
+        Since the partial derivatives are continuous, we can bound 
+        \[\frac{\partial f}{\partial y}(\beta) - \frac{\partial f}{\partial y}(x), \qquad \textrm{and} \qquad \frac{\partial f}{\partial x}(\alpha) - \frac{\partial f}{\partial x}(x).\]
+        Hence, we find that 
+        \[\frac{f(x + h) - f(x)}{s + it} \to \frac{\partial f}{\partial x}(x) + i \frac{\partial f}{\partial y}(x)\]
+        as $h \to 0$. So, the result follows.
+    \end{proof}
+
     \newpage
 
     \section{Power Series}
@@ -116,918 +240,918 @@
     if the limits exist, where we define $\frac{1}{0} := \infty$ and $\frac{1}{\infty} := 0$. 
 
     Above, we found that the geometric series has radius of convergence 1. Moreover, we saw that any $z \in \mathbb{C}$ with $|z| = 1$, the geometric series $\sum_{n=0}^\infty z^n$ diverges. Next, the power series $\sum_{n=1}^\infty \frac{z^n}{n}$ has radius of convergence 1, but it diverges at $z = 1$ and converges for all $z \neq -1$ with $|z| = 1$.
-    % TODO: Prove
+    % % TODO: Prove
 
     Now, for a power series $\sum_{n=0}^\infty a_n z^n$ with radius of convergence $R$, we can consider it as a function $f \colon D_R(0) \to \mathbb{C}$. In this perspective, we find that $f$ is holomorphic on $D_R(0)$, with 
     \[f'(z) = \sum_{n=0}^\infty na_n z^{n-1}.\]
     Note that the power series $f'$ also has radius of convergence $R$. This implies that a power series is infinitely complex-differentiable, since its derivative is also a power series. Using this result, we find that $\exp z$, $\cos z$ and $\sin z$ are infinitely-differentiable on $\mathbb{C}$, with
     \[\cos' z = -\sin z, \qquad \sin' z = \cos z, \qquad \exp' z = \exp z.\]
 
-    We will now generalise power series. A \emph{power series centered at $z_0 \in \mathbb{C}$} is an expression of the form $\sum_{n=0}^\infty a_n (z - z_0)^n$, with $(a_n)_{n=0}^\infty$ a sequence in $\mathbb{C}$. Properties of the generalised power series $\sum_{n=0}^\infty a_n (z - z_0)^n$ can be inferred from the power series $\sum_{n=0}^\infty a_n z^n$. In particular, the radius of convergence $R \in [0, \infty]$ can be defined by
-    \[\limsup |a_n|^{1/n} = \lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} = \frac{1}{R},\]
-    with derivative
-    \[g'(z) = \sum_{n=0}^\infty na_n (z - z_0)^{n-1}.\]
-    This follows from the chain rule using the function $f(z) = g(z + z_0)$. It has disc of convergence $D_R(z_0)$.
+    % We will now generalise power series. A \emph{power series centered at $z_0 \in \mathbb{C}$} is an expression of the form $\sum_{n=0}^\infty a_n (z - z_0)^n$, with $(a_n)_{n=0}^\infty$ a sequence in $\mathbb{C}$. Properties of the generalised power series $\sum_{n=0}^\infty a_n (z - z_0)^n$ can be inferred from the power series $\sum_{n=0}^\infty a_n z^n$. In particular, the radius of convergence $R \in [0, \infty]$ can be defined by
+    % \[\limsup |a_n|^{1/n} = \lim_{n \to \infty} \frac{|a_{n+1}|}{|a_n|} = \frac{1}{R},\]
+    % with derivative
+    % \[g'(z) = \sum_{n=0}^\infty na_n (z - z_0)^{n-1}.\]
+    % This follows from the chain rule using the function $f(z) = g(z + z_0)$. It has disc of convergence $D_R(z_0)$.
 
-    Now, let $U \subseteq \mathbb{C}$ be non-empty and open, and let $f \colon U \to \mathbb{C}$ be a function. We say that $f$ is \emph{analytic at $z_0 \in U$} if there exists a power series $g(z) = \sum_{n=0}^\infty a_n (z - z_0)^n$ with radius of convergence $R > 0$ such that $f(z) = g(z)$ for all $z \in U'$, with $U'$ an open set containing $z_0$. Alternatively, we say that $f$ has a power series expansion at $z$. Moreover, we say that $f$ is analytic in $U$ if for every $z \in U$, $f$ is analytic at $z_0$. By definition, if $f$ is analytic in $U$, then $f$ is holomorphic on $U$.
+    % Now, let $U \subseteq \mathbb{C}$ be non-empty and open, and let $f \colon U \to \mathbb{C}$ be a function. We say that $f$ is \emph{analytic at $z_0 \in U$} if there exists a power series $g(z) = \sum_{n=0}^\infty a_n (z - z_0)^n$ with radius of convergence $R > 0$ such that $f(z) = g(z)$ for all $z \in U'$, with $U'$ an open set containing $z_0$ (e.g. $D_R(z_0)$). Alternatively, we say that $f$ has a power series expansion at $z$. Moreover, we say that $f$ is analytic in $U$ if for every $z \in U$, $f$ is analytic at $z_0$. By definition, if $f$ is analytic in $U$, then $f$ is holomorphic on $U$.
 
-    Define the function $f \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ $f(z) = \frac{1}{z}$. We claim that $f$ is analytic at $\mathbb{C} \setminus \{0\}$. So, let $z_0 \in \mathbb{C} \setminus \{0\}$. We have
-    \begin{align*}
-        f(z) &= \frac{1}{z} \\
-        &= \frac{1}{(z - z_0) + z_0} \\
-        &= \frac{-1}{z_0} \cdot \frac{1}{1 - \frac{z + z_0}{z_0}} \\
-        &= \frac{-1}{z_0} \cdot \sum_{n=0}^\infty \left(\frac{z + z_0}{z_0} \right)^n 
-    \end{align*}
-    if 
-    \[\left|\frac{z + z_0}{z_0}\right| < 1 \iff |z + z_0| < |z_0|.\]
-    So, the function has a local power series expansion on the open set
-    \[U = \{z \in \mathbb{C} \mid |z + z_0| < |z_0|\}.\]
-    Hence, $f$ is analytic on $\mathbb{C} \setminus \{0\}$.
-    \newpage
+    % Define the function $f \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ $f(z) = \frac{1}{z}$. We claim that $f$ is analytic at $\mathbb{C} \setminus \{0\}$. So, let $z_0 \in \mathbb{C} \setminus \{0\}$. We have
+    % \begin{align*}
+    %     f(z) &= \frac{1}{z} \\
+    %     &= \frac{1}{(z - z_0) + z_0} \\
+    %     &= \frac{1}{z_0} \cdot \frac{1}{1 + \frac{z - z_0}{z_0}} \\
+    %     &= \frac{1}{z_0} \cdot \sum_{n=0}^\infty (-1)^n \left(\frac{z - z_0}{z_0} \right)^n 
+    % \end{align*}
+    % if 
+    % \[\left|\frac{z - z_0}{z_0}\right| < 1 \iff |z - z_0| < |z_0|.\]
+    % So, the function has a local power series expansion on the open set
+    % \[U = \{z \in \mathbb{C} \mid |z - z_0| < |z_0|\}.\]
+    % Hence, $f$ is analytic on $\mathbb{C} \setminus \{0\}$.
+    % \newpage
 
-    \section{Integration}
-    In this section, we will define integration for complex-valued functions. First, let $f \colon [a, b] \to \mathbb{C}$ be a function. We can define the integral of $f$ over the interval $[a, b]$ by the integral of the real and the imaginary part of $f$. In particular, assume that the real part $\operatorname{Re} (f)$ and $\operatorname{Im} (f)$ are (Riemann) integrable. We then define the integral of $f$ over $[a, b]$ by:
-    \[\int_a^b f(t) \ dt = \int_a^b \operatorname{Re}(f(t)) \ dt + i \int_a^b \operatorname{Im}(f(t)) \ dt.\]
+    % \section{Integration}
+    % In this section, we will define integration for complex-valued functions. First, let $f \colon [a, b] \to \mathbb{C}$ be a function. We can define the integral of $f$ over the interval $[a, b]$ by the integral of the real and the imaginary part of $f$. In particular, assume that the real part $\operatorname{Re} (f)$ and $\operatorname{Im} (f)$ are (Riemann) integrable. We then define the integral of $f$ over $[a, b]$ by:
+    % \[\int_a^b f(t) \ dt = \int_a^b \operatorname{Re}(f(t)) \ dt + i \int_a^b \operatorname{Im}(f(t)) \ dt.\]
 
-    To extend the concept of integrability in the domain, we define paths. A \emph{path} (in $\mathbb{C}$) is a continuous function $\gamma \colon [a, b] \to \mathbb{C}$. The path $\gamma$ is \emph{smooth} if it has a continuous derivative. It is \emph{piecewise-smooth} if there exist $a = a_0 < a_1 < \dots < a_n = b$ such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for all $1 \leq i \leq n$. A path $\gamma$ is \emph{closed} if $\gamma(a) = \gamma(b)$. Finally, it is \emph{simple} if $\gamma$ is injective on $(a, b)$, i.e. the path doesn't self-intersect except possibly at the endpoints.
+    % To extend the concept of integrability in the domain, we define paths. A \emph{path} (in $\mathbb{C}$) is a continuous function $\gamma \colon [a, b] \to \mathbb{C}$. The path $\gamma$ is \emph{smooth} if it has a continuous derivative. It is \emph{piecewise-smooth} if there exist $a = a_0 < a_1 < \dots < a_n = b$ such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for all $1 \leq i \leq n$. A path $\gamma$ is \emph{closed} if $\gamma(a) = \gamma(b)$. Finally, it is \emph{simple} if $\gamma$ is injective on $(a, b)$, i.e. the path doesn't self-intersect except possibly at the endpoints.
     
-    % TODO: Diagrams and examples?
+    % % TODO: Diagrams and examples?
 
-    We will now define integration on paths. So, let $X \subseteq \mathbb{C}$ and $\gamma \colon [a, b] \to X$ be a piecewise-smooth path. If $f \colon X \to \mathbb{C}$ is a continuous function on $\Gamma = \gamma [a, b]$, we define the \emph{integral of $f$ along $\gamma$} by
-    \[\int_\gamma f(z) \ dz = \int_a^b f(\gamma(t)) \gamma'(t) \ dt.\]
+    % We will now define integration on paths. So, let $X \subseteq \mathbb{C}$ and $\gamma \colon [a, b] \to X$ be a piecewise-smooth path. If $f \colon X \to \mathbb{C}$ is a continuous function on $\Gamma = \gamma [a, b]$, we define the \emph{integral of $f$ along $\gamma$} by
+    % \[\int_\gamma f(z) \ dz = \int_a^b f(\gamma(t)) \gamma'(t) \ dt.\]
     
-    Now, let $a = a_0 < \dots < a_n = b$ be such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for $1 \leq i \leq n$. Then, 
-    \[\int_\gamma f(z) \ dz = \sum_{i=1}^n \int_{a_{i-1}}^{a_i} f(\gamma(t)) \gamma'(t) \ dt.\]
-    This follows from the properties of Riemann integration. Moreover, the integral $\int_\gamma f(z) \ dz$ only depends on $\Gamma = \gamma [a, b]$ once the orientation is fixed, i.e. two parametrisations of the same curve have the same integral. We can define $\gamma_- \colon [a, b] \to X$ by $\gamma_-(t) = \gamma(b + a - t)$- this curve traverses $\gamma$ in opposite orientation. It also satisfies
-    \[\int_{\gamma_-} f(z) \ dz = -\int_\gamma f(z) \ dz.\]
+    % Now, let $a = a_0 < \dots < a_n = b$ be such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for $1 \leq i \leq n$. Then, 
+    % \[\int_\gamma f(z) \ dz = \sum_{i=1}^n \int_{a_{i-1}}^{a_i} f(\gamma(t)) \gamma'(t) \ dt.\]
+    % This follows from the properties of Riemann integration. Moreover, the integral $\int_\gamma f(z) \ dz$ only depends on $\Gamma = \gamma [a, b]$ once the orientation is fixed, i.e. two parametrisations of the same curve have the same integral. We can define $\gamma_- \colon [a, b] \to X$ by $\gamma_-(t) = \gamma(b + a - t)$- this curve traverses $\gamma$ in opposite orientation. It also satisfies
+    % \[\int_{\gamma_-} f(z) \ dz = -\int_\gamma f(z) \ dz.\]
 
-    Like with integration in $\mathbb{R}$, the following integration properties hold in $\mathbb{C}$:
-    \begin{itemize}
-        \item it is linear, i.e. for $f, g \colon X \to \mathbb{C}$,
-        \[\int_\gamma f(z) + g(z) \ dz = \int_\gamma f(z) \ dz + \int_\gamma g(z) \ dz\]
-        and for $\lambda \in \mathbb{C}$ and $f \colon X \to \mathbb{C}$,
-        \[\int_\gamma \lambda f(z) \ dz = \lambda \int_\gamma f(z) \ dz.\]
+    % Like with integration in $\mathbb{R}$, the following integration properties hold in $\mathbb{C}$:
+    % \begin{itemize}
+    %     \item it is linear, i.e. for $f, g \colon X \to \mathbb{C}$,
+    %     \[\int_\gamma f(z) + g(z) \ dz = \int_\gamma f(z) \ dz + \int_\gamma g(z) \ dz\]
+    %     and for $\lambda \in \mathbb{C}$ and $f \colon X \to \mathbb{C}$,
+    %     \[\int_\gamma \lambda f(z) \ dz = \lambda \int_\gamma f(z) \ dz.\]
 
-        \item we can estimate the integral, i.e.
-        \[\left|\int_\gamma f(z) \ dz\right| \leq \sup_{z \in \gamma([a, b])} |f(z)|\cdot \int_a^b |\gamma'(t)| \ dt.\]
-        We refer to the $\int_a^b |\gamma'(t)| \ dt$ as the \emph{length of $\gamma$}.
-    \end{itemize}
-    Note that since $[a, b]$ is compact, the image $\gamma [a, b]$ is also compact. Hence, $\gamma$ is bounded and attains its bounds on $[a, b]$ (by the extreme value theorem) and it is uniformly continuous on $[a, b]$.
+    %     \item we can estimate the integral, i.e.
+    %     \[\left|\int_\gamma f(z) \ dz\right| \leq \sup_{z \in \gamma([a, b])} |f(z)|\cdot \int_a^b |\gamma'(t)| \ dt.\]
+    %     We refer to the $\int_a^b |\gamma'(t)| \ dt$ as the \emph{length of $\gamma$}.
+    % \end{itemize}
+    % Note that since $[a, b]$ is compact, the image $\gamma [a, b]$ is also compact. Hence, $\gamma$ is bounded and attains its bounds on $[a, b]$ (by the extreme value theorem) and it is uniformly continuous on $[a, b]$.
 
-    Now, we will define primitives (i.e. anti-derivatives). Let $U \subseteq \mathbb{C}$ be an open subset and let $f \colon U \to \mathbb{C}$ be a function. A \emph{primitive} of $f$ in $U$ is a holomorphic function $F \colon U \to \mathbb{C}$ such that $F'(z) = f(z)$ for all $z \in U$. The Fundamental Theorem of Calculus connects differentiation with integration via primitives.
+    % Now, we will define primitives (i.e. anti-derivatives). Let $U \subseteq \mathbb{C}$ be an open subset and let $f \colon U \to \mathbb{C}$ be a function. A \emph{primitive} of $f$ in $U$ is a holomorphic function $F \colon U \to \mathbb{C}$ such that $F'(z) = f(z)$ for all $z \in U$. The Fundamental Theorem of Calculus connects differentiation with integration via primitives.
 
-    \begin{theorem}[Fundamental Theorem of Calculus]
-        Let $U \subseteq \mathbb{C}$ be open and let $f \colon U \to \mathbb{C}$ be a continuous function with primitive $F \colon U \to \mathbb{C}$. Then, for a piecewise-smooth path $\gamma \colon [a, b] \to U$,
-        \[\int_\gamma f(z) \ dz = F(\gamma(b)) - F(\gamma(a)).\]
-    \end{theorem}
-    \begin{proof}
-        First, assume that $\gamma$ is smooth. Then,
-        \begin{align*}
-            \int_\gamma f(z) \ dz &= \int_b^a f(\gamma(t)) \gamma'(t) \ dt \\
-            &= \int_\gamma F'(\gamma(t)) \gamma'(t) \ dt \\
-            &= \int_\gamma (F \circ \gamma)'(t) \ dt \\
-            &= (F \circ \gamma)(b) - (F \circ \gamma)(a) \\
-            &= F(\gamma(b)) - F(\gamma(a))
-        \end{align*}
-        by the Fundamental Theorem of Calculus in $\mathbb{R}$.
+    % \begin{theorem}[Fundamental Theorem of Calculus]
+    %     Let $U \subseteq \mathbb{C}$ be open and let $f \colon U \to \mathbb{C}$ be a continuous function with primitive $F \colon U \to \mathbb{C}$. Then, for a piecewise-smooth path $\gamma \colon [a, b] \to U$,
+    %     \[\int_\gamma f(z) \ dz = F(\gamma(b)) - F(\gamma(a)).\]
+    % \end{theorem}
+    % \begin{proof}
+    %     First, assume that $\gamma$ is smooth. Then,
+    %     \begin{align*}
+    %         \int_\gamma f(z) \ dz &= \int_b^a f(\gamma(t)) \gamma'(t) \ dt \\
+    %         &= \int_\gamma F'(\gamma(t)) \gamma'(t) \ dt \\
+    %         &= \int_\gamma (F \circ \gamma)'(t) \ dt \\
+    %         &= (F \circ \gamma)(b) - (F \circ \gamma)(a) \\
+    %         &= F(\gamma(b)) - F(\gamma(a))
+    %     \end{align*}
+    %     by the Fundamental Theorem of Calculus in $\mathbb{R}$.
 
-        Now, if $a = a_0 < a_1 < \dots < a_n = b$ such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for all $1 \leq i \leq n$, then
-        \begin{align*}
-            \int_\gamma f(z) \ dz &= \sum_{i=1}^n \int_{a_{i-1}}^{a_i} f(\gamma(t)) \gamma'(t) \ dt \\
-            &= \sum_{i=1}^n F(\gamma(a_i)) - F(\gamma(a_{i-1})) \\
-            &= F(\gamma(b)) - F(\gamma(b)).
-        \end{align*}
-        So, the result holds for a piecewise-smooth path $\gamma$.
-    \end{proof}
+    %     Now, if $a = a_0 < a_1 < \dots < a_n = b$ such that $\gamma$ is smooth on $[a_{i-1}, a_i]$ for all $1 \leq i \leq n$, then
+    %     \begin{align*}
+    %         \int_\gamma f(z) \ dz &= \sum_{i=1}^n \int_{a_{i-1}}^{a_i} f(\gamma(t)) \gamma'(t) \ dt \\
+    %         &= \sum_{i=1}^n F(\gamma(a_i)) - F(\gamma(a_{i-1})) \\
+    %         &= F(\gamma(b)) - F(\gamma(b)).
+    %     \end{align*}
+    %     So, the result holds for a piecewise-smooth path $\gamma$.
+    % \end{proof}
 
-    Using this result, we find that for $\gamma \colon [a, b] \to U$ a piecewise-smooth, closed path in an open set $U \subseteq \mathbb{C}$ and a continuous function $f \colon U \to \mathbb{C}$ with a primitive $F$, 
-    \[\int_\gamma f(z) \ dz = F(\gamma(b)) - F(\gamma(a)) = 0\]
-    since $\gamma(b) = \gamma(a)$. Now, for $n \in \mathbb{Z}$ with $n \neq -1$, we know that the function $f \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ given by $f(z) = z^n$ is continuous with primitive $\frac{1}{n+1} z^{n+1}$. Hence, for a closed piecewise-smooth path $\gamma$, we find that
-    \[\int_\gamma f(z) \ dz = 0.\]
-    Now, if $f(z) = \frac{1}{z}$, then $f$ does not have a primitive in $\mathbb{C} \setminus \{0\}$. To see this, let $C = C_1(0)$ be the unit circle centered at the origin. We can define the smooth path $\gamma \colon [0, 2\pi] \to C$ by $\gamma(t) = e^{it}$. In that case,
-    \[\int_C f(z) \ dz = \int_0^{2\pi} f(\gamma(t)) \gamma'(t) \ dt = \int_0^{2\pi} \frac{ie^{it}}{e^{it}} \ dt = 2\pi i.\]
-    If $f$ had a primitive, the Fundamental Theorem of Calculus would imply that the integral over the closed smooth curve $C$ is $0$, but this is not the case. Hence, $f$ cannot have a primitive.
+    % Using this result, we find that for $\gamma \colon [a, b] \to U$ a piecewise-smooth, closed path in an open set $U \subseteq \mathbb{C}$ and a continuous function $f \colon U \to \mathbb{C}$ with a primitive $F$, 
+    % \[\int_\gamma f(z) \ dz = F(\gamma(b)) - F(\gamma(a)) = 0\]
+    % since $\gamma(b) = \gamma(a)$. Now, for $n \in \mathbb{Z}$ with $n \neq -1$, we know that the function $f \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ given by $f(z) = z^n$ is continuous with primitive $\frac{1}{n+1} z^{n+1}$. Hence, for a closed piecewise-smooth path $\gamma$, we find that
+    % \[\int_\gamma f(z) \ dz = 0.\]
+    % Now, if $f(z) = \frac{1}{z}$, then $f$ does not have a primitive in $\mathbb{C} \setminus \{0\}$. To see this, let $C = C_1(0)$ be the unit circle centered at the origin. We can define the smooth path $\gamma \colon [0, 2\pi] \to C$ by $\gamma(t) = e^{it}$. In that case,
+    % \[\int_C f(z) \ dz = \int_0^{2\pi} f(\gamma(t)) \gamma'(t) \ dt = \int_0^{2\pi} \frac{ie^{it}}{e^{it}} \ dt = 2\pi i.\]
+    % If $f$ had a primitive, the Fundamental Theorem of Calculus would imply that the integral over the closed smooth curve $C$ is $0$, but this is not the case. Hence, $f$ cannot have a primitive.
 
-    We will use the Fundamental Theorem of Calculus to show that only constant functions have derivative 0.
-    \begin{corollary}
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function, where $U \subseteq \mathbb{C}$ is an open connected set. If $f'(z) = 0$ for all $z \in U$, then $f$ is a constant on $U$.
-    \end{corollary}
-    \begin{proof}
-        Let $w_0 \in U$. We show that $f(w) = f(w_0)$ for all $w \in U$. So, let $w \in U$. Since $U$ is open and connected, there exists a piecewise-smooth path $\gamma \colon [a, b] \to U$ with $\gamma(a) = w_0$ and $\gamma(b) = w$. Since $f$ is a primitive of $f'$, we find that 
-        \[\int_\gamma f'(z) \ dz = f(\gamma(b)) - f(\gamma(a)) = f(w) - f(w_0)\]
-        by the Fundamental Theorem of Calculus. Moreover, we know that $f'(z) = 0$ for all $z \in U$. So, we also have $\int_\gamma f'(z) \ dz = 0$. This implies that $f(w) = f(w_0)$, meaning that $f$ is constant.
-    \end{proof}
+    % We will use the Fundamental Theorem of Calculus to show that only constant functions have derivative 0.
+    % \begin{corollary}
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function, where $U \subseteq \mathbb{C}$ is an open connected set. If $f'(z) = 0$ for all $z \in U$, then $f$ is a constant on $U$.
+    % \end{corollary}
+    % \begin{proof}
+    %     Let $w_0 \in U$. We show that $f(w) = f(w_0)$ for all $w \in U$. So, let $w \in U$. Since $U$ is open and connected, there exists a piecewise-smooth path $\gamma \colon [a, b] \to U$ with $\gamma(a) = w_0$ and $\gamma(b) = w$. Since $f$ is a primitive of $f'$, we find that 
+    %     \[\int_\gamma f'(z) \ dz = f(\gamma(b)) - f(\gamma(a)) = f(w) - f(w_0)\]
+    %     by the Fundamental Theorem of Calculus. Moreover, we know that $f'(z) = 0$ for all $z \in U$. So, we also have $\int_\gamma f'(z) \ dz = 0$. This implies that $f(w) = f(w_0)$, meaning that $f$ is constant.
+    % \end{proof}
 
-    We can use this result to show that all primitives of a function are just translations of each other.
-    \begin{corollary}
-        Let $f \colon U \to \mathbb{C}$ be a continuous function on some open set $U \subseteq \mathbb{C}$, and let $F \colon U \to \mathbb{C}$ be a primitive for $f$. Then, every primitive of $f$ is of the form $z \mapsto F(z) + z_0$, for some $z_0 \in \mathbb{C}$.
-    \end{corollary}
-    \begin{proof}
-        Let $G \colon U \to \mathbb{C}$ be a function given by $G(z) = F(z) + z_0$, for some $z_0 \in \mathbb{C}$. By chain rule, we find that $G$ is holomorphic on $U$, with $G'(z) = f(z)$. Hence, $G$ is a primitive of $f$.
+    % We can use this result to show that all primitives of a function are just translations of each other.
+    % \begin{corollary}
+    %     Let $f \colon U \to \mathbb{C}$ be a continuous function on some open set $U \subseteq \mathbb{C}$, and let $F \colon U \to \mathbb{C}$ be a primitive for $f$. Then, every primitive of $f$ is of the form $z \mapsto F(z) + z_0$, for some $z_0 \in \mathbb{C}$.
+    % \end{corollary}
+    % \begin{proof}
+    %     Let $G \colon U \to \mathbb{C}$ be a function given by $G(z) = F(z) + z_0$, for some $z_0 \in \mathbb{C}$. By chain rule, we find that $G$ is holomorphic on $U$, with $G'(z) = f(z)$. Hence, $G$ is a primitive of $f$.
 
-        Now, let $G \colon U \to \mathbb{C}$ be a primitive of $f$. Then, define the function $g \colon U \to \mathbb{C}$ by $g(z) = F(z) - G(z)$. Then,
-        \[g'(z) = F'(z) - G'(z) = 0.\]
-        By the result above, we find that $g'(z) = z_0$, for some $z_0 \in \mathbb{C}$. This implies that $G(z) = F(z) + z_0$ for all $z \in \mathbb{C}$.
-    \end{proof}
-    \newpage
+    %     Now, let $G \colon U \to \mathbb{C}$ be a primitive of $f$. Then, define the function $g \colon U \to \mathbb{C}$ by $g(z) = F(z) - G(z)$. Then,
+    %     \[g'(z) = F'(z) - G'(z) = 0.\]
+    %     By the result above, we find that $g'(z) = z_0$, for some $z_0 \in \mathbb{C}$. This implies that $G(z) = F(z) + z_0$ for all $z \in \mathbb{C}$.
+    % \end{proof}
+    % \newpage
 
-    \section{Integral Formulae}
-    In this section, we will provide different results about integrals, such as Goursat's Theorem and Cauchy's Integral Formulae.
+    % \section{Integral Formulae}
+    % In this section, we will provide different results about integrals, such as Goursat's Theorem and Cauchy's Integral Formulae.
 
-    \begin{theorem}[Goursat's Theorem]
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function with $U \subseteq \mathbb{C}$ open. Then, for a triangle $T$ contained in $U$, traced anticlockwise, 
-        \[\int_T f(z) \ dz = 0.\]
-    \end{theorem}
-    \begin{proof}
-        Let $T_0 = T$. Divide the triangle into 4 sub-triangles by breaking them with respect to the midpoints of the triangles, as shown below:
-        % TODO: Add diagram
+    % \begin{theorem}[Goursat's Theorem]
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function with $U \subseteq \mathbb{C}$ open. Then, for a triangle $T$ contained in $U$, traced anticlockwise, 
+    %     \[\int_T f(z) \ dz = 0.\]
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $T_0 = T$. Divide the triangle into 4 sub-triangles by breaking them with respect to the midpoints of the triangles, as shown below:
+    %     % TODO: Add diagram
         
-        \noindent By the reversing of the order in the triangle $T_1^3$ as opposed to the shared edges in the other triangles, we find that
-        \[\int_{T_0} f(z) \ dz = \sum_{i=1}^4 \int_{T_1^i} f(z) \ dz.\]
-        Hence, by the Triangle Inequality, we find that
-        \[\left|\int_{T_0} f(z) \ dz\right| \leq \sum_{i=1}^4 \left|\int_{T_1^i} f(z) \ dz\right|.\]
-        Now, if 
-        \[\left| \int_{T_0} f(z) \ dz\right| > 4\left|\int_{T_1^{i}} f(z) \ dz\right|\]
-        for all $1 \leq i \leq 4$, then
-        \[4\left|\int_{T_0} f(z) \ dz\right| > 4 \sum_{i=1}^4 \left|\int_{T_1^i} f(z) \ dz \right|,\]
-        which contradicts the triangle inequality. Hence, there exists an $1 \leq i \leq 4$ such that 
-        \[\left|\int_{T_0} f(z) \ dz\right| \leq 4 \left|\int_{T_1^i} f(z) \ dz\right|.\]
-        We denote $T_1 = T_1^i$. By dividing $T_1$ further into 4 triangles and selecting the right sub-triangle, and so on, we can define a sequence of triangles $(T_n)_{n=0}^\infty$ in $U$. Then, for all $n \in \mathbb{Z}_{\geq 0}$,
-        \[\left|\int_{T_0} f(z) \ dz\right| \leq 4^n \left|\int_{T_n} f(z) \ dz\right|.\]
-        Define the sequences $(d_n)_{n=1}^\infty$ of diameter of $T_n$, and $(p_n)_{n=1}^\infty$ of perimeter of $T_n$. Since $T_{n+1}$ is half the size of $T_n$, we find that
-        \[d_n = \operatorname{diameter}(T_n) = 2^{-n} d_0, \qquad p_n = \operatorname{perimeter}(T_n) = 2^{-n} p_0\]
-        for all $n \in \mathbb{Z}_{\geq 1}$. Now, define the sequence $(\hat{T}_n)_{n=1}^\infty$ of the solid triangle whose boundary is $T_n$- each set $\hat{T}_n$ is closed and bounded, meaning that it is compact with $\hat{T}_n \supseteq \hat{T}_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$. Since $d_n \to 0$ as $n \to \infty$, we find that
-        \[\bigcap_{n=0}^\infty \hat{T}_n = \{z_0\},\]
-        for some $z_0 \in U$. Since $f$ is holomorphic at $z_0$, we can write
-        \[f(z) = f(z_0) + f'(z_0)(z - z_0) + \psi(z)(z - z_0),\]
-        for some function $\psi \colon U \to \mathbb{C}$ with $\psi(z) \to 0$ as $z \to z_0$. Hence,
-        \[\int_{T_n} f \ dz = \int_{T_n} (f(z_0) + f'(z_0)(z - z_0)) \ dz + \int_{T_n} \psi(z) (z - z_0) \ dz.\]
-        Since $f(z_0)$ and $f'(z_0)$ are constants, and $T_n$ is a closed curve, we find that
-        \[\int_{T_n} (f(z_0) + f'(z_0)(z - z_0)) \ dz = 0.\]
-        This implies that
-        \begin{align*}
-            \left|\int_{T_n} f(z) \ dz\right| &= \left|\int_{T_n} \gamma(z) (z - z_0) \ dz\right| \\
-            &\leq \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot \operatorname{length} (T_n) \\
-            &= \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_n \cdot p_n \\
-            &= \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot (2^{-n} d_0) (2^{-n} p_0).
-        \end{align*}
-        Therefore,
-        \[\left|\int_{T_0} f(z) \ dz\right| \leq 4^n \left|\int_{T_n} f(z) \ dz\right| \leq \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_0 \cdot p_0.\]
-        We know that as $z \to z_0$, $\phi(z) \to z_0$, with $z_0$ the unique point in the intersection of $(T_n)$. Thus, $\left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_0 \cdot p_0 \to 0$ as $n \to \infty$. This implies that
-        \[\left|\int_{T_0} f(z) \ dz\right| = 0,\]
-        and so
-        \[\int_{T_0} f(z) \ dz = 0.\]
-    \end{proof}
+    %     \noindent By the reversing of the order in the triangle $T_1^3$ as opposed to the shared edges in the other triangles, we find that
+    %     \[\int_{T_0} f(z) \ dz = \sum_{i=1}^4 \int_{T_1^i} f(z) \ dz.\]
+    %     Hence, by the Triangle Inequality, we find that
+    %     \[\left|\int_{T_0} f(z) \ dz\right| \leq \sum_{i=1}^4 \left|\int_{T_1^i} f(z) \ dz\right|.\]
+    %     Now, if 
+    %     \[\left| \int_{T_0} f(z) \ dz\right| > 4\left|\int_{T_1^{i}} f(z) \ dz\right|\]
+    %     for all $1 \leq i \leq 4$, then
+    %     \[4\left|\int_{T_0} f(z) \ dz\right| > 4 \sum_{i=1}^4 \left|\int_{T_1^i} f(z) \ dz \right|,\]
+    %     which contradicts the triangle inequality. Hence, there exists an $1 \leq i \leq 4$ such that 
+    %     \[\left|\int_{T_0} f(z) \ dz\right| \leq 4 \left|\int_{T_1^i} f(z) \ dz\right|.\]
+    %     We denote $T_1 = T_1^i$. By dividing $T_1$ further into 4 triangles and selecting the right sub-triangle, and so on, we can define a sequence of triangles $(T_n)_{n=0}^\infty$ in $U$. Then, for all $n \in \mathbb{Z}_{\geq 0}$,
+    %     \[\left|\int_{T_0} f(z) \ dz\right| \leq 4^n \left|\int_{T_n} f(z) \ dz\right|.\]
+    %     Define the sequences $(d_n)_{n=1}^\infty$ of diameter of $T_n$, and $(p_n)_{n=1}^\infty$ of perimeter of $T_n$. Since $T_{n+1}$ is half the size of $T_n$, we find that
+    %     \[d_n = \operatorname{diameter}(T_n) = 2^{-n} d_0, \qquad p_n = \operatorname{perimeter}(T_n) = 2^{-n} p_0\]
+    %     for all $n \in \mathbb{Z}_{\geq 1}$. Now, define the sequence $(\hat{T}_n)_{n=1}^\infty$ of the solid triangle whose boundary is $T_n$- each set $\hat{T}_n$ is closed and bounded, meaning that it is compact with $\hat{T}_n \supseteq \hat{T}_{n+1}$ for all $n \in \mathbb{Z}_{\geq 1}$. Since $d_n \to 0$ as $n \to \infty$, we find that
+    %     \[\bigcap_{n=0}^\infty \hat{T}_n = \{z_0\},\]
+    %     for some $z_0 \in U$. Since $f$ is holomorphic at $z_0$, we can write
+    %     \[f(z) = f(z_0) + f'(z_0)(z - z_0) + \psi(z)(z - z_0),\]
+    %     for some function $\psi \colon U \to \mathbb{C}$ with $\psi(z) \to 0$ as $z \to z_0$. Hence,
+    %     \[\int_{T_n} f \ dz = \int_{T_n} (f(z_0) + f'(z_0)(z - z_0)) \ dz + \int_{T_n} \psi(z) (z - z_0) \ dz.\]
+    %     Since $f(z_0)$ and $f'(z_0)$ are constants, and $T_n$ is a closed curve, we find that
+    %     \[\int_{T_n} (f(z_0) + f'(z_0)(z - z_0)) \ dz = 0.\]
+    %     This implies that
+    %     \begin{align*}
+    %         \left|\int_{T_n} f(z) \ dz\right| &= \left|\int_{T_n} \gamma(z) (z - z_0) \ dz\right| \\
+    %         &\leq \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot \operatorname{length} (T_n) \\
+    %         &= \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_n \cdot p_n \\
+    %         &= \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot (2^{-n} d_0) (2^{-n} p_0).
+    %     \end{align*}
+    %     Therefore,
+    %     \[\left|\int_{T_0} f(z) \ dz\right| \leq 4^n \left|\int_{T_n} f(z) \ dz\right| \leq \left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_0 \cdot p_0.\]
+    %     We know that as $z \to z_0$, $\phi(z) \to z_0$, with $z_0$ the unique point in the intersection of $(T_n)$. Thus, $\left(\sup_{z \in T_0} |\psi(z)| \right) \cdot d_0 \cdot p_0 \to 0$ as $n \to \infty$. This implies that
+    %     \[\left|\int_{T_0} f(z) \ dz\right| = 0,\]
+    %     and so
+    %     \[\int_{T_0} f(z) \ dz = 0.\]
+    % \end{proof}
 
-    We will now look at applications of the Goursat's Theorem. 
-    \begin{corollary}
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function with $U \subseteq \mathbb{C}$. Then, for a rectangle $R$ contained in $U$, traced anticlockwise, then 
-        \[\int_R f(z) \ dz = 0.\]
-    \end{corollary}
-    This follows by breaking the rectangle $R$ into two triangles- $T_1$ and $T_2$, as shown below.
-    % TODO: Diagram
-    Since the shared line is going in opposite directions, we find that
-    \[\int_R f(z) \ dz = \int_{T_1} f(z) \ dz + \int_{T_2} f(z) \ dz.\]
-    By Goursat's Theorem, this value is $0$. We can use Goursat's Theorem for more complex shapes as well, using a similar argument.
+    % We will now look at applications of the Goursat's Theorem. 
+    % \begin{corollary}
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function with $U \subseteq \mathbb{C}$. Then, for a rectangle $R$ contained in $U$, traced anticlockwise, then 
+    %     \[\int_R f(z) \ dz = 0.\]
+    % \end{corollary}
+    % This follows by breaking the rectangle $R$ into two triangles- $T_1$ and $T_2$, as shown below.
+    % % TODO: Diagram
+    % Since the shared line is going in opposite directions, we find that
+    % \[\int_R f(z) \ dz = \int_{T_1} f(z) \ dz + \int_{T_2} f(z) \ dz.\]
+    % By Goursat's Theorem, this value is $0$. We can use Goursat's Theorem for more complex shapes as well, using a similar argument.
 
-    We can also show that any holomorphic function on an open disc has a primitive using Goursat's Theorem.
-    \begin{theorem}
-        Let $f \colon D \to \mathbb{C}$ be holomorphic, with $D \subseteq \mathbb{C}$ non-empty open disc. Then, $f$ has a primitive $F \colon D \to \mathbb{C}$.
-    \end{theorem}
-    \begin{proof}
-        Let $D$ be centered at $a \in \mathbb{C}$. For $z \in D$, define the path $\gamma_z$ from $a$ to $z$ by moving horizontally first and then vertically, as shown in the diagram below.
-        % TODO: Diagram
-        By definition, $\gamma_z$ is piecewise-smooth. Now, define $F \colon D \to \mathbb{C}$ by
-        \[F(z) = \int_{\gamma_z} f(w) \ dw.\]
-        We show that $F$ is a primitive for $f$. Let $h \in \mathbb{C}$ such that $z + h \in D$- this is possible since $D$ is open. Define the paths $\gamma_{z, z+h}$, $\delta_{z, z+h}$ and $\eta_{z, z+h}$ as shown in the diagram below:
-        % TODO: Diagram
-        We find that
-        \begin{align*}
-            F(z+h) - F(z) &= \int_{\gamma_{z+h}} f(w) \ dw - \int_{\gamma_z} f(w) \ dw \\
-            &= \int_{\gamma_{z, z+h}} f(w) \ dw \\
-            &= \int_{\delta_{z, z+h}} f(w) \ dw \\
-            &= \int_{\eta_{z, z+h}} f(w) \ dw.
-        \end{align*}
-        Since $f$ is continuous, we can write $f(w) = f(z) + \psi(w)$, where $\psi(w) = f(w) - f(z)$, with $\psi(w) \to 0$ as $z \to w$ (by continuity). Hence,
-        \begin{align*}
-            F(z+h) - F(z) &= \int_{\eta_{z, z+h}} f(z) \ dw + \int_{\eta_{z, z+h}} \psi(w) \ dw \\
-            &= f(z) \cdot h + \int_{\eta_{z, z+h}} \psi(w) \ dw.
-        \end{align*}
-        This implies that
-        \[\frac{F(z+h) - F(z)}{h} = f(z) + \frac{1}{h} \int_{\eta_{z, z+h}} \psi(w) \ dw.\]
-        We now find that
-        \[\left|\frac{1}{h} \int_{\eta_{z, z+h}} \psi(w) \ dw\right| \leq \frac{1}{|h|} |h| \cdot \sup_{w \in \eta_{z, z+h}} |\psi(w)| = \sup_{w \in \eta_{z, z+h}} |\psi(w)| \to 0\]
-        as $h \to 0$, since $\psi(w) \to 0$ as $w \to z$.
-        Therefore,
-        \[F'(z) = \lim_{h \to \infty} \frac{F(z+h) - F(z)}{h} = f(z).\]
-        So, $F$ is holomorphic, with $F' = f$.
-    \end{proof}
+    % We can also show that any holomorphic function on an open disc has a primitive using Goursat's Theorem.
+    % \begin{theorem}
+    %     Let $f \colon D \to \mathbb{C}$ be holomorphic, with $D \subseteq \mathbb{C}$ non-empty open disc. Then, $f$ has a primitive $F \colon D \to \mathbb{C}$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $D$ be centered at $a \in \mathbb{C}$. For $z \in D$, define the path $\gamma_z$ from $a$ to $z$ by moving horizontally first and then vertically, as shown in the diagram below.
+    %     % TODO: Diagram
+    %     By definition, $\gamma_z$ is piecewise-smooth. Now, define $F \colon D \to \mathbb{C}$ by
+    %     \[F(z) = \int_{\gamma_z} f(w) \ dw.\]
+    %     We show that $F$ is a primitive for $f$. Let $h \in \mathbb{C}$ such that $z + h \in D$- this is possible since $D$ is open. Define the paths $\gamma_{z, z+h}$, $\delta_{z, z+h}$ and $\eta_{z, z+h}$ as shown in the diagram below:
+    %     % TODO: Diagram
+    %     We find that
+    %     \begin{align*}
+    %         F(z+h) - F(z) &= \int_{\gamma_{z+h}} f(w) \ dw - \int_{\gamma_z} f(w) \ dw \\
+    %         &= \int_{\gamma_{z, z+h}} f(w) \ dw \\
+    %         &= \int_{\delta_{z, z+h}} f(w) \ dw \\
+    %         &= \int_{\eta_{z, z+h}} f(w) \ dw.
+    %     \end{align*}
+    %     Since $f$ is continuous, we can write $f(w) = f(z) + \psi(w)$, where $\psi(w) = f(w) - f(z)$, with $\psi(w) \to 0$ as $z \to w$ (by continuity). Hence,
+    %     \begin{align*}
+    %         F(z+h) - F(z) &= \int_{\eta_{z, z+h}} f(z) \ dw + \int_{\eta_{z, z+h}} \psi(w) \ dw \\
+    %         &= f(z) \cdot h + \int_{\eta_{z, z+h}} \psi(w) \ dw.
+    %     \end{align*}
+    %     This implies that
+    %     \[\frac{F(z+h) - F(z)}{h} = f(z) + \frac{1}{h} \int_{\eta_{z, z+h}} \psi(w) \ dw.\]
+    %     We now find that
+    %     \[\left|\frac{1}{h} \int_{\eta_{z, z+h}} \psi(w) \ dw\right| \leq \frac{1}{|h|} |h| \cdot \sup_{w \in \eta_{z, z+h}} |\psi(w)| = \sup_{w \in \eta_{z, z+h}} |\psi(w)| \to 0\]
+    %     as $h \to 0$, since $\psi(w) \to 0$ as $w \to z$.
+    %     Therefore,
+    %     \[F'(z) = \lim_{h \to \infty} \frac{F(z+h) - F(z)}{h} = f(z).\]
+    %     So, $F$ is holomorphic, with $F' = f$.
+    % \end{proof}
 
-    Using this result, we can show Cauchy's Theorem for a disc.
-    \begin{theorem}[Cauchy's Theorem for a disc]
-        Let $f \colon D \to \mathbb{C}$ be holomorphic on an open disc $D \subseteq \mathbb{C}$. Then, for every closed, piecewise-smooth curve path $\gamma$ in $D$,
-        \[\int_\gamma f(z) \ dz = 0.\]
-    \end{theorem}
-    This directly follows from applying the Fundamental Theorem of Calculus since we know that $f$ has a primitive.
+    % Using this result, we can show Cauchy's Theorem for a disc.
+    % \begin{theorem}[Cauchy's Theorem for a disc]
+    %     Let $f \colon D \to \mathbb{C}$ be holomorphic on an open disc $D \subseteq \mathbb{C}$. Then, for every closed, piecewise-smooth curve path $\gamma$ in $D$,
+    %     \[\int_\gamma f(z) \ dz = 0.\]
+    % \end{theorem}
+    % This directly follows from applying the Fundamental Theorem of Calculus since we know that $f$ has a primitive.
 
-    \begin{corollary}
-        Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C$ be a circle in $U$ (along with its interior), traced anticlockwise. Then,
-        \[\int_C f(z) \ dz = 0.\]
-    \end{corollary}
-    \begin{proof}
-        Let $D$ be a disc with boundary $C$. Since $U$ is open, there exists a disc $D'$ in $U$ such that $D \subsetneq D'$. Since $f$ is holomorphic in $D'$, Cauchy's Theorem for a disc tells us that 
-        \[\int_C f(z) \ dz = 0.\]
-    \end{proof}
+    % \begin{corollary}
+    %     Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C$ be a circle in $U$ (along with its interior), traced anticlockwise. Then,
+    %     \[\int_C f(z) \ dz = 0.\]
+    % \end{corollary}
+    % \begin{proof}
+    %     Let $D$ be a disc with boundary $C$. Since $U$ is open, there exists a disc $D'$ in $U$ such that $D \subsetneq D'$. Since $f$ is holomorphic in $D'$, Cauchy's Theorem for a disc tells us that 
+    %     \[\int_C f(z) \ dz = 0.\]
+    % \end{proof}
 
-    Now, we shall consider Cauchy's Theorem in general. Let $U \subseteq \mathbb{C}$ be a path-connected open set, and let $\delta, \gamma \colon [0, 1] \to U$ be paths from $a$ to $b$, i.e. $\delta(0) = \gamma(0) = a$ and $\delta(1) = \gamma(1) = b$. We say that $\delta$ and $\gamma$ are \emph{homotopic in $U$} if there exists a collection of paths $\gamma_s \colon [0, 1] \to U$ for $s \in (0, 1)$ such that:
-    \begin{itemize}
-        \item $\gamma_s$ is a path from $a$ to $b$;
-        \item $\gamma_0 = \gamma$ and $\gamma_1 = \delta$
-        \item $\gamma_s(t)$ is a continuous function $[0, 1] \times [0, 1] \to U$.
-    \end{itemize}
-    A path-connected open set $U \subseteq \mathbb{C}$ is \emph{simply-connected} if for any two paths $\gamma$ and $\delta$ in $U$ with the same endpoints are homotopic. 
-    % TODO: Example of homotopic and non-homotopic sets
+    % Now, we shall consider Cauchy's Theorem in general. Let $U \subseteq \mathbb{C}$ be a path-connected open set, and let $\delta, \gamma \colon [0, 1] \to U$ be paths from $a$ to $b$, i.e. $\delta(0) = \gamma(0) = a$ and $\delta(1) = \gamma(1) = b$. We say that $\delta$ and $\gamma$ are \emph{homotopic in $U$} if there exists a collection of paths $\gamma_s \colon [0, 1] \to U$ for $s \in (0, 1)$ such that:
+    % \begin{itemize}
+    %     \item $\gamma_s$ is a path from $a$ to $b$;
+    %     \item $\gamma_0 = \gamma$ and $\gamma_1 = \delta$
+    %     \item $\gamma_s(t)$ is a continuous function $[0, 1] \times [0, 1] \to U$.
+    % \end{itemize}
+    % A path-connected open set $U \subseteq \mathbb{C}$ is \emph{simply-connected} if for any two paths $\gamma$ and $\delta$ in $U$ with the same endpoints are homotopic. 
+    % % TODO: Example of homotopic and non-homotopic sets
 
-    \begin{theorem}[Cauchy's Theorem for simply connected sets]
-        Let $U \subseteq \mathbb{C}$ be an open simply connected set, $f \colon U \to \mathbb{C}$ be holomorphic in $U$ and let $\gamma$ be a piecewise-smooth, closed path in $U$. Then,
-        \[\int_\gamma f(z) \ dz = 0.\]
-    \end{theorem}
-    \begin{proof}[Sketch Proof]
-        Let $\Gamma = \gamma [a, b]$. Since $\Gamma$ is compact, we can cover it by finitely many open discs in $U$. In each disc, we can replace a section of $\Gamma$ with a line segment by Cauchy's Theorem for open discs, as shown below:
-        % TODO: Add diagram
-        We can further assume that $\Gamma$ is simple, i.e. it doesn't self-intersect. This is because we can break the integral into a sum of integrals, where we have no self-intersections. Since $U$ is simply connected, the interior of the polygon is contained in $U$. Hence, we can apply Goursat's Theorem on the polygon (by triangulating it) to show that the integral around the polygon is 0.
-    \end{proof}
+    % \begin{theorem}[Cauchy's Theorem for simply connected sets]
+    %     Let $U \subseteq \mathbb{C}$ be an open simply connected set, $f \colon U \to \mathbb{C}$ be holomorphic in $U$ and let $\gamma$ be a piecewise-smooth, closed path in $U$. Then,
+    %     \[\int_\gamma f(z) \ dz = 0.\]
+    % \end{theorem}
+    % \begin{proof}[Sketch Proof]
+    %     Let $\Gamma = \gamma [a, b]$. Since $\Gamma$ is compact, we can cover it by finitely many open discs in $U$. In each disc, we can replace a section of $\Gamma$ with a line segment by Cauchy's Theorem for open discs, as shown below:
+    %     % TODO: Add diagram
+    %     We can further assume that $\Gamma$ is simple, i.e. it doesn't self-intersect. This is because we can break the integral into a sum of integrals, where we have no self-intersections. Since $U$ is simply connected, the interior of the polygon is contained in $U$. Hence, we can apply Goursat's Theorem on the polygon (by triangulating it) to show that the integral around the polygon is 0.
+    % \end{proof}
 
-    Using this result, we can derive Cauchy's Integral Formula.
-    \begin{theorem}[Cauchy's Integral Formula]
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$, let $D \subseteq U$ be an open disc whose interior is contained in $U$ and let $C$ be the boundary of the disc, traced anti-clockwise. Then, for all $z \in D$,
-        \[f(z) = \frac{1}{2\pi i} \int_C \frac{f(\zeta)}{\zeta - z} \ d\zeta.\]
-    \end{theorem}
-    \noindent We will now prove a lemma and then the generalisation of Cauchy's Integral Formula.
-    \begin{lemma}
-        Let $\varepsilon > 0$ and $\gamma \colon [a, b] \to \mathbb{C}$ be a piecewise-smooth path, and denote $\Gamma = \gamma [a, b]$. If $F \colon D_\varepsilon(0) \times \Gamma \to \mathbb{C}$ is continuous, then
-        \[\lim_{n \to 0} \int_\Gamma F(n, z) \ dz = \int_\Gamma F(0, z) \ dz.\]
-    \end{lemma}
-    \begin{proof}
-        % TODO: Show uniform convergence on \gamma
-    \end{proof}
-    \begin{theorem}[Cauchy's Integral Formula (for derivatives)]
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$. Then, $f$ is infinite-differentiable on $U$, and for $C$ a circle whose interior is contained in $U$, then
-        \[f^{(n)}(z) = \frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta\]
-        for all $z$ in the interior of $C$ and $n \geq 0$.
-    \end{theorem}
-    \begin{proof}
-        We show this by induction. If $n = 0$, then we get the Cauchy's Integral Formula we saw above. Now, assume that $f$ has $n-1$ derivatives, with
-        \[f^{(n-1)}(z) = \frac{(n-1)!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^n} \ d\zeta.\]
-        For small $h \in \mathbb{C}$, we find that
-        \[\frac{f^{(n-1)}(z+h) - f^{(n-1)}(z)}{h} = \frac{(n-1)!}{2\pi i} \int_C \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta.\]
-        Now, let
-        \[A = \frac{1}{\zeta - z - h}\qquad, B = \frac{1}{\zeta - z}.\]
-        We know that
-        \[A^n - B^n = (A - B)(A^{n-1} + A^{n-2}B + \dots + B^{n-1}).\]
-        We have
-        \[A - B = \frac{h}{(\zeta - z - h)(\zeta - z)},\]
-        and as $h \to 0$, $A \to B$ and so 
-        \[A^{n-1} + A^{n-2}B + \dots + B^{n-1} \to A^{n-1} + A^{n-1} + \dots + A^{n-1} = \frac{n}{(\zeta - z)^{n-1}}.\]
-        Therefore,
-        \[\lim_{h \to 0} \frac{1}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) = \frac{n}{(\zeta - z)^{n+1}}.\]
-        By the lemma above, this implies that
-        \begin{align*}
-            \lim_{h \to 0} \int_C \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta &= \int_C \lim_{h \to 0} \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta \\
-            &= n \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta.
-        \end{align*}
-        Hence, $f^{(n-1)}$ is holomorphic, with
-        \[f^{(n)}(z) = \frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta.\]
-        So, the result follows by induction.
-    \end{proof}
-    When we apply the lemma, we take $\varepsilon = \frac{1}{2} \inf_{\zeta \in C} |\zeta - z|$ and 
-    \[h(h, \zeta) = \frac{f(\zeta) (A^{n-1} + A^{n-2}B + \dots + B^{n-1} \to A^{n-1} + A^{n-1} + \dots + A^{n-1})}{(\zeta - z - h)(\zeta - z)}.\]
+    % Using this result, we can derive Cauchy's Integral Formula.
+    % \begin{theorem}[Cauchy's Integral Formula]
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$, let $D \subseteq U$ be an open disc whose interior is contained in $U$ and let $C$ be the boundary of the disc, traced anti-clockwise. Then, for all $z \in D$,
+    %     \[f(z) = \frac{1}{2\pi i} \int_C \frac{f(\zeta)}{\zeta - z} \ d\zeta.\]
+    % \end{theorem}
+    % \noindent We will now prove a lemma and then the generalisation of Cauchy's Integral Formula.
+    % \begin{lemma}
+    %     Let $\varepsilon > 0$ and $\gamma \colon [a, b] \to \mathbb{C}$ be a piecewise-smooth path, and denote $\Gamma = \gamma [a, b]$. If $F \colon D_\varepsilon(0) \times \Gamma \to \mathbb{C}$ is continuous, then
+    %     \[\lim_{n \to 0} \int_\Gamma F(n, z) \ dz = \int_\Gamma F(0, z) \ dz.\]
+    % \end{lemma}
+    % \begin{proof}
+    %     % TODO: Show uniform convergence on \gamma
+    % \end{proof}
+    % \begin{theorem}[Cauchy's Integral Formula (for derivatives)]
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$. Then, $f$ is infinite-differentiable on $U$, and for $C$ a circle whose interior is contained in $U$, then
+    %     \[f^{(n)}(z) = \frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta\]
+    %     for all $z$ in the interior of $C$ and $n \geq 0$.
+    % \end{theorem}
+    % \begin{proof}
+    %     We show this by induction. If $n = 0$, then we get the Cauchy's Integral Formula we saw above. Now, assume that $f$ has $n-1$ derivatives, with
+    %     \[f^{(n-1)}(z) = \frac{(n-1)!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^n} \ d\zeta.\]
+    %     For small $h \in \mathbb{C}$, we find that
+    %     \[\frac{f^{(n-1)}(z+h) - f^{(n-1)}(z)}{h} = \frac{(n-1)!}{2\pi i} \int_C \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta.\]
+    %     Now, let
+    %     \[A = \frac{1}{\zeta - z - h}\qquad, B = \frac{1}{\zeta - z}.\]
+    %     We know that
+    %     \[A^n - B^n = (A - B)(A^{n-1} + A^{n-2}B + \dots + B^{n-1}).\]
+    %     We have
+    %     \[A - B = \frac{h}{(\zeta - z - h)(\zeta - z)},\]
+    %     and as $h \to 0$, $A \to B$ and so 
+    %     \[A^{n-1} + A^{n-2}B + \dots + B^{n-1} \to A^{n-1} + A^{n-1} + \dots + A^{n-1} = \frac{n}{(\zeta - z)^{n-1}}.\]
+    %     Therefore,
+    %     \[\lim_{h \to 0} \frac{1}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) = \frac{n}{(\zeta - z)^{n+1}}.\]
+    %     By the lemma above, this implies that
+    %     \begin{align*}
+    %         \lim_{h \to 0} \int_C \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta &= \int_C \lim_{h \to 0} \frac{f(\zeta)}{h} \left(\frac{1}{(\zeta - z - h)^n} - \frac{1}{(\zeta - z)^n}\right) \ d\zeta \\
+    %         &= n \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta.
+    %     \end{align*}
+    %     Hence, $f^{(n-1)}$ is holomorphic, with
+    %     \[f^{(n)}(z) = \frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z)^{n+1}} \ d\zeta.\]
+    %     So, the result follows by induction.
+    % \end{proof}
+    % When we apply the lemma, we take $\varepsilon = \frac{1}{2} \inf_{\zeta \in C} |\zeta - z|$ and 
+    % \[h(h, \zeta) = \frac{f(\zeta) (A^{n-1} + A^{n-2}B + \dots + B^{n-1} \to A^{n-1} + A^{n-1} + \dots + A^{n-1})}{(\zeta - z - h)(\zeta - z)}.\]
 
-    Using this result, we can derive Cauchy's Inequality.
-    \begin{corollary}[Cauchy's Inequality]
-        Let $f \colon U \to \mathbb{C}$ be holomorphic on some open set $U \subseteq \mathbb{C}$ and let $D_R(z_0)$ be an open disc contained in $U$. Then,
-        \[|f^{(n)} (z_0)| \leq \frac{n!}{R^n} \lVert f \rVert_C,\]
-        where $C = \partial D_R(z_0)$ is the boundary of the disc, traced anti-clockwise and
-        \[\lVert f \rVert_C = \sup_{z \in C} |f(z)|.\]
-    \end{corollary}
-    \begin{proof}
-        By Cauchy's Integral Formula (for derivatives), we find that
-        \begin{align*}
-            |f^{(n)}(z_0)| &= \left|\frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z_0)^{n+1}} \ d\zeta \right| \\
-            &= \frac{n!}{2\pi} \left|\int_0^{2\pi} \frac{f(z_0 + Re^{i\theta})}{(Re^{i\theta})^{n+1}}\cdot Ri e^{i\theta} \ d\theta \right| \\
-            &= \frac{n!}{2\pi \cdot R^n} \left| \int_0^{2\pi} f(z_0 + Re^{i\theta}) \ d\theta \right| \\
-            &\leq \frac{n!}{2\pi \cdot R^n}  \cdot 2\pi \lVert f \rVert_C = \frac{n!}{R^n} \lVert f \rVert_C.
-        \end{align*}
-    \end{proof}
-    Using this result, we can show that a holomorphic function is analytic.
-    \begin{theorem}[Taylor's Theorem]
-        Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$. If $\overline{D}_R(z_0) \subseteq U$, then $f$ has a power series expansion at $z_0$ given by
-        \[f(z) = \sum_{k=0}^\infty a_n(z - z_0)^n\]
-        for all $z \in D_R(z_0)$, where $a_n = \frac{f^{(n)}(z_0)}{n}$. In particular, $f$ is analytic.
-    \end{theorem}
-    \newpage
+    % Using this result, we can derive Cauchy's Inequality.
+    % \begin{corollary}[Cauchy's Inequality]
+    %     Let $f \colon U \to \mathbb{C}$ be holomorphic on some open set $U \subseteq \mathbb{C}$ and let $D_R(z_0)$ be an open disc contained in $U$. Then,
+    %     \[|f^{(n)} (z_0)| \leq \frac{n!}{R^n} \lVert f \rVert_C,\]
+    %     where $C = \partial D_R(z_0)$ is the boundary of the disc, traced anti-clockwise and
+    %     \[\lVert f \rVert_C = \sup_{z \in C} |f(z)|.\]
+    % \end{corollary}
+    % \begin{proof}
+    %     By Cauchy's Integral Formula (for derivatives), we find that
+    %     \begin{align*}
+    %         |f^{(n)}(z_0)| &= \left|\frac{n!}{2\pi i} \int_C \frac{f(\zeta)}{(\zeta - z_0)^{n+1}} \ d\zeta \right| \\
+    %         &= \frac{n!}{2\pi} \left|\int_0^{2\pi} \frac{f(z_0 + Re^{i\theta})}{(Re^{i\theta})^{n+1}}\cdot Ri e^{i\theta} \ d\theta \right| \\
+    %         &= \frac{n!}{2\pi \cdot R^n} \left| \int_0^{2\pi} f(z_0 + Re^{i\theta}) \ d\theta \right| \\
+    %         &\leq \frac{n!}{2\pi \cdot R^n}  \cdot 2\pi \lVert f \rVert_C = \frac{n!}{R^n} \lVert f \rVert_C.
+    %     \end{align*}
+    % \end{proof}
+    % Using this result, we can show that a holomorphic function is analytic.
+    % \begin{theorem}[Taylor's Theorem]
+    %     Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$. If $\overline{D}_R(z_0) \subseteq U$, then $f$ has a power series expansion at $z_0$ given by
+    %     \[f(z) = \sum_{k=0}^\infty a_n(z - z_0)^n\]
+    %     for all $z \in D_R(z_0)$, where $a_n = \frac{f^{(n)}(z_0)}{n}$. In particular, $f$ is analytic.
+    % \end{theorem}
+    % \newpage
 
-    \section{Consequences of Integral Formulae}
-    In this section, we will look at some consequences of Cauchy's Integral Formula.
+    % \section{Consequences of Integral Formulae}
+    % In this section, we will look at some consequences of Cauchy's Integral Formula.
 
-    The first consequence we shall study is the Fundamental Theorem of Algebra. To do so, we require Lioville's Theorem, which follows from Cauchy's Integral Formula.
-    \begin{theorem}[Lioville's Theorem]
-        Let $f \colon \mathbb{C} \to \mathbb{C}$ be an entire function such that $f$ is bounded. Then, $f$ is a constant function.
-    \end{theorem}
-    \begin{proof}
-        Since $\mathbb{C}$ is connected, we need to show that $f'(z) = 0$ for all $z \in \mathbb{C}$. So, let $z_0 \in \mathbb{C}$ and $R > 0$. By Cauchy's Inequality, we find that
-        \[|f'(z)| \leq \frac{1}{R} \lVert f \rVert_C.\]
-        We know that $f$ is bounded, so $\lVert f \rVert_C$ exists. The inequality holds for all $R > 0$, so we find that $|f'(z)| = 0$. Hence, $f'(z) = 0$ for all $z \in \mathbb{C}$- $f$ is a constant function.
-    \end{proof}
-    \begin{theorem}[Fundamental Theorem of Algebra]
-        Let $p \colon \mathbb{C} \to \mathbb{C}$ be a polynomial in $\mathbb{C}$ of degree $n \geq 1$. Then, $p$ has a root in $\mathbb{C}$, i.e. there exists a $z_0 \in \mathbb{C}$ such that $p(z_0) = 0$.
-    \end{theorem}
-    \begin{proof}
-        Assume that $p$ has no roots. Denote
-        \[p(z) = a_n z^n + a_{n-1} z^{n-1} + \dots + a_0,\]
-        with $a_n \neq 0$. Then, for $z \in \mathbb{C}$ with $z \neq 0$,
-        \[\frac{p(z)}{z^n} = a_n + \left(\frac{a_{n-1}}{z} + \dots + \frac{a_0}{z^n}\right).\]
-        We know that 
-        \[\frac{a_{n-1}}{z} + \dots + \frac{a_0}{z^n} \to 0\]
-        as $|z| \to \infty$. Hence, there exists an $R > 0$ such that for $z \in \mathbb{C}$, if $|z| > R$, then 
-        \[\left|\frac{p(z)}{z^n}\right| \geq \frac{|a_n|}{2} \iff |p(z)| \geq \frac{|a_n|}{2} |z|^n.\]
-        Hence, $p$ is bounded below on $\mathbb{C} \setminus \overline{D}_R(0)$. Now, since $p$ is continuous and has no roots, we find that $p$ is bounded below on $\overline{D}_R(0)$ too (since it is compact). Hence, $\frac{1}{p}$ is bounded and entire. By Lioville's Theorem, we find that $\frac{1}{p}$ is constant. This is a contradiction since $p$ is not a constant.
-    \end{proof}
-    Now, we can find that a polynomial has precisely $n$ roots.
-    \begin{corollary}
-        Let $p \colon \mathbb{C} \to \mathbb{C}$ be a polynomial of degree $n \geq 1$. Then, $p$ has $n$ roots.
-    \end{corollary}
+    % The first consequence we shall study is the Fundamental Theorem of Algebra. To do so, we require Lioville's Theorem, which follows from Cauchy's Integral Formula.
+    % \begin{theorem}[Lioville's Theorem]
+    %     Let $f \colon \mathbb{C} \to \mathbb{C}$ be an entire function such that $f$ is bounded. Then, $f$ is a constant function.
+    % \end{theorem}
+    % \begin{proof}
+    %     Since $\mathbb{C}$ is connected, we need to show that $f'(z) = 0$ for all $z \in \mathbb{C}$. So, let $z_0 \in \mathbb{C}$ and $R > 0$. By Cauchy's Inequality, we find that
+    %     \[|f'(z)| \leq \frac{1}{R} \lVert f \rVert_C.\]
+    %     We know that $f$ is bounded, so $\lVert f \rVert_C$ exists. The inequality holds for all $R > 0$, so we find that $|f'(z)| = 0$. Hence, $f'(z) = 0$ for all $z \in \mathbb{C}$- $f$ is a constant function.
+    % \end{proof}
+    % \begin{theorem}[Fundamental Theorem of Algebra]
+    %     Let $p \colon \mathbb{C} \to \mathbb{C}$ be a polynomial in $\mathbb{C}$ of degree $n \geq 1$. Then, $p$ has a root in $\mathbb{C}$, i.e. there exists a $z_0 \in \mathbb{C}$ such that $p(z_0) = 0$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Assume that $p$ has no roots. Denote
+    %     \[p(z) = a_n z^n + a_{n-1} z^{n-1} + \dots + a_0,\]
+    %     with $a_n \neq 0$. Then, for $z \in \mathbb{C}$ with $z \neq 0$,
+    %     \[\frac{p(z)}{z^n} = a_n + \left(\frac{a_{n-1}}{z} + \dots + \frac{a_0}{z^n}\right).\]
+    %     We know that 
+    %     \[\frac{a_{n-1}}{z} + \dots + \frac{a_0}{z^n} \to 0\]
+    %     as $|z| \to \infty$. Hence, there exists an $R > 0$ such that for $z \in \mathbb{C}$, if $|z| > R$, then 
+    %     \[\left|\frac{p(z)}{z^n}\right| \geq \frac{|a_n|}{2} \iff |p(z)| \geq \frac{|a_n|}{2} |z|^n.\]
+    %     Hence, $p$ is bounded below on $\mathbb{C} \setminus \overline{D}_R(0)$. Now, since $p$ is continuous and has no roots, we find that $p$ is bounded below on $\overline{D}_R(0)$ too (since it is compact). Hence, $\frac{1}{p}$ is bounded and entire. By Lioville's Theorem, we find that $\frac{1}{p}$ is constant. This is a contradiction since $p$ is not a constant.
+    % \end{proof}
+    % Now, we can find that a polynomial has precisely $n$ roots.
+    % \begin{corollary}
+    %     Let $p \colon \mathbb{C} \to \mathbb{C}$ be a polynomial of degree $n \geq 1$. Then, $p$ has $n$ roots.
+    % \end{corollary}
 
-    We shall now consider the Identity Theorem. We need the concept of a region to do so- a \emph{region} is a connected open subset of $\mathbb{C}$.
-    \begin{theorem}[Identity Theorem for zero functions]
-        Let $U \subseteq \mathbb{C}$ be a region and $f \colon U \to \mathbb{C}$ a holomorphic function. If there exists a convergent sequence $(z_n)_{n=1}^\infty$ of distinct points in $U$ (with limit in $U$) such that $f(z_n) = 0$ for all $n \in \mathbb{Z}_{\geq 1}$, then $f(z) = 0$ for all $z \in U$.
-    \end{theorem}
-    \begin{proof}
-        Let $z_n \to w$, for some $w \in U$, and let $D \subseteq U$ be an open disc centered at $w$. Since $f$ is holomorphic, we know that
-        \[f(z) = \sum_{n=0}^\infty a_n (z - z_0)^n\]
-        for all $z \in D$. Now, assume that $f$ is not the zero function on $D$. Let $a_m$ be the first non-zero coefficient in the power series expansion. Then,
-        \[f(z) = a_m(z - w)^m(1 + g(z)),\]
-        where 
-        \[g(z) = \sum_{j=1}^\infty \frac{a_{m+j}}{a_m} (z - w)^j.\]
-        The function $g$ is continuous with $g(w) = 0$. So, we can find an open disc $D' \subseteq D$ centered at $w$ such that $1 + g(z) \neq 0$ for all $z \in D'$. We know that $z_n \to w$, so we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \geq N$, $z_n \in D'$. In that case, we can find an $n \geq N$ such that
-        \[f(z_n) = a_m (z_n - w)^m (1 + g(z)) \neq 0\]
-        This is a contradiction. Hence, $f$ must be identically $0$, i.e. $f(z) = 0$ for all $z \in D$. 
+    % We shall now consider the Identity Theorem. We need the concept of a region to do so- a \emph{region} is a connected open subset of $\mathbb{C}$.
+    % \begin{theorem}[Identity Theorem for zero functions]
+    %     Let $U \subseteq \mathbb{C}$ be a region and $f \colon U \to \mathbb{C}$ a holomorphic function. If there exists a convergent sequence $(z_n)_{n=1}^\infty$ of distinct points in $U$ (with limit in $U$) such that $f(z_n) = 0$ for all $n \in \mathbb{Z}_{\geq 1}$, then $f(z) = 0$ for all $z \in U$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $z_n \to w$, for some $w \in U$, and let $D \subseteq U$ be an open disc centered at $w$. Since $f$ is holomorphic, we know that
+    %     \[f(z) = \sum_{n=0}^\infty a_n (z - z_0)^n\]
+    %     for all $z \in D$. Now, assume that $f$ is not the zero function on $D$. Let $a_m$ be the first non-zero coefficient in the power series expansion. Then,
+    %     \[f(z) = a_m(z - w)^m(1 + g(z)),\]
+    %     where 
+    %     \[g(z) = \sum_{j=1}^\infty \frac{a_{m+j}}{a_m} (z - w)^j.\]
+    %     The function $g$ is continuous with $g(w) = 0$. So, we can find an open disc $D' \subseteq D$ centered at $w$ such that $1 + g(z) \neq 0$ for all $z \in D'$. We know that $z_n \to w$, so we can find an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \geq N$, $z_n \in D'$. In that case, we can find an $n \geq N$ such that
+    %     \[f(z_n) = a_m (z_n - w)^m (1 + g(z)) \neq 0\]
+    %     This is a contradiction. Hence, $f$ must be identically $0$, i.e. $f(z) = 0$ for all $z \in D$. 
 
-        Now, let
-        \[V = \{z \in U \mid f \equiv 0 \textrm{ on an open disc } D \textrm{ centered at } z\}.\]
-        We know that $z_0 \in V$ by above. Moreover, $V$ is open\sidefootnote{for all $z \in V$, there exists an open disc $D$ centered at $z$ such that $f \equiv 0$, meaning that $D \subseteq V$ with $z \in D$.}. Also, $V$ is closed- let $(z_n)_{n=1}^\infty$ be a sequence in $V$ that converges to $z \in V$, we can use the argument above to show that $f \equiv 0$ on an open disc centered at $z$. Since $U$ is connected, this implies that $V = U$. Hence, $f \equiv 0$ in $U$.
-    \end{proof}
-    Intuitively, this result means that a non-zero holomorphic function that has isolated zeros. We can generalise the result to arbitrary functions.
-    \begin{theorem}[Identity Theorem]
-        Let $U \subseteq \mathbb{C}$ be a region and $f, g \colon U \to \mathbb{C}$ holomorphic functions. If there exists a convergent sequence $(z_n)_{n=1}^\infty$ of distinct points in $U$ (with limit in $U$) such that $f(z_n) = g(z_n)$ for all $n \in \mathbb{Z}_{\geq 1}$, then $f \equiv g$ in $U$.
-    \end{theorem}
-    \noindent This follows by using the previous result on the function $g - f$. 
+    %     Now, let
+    %     \[V = \{z \in U \mid f \equiv 0 \textrm{ on an open disc } D \textrm{ centered at } z\}.\]
+    %     We know that $z_0 \in V$ by above. Moreover, $V$ is open\sidefootnote{for all $z \in V$, there exists an open disc $D$ centered at $z$ such that $f \equiv 0$, meaning that $D \subseteq V$ with $z \in D$.}. Also, $V$ is closed- let $(z_n)_{n=1}^\infty$ be a sequence in $V$ that converges to $z \in V$, we can use the argument above to show that $f \equiv 0$ on an open disc centered at $z$. Since $U$ is connected, this implies that $V = U$. Hence, $f \equiv 0$ in $U$.
+    % \end{proof}
+    % Intuitively, this result means that a non-zero holomorphic function that has isolated zeros. We can generalise the result to arbitrary functions.
+    % \begin{theorem}[Identity Theorem]
+    %     Let $U \subseteq \mathbb{C}$ be a region and $f, g \colon U \to \mathbb{C}$ holomorphic functions. If there exists a convergent sequence $(z_n)_{n=1}^\infty$ of distinct points in $U$ (with limit in $U$) such that $f(z_n) = g(z_n)$ for all $n \in \mathbb{Z}_{\geq 1}$, then $f \equiv g$ in $U$.
+    % \end{theorem}
+    % \noindent This follows by using the previous result on the function $g - f$. 
 
-    The identity theorem can be used to show the trigonometric identity
-    \[\sin^2 z + \cos^2 z = 1\]
-    for all $z \in \mathbb{C}$. To do so, define the sequence $(z_n)_{n=1}^\infty$ by $z_n = \frac{1}{n}$. We assume the identity holds on $\mathbb{R}$ (which can be shown using real analysis). With that, we can apply the identity theorem using the sequence $(z_n)$ and functions $f(z) = \sin^2 z + \cos^2 z, g(z) = 1$ to show that $f(z) = g(z)$ for all $z \in \mathbb{C}$.
+    % The identity theorem can be used to show the trigonometric identity
+    % \[\sin^2 z + \cos^2 z = 1\]
+    % for all $z \in \mathbb{C}$. To do so, define the sequence $(z_n)_{n=1}^\infty$ by $z_n = \frac{1}{n}$. We assume the identity holds on $\mathbb{R}$ (which can be shown using real analysis). With that, we can apply the identity theorem using the sequence $(z_n)$ and functions $f(z) = \sin^2 z + \cos^2 z, g(z) = 1$ to show that $f(z) = g(z)$ for all $z \in \mathbb{C}$.
 
-    Note that we cannot drop the assumption that the limit lies in $U$ in the identity theorem. To see this, define the functions
-    \[f(z) = \sin (1/z), \qquad g(z) = 0\]
-    and the sequence $(z_n)_{n=1}^\infty$ by $z_n = \frac{1}{n \pi}$. We know that $z_n \to 0$, but $f$ is not defined on $0$. Moreover, $f(z_n) = g(z_n)$ for all $n \in \mathbb{Z}_{\geq 1}$, but $f \not\equiv g$ in $\mathbb{C} \setminus \{0\}$. So, the assumption that the limit lies in the set is a necessary one.
+    % Note that we cannot drop the assumption that the limit lies in $U$ in the identity theorem. To see this, define the functions
+    % \[f(z) = \sin (1/z), \qquad g(z) = 0\]
+    % and the sequence $(z_n)_{n=1}^\infty$ by $z_n = \frac{1}{n \pi}$. We know that $z_n \to 0$, but $f$ is not defined on $0$. Moreover, $f(z_n) = g(z_n)$ for all $n \in \mathbb{Z}_{\geq 1}$, but $f \not\equiv g$ in $\mathbb{C} \setminus \{0\}$. So, the assumption that the limit lies in the set is a necessary one.
 
-    We will now prove the converse of Goursat's Theorem- Morera's Theorem.
-    \begin{theorem}[Morera's Theorem]
-        Let $f \colon D \to \mathbb{C}$ be a continuous function in an open disc $D \subseteq \mathbb{C}$. If 
-        \[\int_T f(z) \ dz = 0\]
-        for all triangles $T$ whose interior is contained in $D$, then $f$ is holomorphic.
-    \end{theorem}
-    \begin{proof}
-        By a previous result, we know that $f$ has a primitive $F$ in $D$. Since $F$ is infinitely differentiable, we find that $f = F'$ is differentiable.
-    \end{proof}
-    We can use this to show that a convergent sequence of holomorphic functions is holomorphic.
-    \begin{theorem}
-        Let $U \subseteq \mathbb{C}$ be an open subset, and $(f_n)_{n=1}^\infty$ a sequence of holomorphic functions $f_n \colon U \to \mathbb{C}$ that converges uniformly to some function $f \colon U \to \mathbb{C}$ in every compact subset of $U$. Then, $f$ is holomorphic in $U$.
-    \end{theorem}
-    \begin{proof}
-        Let $D \subseteq \mathbb{C}$ be an open disc such that its closure is contained in $U$ and let $T$ be a triangle in $D$. Since $f_n$ is holomorphic for all $n \in \mathbb{Z}_{\geq 1}$, we find that 
-        \[\int_T f_n(z) \ dz = 0\]
-        by Goursat's Theorem. Since $f_n \to f$ uniformly in the closure of $D$, $f$ is continuous with
-        \[\int_T f_n(z) \ dz \to \int_T f(z) \ dz\]
-        as $n \to \infty$. Hence,
-        \[\int_T f(z) \ dz = 0.\]
-        By Morera's Theorem, we find that $f$ is holomorphic in $D$. Since $D$ was an arbitrary disc whose closure is contained in $U$, we find that $f$ is holomorphic in $U$.
-    \end{proof}
-    \newpage
+    % We will now prove the converse of Goursat's Theorem- Morera's Theorem.
+    % \begin{theorem}[Morera's Theorem]
+    %     Let $f \colon D \to \mathbb{C}$ be a continuous function in an open disc $D \subseteq \mathbb{C}$. If 
+    %     \[\int_T f(z) \ dz = 0\]
+    %     for all triangles $T$ whose interior is contained in $D$, then $f$ is holomorphic.
+    % \end{theorem}
+    % \begin{proof}
+    %     By a previous result, we know that $f$ has a primitive $F$ in $D$. Since $F$ is infinitely differentiable, we find that $f = F'$ is differentiable.
+    % \end{proof}
+    % We can use this to show that a convergent sequence of holomorphic functions is holomorphic.
+    % \begin{theorem}
+    %     Let $U \subseteq \mathbb{C}$ be an open subset, and $(f_n)_{n=1}^\infty$ a sequence of holomorphic functions $f_n \colon U \to \mathbb{C}$ that converges uniformly to some function $f \colon U \to \mathbb{C}$ in every compact subset of $U$. Then, $f$ is holomorphic in $U$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $D \subseteq \mathbb{C}$ be an open disc such that its closure is contained in $U$ and let $T$ be a triangle in $D$. Since $f_n$ is holomorphic for all $n \in \mathbb{Z}_{\geq 1}$, we find that 
+    %     \[\int_T f_n(z) \ dz = 0\]
+    %     by Goursat's Theorem. Since $f_n \to f$ uniformly in the closure of $D$, $f$ is continuous with
+    %     \[\int_T f_n(z) \ dz \to \int_T f(z) \ dz\]
+    %     as $n \to \infty$. Hence,
+    %     \[\int_T f(z) \ dz = 0.\]
+    %     By Morera's Theorem, we find that $f$ is holomorphic in $D$. Since $D$ was an arbitrary disc whose closure is contained in $U$, we find that $f$ is holomorphic in $U$.
+    % \end{proof}
+    % \newpage
 
-    \section{Isolated Singularities}
-    A function $f \colon U \to \mathbb{C}$ on an open set $U \subseteq \mathbb{C}$ has an \emph{isolated singularity} at $z_0 \in U$ if $f$ is holomorphic at $U \setminus \{z_0\}$. There are 3 types of isolated singularities:
-    \begin{itemize}
-        \item it is \emph{removable} if $f$ can be extended to a holomorphic function in $U$;
-        \item it is a \emph{pole} if the limit $|f(z)| \to \infty$ as $z \to z_0$;
-        \item otherwise, it is \emph{essential}.
-    \end{itemize}
-    We will now look at some examples:
-    \begin{itemize}
-        \item The functions $\frac{\sin z}{z}$ and $\frac{\exp z - 1}{z}$ have removable singularities at $z = 0$- this follows from their power series expansions. 
-        \item The functions $\frac{1}{z}$ and $\frac{1}{\sin z}$ have poles at $z = 0$. 
-        \item The functions $\sin (1/z)$ and $\exp (1/z)$ have essential singularities at $z = 0$.
-    \end{itemize}
+    % \section{Isolated Singularities}
+    % A function $f \colon U \to \mathbb{C}$ on an open set $U \subseteq \mathbb{C}$ has an \emph{isolated singularity} at $z_0 \in U$ if $f$ is holomorphic at $U \setminus \{z_0\}$. There are 3 types of isolated singularities:
+    % \begin{itemize}
+    %     \item it is \emph{removable} if $f$ can be extended to a holomorphic function in $U$;
+    %     \item it is a \emph{pole} if the limit $|f(z)| \to \infty$ as $z \to z_0$;
+    %     \item otherwise, it is \emph{essential}.
+    % \end{itemize}
+    % We will now look at some examples:
+    % \begin{itemize}
+    %     \item The functions $\frac{\sin z}{z}$ and $\frac{\exp z - 1}{z}$ have removable singularities at $z = 0$- this follows from their power series expansions. 
+    %     \item The functions $\frac{1}{z}$ and $\frac{1}{\sin z}$ have poles at $z = 0$. 
+    %     \item The functions $\sin (1/z)$ and $\exp (1/z)$ have essential singularities at $z = 0$.
+    % \end{itemize}
 
-    We will now look at a theorem that gives a sufficient condition for removable singularities.
-    \begin{theorem}[Riemann's Theorem on Removable Singularities]
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, for some $z_0 \in U$. If $f$ is bounded on $U \setminus \{z_0\}$, then $f$ has a removable singularity at $z_0$.
-    \end{theorem}
-    \begin{proof}
-        Define the function $h \colon U \to \mathbb{C}$ by
-        \[h(z) = \begin{cases}
-            0 & z = z_0 \\
-            (z - z_0)^2 f(z) & \textrm{otherwise}.
-        \end{cases}\]
-        We claim that $h$ is holomorphic in $U$. By product rule, $h$ is holomorphic at all $z \in U \setminus \{z_0\}$. By assumption, $f$ is bounded, so there exists an $M > 0$ such that $|f(z)| \leq M$ for all $z \in U \setminus \{z_0\}$. In that case, for $z \in U \setminus \{z_0\}$,
-        \[\left|\frac{h(z) - h(z_0)}{z - z_0}\right| = |z - z_0| \cdot |f(z)| \leq M|z - z_0|.\]
-        As $z \to z_0$, we find that $M|z -z_0| \to 0$. Hence, $h$ is holomorphic at $z_0$, with $h'(z) = 0$. So, $h$ is holomorphic in $U$.
+    % We will now look at a theorem that gives a sufficient condition for removable singularities.
+    % \begin{theorem}[Riemann's Theorem on Removable Singularities]
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, for some $z_0 \in U$. If $f$ is bounded on $U \setminus \{z_0\}$, then $f$ has a removable singularity at $z_0$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Define the function $h \colon U \to \mathbb{C}$ by
+    %     \[h(z) = \begin{cases}
+    %         0 & z = z_0 \\
+    %         (z - z_0)^2 f(z) & \textrm{otherwise}.
+    %     \end{cases}\]
+    %     We claim that $h$ is holomorphic in $U$. By product rule, $h$ is holomorphic at all $z \in U \setminus \{z_0\}$. By assumption, $f$ is bounded, so there exists an $M > 0$ such that $|f(z)| \leq M$ for all $z \in U \setminus \{z_0\}$. In that case, for $z \in U \setminus \{z_0\}$,
+    %     \[\left|\frac{h(z) - h(z_0)}{z - z_0}\right| = |z - z_0| \cdot |f(z)| \leq M|z - z_0|.\]
+    %     As $z \to z_0$, we find that $M|z -z_0| \to 0$. Hence, $h$ is holomorphic at $z_0$, with $h'(z) = 0$. So, $h$ is holomorphic in $U$.
 
-        Since $h$ is holomorphic in $U$, it has a power series representation
-        \[h(z) = \sum_{n=0}^\infty \frac{a_n}{n!} (z - z_0)^n\]
-        around some open disc $D$ centered at $z_0$. We have $a_0 = h(z_0)$ and $a_1 = h'(z_0)$, so
-        \[h(z) = \sum_{n=2}^\infty \frac{a_n}{n!}(z - z_0)^n = (z - z_0)^2 \sum_{n=2}^\infty a_n(z - z_0)^{n-2}.\]
-        Hence, for all $z \in D \setminus \{z_0\}$,
-        \[f(z) = (z - z_0)^{-2} f(z) = \sum_{n=2}^\infty a_n (z - z_0)^{n-2}.\]
-        We know that the power series for $f$ is holomorphic in $D$, we can use it to extend $f$ to $U$. So, $z_0$ is a removable singularity.
-    \end{proof}
+    %     Since $h$ is holomorphic in $U$, it has a power series representation
+    %     \[h(z) = \sum_{n=0}^\infty \frac{a_n}{n!} (z - z_0)^n\]
+    %     around some open disc $D$ centered at $z_0$. We have $a_0 = h(z_0)$ and $a_1 = h'(z_0)$, so
+    %     \[h(z) = \sum_{n=2}^\infty \frac{a_n}{n!}(z - z_0)^n = (z - z_0)^2 \sum_{n=2}^\infty a_n(z - z_0)^{n-2}.\]
+    %     Hence, for all $z \in D \setminus \{z_0\}$,
+    %     \[f(z) = (z - z_0)^{-2} f(z) = \sum_{n=2}^\infty a_n (z - z_0)^{n-2}.\]
+    %     We know that the power series for $f$ is holomorphic in $D$, we can use it to extend $f$ to $U$. So, $z_0$ is a removable singularity.
+    % \end{proof}
     
-    We will now look at different kinds of isolated singularities. For instance, consider the function
-    \[f(z) = \frac{1}{\sin (1/z)}.\]
-    We claim that $0$ is not an isolated singularity for $f$. Note that for every $n \in \mathbb{Z}_{\geq 1}$, the value $z_n = \frac{1}{\pi n}$ satisfies $\sin (z_n) = 0$. This implies that there cannot be an open disc $D$ such that $f$ is holomorphic at $D \setminus \{0\}$- we will have a value of form $\frac{1}{\pi n}$ for sufficiently large $n \in \mathbb{Z}_{\geq 1}$. 
+    % We will now look at different kinds of isolated singularities. For instance, consider the function
+    % \[f(z) = \frac{1}{\sin (1/z)}.\]
+    % We claim that $0$ is not an isolated singularity for $f$. Note that for every $n \in \mathbb{Z}_{\geq 1}$, the value $z_n = \frac{1}{\pi n}$ satisfies $\sin (z_n) = 0$. This implies that there cannot be an open disc $D$ such that $f$ is holomorphic at $D \setminus \{0\}$- we will have a value of form $\frac{1}{\pi n}$ for sufficiently large $n \in \mathbb{Z}_{\geq 1}$. 
     
-    Next, we show that $f(z) = \sin (1/z)$ has an essential singularity at $z = 0$. To prove this, we first show that $f$ is not removable, i.e. the limit $\lim_{z \to 0} f(z)$ does not exist. Consider the sequences $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ by $x_n = \frac{1}{2\pi n}$ and $y_n = \frac{1}{2\pi n + \frac{\pi}{2}}$. Then,
-    \[f(x_n) = \sin (2\pi n) = 0, \qquad f(y_n) = \sin (2\pi n+ \tfrac{\pi}{2}) = 1\]
-    for all $n \in \mathbb{Z}_{\geq 1}$. Hence, $f(x_n) \to 0$ and $f(y_n) \to 1$. We have $x_n \to 0$ and $y_n \to 0$ as $n \to \infty$, so we must have that the limit $\lim_{z \to 0} f(z)$ does not exist, i.e. the isolated singularity is not removable. Moreover, we also cannot have $\lim_{z \to 0} f(z) = \infty$, meaning that the isolated singularity is not a pole. Hence, the isolated singularity is essential.
+    % Next, we show that $f(z) = \sin (1/z)$ has an essential singularity at $z = 0$. To prove this, we first show that $f$ is not removable, i.e. the limit $\lim_{z \to 0} f(z)$ does not exist. Consider the sequences $(x_n)_{n=1}^\infty$ and $(y_n)_{n=1}^\infty$ by $x_n = \frac{1}{2\pi n}$ and $y_n = \frac{1}{2\pi n + \frac{\pi}{2}}$. Then,
+    % \[f(x_n) = \sin (2\pi n) = 0, \qquad f(y_n) = \sin (2\pi n+ \tfrac{\pi}{2}) = 1\]
+    % for all $n \in \mathbb{Z}_{\geq 1}$. Hence, $f(x_n) \to 0$ and $f(y_n) \to 1$. We have $x_n \to 0$ and $y_n \to 0$ as $n \to \infty$, so we must have that the limit $\lim_{z \to 0} f(z)$ does not exist, i.e. the isolated singularity is not removable. Moreover, we also cannot have $\lim_{z \to 0} f(z) = \infty$, meaning that the isolated singularity is not a pole. Hence, the isolated singularity is essential.
 
-    We will now show that the image of a function with an essential singularity is dense.
-    \begin{theorem}[Casarati-Weierstrass Theorem]
-        Let $f \colon D_R(z_0) \to \mathbb{C}$ be a holomorphic function on the punctured open disc $D_R(z_0) \setminus \{z_0\}$ for some $z_0 \in U$, and let $f$ have an essential singularity at $z_0$. Then, the image of the set $D_R(z_0) \setminus \{z_0\}$ is dense in $\mathbb{C}$.
-    \end{theorem}
-    \begin{proof}
-        Assume that the image of the set $D_R(z_0) \setminus \{z_0\}$ is dense in $\mathbb{C}$. In that case, there exists a $w \in \mathbb{C}$ and a $\delta > 0$ such that the open disc $D_\delta(w)$ intersects the image trivially, i.e. $|f(z) - w| \geq \delta$ for all $z \in D_R(z_0) \setminus \{z_0\}$. Hence, the closed ball $\overline{D}_\delta(w) \subseteq (D_R(z_0) \setminus \{z_0\})^c$. Now, define the function $g \colon D_R(z_0) \setminus \{z_0\} \to \mathbb{C}$ by
-        \[g(z) = \frac{1}{f(z) - w}.\]
-        Then, $g$ is holomorphic in $U \setminus \{z_0\}$ since $f$ is. Moreover,
-        \[|g(z)| = \frac{1}{|f(z) - w|} \leq \frac{1}{\delta}\]
-        for all $z \in D_R(z_0) \setminus \{z_0\}$. That is, $g$ is bounded on $D_R(z_0) \setminus \{z_0\}$. So, by Riemann's Theorem on Removable Singularities, we find that $g$ has a removable singularity at $z_0$. So, we can find an extension of $g$, $\overline{g} \colon D_R(z_0) \to \mathbb{C}$, that is holomorphic on $D_R(z_0)$. We now consider two cases:
-        \begin{itemize}
-            \item If $\overline{g}(z_0) = 0$, then 
-            \[\lim_{z \to z_0} f(z_0) = \lim_{z \to z_0} \frac{1}{\overline{g}(z_0)} = \infty,\]
-            so $f$ has a pole at $z_0$.
-            \item Otherwise, $\overline{g}(z_0) \neq 0$. Hence, $f(z) - w$ is holomorphic at $z_0$, meaning that $f$ has a removable singularity at $z_0$.
-        \end{itemize}
-        Hence, $f$ does not have an essential singularity at $z_0$. Taking the contrapositive, we find that if $f$ has an essential singularity at $z_0$, then the image is dense in $\mathbb{C}$.
-    \end{proof}
+    % We will now show that the image of a function with an essential singularity is dense.
+    % \begin{theorem}[Casarati-Weierstrass Theorem]
+    %     Let $f \colon D_R(z_0) \to \mathbb{C}$ be a holomorphic function on the punctured open disc $D_R(z_0) \setminus \{z_0\}$ for some $z_0 \in U$, and let $f$ have an essential singularity at $z_0$. Then, the image of the set $D_R(z_0) \setminus \{z_0\}$ is dense in $\mathbb{C}$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Assume that the image of the set $D_R(z_0) \setminus \{z_0\}$ is dense in $\mathbb{C}$. In that case, there exists a $w \in \mathbb{C}$ and a $\delta > 0$ such that the open disc $D_\delta(w)$ intersects the image trivially, i.e. $|f(z) - w| \geq \delta$ for all $z \in D_R(z_0) \setminus \{z_0\}$. Hence, the closed ball $\overline{D}_\delta(w) \subseteq (D_R(z_0) \setminus \{z_0\})^c$. Now, define the function $g \colon D_R(z_0) \setminus \{z_0\} \to \mathbb{C}$ by
+    %     \[g(z) = \frac{1}{f(z) - w}.\]
+    %     Then, $g$ is holomorphic in $U \setminus \{z_0\}$ since $f$ is. Moreover,
+    %     \[|g(z)| = \frac{1}{|f(z) - w|} \leq \frac{1}{\delta}\]
+    %     for all $z \in D_R(z_0) \setminus \{z_0\}$. That is, $g$ is bounded on $D_R(z_0) \setminus \{z_0\}$. So, by Riemann's Theorem on Removable Singularities, we find that $g$ has a removable singularity at $z_0$. So, we can find an extension of $g$, $\overline{g} \colon D_R(z_0) \to \mathbb{C}$, that is holomorphic on $D_R(z_0)$. We now consider two cases:
+    %     \begin{itemize}
+    %         \item If $\overline{g}(z_0) = 0$, then 
+    %         \[\lim_{z \to z_0} f(z_0) = \lim_{z \to z_0} \frac{1}{\overline{g}(z_0)} = \infty,\]
+    %         so $f$ has a pole at $z_0$.
+    %         \item Otherwise, $\overline{g}(z_0) \neq 0$. Hence, $f(z) - w$ is holomorphic at $z_0$, meaning that $f$ has a removable singularity at $z_0$.
+    %     \end{itemize}
+    %     Hence, $f$ does not have an essential singularity at $z_0$. Taking the contrapositive, we find that if $f$ has an essential singularity at $z_0$, then the image is dense in $\mathbb{C}$.
+    % \end{proof}
 
-    Now, we will study poles in more detail. They are closely related to zeros of a function. Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$. Then, $z_0 \in U$ is a \emph{zero} of $f$ if $f(z_0) = 0$. By the identity theorem, we know that a non-zero holomorphic function cannot have a neighbourhood around $z_0$ that is identically zero, i.e. any zeros of a holomorphic function are isolated. 
+    % Now, we will study poles in more detail. They are closely related to zeros of a function. Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$. Then, $z_0 \in U$ is a \emph{zero} of $f$ if $f(z_0) = 0$. By the identity theorem, we know that a non-zero holomorphic function cannot have a neighbourhood around $z_0$ that is identically zero, i.e. any zeros of a holomorphic function are isolated. 
     
-    It turns out that we can factorise a holomorphic function around its zero locally.
-    \begin{theorem}
-        Let $f \colon U \to \mathbb{C}$ be a non-zero holomorphic function on a region $U \subseteq \mathbb{C}$ and has a zero $z_0 \in U$. Then, there exists a neighbourhood $V \subseteq U$ of $z_0$ and a holomorphic function $g \colon V \to \mathbb{C}$ and a unique $n \in \mathbb{Z}_{\geq 1}$ such that $g(z_0) \neq 0$ and $f(z) = (z - z_0)^n g(z)$ for all $z \in V$.
-    \end{theorem}
-    \begin{proof}
-        We can write $f$ by its power series expansion, i.e.
-        \[f(z) = \sum_{k=0}^\infty a_k (z - z_0)^k\]
-        for all $z \in D_R(z_0)$, where $R > 0$. Since $f$ is not identically 0 on any neighbourhood around $z_0$, so  so the identity theorem tells us that there exists an $n \in \mathbb{Z}_{\geq 1}$ such that $a_n \neq 0$, and $n$ is the smallest integer satisfying the condition. Note that we have $a_0 = f(z_0) = 0$, so $n \geq 1$. Hence,
-        \[f(z) = \sum_{k=n}^\infty a_k(z - z_0)^k = (z - z_0)^n \sum_{k=n}^\infty a_k(z - z_0)^{k-n}.\]
-        So, let
-        \[g(z) = \sum_{k=n}^\infty a_k(z - z_0)^{k-n}.\]
-        Then, $g$ is holomorphic in some open disc $D \subseteq U$ centered at $z_0$, with $g(z_0) = a_n \neq 0$.
+    % It turns out that we can factorise a holomorphic function around its zero locally.
+    % \begin{theorem}
+    %     Let $f \colon U \to \mathbb{C}$ be a non-zero holomorphic function on a region $U \subseteq \mathbb{C}$ and has a zero $z_0 \in U$. Then, there exists a neighbourhood $V \subseteq U$ of $z_0$ and a holomorphic function $g \colon V \to \mathbb{C}$ and a unique $n \in \mathbb{Z}_{\geq 1}$ such that $g(z_0) \neq 0$ and $f(z) = (z - z_0)^n g(z)$ for all $z \in V$.
+    % \end{theorem}
+    % \begin{proof}
+    %     We can write $f$ by its power series expansion, i.e.
+    %     \[f(z) = \sum_{k=0}^\infty a_k (z - z_0)^k\]
+    %     for all $z \in D_R(z_0)$, where $R > 0$. Since $f$ is not identically 0 on any neighbourhood around $z_0$, so  so the identity theorem tells us that there exists an $n \in \mathbb{Z}_{\geq 1}$ such that $a_n \neq 0$, and $n$ is the smallest integer satisfying the condition. Note that we have $a_0 = f(z_0) = 0$, so $n \geq 1$. Hence,
+    %     \[f(z) = \sum_{k=n}^\infty a_k(z - z_0)^k = (z - z_0)^n \sum_{k=n}^\infty a_k(z - z_0)^{k-n}.\]
+    %     So, let
+    %     \[g(z) = \sum_{k=n}^\infty a_k(z - z_0)^{k-n}.\]
+    %     Then, $g$ is holomorphic in some open disc $D \subseteq U$ centered at $z_0$, with $g(z_0) = a_n \neq 0$.
 
-        Now, we show that the value $n$ is unique. So, let $f(z) = (z - z_0)^n g(z)$ and $f(z) = (z - z_0)^m h(z)$. Without loss of generality, assume that $m \geq n$. In that case, we have $g(z) = (z - z_0)^{m-n} h(z)$. Since $g(z_0) \neq 0$, we must find that $m = n$.
-    \end{proof}
-    \noindent We define the value $n$ as the \emph{order} (or \emph{multiplicity}) of the zero $z_0$. We will use this to define the order of a pole. 
+    %     Now, we show that the value $n$ is unique. So, let $f(z) = (z - z_0)^n g(z)$ and $f(z) = (z - z_0)^m h(z)$. Without loss of generality, assume that $m \geq n$. In that case, we have $g(z) = (z - z_0)^{m-n} h(z)$. Since $g(z_0) \neq 0$, we must find that $m = n$.
+    % \end{proof}
+    % \noindent We define the value $n$ as the \emph{order} (or \emph{multiplicity}) of the zero $z_0$. We will use this to define the order of a pole. 
     
-    % TODO: Make proposition
-    % So, let $U \subseteq \mathbb{C}$ be an open set and $z_0 \in U$ and $f$ a holomorphic function $f$ in $U \setminus \{z_0\}$ has a pole at $z_0$ if the function
-    % \[g(z) = \begin{cases}
-    %     1/f(z) & z \in V \setminus \{z_0\} \\
-    %     0 & \textrm{otherwise}
-    % \end{cases}\]
-    % is holomorphic in some open set $V \subseteq U$ containing $z_0$.
+    % % TODO: Make proposition
+    % % So, let $U \subseteq \mathbb{C}$ be an open set and $z_0 \in U$ and $f$ a holomorphic function $f$ in $U \setminus \{z_0\}$ has a pole at $z_0$ if the function
+    % % \[g(z) = \begin{cases}
+    % %     1/f(z) & z \in V \setminus \{z_0\} \\
+    % %     0 & \textrm{otherwise}
+    % % \end{cases}\]
+    % % is holomorphic in some open set $V \subseteq U$ containing $z_0$.
 
-    % \noindent Using this result, we can define the \emph{order} of a pole at $z_0$ (with respect to the function $f$) by the order of the zero at $z_0$ with respect to the function $g$.
-    \begin{theorem}
-        Let $f \colon U \to \mathbb{C}$ be a function that is holomorphic at $U \setminus \{z_0\}$, for some $z_0 \in U$, and let $f$ have a pole at $z_0$. Then, there exists a holomorphic function $h \colon V \to \mathbb{C}$ in some open neighbourhood $V \subseteq U$ containing $z_0$ and a unique $n \in \mathbb{Z}_{\geq 1}$ such that $f(z) = (z - z_0)^{-n} h(z)$ for all $z \in V$.
-    \end{theorem}
-    \begin{proof}
-        % TODO: Apply the previous theorem to 1/f(z)
-    \end{proof}
+    % % \noindent Using this result, we can define the \emph{order} of a pole at $z_0$ (with respect to the function $f$) by the order of the zero at $z_0$ with respect to the function $g$.
+    % \begin{theorem}
+    %     Let $f \colon U \to \mathbb{C}$ be a function that is holomorphic at $U \setminus \{z_0\}$, for some $z_0 \in U$, and let $f$ have a pole at $z_0$. Then, there exists a holomorphic function $h \colon V \to \mathbb{C}$ in some open neighbourhood $V \subseteq U$ containing $z_0$ and a unique $n \in \mathbb{Z}_{\geq 1}$ such that $f(z) = (z - z_0)^{-n} h(z)$ for all $z \in V$.
+    % \end{theorem}
+    % \begin{proof}
+    %     % TODO: Apply the previous theorem to 1/f(z)
+    % \end{proof}
 
-    We now define the \emph{order of a pole} of the function $f$ at $z_0$ as the order of the zero of the function $g$, as defined above, at $z_0$. We say that a pole (or a zero) is \emph{simple} if it has order 1.
+    % We now define the \emph{order of a pole} of the function $f$ at $z_0$ as the order of the zero of the function $g$, as defined above, at $z_0$. We say that a pole (or a zero) is \emph{simple} if it has order 1.
 
-    \begin{theorem}
-        Let $U \subseteq \mathbb{C}$ be an open set and let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, for some $z_0 \in U$. If $f$ has a pole of order $n$ at $z_0$, then
-        \[f(z) = \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0} + g(z),\]
-        where $g \colon V \to \mathbb{C}$ is holomorphic and $V \subseteq U$ is a neighbourhood around $z_0$, for all $z \in V$.
-    \end{theorem}
-    \begin{proof}
-        We know that
-        \[f(z) = (z - z_0)^{-n} h(z),\]
-        where $h \colon V \to \mathbb{C}$ is holomorphic in some neighbourhood around $z_0$. Hence, we can write $z_0$ by its power series expansion, i.e.
-        \[h(z) = \sum_{k=0}^\infty b_k (z - z_0)^k\]
-        for all $z \in V$. This implies that
-        \begin{align*}
-            f(z) &= (z - z_0)^{-n} \sum_{k=0}^\infty b_k (z - z_0)^k \\
-            &= \sum_{j=0}^\infty a_j (z - z_0)^{j - k} \\
-            &= \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0} + g(z),
-        \end{align*}
-        where
-        \[g(z) = \sum_{j=n}^\infty a_j (z - z_0)^{j-n}\]
-        is holomorphic on $V$.
-    \end{proof}
-    \noindent We call the expression
-    \[\frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}\]
-    the \emph{principal part of $f$}, and the value $a_{-1}$ the \emph{residue of $f$}. We denote this by $\operatorname{res}_{z_0}(f)$.
+    % \begin{theorem}
+    %     Let $U \subseteq \mathbb{C}$ be an open set and let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, for some $z_0 \in U$. If $f$ has a pole of order $n$ at $z_0$, then
+    %     \[f(z) = \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0} + g(z),\]
+    %     where $g \colon V \to \mathbb{C}$ is holomorphic and $V \subseteq U$ is a neighbourhood around $z_0$, for all $z \in V$.
+    % \end{theorem}
+    % \begin{proof}
+    %     We know that
+    %     \[f(z) = (z - z_0)^{-n} h(z),\]
+    %     where $h \colon V \to \mathbb{C}$ is holomorphic in some neighbourhood around $z_0$. Hence, we can write $z_0$ by its power series expansion, i.e.
+    %     \[h(z) = \sum_{k=0}^\infty b_k (z - z_0)^k\]
+    %     for all $z \in V$. This implies that
+    %     \begin{align*}
+    %         f(z) &= (z - z_0)^{-n} \sum_{k=0}^\infty b_k (z - z_0)^k \\
+    %         &= \sum_{j=0}^\infty a_j (z - z_0)^{j - k} \\
+    %         &= \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0} + g(z),
+    %     \end{align*}
+    %     where
+    %     \[g(z) = \sum_{j=n}^\infty a_j (z - z_0)^{j-n}\]
+    %     is holomorphic on $V$.
+    % \end{proof}
+    % \noindent We call the expression
+    % \[\frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}\]
+    % the \emph{principal part of $f$}, and the value $a_{-1}$ the \emph{residue of $f$}. We denote this by $\operatorname{res}_{z_0}(f)$.
 
-    We will now look at a way to compute the residue for a pole.
-    \begin{theorem}
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, where $U$ is open and $z_0 \in U$, with a pole of order $n$ at $z_0$. Then,
-        \[\operatorname{res}_{z_0}(f) = \lim_{z \to z_0} \frac{1}{(n-1)!} \frac{d^{n-1}}{dz^{n-1}} (z - z_0)^n f(z).\]
-    \end{theorem}
-    \begin{proof}
-        Let the principal part of $f$ be
-        \[\frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}.\]
-        % TODO
-    \end{proof}
-    \noindent We will now compute some residues. Define the function 
-    \[f(z) = \frac{z}{(z - 1)^3 (z + 3)}.\]
-    It is holomorphic on $\mathbb{C} \setminus \{1, -3\}$. Clearly, it has a simple pole at $z = -3$ and a pole of order 3 at $z = 1$. Moreover,
-    \begin{align*}
-        \operatorname{res}_{1}(f) &= \frac{1}{2!} \lim_{z \to 1} \frac{d^2}{dz^2} \frac{z}{z+3} = \lim_{z \to 1} \frac{-3}{(z + 3)^3} = \frac{-3}{64}, \\
-        \operatorname{res}_{-3}(f) &= \lim_{z \to -3} \frac{z}{(z - 1)^3} = \frac{3}{64}.
-    \end{align*}
-    Next, consider the function
-    \[f(z) = \frac{e^z}{z^5}.\]
-    The function has a pole of order 5 at $z = 0$. Moreover, by the power series expansion of $\exp z$ around $z = 0$, we find that the principal part of $f$ is:
-    \[\frac{1}{z^5} + \frac{1}{z^4} + \frac{1}{2z^3} + \frac{1}{6z^2} + \frac{1}{24z}.\]
-    Hence, the residue is $\frac{1}{24}$. Alternatively,
-    \[\operatorname{res}_{0}(f) = \frac{1}{4!} \lim_{z \to 0} \frac{d^5}{dz^5} e^z = \frac{1}{4!} \lim_{z \to 0} e^z = \frac{1}{24}.\]
+    % We will now look at a way to compute the residue for a pole.
+    % \begin{theorem}
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function on $U \setminus \{z_0\}$, where $U$ is open and $z_0 \in U$, with a pole of order $n$ at $z_0$. Then,
+    %     \[\operatorname{res}_{z_0}(f) = \lim_{z \to z_0} \frac{1}{(n-1)!} \frac{d^{n-1}}{dz^{n-1}} (z - z_0)^n f(z).\]
+    % \end{theorem}
+    % \begin{proof}
+    %     Let the principal part of $f$ be
+    %     \[\frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}.\]
+    %     % TODO
+    % \end{proof}
+    % \noindent We will now compute some residues. Define the function 
+    % \[f(z) = \frac{z}{(z - 1)^3 (z + 3)}.\]
+    % It is holomorphic on $\mathbb{C} \setminus \{1, -3\}$. Clearly, it has a simple pole at $z = -3$ and a pole of order 3 at $z = 1$. Moreover,
+    % \begin{align*}
+    %     \operatorname{res}_{1}(f) &= \frac{1}{2!} \lim_{z \to 1} \frac{d^2}{dz^2} \frac{z}{z+3} = \lim_{z \to 1} \frac{-3}{(z + 3)^3} = \frac{-3}{64}, \\
+    %     \operatorname{res}_{-3}(f) &= \lim_{z \to -3} \frac{z}{(z - 1)^3} = \frac{3}{64}.
+    % \end{align*}
+    % Next, consider the function
+    % \[f(z) = \frac{e^z}{z^5}.\]
+    % The function has a pole of order 5 at $z = 0$. Moreover, by the power series expansion of $\exp z$ around $z = 0$, we find that the principal part of $f$ is:
+    % \[\frac{1}{z^5} + \frac{1}{z^4} + \frac{1}{2z^3} + \frac{1}{6z^2} + \frac{1}{24z}.\]
+    % Hence, the residue is $\frac{1}{24}$. Alternatively,
+    % \[\operatorname{res}_{0}(f) = \frac{1}{4!} \lim_{z \to 0} \frac{d^5}{dz^5} e^z = \frac{1}{4!} \lim_{z \to 0} e^z = \frac{1}{24}.\]
 
-    Now, we shall prove the Residue Formula.
-    \begin{theorem}[Residue Formula for a single pole]
-        Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose iterior is contained in $U$, except for a pole at $z_0$ inside $C$. Then,
-        \[\int_C f(z) \ dz = 2\pi i \cdot \operatorname{res}_{z_0}(f).\]
-    \end{theorem}
-    \begin{proof}
-        Let $p$ be the principal part of $f$ at $z_0$, given by
-        \[p(z) = \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}.\]
-        Then, $p$ is holomorphic in $\mathbb{C} \setminus \{z_0\}$, and the function $f - p$ has a removable singularity at $z_0$. Hence, $f - p$ extends to a holomorphic function $g \colon U \to \mathbb{C}$. By Cauchy's Theorem, we find that
-        \[\int_C f(z) - p(z) \ dz = 0.\]
-        This implies that
-        \[\int_C f(z) \ dz = \int_C p(z) \ dz = \sum_{i=1}^n \int_C \frac{a_{-i}}{(z - z_0)^i} \ dz.\]
-        The function $\frac{1}{(z - z_0)^n}$ has a primitive if and only if $n \neq -1$. Therefore,
-        \[\int_C f(z) \ dz = \int_C \frac{a_{-1}}{z - z_0} \ dz = 2\pi i \cdot a_{-1} = 2\pi i \cdot \operatorname{res}_f(z_0).\]
-    \end{proof}
-    \begin{corollary}[Residue Formula]
-        Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose interior is contained in $U$, except for finitely many poles $z_1, \dots, z_n$ inside $C$. Then,
-        \[\int_C f(z) \ dz = 2\pi i \cdot \sum_{k=1}^n \operatorname{res}_{z_n}(f).\]
-    \end{corollary}
-    \noindent This follows by breaking the circle down into smaller circles, each of which contains a single pole.
+    % Now, we shall prove the Residue Formula.
+    % \begin{theorem}[Residue Formula for a single pole]
+    %     Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose iterior is contained in $U$, except for a pole at $z_0$ inside $C$. Then,
+    %     \[\int_C f(z) \ dz = 2\pi i \cdot \operatorname{res}_{z_0}(f).\]
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $p$ be the principal part of $f$ at $z_0$, given by
+    %     \[p(z) = \frac{a_{-n}}{(z - z_0)^n} + \dots + \frac{a_{-1}}{z - z_0}.\]
+    %     Then, $p$ is holomorphic in $\mathbb{C} \setminus \{z_0\}$, and the function $f - p$ has a removable singularity at $z_0$. Hence, $f - p$ extends to a holomorphic function $g \colon U \to \mathbb{C}$. By Cauchy's Theorem, we find that
+    %     \[\int_C f(z) - p(z) \ dz = 0.\]
+    %     This implies that
+    %     \[\int_C f(z) \ dz = \int_C p(z) \ dz = \sum_{i=1}^n \int_C \frac{a_{-i}}{(z - z_0)^i} \ dz.\]
+    %     The function $\frac{1}{(z - z_0)^n}$ has a primitive if and only if $n \neq -1$. Therefore,
+    %     \[\int_C f(z) \ dz = \int_C \frac{a_{-1}}{z - z_0} \ dz = 2\pi i \cdot a_{-1} = 2\pi i \cdot \operatorname{res}_f(z_0).\]
+    % \end{proof}
+    % \begin{corollary}[Residue Formula]
+    %     Let $f \colon U \to \mathbb{C}$ be holomorphic on an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose interior is contained in $U$, except for finitely many poles $z_1, \dots, z_n$ inside $C$. Then,
+    %     \[\int_C f(z) \ dz = 2\pi i \cdot \sum_{k=1}^n \operatorname{res}_{z_n}(f).\]
+    % \end{corollary}
+    % \noindent This follows by breaking the circle down into smaller circles, each of which contains a single pole.
 
-    Typically, it is easier to compute the residues than the integral directly. We will now illustrate this. For instance, let
-    \[f(z) = \frac{z}{(z - 1)^3 (z - 5)}.\]
-    Then, $f$ is holomorphic in $\mathbb{C} \setminus \{1, 5\}$ and has a simple pole at $z = 5$ and a pole of order 3 at $z = 1$. If we want to compute the integral over the circle $C$ of radius 2 centered at 0, then we just need to consider the pole at $z = 1$. We have
-    \[\operatorname{res}_1(f) = \frac{1}{2!} \cdot \lim_{z \to 1} \frac{d}{dz^2} \frac{z}{z-5} = \lim_{z \to 1} \frac{-5}{(z - 5)^3}= \frac{-5}{64}.\]
-    Hence,
-    \[\int_C f(z) \ dz = 2\pi i \cdot \operatorname{res}_1(f) = \frac{-5}{32} \pi i.\]
+    % Typically, it is easier to compute the residues than the integral directly. We will now illustrate this. For instance, let
+    % \[f(z) = \frac{z}{(z - 1)^3 (z - 5)}.\]
+    % Then, $f$ is holomorphic in $\mathbb{C} \setminus \{1, 5\}$ and has a simple pole at $z = 5$ and a pole of order 3 at $z = 1$. If we want to compute the integral over the circle $C$ of radius 2 centered at 0, then we just need to consider the pole at $z = 1$. We have
+    % \[\operatorname{res}_1(f) = \frac{1}{2!} \cdot \lim_{z \to 1} \frac{d}{dz^2} \frac{z}{z-5} = \lim_{z \to 1} \frac{-5}{(z - 5)^3}= \frac{-5}{64}.\]
+    % Hence,
+    % \[\int_C f(z) \ dz = 2\pi i \cdot \operatorname{res}_1(f) = \frac{-5}{32} \pi i.\]
 
-    A function $f \colon U \to \mathbb{C}$ is \emph{meromorphic} on an open set $U \subseteq \mathbb{C}$ if there exists a set of poles $P \subseteq U$ such that $f$ is holomorphic in $U \setminus P$. By the definition of isolated singularities, we find that $P$ is closed (and discrete). Examples of meromorphic functions include holomorphic functions, a rational function $\frac{p(z)}{q(z)}$, where $p$ and $q$ are polynomials, $\frac{1}{\sin z}$ (which has poles at $\pi k$ for $k \in \mathbb{Z}$), and in general, functions of the form $\frac{f(z)}{g(z)}$, where $f$ and $g$ are holomorphic in $U \subseteq \mathbb{C}$ open, and $g \not\equiv 0$ on any open subset of $U$. We can now prove the argument principle.
-    \begin{theorem}[The Argument Principle]
-        Let $f \colon U \to \mathbb{C}$ be meromorphic on an open set $U \subseteq \mathbb{C}$, and let $C \subseteq U$ be a circle whose interior is in $C$. If $f$ has no poles and no zeros on $C$, then
-        \[\frac{1}{2\pi i} \int_C \frac{f'(z)}{f(z)} \ dz = z - p,\]
-        where $z$ is the number of zeros of $f$ inside $C$ (with respect to their order), and $p$ the number of poles inside $C$ (with respect to their order).
-    \end{theorem}
-    \begin{proof}
-        By the quotient rule, we know that $\frac{f'}{f}$ is holomorphic on $U$ except for the zeros and poles of $f$. We will show the result using residue formula.
+    % A function $f \colon U \to \mathbb{C}$ is \emph{meromorphic} on an open set $U \subseteq \mathbb{C}$ if there exists a set of poles $P \subseteq U$ such that $f$ is holomorphic in $U \setminus P$. By the definition of isolated singularities, we find that $P$ is closed (and discrete). Examples of meromorphic functions include holomorphic functions, a rational function $\frac{p(z)}{q(z)}$, where $p$ and $q$ are polynomials, $\frac{1}{\sin z}$ (which has poles at $\pi k$ for $k \in \mathbb{Z}$), and in general, functions of the form $\frac{f(z)}{g(z)}$, where $f$ and $g$ are holomorphic in $U \subseteq \mathbb{C}$ open, and $g \not\equiv 0$ on any open subset of $U$. We can now prove the argument principle.
+    % \begin{theorem}[The Argument Principle]
+    %     Let $f \colon U \to \mathbb{C}$ be meromorphic on an open set $U \subseteq \mathbb{C}$, and let $C \subseteq U$ be a circle whose interior is in $C$. If $f$ has no poles and no zeros on $C$, then
+    %     \[\frac{1}{2\pi i} \int_C \frac{f'(z)}{f(z)} \ dz = z - p,\]
+    %     where $z$ is the number of zeros of $f$ inside $C$ (with respect to their order), and $p$ the number of poles inside $C$ (with respect to their order).
+    % \end{theorem}
+    % \begin{proof}
+    %     By the quotient rule, we know that $\frac{f'}{f}$ is holomorphic on $U$ except for the zeros and poles of $f$. We will show the result using residue formula.
 
-        First, assume that $f$ has a zero of order $n$ at $z_0$ inside $C$. Then, we can find a function $g \colon D \to \mathbb{C}$ holomorphic on an open disc $D$ centered at $z_0$ with $g(z_0) \neq 0$ such that $f(z) = (z - z_0)^n g(z)$ for all $z \in D$. Hence,
-        \[\frac{f'(z)}{f(z)} = \frac{n(z - z_0)^{n-1} g(z) + (z - z_0)^n g'(z)}{(z - z_0)^n g(z)} = \frac{n}{z - z_0} + \frac{g'(z)}{g(z)}.\]
-        We know that $g(z_0) \neq 0$, so $\frac{g'}{g}$ is holomorphic around some neighbourhood of $z_0$. Hence, $\operatorname{res}_{f'/f}(z_0) = n$.
+    %     First, assume that $f$ has a zero of order $n$ at $z_0$ inside $C$. Then, we can find a function $g \colon D \to \mathbb{C}$ holomorphic on an open disc $D$ centered at $z_0$ with $g(z_0) \neq 0$ such that $f(z) = (z - z_0)^n g(z)$ for all $z \in D$. Hence,
+    %     \[\frac{f'(z)}{f(z)} = \frac{n(z - z_0)^{n-1} g(z) + (z - z_0)^n g'(z)}{(z - z_0)^n g(z)} = \frac{n}{z - z_0} + \frac{g'(z)}{g(z)}.\]
+    %     We know that $g(z_0) \neq 0$, so $\frac{g'}{g}$ is holomorphic around some neighbourhood of $z_0$. Hence, $\operatorname{res}_{f'/f}(z_0) = n$.
 
-        Next, assume that $f$ has a pole of order $n$ at $z_0$ inside $C$. Then, we can find a function $g \colon D \to \mathbb{C}$ holomorphic on an open disc $D$ centered at $z_0$ with $g(z) \neq 0$ such that $f(z) = (z - z_0)^{-n} g(z)$ for all $z \in D$. Hence,
-        \[\frac{f'(z)}{f(z)} = \frac{-n(z - z_0)^{-n-1} g(z) + (z - z_0)^{-n} g'(z)}{(z - z_0)^{-n} g(z)} = \frac{-n}{z - z_0} + \frac{g'(z)}{g(z)}.\]
-        So, we find that $\operatorname{res}_{f
-        /f}(z_0) = -n$.
+    %     Next, assume that $f$ has a pole of order $n$ at $z_0$ inside $C$. Then, we can find a function $g \colon D \to \mathbb{C}$ holomorphic on an open disc $D$ centered at $z_0$ with $g(z) \neq 0$ such that $f(z) = (z - z_0)^{-n} g(z)$ for all $z \in D$. Hence,
+    %     \[\frac{f'(z)}{f(z)} = \frac{-n(z - z_0)^{-n-1} g(z) + (z - z_0)^{-n} g'(z)}{(z - z_0)^{-n} g(z)} = \frac{-n}{z - z_0} + \frac{g'(z)}{g(z)}.\]
+    %     So, we find that $\operatorname{res}_{f
+    %     /f}(z_0) = -n$.
 
-        Now, by residue formula, we find that
-        \[\frac{1}{2\pi i} \int_C \frac{f'(z)}{f(z)} \ dz = \sum_{z_0 \textrm{ pole of } f'/f \textrm{ in } C} \operatorname{res}_{f'/f}(z_0) = z - p.\]
-    \end{proof}
-    \noindent We can use the argument principle to compute integrals. For instance, consider the integral
-    \[\int_C \frac{z^4}{z^5 - 1} \ dz,\]
-    where $C$ is a circle with radius 2 centered at 0. Here, we have $f(z) = z^5 - 1$. The function $f$ has 5 zeros that are roots of unity, meaning that they lie inside $C$, and it has no poles. Hence,
-    \[\int_C \frac{f'(z)}{f(z)} \ dz = 2\pi i \cdot 5 = 10\pi i.\]
-    This implies that
-    \[\int_C \frac{z^4}{z^5 - 1} \ dz = \frac{1}{5} \int_C \frac{f'(z)}{f(z)} \ dz = 2\pi i.\]
-    \newpage
+    %     Now, by residue formula, we find that
+    %     \[\frac{1}{2\pi i} \int_C \frac{f'(z)}{f(z)} \ dz = \sum_{z_0 \textrm{ pole of } f'/f \textrm{ in } C} \operatorname{res}_{f'/f}(z_0) = z - p.\]
+    % \end{proof}
+    % \noindent We can use the argument principle to compute integrals. For instance, consider the integral
+    % \[\int_C \frac{z^4}{z^5 - 1} \ dz,\]
+    % where $C$ is a circle with radius 2 centered at 0. Here, we have $f(z) = z^5 - 1$. The function $f$ has 5 zeros that are roots of unity, meaning that they lie inside $C$, and it has no poles. Hence,
+    % \[\int_C \frac{f'(z)}{f(z)} \ dz = 2\pi i \cdot 5 = 10\pi i.\]
+    % This implies that
+    % \[\int_C \frac{z^4}{z^5 - 1} \ dz = \frac{1}{5} \int_C \frac{f'(z)}{f(z)} \ dz = 2\pi i.\]
+    % \newpage
 
-    \section{Rouché's Theorem}
-    In this section, we will prove Rouché's Theorem. First, we prove a lemma about continuous functions.
-    \begin{lemma}
-        Let $h \colon [0, 1] \to \mathbb{C}$ be a continuous function. If $h(t) \in \mathbb{Z}$ for all $t \in [0, 1]$, then $h$ is constant.
-    \end{lemma}
-    \begin{proof}
-        % TODO
-    \end{proof}
-    \noindent We make use of the lemma in Rouché's Theorem below.
-    \begin{theorem}[Rouché's Theorem]
-        Let $f, g \colon U \to \mathbb{C}$ be non-zero holomorphic functions in an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose interior is in $U$. If $|f(z)| > |g(z)|$ for all $z \in C$, then $f$ and $f + g$ have the same number of zeros inside $C$.
-    \end{theorem}
-    \begin{proof}
-        For every $0 \leq t \leq 1$, define the function $f_t \colon U \to \mathbb{C}$ by $f_t(z) = f(z) + tg(z)$ and let $n_t$ be the number of zeros the function $f_t$ has inside $C$. Then, $f_0 = f$ and $f_1 = f + g$. Since $f_t$ is holomorphic for all $t \in [0, 1]$ and not identically equal to $0$, we note that $n_t \in \mathbb{Z}_{\geq 0}$. We will show that $t \mapsto n_t$ is a continuous function, and hence a constant.
+    % \section{Rouché's Theorem}
+    % In this section, we will prove Rouché's Theorem. First, we prove a lemma about continuous functions.
+    % \begin{lemma}
+    %     Let $h \colon [0, 1] \to \mathbb{C}$ be a continuous function. If $h(t) \in \mathbb{Z}$ for all $t \in [0, 1]$, then $h$ is constant.
+    % \end{lemma}
+    % \begin{proof}
+    %     % TODO
+    % \end{proof}
+    % \noindent We make use of the lemma in Rouché's Theorem below.
+    % \begin{theorem}[Rouché's Theorem]
+    %     Let $f, g \colon U \to \mathbb{C}$ be non-zero holomorphic functions in an open set $U \subseteq \mathbb{C}$ and let $C \subseteq U$ be a circle whose interior is in $U$. If $|f(z)| > |g(z)|$ for all $z \in C$, then $f$ and $f + g$ have the same number of zeros inside $C$.
+    % \end{theorem}
+    % \begin{proof}
+    %     For every $0 \leq t \leq 1$, define the function $f_t \colon U \to \mathbb{C}$ by $f_t(z) = f(z) + tg(z)$ and let $n_t$ be the number of zeros the function $f_t$ has inside $C$. Then, $f_0 = f$ and $f_1 = f + g$. Since $f_t$ is holomorphic for all $t \in [0, 1]$ and not identically equal to $0$, we note that $n_t \in \mathbb{Z}_{\geq 0}$. We will show that $t \mapsto n_t$ is a continuous function, and hence a constant.
 
-        Now, let $t \in [0, 1]$. We first show that $f_t$ has no zeros in $C$. So, let $z_0 \in C$ be a zero of $f_t$. In that case, $|f(z_0)| = t|g(z_0)|$. However, since $0 \leq t \leq 1$ and $|f(z_0)| > |g(z_0)|$, this is a contradiction. Hence, $f_t$ has no zeros in $C$.
+    %     Now, let $t \in [0, 1]$. We first show that $f_t$ has no zeros in $C$. So, let $z_0 \in C$ be a zero of $f_t$. In that case, $|f(z_0)| = t|g(z_0)|$. However, since $0 \leq t \leq 1$ and $|f(z_0)| > |g(z_0)|$, this is a contradiction. Hence, $f_t$ has no zeros in $C$.
 
-        Next, since $f_t$ is holomorphic in $U$ and has no poles, the argument principle tells us that
-        \[n_t = \int_C \frac{f'_t(z)}{f_t(z)} \ dz.\]
-        % TODO: Show $t \mapsto n_t$ is continuous
-        Hence, the map $t \mapsto n_t$ is continuous. This implies that the value $n_t$ is constant by the lemma above, meaning that $n_0 = n_1$. Therefore, $f$ and $f + g$ have the same number of zeros.
-    \end{proof}
+    %     Next, since $f_t$ is holomorphic in $U$ and has no poles, the argument principle tells us that
+    %     \[n_t = \int_C \frac{f'_t(z)}{f_t(z)} \ dz.\]
+    %     % TODO: Show $t \mapsto n_t$ is continuous
+    %     Hence, the map $t \mapsto n_t$ is continuous. This implies that the value $n_t$ is constant by the lemma above, meaning that $n_0 = n_1$. Therefore, $f$ and $f + g$ have the same number of zeros.
+    % \end{proof}
     
-    We will now use Rouché's Theorem to prove different results. For instance, we can prove the Fundamental Theorem of Algebra using it. So, let $p$ be a polynomial of degree $n \geq 1$, given by
-    \[p(z) = a_n z^n + a_{n-1} z^{n-1} + \dots + a_0,\]
-    with $a_n \neq 0$. Then,
-    \[\frac{p(z) - a_n z^n}{a_n z^n} = \frac{a_{n-1} z^{-1} + \dots + a_0 z^{-n}}{a_n} \to 0\]
-    as $|z| \to \infty$. Hence, there exists a circle $C$ of radius $R > 0$ centered at $0$ such that for all $z \in C$, then 
-    \[\left|\frac{p(z) - a_n z^n}{a_n z^n}\right| < 1 \iff |p(z) - a_n z^n| < |a_n z^n|.\]
-    So, Rouché's Theorem tells us that $z \mapsto a_n z^n$ and $z \mapsto p(z)$ have the same number of zeros inside $C$. We know that $a_n z^n$ has $n$ zeros inside $C$ (since it contains 0), meaning that $p$ has $n$ zeros inside $C$. The circle $C$ can be made arbitrarily big (since the radius $R$ can be arbitrarily increased), meaning that $p$ has $n$ zeros in $\mathbb{C}$.
+    % We will now use Rouché's Theorem to prove different results. For instance, we can prove the Fundamental Theorem of Algebra using it. So, let $p$ be a polynomial of degree $n \geq 1$, given by
+    % \[p(z) = a_n z^n + a_{n-1} z^{n-1} + \dots + a_0,\]
+    % with $a_n \neq 0$. Then,
+    % \[\frac{p(z) - a_n z^n}{a_n z^n} = \frac{a_{n-1} z^{-1} + \dots + a_0 z^{-n}}{a_n} \to 0\]
+    % as $|z| \to \infty$. Hence, there exists a circle $C$ of radius $R > 0$ centered at $0$ such that for all $z \in C$, then 
+    % \[\left|\frac{p(z) - a_n z^n}{a_n z^n}\right| < 1 \iff |p(z) - a_n z^n| < |a_n z^n|.\]
+    % So, Rouché's Theorem tells us that $z \mapsto a_n z^n$ and $z \mapsto p(z)$ have the same number of zeros inside $C$. We know that $a_n z^n$ has $n$ zeros inside $C$ (since it contains 0), meaning that $p$ has $n$ zeros inside $C$. The circle $C$ can be made arbitrarily big (since the radius $R$ can be arbitrarily increased), meaning that $p$ has $n$ zeros in $\mathbb{C}$.
 
-    Next, we will use Rouché's Theorem to show that all solutions of $z^6 + z + 1 = 0$ lie in the annulus $\frac{1}{2} < |z| < 2$. First, let $C_1 = C_2(0)$. Then, we know that for $z \in C_1$,
-    \[|z + 1| \leq |z| + 1 = 3, \qquad |z^6| = 2^6.\]
-    Hence, $|z + 1| < |z^6|$. We know that $z^6$ has 6 zeros inside $C_1$, so Rouché's Theorem tells us that $z^6 + z + 1$ has 6 zeros inside $C_1$ and none on $C_1$. Next, let $C_2 = C_{1/2}(0)$. Then, we know that for $z \in C_2$,
-    \[|z^6 + z| \leq |z^6| + |z| = \frac{1}{2^6} + \frac{1}{2} < 1.\]
-    We know that the function $z \mapsto 1$ in $C_2$ has no zeros in $C_2$, so Rouché's Theorem tells us that $z^6 + z + 1$ has no zeros inside $C_2$ and on $C_2$. So, the zeros of the polynomial $z^6 + z + 1$ satisfy $\frac{1}{2} < |z| < 2$.
+    % Next, we will use Rouché's Theorem to show that all solutions of $z^6 + z + 1 = 0$ lie in the annulus $\frac{1}{2} < |z| < 2$. First, let $C_1 = C_2(0)$. Then, we know that for $z \in C_1$,
+    % \[|z + 1| \leq |z| + 1 = 3, \qquad |z^6| = 2^6.\]
+    % Hence, $|z + 1| < |z^6|$. We know that $z^6$ has 6 zeros inside $C_1$, so Rouché's Theorem tells us that $z^6 + z + 1$ has 6 zeros inside $C_1$ and none on $C_1$. Next, let $C_2 = C_{1/2}(0)$. Then, we know that for $z \in C_2$,
+    % \[|z^6 + z| \leq |z^6| + |z| = \frac{1}{2^6} + \frac{1}{2} < 1.\]
+    % We know that the function $z \mapsto 1$ in $C_2$ has no zeros in $C_2$, so Rouché's Theorem tells us that $z^6 + z + 1$ has no zeros inside $C_2$ and on $C_2$. So, the zeros of the polynomial $z^6 + z + 1$ satisfy $\frac{1}{2} < |z| < 2$.
 
-    Next, we will prove the open mapping theorem. A function $f \colon X \to \mathbb{C}$ is an \emph{open map} in $X \subseteq C$ if for all $U \subseteq X$ open, its image $f(U)$ is open.
-    \begin{theorem}[Open Mapping Theorem]
-        Let $f \colon U \to \mathbb{C}$ be a non-constant holomorphic function in some region $U \subseteq \mathbb{C}$. Then, $f$ is an open map.
-    \end{theorem}
-    \begin{proof}
-        Let $V \subseteq U$ be open. We show that $f(V)$ is open. Let $w_0 \in f(V)$. So, there exists a $z_0 \in V$ such that $f(z_0) = w_0$. Define the function $F \colon U \to \mathbb{Z}$ by $F(z) = f(z) - w_0$. Then, $F$ has a zero at $z_0$. Moreover, since $F$ is not a constant function, it has isolated zeros. Hence, there exists a $\delta > 0$ such that $z_0$ is the only isolated zero of $F$ in $\overline{D}_\delta(z_0)$. Set
-        \[\varepsilon = \inf_{z \in C_\delta(z_0)} |F(z)| > 0.\]
-        We claim that $D_{\varepsilon}(w_0) \subseteq f(V)$. So, let $w \in D_{\varepsilon}(w_0)$. Define the function $G \colon U \to \mathbb{C}$ by $G(z) = f(z) - w$. Then,
-        \[|G(z) - F(z)| = |w - w_0| < \varepsilon \leq |F(z)|\]
-        for all $z \in C_\delta(z_0)$. Now, by Rouché's Theorem, we find that $F$ and $F + G$ have the same number of zeros inside $C_\delta(z_0)$. By construction, $F$ has precisely one zero inside $C_\delta(z_0)$, at $z_0$. Hence, there exists a $z \in D_\delta(z_0) \subseteq V$ such that $G(z) = 0$, meaning that $f(z) = w$. So, $w \in f(V)$. So, $D_{\varepsilon}(w_0) \subseteq f(V)$, meaning that $f(V)$ is open.
-    \end{proof}
-    \noindent Note that the Open Mapping Theorem does not hold in $\mathbb{R}$. For instance, consider the function $f(x) = x^2$. Then, $f(-1, 1) = [0, 1)$ is not open, even though $f$ is a non-constant holomorphic function that is infinitely differentiable and has Maclaurin series with radius of convergence $\infty$!
-    % TODO: What changes in C???
+    % Next, we will prove the open mapping theorem. A function $f \colon X \to \mathbb{C}$ is an \emph{open map} in $X \subseteq C$ if for all $U \subseteq X$ open, its image $f(U)$ is open.
+    % \begin{theorem}[Open Mapping Theorem]
+    %     Let $f \colon U \to \mathbb{C}$ be a non-constant holomorphic function in some region $U \subseteq \mathbb{C}$. Then, $f$ is an open map.
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $V \subseteq U$ be open. We show that $f(V)$ is open. Let $w_0 \in f(V)$. So, there exists a $z_0 \in V$ such that $f(z_0) = w_0$. Define the function $F \colon U \to \mathbb{Z}$ by $F(z) = f(z) - w_0$. Then, $F$ has a zero at $z_0$. Moreover, since $F$ is not a constant function, it has isolated zeros. Hence, there exists a $\delta > 0$ such that $z_0$ is the only isolated zero of $F$ in $\overline{D}_\delta(z_0)$. Set
+    %     \[\varepsilon = \inf_{z \in C_\delta(z_0)} |F(z)| > 0.\]
+    %     We claim that $D_{\varepsilon}(w_0) \subseteq f(V)$. So, let $w \in D_{\varepsilon}(w_0)$. Define the function $G \colon U \to \mathbb{C}$ by $G(z) = f(z) - w$. Then,
+    %     \[|G(z) - F(z)| = |w - w_0| < \varepsilon \leq |F(z)|\]
+    %     for all $z \in C_\delta(z_0)$. Now, by Rouché's Theorem, we find that $F$ and $F + G$ have the same number of zeros inside $C_\delta(z_0)$. By construction, $F$ has precisely one zero inside $C_\delta(z_0)$, at $z_0$. Hence, there exists a $z \in D_\delta(z_0) \subseteq V$ such that $G(z) = 0$, meaning that $f(z) = w$. So, $w \in f(V)$. So, $D_{\varepsilon}(w_0) \subseteq f(V)$, meaning that $f(V)$ is open.
+    % \end{proof}
+    % \noindent Note that the Open Mapping Theorem does not hold in $\mathbb{R}$. For instance, consider the function $f(x) = x^2$. Then, $f(-1, 1) = [0, 1)$ is not open, even though $f$ is a non-constant holomorphic function that is infinitely differentiable and has Maclaurin series with radius of convergence $\infty$!
+    % % TODO: What changes in C???
 
-    Next, we consider the maximum modulus principle.
-    \begin{theorem}[Maximum Modulus Principle]
-        Let $f \colon U \to \mathbb{C}$ be a non-constant holomorphic function in a region $U \subseteq \mathbb{C}$. Then, the complex modulus $|f|$ cannot attain a local maximum in $U$.
-    \end{theorem}
-    \begin{proof}
-        Note that since $f$ is not a constant, it satisfies the Open Mapping Theorem. Now, assume, for a contradiction, that $|f|$ attains a local maximum at some $z_0 \in U$. Then, there exists an open set $V \subseteq U$ containing $z_0$ such that $|f(z)| \leq |f(z_0)|$ for all $z \in V$. By the open mapping theorem, we know that $f(V)$ is open. Hence, there exists a $\delta > 0$ such that $D_\delta(f(z_0)) \subseteq f(V)$. In particular, we have $z_0 + \frac{\delta}{2} \in f(V)$ that satisfies $|z_0 + \tfrac{\delta}{2}| > |z_0|$. This is a contradiction since $z_0$ is a local maximum.
-    \end{proof}
-    \newpage
+    % Next, we consider the maximum modulus principle.
+    % \begin{theorem}[Maximum Modulus Principle]
+    %     Let $f \colon U \to \mathbb{C}$ be a non-constant holomorphic function in a region $U \subseteq \mathbb{C}$. Then, the complex modulus $|f|$ cannot attain a local maximum in $U$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Note that since $f$ is not a constant, it satisfies the Open Mapping Theorem. Now, assume, for a contradiction, that $|f|$ attains a local maximum at some $z_0 \in U$. Then, there exists an open set $V \subseteq U$ containing $z_0$ such that $|f(z)| \leq |f(z_0)|$ for all $z \in V$. By the open mapping theorem, we know that $f(V)$ is open. Hence, there exists a $\delta > 0$ such that $D_\delta(f(z_0)) \subseteq f(V)$. In particular, we have $z_0 + \frac{\delta}{2} \in f(V)$ that satisfies $|z_0 + \tfrac{\delta}{2}| > |z_0|$. This is a contradiction since $z_0$ is a local maximum.
+    % \end{proof}
+    % \newpage
 
-    \section{Conformal Mappings}
-    A \emph{conformal map} is a holomorphic bijection $f \colon U \to V$, where $U, V \subseteq \mathbb{C}$ are open sets. Examples of conformal mappings include:
-    \begin{itemize}
-        \item $f(z) = az + b$, for $a, b \in \mathbb{C}$ with $a \neq 0$, with inverse $f^{-1}(z) = \frac{1}{a}(z - b)$. These maps are entire bijections.
-        \item $f(z) = e^z$ from the open set 
-        \[\{z \in \mathbb{C} \mid \operatorname{Re}(z) < 0, \operatorname{Im}(z) \in (0, \pi)\}\]
-        to the open set
-        \[\{z \in \mathbb{C} \mid |z| < 1, \operatorname{Im}(z) > 0\}.\]
-        \item Let
-        \[\mathbb{H} = \{z \in \mathbb{C} \mid \operatorname{Im}(z) > 0\}, \qquad \mathbb{D} = D_1(0).\]
-        Define the functions $F \colon \mathbb{H} \to \mathbb{D}$ and $G \colon \mathbb{D} \to \mathbb{H}$ by
-        \[F(z) = \frac{i - z}{i + z}, \qquad G(z) = i \frac{1 - w}{1 + w}.\] 
-        We claim that $F$ is conformal with inverse $G$. By definition, they are holomorphic on their respective domains. We have $|i - z| < |i + z|$ for all $z \in \mathbb{H}$, so $|F(z)| < 1$ and hence lies in $\mathbb{D}$. So, the map $F$ is well-defined. Moreover, for all $w \in \mathbb{D}$ with $w = u + iv$ for $u, v \in \mathbb{R}$. Then,
-        \begin{align*}
-            \operatorname{Im}(G(w)) &= \operatorname{Im} \left(i \frac{1 - u - iv}{1 + u + iv}\right) \\
-            &= \operatorname{Re} \left(\frac{1 - u - iv}{1 + u + iv}\right) \\
-            &= \operatorname{Re} \left(\frac{(1 - u - iv)(1 + u - iv)}{(1 + u)^2 + v^2}\right) \\
-            &= \frac{1 - u^2 - v^2}{(1 + u)^2 + v^2} > 0
-        \end{align*}
-        since $|w|^2 = u^2 + v^2 < 1$. So, $G$ too is well-defined. Finally, for $w \in \mathbb{D}$ and $z \in \mathbb{H}$,
-        % TODO: Complete G(F(z))
-        \begin{align*}
-            F(G(w)) &= \frac{i - i\frac{1 - w}{1 + w}}{i + i \frac{1 - w}{1 + w}} & G(F(z)) &= \\
-            &= \frac{1 + w - 1 + w}{1 + w + 1 - w} \\
-            &= w
-        \end{align*}
-    \end{itemize}
+    % \section{Conformal Mappings}
+    % A \emph{conformal map} is a holomorphic bijection $f \colon U \to V$, where $U, V \subseteq \mathbb{C}$ are open sets. Examples of conformal mappings include:
+    % \begin{itemize}
+    %     \item $f(z) = az + b$, for $a, b \in \mathbb{C}$ with $a \neq 0$, with inverse $f^{-1}(z) = \frac{1}{a}(z - b)$. These maps are entire bijections.
+    %     \item $f(z) = e^z$ from the open set 
+    %     \[\{z \in \mathbb{C} \mid \operatorname{Re}(z) < 0, \operatorname{Im}(z) \in (0, \pi)\}\]
+    %     to the open set
+    %     \[\{z \in \mathbb{C} \mid |z| < 1, \operatorname{Im}(z) > 0\}.\]
+    %     \item Let
+    %     \[\mathbb{H} = \{z \in \mathbb{C} \mid \operatorname{Im}(z) > 0\}, \qquad \mathbb{D} = D_1(0).\]
+    %     Define the functions $F \colon \mathbb{H} \to \mathbb{D}$ and $G \colon \mathbb{D} \to \mathbb{H}$ by
+    %     \[F(z) = \frac{i - z}{i + z}, \qquad G(z) = i \frac{1 - w}{1 + w}.\] 
+    %     We claim that $F$ is conformal with inverse $G$. By definition, they are holomorphic on their respective domains. We have $|i - z| < |i + z|$ for all $z \in \mathbb{H}$, so $|F(z)| < 1$ and hence lies in $\mathbb{D}$. So, the map $F$ is well-defined. Moreover, for all $w \in \mathbb{D}$ with $w = u + iv$ for $u, v \in \mathbb{R}$. Then,
+    %     \begin{align*}
+    %         \operatorname{Im}(G(w)) &= \operatorname{Im} \left(i \frac{1 - u - iv}{1 + u + iv}\right) \\
+    %         &= \operatorname{Re} \left(\frac{1 - u - iv}{1 + u + iv}\right) \\
+    %         &= \operatorname{Re} \left(\frac{(1 - u - iv)(1 + u - iv)}{(1 + u)^2 + v^2}\right) \\
+    %         &= \frac{1 - u^2 - v^2}{(1 + u)^2 + v^2} > 0
+    %     \end{align*}
+    %     since $|w|^2 = u^2 + v^2 < 1$. So, $G$ too is well-defined. Finally, for $w \in \mathbb{D}$ and $z \in \mathbb{H}$,
+    %     % TODO: Complete G(F(z))
+    %     \begin{align*}
+    %         F(G(w)) &= \frac{i - i\frac{1 - w}{1 + w}}{i + i \frac{1 - w}{1 + w}} & G(F(z)) &= \\
+    %         &= \frac{1 + w - 1 + w}{1 + w + 1 - w} \\
+    %         &= w
+    %     \end{align*}
+    % \end{itemize}
 
-    We will now show that the inverse is holomorphic. First, we prove the lemma below.
-    \begin{lemma}
-        Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$ and $w_0 \in \mathbb{C}$ such that the function $f(z) - w_0$ has an isolated zero of multiplicity $n \in \mathbb{Z}_{\geq 1}$ at some $z_0 \in U$. Then, for all sufficiently small $\varepsilon > 0$, there exists a $\delta > 0$ such that if $0 < |w - w_1| < \delta$, then $f(z) = w$ has precisely $n$ distinct solutions $z$ with $|z - z_0| < \varepsilon$.
-    \end{lemma}
-    \begin{proof}
-        % TODO: Idea is similar to the open mapping theorem proof
-    \end{proof}
+    % We will now show that the inverse is holomorphic. First, we prove the lemma below.
+    % \begin{lemma}
+    %     Let $f \colon U \to \mathbb{C}$ be a holomorphic function on an open set $U \subseteq \mathbb{C}$ and $w_0 \in \mathbb{C}$ such that the function $f(z) - w_0$ has an isolated zero of multiplicity $n \in \mathbb{Z}_{\geq 1}$ at some $z_0 \in U$. Then, for all sufficiently small $\varepsilon > 0$, there exists a $\delta > 0$ such that if $0 < |w - w_1| < \delta$, then $f(z) = w$ has precisely $n$ distinct solutions $z$ with $|z - z_0| < \varepsilon$.
+    % \end{lemma}
+    % \begin{proof}
+    %     % TODO: Idea is similar to the open mapping theorem proof
+    % \end{proof}
 
-    \begin{proposition}
-        Let $U, V \subseteq \mathbb{C}$ be open and let $f \colon U \to V$ be holomorphic and bijective. Then, its inverse $f^{-1} \colon V \to U$ is also holomorphic, with
-        \[(f^{-1})'(w) = \frac{1}{f'(f^{-1}(w))}\]
-        for all $w \in V$. In particular, $f^{-1}$ is conformal.
-    \end{proposition}
-    \begin{proof}
-        We first show that $f'(z) \neq 0$ for all $z \in U$. Assume, for a contradiction, that $f'(z_0) = 0$ for some $z_0 \in U$. Then, the following is a power series expansion of $f$ around $z_0$:
-        \[f(z) = a_0 + \sum_{n=2}^\infty a_n (z - z_0)^n\]
-        for all $z$ in some open disc $D$ in $U$ centered at $z_0$. Since the zeros of $f'$ are isolated, we can assume that $f'(z) \neq 0$ for all $z \in D$ with $z \neq z_0$. By the lemma above, we find that $f(z) = w$ has more than 2 solutions in $D$. Since $f$ is a bijection, this is a contradiction. Hence, $f'(z) \neq 0$ for all $z \in U$.
+    % \begin{proposition}
+    %     Let $U, V \subseteq \mathbb{C}$ be open and let $f \colon U \to V$ be holomorphic and bijective. Then, its inverse $f^{-1} \colon V \to U$ is also holomorphic, with
+    %     \[(f^{-1})'(w) = \frac{1}{f'(f^{-1}(w))}\]
+    %     for all $w \in V$. In particular, $f^{-1}$ is conformal.
+    % \end{proposition}
+    % \begin{proof}
+    %     We first show that $f'(z) \neq 0$ for all $z \in U$. Assume, for a contradiction, that $f'(z_0) = 0$ for some $z_0 \in U$. Then, the following is a power series expansion of $f$ around $z_0$:
+    %     \[f(z) = a_0 + \sum_{n=2}^\infty a_n (z - z_0)^n\]
+    %     for all $z$ in some open disc $D$ in $U$ centered at $z_0$. Since the zeros of $f'$ are isolated, we can assume that $f'(z) \neq 0$ for all $z \in D$ with $z \neq z_0$. By the lemma above, we find that $f(z) = w$ has more than 2 solutions in $D$. Since $f$ is a bijection, this is a contradiction. Hence, $f'(z) \neq 0$ for all $z \in U$.
 
-        We know that the inverse map $f^{-1} \colon V \to U$ is continuous by the open mapping theorem. Let $w_0 \in V$. We show that $f$ is differentiable at $w_0$. Then, for $w \in V$, with $z = f(w)$ and $z_0 = f(w_0)$, we find that
-        \[\frac{f^{-1}(w) - f^{-1}(w_0)}{w - w_0} = \frac{z - z_0}{f(z) - f(z_0)} \to \frac{1}{f'(z_0)}\]
-        as $z \to z_0$ by continuity of $f^{-1}$, i.e. $w \to w_0$ as $z \to z_0$. Hence,
-        \[(f^{-1})'(w_0) = \frac{1}{f'(z_0)} = \frac{1}{f'(f^{-1}(w_0))}.\]
-    \end{proof}
+    %     We know that the inverse map $f^{-1} \colon V \to U$ is continuous by the open mapping theorem. Let $w_0 \in V$. We show that $f$ is differentiable at $w_0$. Then, for $w \in V$, with $z = f(w)$ and $z_0 = f(w_0)$, we find that
+    %     \[\frac{f^{-1}(w) - f^{-1}(w_0)}{w - w_0} = \frac{z - z_0}{f(z) - f(z_0)} \to \frac{1}{f'(z_0)}\]
+    %     as $z \to z_0$ by continuity of $f^{-1}$, i.e. $w \to w_0$ as $z \to z_0$. Hence,
+    %     \[(f^{-1})'(w_0) = \frac{1}{f'(z_0)} = \frac{1}{f'(f^{-1}(w_0))}.\]
+    % \end{proof}
 
-    We will now consider automorphisms. A \emph{(conformal) automorphism} of an open set $U \subseteq \mathbb{C}$ is a conformal map $f \colon U \to U$. We denote by $\operatorname{Aut}(U)$ the set of automorphisms. We first characterise automorphisms of $\mathbb{C}$.
-    \begin{theorem}
-        The automorphisms of the plane are precisely the polynomials of degree 1, i.e.
-        \[\operatorname{Aut}(\mathbb{C}) = \{z \mapsto az + b \mid a, b \in \mathbb{C}, a \neq 0\}.\]
-    \end{theorem}
-    \begin{proof}
-        We saw above that polynomials of degree 1 give rise to a conformal map $\mathbb{C} \to \mathbb{C}$. Now, let $f \colon \mathbb{C} \to \mathbb{C}$ be a conformal map. Define the map $g \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ by $g(z) = f(1/z)$. Then, $g$ is holomorphic in $\mathbb{C} \setminus \{0\}$ and injective.
+    % We will now consider automorphisms. A \emph{(conformal) automorphism} of an open set $U \subseteq \mathbb{C}$ is a conformal map $f \colon U \to U$. We denote by $\operatorname{Aut}(U)$ the set of automorphisms. We first characterise automorphisms of $\mathbb{C}$.
+    % \begin{theorem}
+    %     The automorphisms of the plane are precisely the polynomials of degree 1, i.e.
+    %     \[\operatorname{Aut}(\mathbb{C}) = \{z \mapsto az + b \mid a, b \in \mathbb{C}, a \neq 0\}.\]
+    % \end{theorem}
+    % \begin{proof}
+    %     We saw above that polynomials of degree 1 give rise to a conformal map $\mathbb{C} \to \mathbb{C}$. Now, let $f \colon \mathbb{C} \to \mathbb{C}$ be a conformal map. Define the map $g \colon \mathbb{C} \setminus \{0\} \to \mathbb{C}$ by $g(z) = f(1/z)$. Then, $g$ is holomorphic in $\mathbb{C} \setminus \{0\}$ and injective.
 
-        Now, we claim that $0$ is not an essential singularity of $g$. Assume, for a contradiction, that 0 is an essential singularity of $g$. Let $D_1, D_2$ be open discs such that $D_1$ is centered at 0 and $D_1 \cap D_2 = \varnothing$. By Casarati-Weierstrass Theorem, we know that $g(D_1 \setminus \{0\})$ is dense in $\mathbb{C}$. Since $g$ is an open map, $g(D_2)$ is open. So, $g(D_1 \setminus \{0\}) \cap g(D_2) \neq \varnothing$. So, there exists a $z_0 \in D_1 \setminus \{0\}$ and $w_0 \in D_2$ such that $g(z_0) = g(w_0)$. However, since $g$ is bijective, this implies that $z_0 = w_0$. This is a contradiction since $D_1 \cap D_2 = \varnothing$. Hence, $0$ is not an essential singularity of $g$.
+    %     Now, we claim that $0$ is not an essential singularity of $g$. Assume, for a contradiction, that 0 is an essential singularity of $g$. Let $D_1, D_2$ be open discs such that $D_1$ is centered at 0 and $D_1 \cap D_2 = \varnothing$. By Casarati-Weierstrass Theorem, we know that $g(D_1 \setminus \{0\})$ is dense in $\mathbb{C}$. Since $g$ is an open map, $g(D_2)$ is open. So, $g(D_1 \setminus \{0\}) \cap g(D_2) \neq \varnothing$. So, there exists a $z_0 \in D_1 \setminus \{0\}$ and $w_0 \in D_2$ such that $g(z_0) = g(w_0)$. However, since $g$ is bijective, this implies that $z_0 = w_0$. This is a contradiction since $D_1 \cap D_2 = \varnothing$. Hence, $0$ is not an essential singularity of $g$.
 
-        Since $f$ is conformal in $\mathbb{C}$,
-        \[f(z) = \sum_{n=0}^\infty a_n z^n\]
-        for all $z \in \mathbb{C}$. Hence,
-        \[g(z) = \sum_{n=0}^\infty a_n z^{-n}.\]
-        Since $0$ is not an essential singularity of $g$, there exists an $m \geq 0$ such that $a_n = 0$ for all $n > m$. So,
-        \[f(z) = \sum_{n=0}^m a_n z^m.\]
-        By the Fundamental Theorem of Algebra, $f$ has $n$ zeros. Since $f$ is injective, we require $f$ to have precisely 1 zero. Hence, we must have $m = 1$. That is, $f(z) = a_0 + a_1 z$, with $a_1 \neq 0$.
-    \end{proof}
+    %     Since $f$ is conformal in $\mathbb{C}$,
+    %     \[f(z) = \sum_{n=0}^\infty a_n z^n\]
+    %     for all $z \in \mathbb{C}$. Hence,
+    %     \[g(z) = \sum_{n=0}^\infty a_n z^{-n}.\]
+    %     Since $0$ is not an essential singularity of $g$, there exists an $m \geq 0$ such that $a_n = 0$ for all $n > m$. So,
+    %     \[f(z) = \sum_{n=0}^m a_n z^m.\]
+    %     By the Fundamental Theorem of Algebra, $f$ has $n$ zeros. Since $f$ is injective, we require $f$ to have precisely 1 zero. Hence, we must have $m = 1$. That is, $f(z) = a_0 + a_1 z$, with $a_1 \neq 0$.
+    % \end{proof}
 
-    Next, we characterise automorphisms of an open disc. We will first prove Schwarz Lemma.
-    \begin{lemma}[Schwarz Lemma]
-        Let $f \colon \mathbb{D} \to \mathbb{D}$ be a holomorphic function from the unit disc $\mathbb{D} = D_1(0)$ such that $f(0) = 0$. Then, the function $f$ is a contraction, i.e. $|f(z)| \leq |z|$ for all $z \in \mathbb{D}$, and $|f'(0)| \leq 1$. Moreover, the following are equivalent:
-        \begin{enumerate}
-            \item There exists a $z_0 \in \mathbb{D} \setminus \{0\}$ such that $|f(z_0)| = |z_0|$.
-            \item The value $|f'(0)| = 1$.
-            \item The function $f = cz$ for some $c \in \mathbb{C}$ with $|c| = 1$.
-        \end{enumerate}
-    \end{lemma}
-    \begin{proof}
-        By Taylor's Theorem, we can write
-        \[f(z) = \sum_{n=0}^\infty a_n z^n\]
-        for all $z \in \mathbb{D}$. Since $f(0) = 0$, we find that $a_0 = 0$. Hence, the function $\frac{f(z)}{z}$ is holomorphic in $\mathbb{D} \setminus \{0\}$ and has a removable singularity at $z = 0$ (as seen by the power series expansion). We note that
-        \[\lim_{z \to 0} \frac{f(z)}{z} = \lim_{z \to 0} \frac{f(z) - f(0)}{z - 0} = f'(0).\]
-        So, we can define the function $g \colon \mathbb{D} \to \mathbb{C}$ by
-        \[g(z) = \begin{cases}
-            f(z)/z & z \in \mathbb{D} \setminus \{0\} \\
-            f'(0) & \textrm{otherwise}
-        \end{cases}\]
-        so that $g$ is holomorphic in $\mathbb{D}$. Let $r \in (0, 1)$. If $z \in \mathbb{D}$ with $|z| = r$, then
-        \[|g(z)| = \frac{|f(z)|}{|z|} \leq \frac{1}{r}.\]
-        By the maximum modulus principle, $|g(z)| \leq \frac{1}{r}$ for all $z \in \overline{D}_1(r)$ as well. If we fix $z$ and let $r \to 1$, we find that $|g(z)| \leq 1$ for all $z \in \mathbb{D}$. Hence, $|f(z)| \leq |z|$ for all $z \in \mathbb{D}$. In particular, $|f'(0)| = |g(0)| \leq 1$.
+    % Next, we characterise automorphisms of an open disc. We will first prove Schwarz Lemma.
+    % \begin{lemma}[Schwarz Lemma]
+    %     Let $f \colon \mathbb{D} \to \mathbb{D}$ be a holomorphic function from the unit disc $\mathbb{D} = D_1(0)$ such that $f(0) = 0$. Then, the function $f$ is a contraction, i.e. $|f(z)| \leq |z|$ for all $z \in \mathbb{D}$, and $|f'(0)| \leq 1$. Moreover, the following are equivalent:
+    %     \begin{enumerate}
+    %         \item There exists a $z_0 \in \mathbb{D} \setminus \{0\}$ such that $|f(z_0)| = |z_0|$.
+    %         \item The value $|f'(0)| = 1$.
+    %         \item The function $f = cz$ for some $c \in \mathbb{C}$ with $|c| = 1$.
+    %     \end{enumerate}
+    % \end{lemma}
+    % \begin{proof}
+    %     By Taylor's Theorem, we can write
+    %     \[f(z) = \sum_{n=0}^\infty a_n z^n\]
+    %     for all $z \in \mathbb{D}$. Since $f(0) = 0$, we find that $a_0 = 0$. Hence, the function $\frac{f(z)}{z}$ is holomorphic in $\mathbb{D} \setminus \{0\}$ and has a removable singularity at $z = 0$ (as seen by the power series expansion). We note that
+    %     \[\lim_{z \to 0} \frac{f(z)}{z} = \lim_{z \to 0} \frac{f(z) - f(0)}{z - 0} = f'(0).\]
+    %     So, we can define the function $g \colon \mathbb{D} \to \mathbb{C}$ by
+    %     \[g(z) = \begin{cases}
+    %         f(z)/z & z \in \mathbb{D} \setminus \{0\} \\
+    %         f'(0) & \textrm{otherwise}
+    %     \end{cases}\]
+    %     so that $g$ is holomorphic in $\mathbb{D}$. Let $r \in (0, 1)$. If $z \in \mathbb{D}$ with $|z| = r$, then
+    %     \[|g(z)| = \frac{|f(z)|}{|z|} \leq \frac{1}{r}.\]
+    %     By the maximum modulus principle, $|g(z)| \leq \frac{1}{r}$ for all $z \in \overline{D}_1(r)$ as well. If we fix $z$ and let $r \to 1$, we find that $|g(z)| \leq 1$ for all $z \in \mathbb{D}$. Hence, $|f(z)| \leq |z|$ for all $z \in \mathbb{D}$. In particular, $|f'(0)| = |g(0)| \leq 1$.
 
-        Now, we show that $(1) \iff (2) \iff (3)$. Clearly, $(3) \implies (1)$ and $(3) \implies (2)$. We will now show $(1) \implies (3)$ and $(2) \implies (3)$.
-        \begin{itemize}
-            \item Assume that there exists a $z_0 \in \mathbb{D} \setminus \{0\}$ such that $|f(z_0)| = |z_0|$. Then, $|g(z_0)| = 1$, so $g$ attains the maximum in the interior of $\mathbb{D}$. Hence, the maximum modulus principle tells us that $g$ is a constant. That is, $g(z) = c$ for all $z \in \mathbb{D}$. Hence, $f = cz$, with $|c| = |g(0)| = 1$.
+    %     Now, we show that $(1) \iff (2) \iff (3)$. Clearly, $(3) \implies (1)$ and $(3) \implies (2)$. We will now show $(1) \implies (3)$ and $(2) \implies (3)$.
+    %     \begin{itemize}
+    %         \item Assume that there exists a $z_0 \in \mathbb{D} \setminus \{0\}$ such that $|f(z_0)| = |z_0|$. Then, $|g(z_0)| = 1$, so $g$ attains the maximum in the interior of $\mathbb{D}$. Hence, the maximum modulus principle tells us that $g$ is a constant. That is, $g(z) = c$ for all $z \in \mathbb{D}$. Hence, $f = cz$, with $|c| = |g(0)| = 1$.
             
-            \item Now, assume that the value $|f'(0)| = 1$. Then, $|g(0)| = 1$, so using the same argument as above, we find that $f = cz$, with $|c| = 1$.
-        \end{itemize}
-    \end{proof}
-    \noindent We refer to maps $z \mapsto cz$ with $|c| = 1$ as \emph{rotation} maps. 
+    %         \item Now, assume that the value $|f'(0)| = 1$. Then, $|g(0)| = 1$, so using the same argument as above, we find that $f = cz$, with $|c| = 1$.
+    %     \end{itemize}
+    % \end{proof}
+    % \noindent We refer to maps $z \mapsto cz$ with $|c| = 1$ as \emph{rotation} maps. 
     
-    Now, we will characterise automorphisms of the disc $\mathbb{D}$. For $a \in \mathbb{D}$, let $\varphi_a \colon \partial \mathbb{D} \to \mathbb{C} \setminus \{1 - \overline{a}\}$ given by $\varphi_a(z) = \frac{z - a}{1 - \overline{a}z}$. By definition, $\varphi_a$ is holomorphic. Moreover, $\frac{1}{\overline{a}} \not\in \overline{D}_1$, so $\varphi_a$ is holomorphic in $\mathbb{D}$. We claim that $\varphi_a(\partial \mathbb{D}) \subseteq \partial \mathbb{D}$. Let $e^{i\theta} \in \partial \mathbb{D}$. Then,
-    \[\varphi_a(e^{i\theta}) = \frac{e^{i\theta} - a}{1 - \overline{a} e^{i\theta}} = \frac{e^{i\theta} - a}{e^{i\theta} (e^{-i\theta} - \overline{a})} = e^{-i\theta} \cdot \frac{e^{i\theta} - a}{\overline{e^{i\theta} - a}}.\]
-    Hence, $|\varphi_a(e^{i\theta})| = 1$. We now claim that $\varphi_a \colon \mathbb{D} \to \mathbb{D}$ defines an automorphism. So, we now require $\varphi_a(\mathbb{D}) \subseteq \mathbb{D}$. By the Maximum Modulus Principle, $|\varphi_a|$ attains its maximum on the boundary $\overline{\mathbb{D}}$. Hence, $|\varphi_a(z)| \leq 1$ for all $z \in \mathbb{D}$ by the result above. Since $\varphi_a$ is not a constant function, we further know that $|\varphi_a(z)| < 1$ for all $z \in \mathbb{D}$, so $\varphi_a(\mathbb{D}) \subseteq \mathbb{D}$. Now, we find that for all $z \in \mathbb{D}$,
-    \begin{align*}
-        \varphi_a(\varphi_{-a}(z)) &= \varphi_a \left(\frac{z + a}{1 + \overline{a}z}\right) \\
-        &= \frac{\frac{z + a}{1 + \overline{a}z} - a}{1 - \overline{a} \frac{z + a}{1 + \overline{a}z}} \\
-        &= \frac{z + a - a(1 + \overline{a}z)}{1 + \overline{a}z} \cdot \frac{1 + \overline{a}z}{(1 + \overline{a}z) - \overline{a}(z+a)} \\
-        &= \frac{z - |a|^2z}{1 - |a|^2} = z.
-    \end{align*}
-    So, $\varphi_a$ is bijective, with $(\varphi_a)^{-1} = \varphi_{-a}$. Hence, $\varphi_a \in \operatorname{Aut}(\mathbb{D})$ for all $a \in \mathbb{D}$. We can now characterise the automorphisms of $\mathbb{D}$.
-    \begin{theorem}
-        We have
-        \[\operatorname{Aut}(\mathbb{D}) = \{c\varphi_a \mid c \in \partial \mathbb{D}, a \in \mathbb{D}\}.\]
-    \end{theorem}
-    \begin{proof}
-        Since $\varphi_a$ and $z \mapsto cz$ are bijections, their composition is also bijective. Moreover, it is a conformal map $\mathbb{D} \to \mathbb{D}$, so an automorphism of $\mathbb{D}$. 
+    % Now, we will characterise automorphisms of the disc $\mathbb{D}$. For $a \in \mathbb{D}$, let $\varphi_a \colon \partial \mathbb{D} \to \mathbb{C} \setminus \{1 - \overline{a}\}$ given by $\varphi_a(z) = \frac{z - a}{1 - \overline{a}z}$. By definition, $\varphi_a$ is holomorphic. Moreover, $\frac{1}{\overline{a}} \not\in \overline{D}_1$, so $\varphi_a$ is holomorphic in $\mathbb{D}$. We claim that $\varphi_a(\partial \mathbb{D}) \subseteq \partial \mathbb{D}$. Let $e^{i\theta} \in \partial \mathbb{D}$. Then,
+    % \[\varphi_a(e^{i\theta}) = \frac{e^{i\theta} - a}{1 - \overline{a} e^{i\theta}} = \frac{e^{i\theta} - a}{e^{i\theta} (e^{-i\theta} - \overline{a})} = e^{-i\theta} \cdot \frac{e^{i\theta} - a}{\overline{e^{i\theta} - a}}.\]
+    % Hence, $|\varphi_a(e^{i\theta})| = 1$. We now claim that $\varphi_a \colon \mathbb{D} \to \mathbb{D}$ defines an automorphism. So, we now require $\varphi_a(\mathbb{D}) \subseteq \mathbb{D}$. By the Maximum Modulus Principle, $|\varphi_a|$ attains its maximum on the boundary $\overline{\mathbb{D}}$. Hence, $|\varphi_a(z)| \leq 1$ for all $z \in \mathbb{D}$ by the result above. Since $\varphi_a$ is not a constant function, we further know that $|\varphi_a(z)| < 1$ for all $z \in \mathbb{D}$, so $\varphi_a(\mathbb{D}) \subseteq \mathbb{D}$. Now, we find that for all $z \in \mathbb{D}$,
+    % \begin{align*}
+    %     \varphi_a(\varphi_{-a}(z)) &= \varphi_a \left(\frac{z + a}{1 + \overline{a}z}\right) \\
+    %     &= \frac{\frac{z + a}{1 + \overline{a}z} - a}{1 - \overline{a} \frac{z + a}{1 + \overline{a}z}} \\
+    %     &= \frac{z + a - a(1 + \overline{a}z)}{1 + \overline{a}z} \cdot \frac{1 + \overline{a}z}{(1 + \overline{a}z) - \overline{a}(z+a)} \\
+    %     &= \frac{z - |a|^2z}{1 - |a|^2} = z.
+    % \end{align*}
+    % So, $\varphi_a$ is bijective, with $(\varphi_a)^{-1} = \varphi_{-a}$. Hence, $\varphi_a \in \operatorname{Aut}(\mathbb{D})$ for all $a \in \mathbb{D}$. We can now characterise the automorphisms of $\mathbb{D}$.
+    % \begin{theorem}
+    %     We have
+    %     \[\operatorname{Aut}(\mathbb{D}) = \{c\varphi_a \mid c \in \partial \mathbb{D}, a \in \mathbb{D}\}.\]
+    % \end{theorem}
+    % \begin{proof}
+    %     Since $\varphi_a$ and $z \mapsto cz$ are bijections, their composition is also bijective. Moreover, it is a conformal map $\mathbb{D} \to \mathbb{D}$, so an automorphism of $\mathbb{D}$. 
         
-        Now, let $f \in \operatorname{Aut}(\mathbb{D})$. Then, there exists an $a \in \mathbb{D}$ such that $f(a) = 0$. Define the function $g = f \circ \varphi_{-a}$. Then, $g \colon \mathbb{D} \to \mathbb{D}$ is a holomorphic bijection, with 
-        \[g(0) = f(\varphi_{-a}(0)) = f \left(\frac{0 + a}{1 + \overline{a} \cdot 0}\right) = f(a) = 0.\]
-        Now, by Schwarz Lemma, we find that $|g(z)| \leq |z|$ for all $z \in \mathbb{D}$. We also have $g^{-1}(0) = 0$, so $|g^{-1}(w)| \leq |w|$ for all $w \in \mathbb{D}$. Hence, for all $z \in \mathbb{D}$, we have
-        \[|z| = |g^{-1}(g(z))| \leq |g(z)| \leq |z|,\]
-        meaning that $|g(z)| = |z|$ for all $z \in \mathbb{D}$. Hence, by Schwarz Lemma again, we find that $g = cz$, for some $c \in \partial \mathbb{D}$. We know that
-        \[c\varphi_a(z) = g(\varphi_a(z)) = f(\varphi_{-a}(\varphi_a(z))) = f(z)\]
-        for all $z \in \mathbb{D}$.
-    \end{proof}
-    We can now characterise automorphisms in the following way.
-    \begin{theorem}
-        Let $z_0, w_0 \in \mathbb{D}$ and $\theta_0 \in (-\pi, \pi)$. Then, there exists a unique automorphism $f$ of $\mathbb{D}$ such that $f(z) = w_0$ and $\arg(f'(z_0)) = \theta_0$.
-    \end{theorem}
-    \begin{proof}
-        Let $c \in \delta \mathbb{D}$, let $f_c \colon \mathbb{D} \to \mathbb{D}$ be given by $f_c(z) = \varphi_{-w_0} (c \varphi_{z_0}(z))$. Then, $f_c(z_0) = w_0$ and
-        \begin{align*}
-            f_c'(z_0) &= \varphi_{-w_0}'(c\varphi_{z_0}(z_0)) \cdot c \varphi'_{z_0}(z_0) \\
-            &= \varphi'_{-w_0}(0) \cdot c \varphi'_{z_0}(z_0) \\
-            &= (1 - |w_0|^2) \cdot \frac{c}{1 - |z_0|^2}.
-        \end{align*}
-        So,
-        \[|f_c'(z_0)| = \frac{1 - |w_0|^2}{1 - |z_0|^2}.\]
-        Hence,
-        \[c \cdot \frac{1 - |w_0|^2}{1 - |z_0|^2}= f_c'(z_0) = |f_c'(z_0)| e^{i \arg f_c'(z_0)} = \frac{1 - |w_0|^2}{1 - |z_0|^2} e ^{i \arg f_c'(z_0)}.\]
-        So, $c = e^{i \arg f_c'(z_0)}$. Therefore, we can fix $c = e^{i \theta_0}$ so that $\arg(f'(z_0)) = \theta_0$.
+    %     Now, let $f \in \operatorname{Aut}(\mathbb{D})$. Then, there exists an $a \in \mathbb{D}$ such that $f(a) = 0$. Define the function $g = f \circ \varphi_{-a}$. Then, $g \colon \mathbb{D} \to \mathbb{D}$ is a holomorphic bijection, with 
+    %     \[g(0) = f(\varphi_{-a}(0)) = f \left(\frac{0 + a}{1 + \overline{a} \cdot 0}\right) = f(a) = 0.\]
+    %     Now, by Schwarz Lemma, we find that $|g(z)| \leq |z|$ for all $z \in \mathbb{D}$. We also have $g^{-1}(0) = 0$, so $|g^{-1}(w)| \leq |w|$ for all $w \in \mathbb{D}$. Hence, for all $z \in \mathbb{D}$, we have
+    %     \[|z| = |g^{-1}(g(z))| \leq |g(z)| \leq |z|,\]
+    %     meaning that $|g(z)| = |z|$ for all $z \in \mathbb{D}$. Hence, by Schwarz Lemma again, we find that $g = cz$, for some $c \in \partial \mathbb{D}$. We know that
+    %     \[c\varphi_a(z) = g(\varphi_a(z)) = f(\varphi_{-a}(\varphi_a(z))) = f(z)\]
+    %     for all $z \in \mathbb{D}$.
+    % \end{proof}
+    % We can now characterise automorphisms in the following way.
+    % \begin{theorem}
+    %     Let $z_0, w_0 \in \mathbb{D}$ and $\theta_0 \in (-\pi, \pi)$. Then, there exists a unique automorphism $f$ of $\mathbb{D}$ such that $f(z) = w_0$ and $\arg(f'(z_0)) = \theta_0$.
+    % \end{theorem}
+    % \begin{proof}
+    %     Let $c \in \delta \mathbb{D}$, let $f_c \colon \mathbb{D} \to \mathbb{D}$ be given by $f_c(z) = \varphi_{-w_0} (c \varphi_{z_0}(z))$. Then, $f_c(z_0) = w_0$ and
+    %     \begin{align*}
+    %         f_c'(z_0) &= \varphi_{-w_0}'(c\varphi_{z_0}(z_0)) \cdot c \varphi'_{z_0}(z_0) \\
+    %         &= \varphi'_{-w_0}(0) \cdot c \varphi'_{z_0}(z_0) \\
+    %         &= (1 - |w_0|^2) \cdot \frac{c}{1 - |z_0|^2}.
+    %     \end{align*}
+    %     So,
+    %     \[|f_c'(z_0)| = \frac{1 - |w_0|^2}{1 - |z_0|^2}.\]
+    %     Hence,
+    %     \[c \cdot \frac{1 - |w_0|^2}{1 - |z_0|^2}= f_c'(z_0) = |f_c'(z_0)| e^{i \arg f_c'(z_0)} = \frac{1 - |w_0|^2}{1 - |z_0|^2} e ^{i \arg f_c'(z_0)}.\]
+    %     So, $c = e^{i \arg f_c'(z_0)}$. Therefore, we can fix $c = e^{i \theta_0}$ so that $\arg(f'(z_0)) = \theta_0$.
 
-        We now show uniqueness. Let $f_1, f_2$ be two automorphisms of $\mathbb{D}$ such that $f_1(z) = f_2(z) = w_0$ and $\arg(f_1'(z)) = \arg(f_2'(z)) = \theta_0$. Define the function $g = \varphi_{z_0} \circ f_2^{-1} \circ f_1 \circ \varphi_{-z_0}$. Then, $g(0) = 0$, and $g$ is automorphism of $\mathbb{D}$. So, there exists a $c \in \delta \mathbb{D}$ and $a \in \mathbb{D}$ by $g = c \varphi_a$. Hence,
-        \[-ac = c\varphi_a(0) = g(0) = 0,\]
-        so $a = 0$. This implies that $g(z) = cz$ and $g'(0) = c$. So, we find that
-        \begin{align*}
-            c &= g'(0) \\
-            &= \varphi_{z_0}'(z_0) \cdot (f_2^{-1})'(w_0) \cdot f_1'(z_0) \cdot \varphi_{-z_0}'(0) \\
-            &= \frac{1}{1 - |z_0|^2} \frac{1}{f_2'(z_0)} f_1'(z_0) (1 - |z_0|^2) \\
-            &= \frac{f_1'(z_0)}{f_2'(z_0)}.
-        \end{align*}
-        Hence, $f_1'(z_0) = cf_2'(z_0)$. Since $\arg (f_1'(z_0)) = \arg (f_2'(z_0))$, we find that $c \in \mathbb{R}$ with $c > 0$. Since $|c| = 1$, we must have $c = 1$. So, $g = cz$ is the identity map. Hence,
-        \begin{align*}
-            \varphi_{z_0} \circ f_2^{-1} \circ f_1 \circ \varphi_{-z_0} = id &\iff f_2^{-1} \circ f_1 = \varphi_{z_0}^{-1} \circ \varphi_{-z_0}^{-1} = id \\
-            &\iff f_2 = f_1.
-        \end{align*}
-    \end{proof}
-    We can use the computation to find particular automorphisms. For instance, we will find the automorphism $f \colon \mathbb{D} \to \mathbb{D}$ with $f(0) = \frac{1}{2}$ and $f'(0) = \frac{\pi}{2}$. We know that $f = c\varphi_a$, for $c \in \partial \mathbb{D}$ and $a \in \mathbb{D}$. Hence,
-    \[\frac{1}{2} = f(0) = c\varphi_a(0) = -ac, \qquad \frac{\pi}{2} = f'(0) = c(1 - |a|^2).\]
-    Since $1 - |a|^2 > 0$, we find that $\arg (f'(0)) = c$, meaning that $\arg (c) = \frac{\pi}{2}$. So, we can set $c = e^{\pi i/2} =  i$. In that case,
-    \[\frac{1}{2} = -ac \iff a = \frac{-1}{2c} = \frac{1}{2}i.\]
-    Therefore, $f(z) = \varphi_{i/2}(z)$.
-    \newpage
+    %     We now show uniqueness. Let $f_1, f_2$ be two automorphisms of $\mathbb{D}$ such that $f_1(z) = f_2(z) = w_0$ and $\arg(f_1'(z)) = \arg(f_2'(z)) = \theta_0$. Define the function $g = \varphi_{z_0} \circ f_2^{-1} \circ f_1 \circ \varphi_{-z_0}$. Then, $g(0) = 0$, and $g$ is automorphism of $\mathbb{D}$. So, there exists a $c \in \delta \mathbb{D}$ and $a \in \mathbb{D}$ by $g = c \varphi_a$. Hence,
+    %     \[-ac = c\varphi_a(0) = g(0) = 0,\]
+    %     so $a = 0$. This implies that $g(z) = cz$ and $g'(0) = c$. So, we find that
+    %     \begin{align*}
+    %         c &= g'(0) \\
+    %         &= \varphi_{z_0}'(z_0) \cdot (f_2^{-1})'(w_0) \cdot f_1'(z_0) \cdot \varphi_{-z_0}'(0) \\
+    %         &= \frac{1}{1 - |z_0|^2} \frac{1}{f_2'(z_0)} f_1'(z_0) (1 - |z_0|^2) \\
+    %         &= \frac{f_1'(z_0)}{f_2'(z_0)}.
+    %     \end{align*}
+    %     Hence, $f_1'(z_0) = cf_2'(z_0)$. Since $\arg (f_1'(z_0)) = \arg (f_2'(z_0))$, we find that $c \in \mathbb{R}$ with $c > 0$. Since $|c| = 1$, we must have $c = 1$. So, $g = cz$ is the identity map. Hence,
+    %     \begin{align*}
+    %         \varphi_{z_0} \circ f_2^{-1} \circ f_1 \circ \varphi_{-z_0} = id &\iff f_2^{-1} \circ f_1 = \varphi_{z_0}^{-1} \circ \varphi_{-z_0}^{-1} = id \\
+    %         &\iff f_2 = f_1.
+    %     \end{align*}
+    % \end{proof}
+    % We can use the computation to find particular automorphisms. For instance, we will find the automorphism $f \colon \mathbb{D} \to \mathbb{D}$ with $f(0) = \frac{1}{2}$ and $f'(0) = \frac{\pi}{2}$. We know that $f = c\varphi_a$, for $c \in \partial \mathbb{D}$ and $a \in \mathbb{D}$. Hence,
+    % \[\frac{1}{2} = f(0) = c\varphi_a(0) = -ac, \qquad \frac{\pi}{2} = f'(0) = c(1 - |a|^2).\]
+    % Since $1 - |a|^2 > 0$, we find that $\arg (f'(0)) = c$, meaning that $\arg (c) = \frac{\pi}{2}$. So, we can set $c = e^{\pi i/2} =  i$. In that case,
+    % \[\frac{1}{2} = -ac \iff a = \frac{-1}{2c} = \frac{1}{2}i.\]
+    % Therefore, $f(z) = \varphi_{i/2}(z)$.
+    % \newpage
 
-    \section{Riemann Mapping Theorem}
-    In this section, we will look at the Riemann Mapping Theorem and its relation to conformal equivalence.
+    % \section{Riemann Mapping Theorem}
+    % In this section, we will look at the Riemann Mapping Theorem and its relation to conformal equivalence.
     
-    Let $U_1, U_2 \subseteq \mathbb{C}$ be open. We say that $U_1$ is \emph{conformally equivalent} to $U_2$ if there exists a conformal mapping $f \colon U_1 \to U_2$. By properties of bijections and holomorphisms, we find that conformal equivalence forms an equivalence relation. We will now try to understand the equivalence classes of conformal equivalence. In particular, given $U \subseteq \mathbb{C}$ open, which sets $V \subseteq \mathbb{C}$ are conformally equivalent to $U$? We will consider this question where $U = \mathbb{D}$. This is given by the Riemann mapping theorem.
-    \begin{theorem}[Riemann Mapping Theorem]
-        Let $U \subsetneq \mathbb{C}$ be a simply-connected non-empty open set. Then, $U$ is conformally equivalent to the unit disc $\mathbb{D}$.
-    \end{theorem}
-    \noindent Note that all the assumptions- proper, non-empty and simply-connected- are necessary. In particular, $\mathbb{C}$ is not conformally equivalent to $\mathbb{D}$. This follows from Lioville's Theorem (a bounded entire function is constant).
+    % Let $U_1, U_2 \subseteq \mathbb{C}$ be open. We say that $U_1$ is \emph{conformally equivalent} to $U_2$ if there exists a conformal mapping $f \colon U_1 \to U_2$. By properties of bijections and holomorphisms, we find that conformal equivalence forms an equivalence relation. We will now try to understand the equivalence classes of conformal equivalence. In particular, given $U \subseteq \mathbb{C}$ open, which sets $V \subseteq \mathbb{C}$ are conformally equivalent to $U$? We will consider this question where $U = \mathbb{D}$. This is given by the Riemann mapping theorem.
+    % \begin{theorem}[Riemann Mapping Theorem]
+    %     Let $U \subsetneq \mathbb{C}$ be a simply-connected non-empty open set. Then, $U$ is conformally equivalent to the unit disc $\mathbb{D}$.
+    % \end{theorem}
+    % \noindent Note that all the assumptions- proper, non-empty and simply-connected- are necessary. In particular, $\mathbb{C}$ is not conformally equivalent to $\mathbb{D}$. This follows from Lioville's Theorem (a bounded entire function is constant).
 
-    Using the Riemann Mapping Theorem, we can generalise the property about automorphisms of $\mathbb{D}$.
-    \begin{theorem}
-        Let $U \subsetneq \mathbb{C}$ be a simply-connected non-empty open set and let $z_0 \in U, w_0 \in \mathbb{D}$ and $\theta_0 \in (-\pi, \pi)$. Then, there exists a unique conformal map $f \colon U \to \mathbb{D}$ such that $f(z_0) = w_0$ and $\arg (f'(z_0)) = \theta_0$.
-    \end{theorem}
-    \begin{proof}
-        By the Riemann Mapping Theorem, we know that there exists a conformal map $g \colon U \to \mathbb{D}$. Let $\tilde{z}_0 = g(z_0)$ and $\varphi_0 = \arg (g'(z_0))$. Let $h \colon \mathbb{D} \to \mathbb{D}$ be the conformal mapping such that $h(\tilde{z}_0) = w_0$ and $\arg (h'(\tilde{z}_0)) = \theta_0 - \varphi_0$. This is possible by the result above about automorphisms on $\mathbb{D}$. Then, define $f = h \circ g \colon U \to \mathbb{D}$. By construction, we find that $f(z_0) = h(\tilde{z}_0) = w_0$ and 
-        \[\arg (f'(z_0)) = \arg (h'(g(z_0)) \cdot g'(z_0)) = (\theta_0 - \varphi_0) + \varphi_0 = \theta_0.\]
+    % Using the Riemann Mapping Theorem, we can generalise the property about automorphisms of $\mathbb{D}$.
+    % \begin{theorem}
+    %     Let $U \subsetneq \mathbb{C}$ be a simply-connected non-empty open set and let $z_0 \in U, w_0 \in \mathbb{D}$ and $\theta_0 \in (-\pi, \pi)$. Then, there exists a unique conformal map $f \colon U \to \mathbb{D}$ such that $f(z_0) = w_0$ and $\arg (f'(z_0)) = \theta_0$.
+    % \end{theorem}
+    % \begin{proof}
+    %     By the Riemann Mapping Theorem, we know that there exists a conformal map $g \colon U \to \mathbb{D}$. Let $\tilde{z}_0 = g(z_0)$ and $\varphi_0 = \arg (g'(z_0))$. Let $h \colon \mathbb{D} \to \mathbb{D}$ be the conformal mapping such that $h(\tilde{z}_0) = w_0$ and $\arg (h'(\tilde{z}_0)) = \theta_0 - \varphi_0$. This is possible by the result above about automorphisms on $\mathbb{D}$. Then, define $f = h \circ g \colon U \to \mathbb{D}$. By construction, we find that $f(z_0) = h(\tilde{z}_0) = w_0$ and 
+    %     \[\arg (f'(z_0)) = \arg (h'(g(z_0)) \cdot g'(z_0)) = (\theta_0 - \varphi_0) + \varphi_0 = \theta_0.\]
 
-        Now, we show that $f$ is unique. So, let $\tilde{f} \colon U \to \mathbb{D}$ be a conformal map such that $\tilde{f}(z_0) = w_0$ and $\arg (\tilde{f}'(z_0)) = \theta_0$. Then, $g := \tilde{f} \circ f^{-1} \colon \mathbb{D} \to \mathbb{D}$ is a conformal mapping such that $g(w_0) = w_0$ to $w_0$ and 
-        \[\arg(g'(w_0)) = \arg (\tilde{f}'(z) \cdot f'(z_0)) = \theta_0 - \theta_0 = 0.\]
-        % TODO: Understand
-        By the uniqueness of automorphisms of $\mathbb{D}$, we find that $g = id$, meaning that $f = \tilde{f}$.
-    \end{proof}
+    %     Now, we show that $f$ is unique. So, let $\tilde{f} \colon U \to \mathbb{D}$ be a conformal map such that $\tilde{f}(z_0) = w_0$ and $\arg (\tilde{f}'(z_0)) = \theta_0$. Then, $g := \tilde{f} \circ f^{-1} \colon \mathbb{D} \to \mathbb{D}$ is a conformal mapping such that $g(w_0) = w_0$ to $w_0$ and 
+    %     \[\arg(g'(w_0)) = \arg (\tilde{f}'(z) \cdot f'(z_0)) = \theta_0 - \theta_0 = 0.\]
+    %     % TODO: Understand
+    %     By the uniqueness of automorphisms of $\mathbb{D}$, we find that $g = id$, meaning that $f = \tilde{f}$.
+    % \end{proof}
 
-    We will now aim to prove the Riemann Mapping Theorem. To do so, we require Montel's Theorem. Let $U \subseteq \mathbb{C}$ be open and let $\mathcal{F}$ be a collection of continuous functions $f \colon U \to \mathbb{C}$. We say that $\mathcal{F}$ is \emph{normal} if every sequence in $\mathcal{F}$ has a subsequence that converges uniformly on compact subsets of $U$. Note that we do not require the limit to be in $\mathcal{F}$. Moreover, $\mathcal{F}$ is \emph{bounded} if there exists an $M > 0$ such that $|f(z)| < M$ for all $f \in \mathcal{F}$ and $z \in U$. Finally, $\mathcal{F}$ is \emph{equi-continuous} at $z_0 \in U$ if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for all $f \in \mathcal{F}$ and $z \in U$, if $|z - z_0| < \delta$, then $|f(z) - f(z_0)| < \varepsilon$.
+    % We will now aim to prove the Riemann Mapping Theorem. To do so, we require Montel's Theorem. Let $U \subseteq \mathbb{C}$ be open and let $\mathcal{F}$ be a collection of continuous functions $f \colon U \to \mathbb{C}$. We say that $\mathcal{F}$ is \emph{normal} if every sequence in $\mathcal{F}$ has a subsequence that converges uniformly on compact subsets of $U$. Note that we do not require the limit to be in $\mathcal{F}$. Moreover, $\mathcal{F}$ is \emph{bounded} if there exists an $M > 0$ such that $|f(z)| < M$ for all $f \in \mathcal{F}$ and $z \in U$. Finally, $\mathcal{F}$ is \emph{equi-continuous} at $z_0 \in U$ if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that for all $f \in \mathcal{F}$ and $z \in U$, if $|z - z_0| < \delta$, then $|f(z) - f(z_0)| < \varepsilon$.
     
-    Now, consider the family $\mathcal{F}$ of functions $f_n \colon \mathbb{D} \to \mathbb{C}$ given by $f_n(z) = \sum_{k=n}^\infty \frac{z^k}{2^k}$. We claim that this family is equi-continuous at $z = 0$.
-    % TODO
+    % Now, consider the family $\mathcal{F}$ of functions $f_n \colon \mathbb{D} \to \mathbb{C}$ given by $f_n(z) = \sum_{k=n}^\infty \frac{z^k}{2^k}$. We claim that this family is equi-continuous at $z = 0$.
+    % % TODO
 
-    Next, we will consider Arzela-Ascoli Theorem, a generalisation of the Heine-Borel Theorem.
-    \begin{theorem}[Arzela-Ascoli Theorem]
-        Let $U \subseteq \mathbb{C}$ be open and $\mathcal{F}$ be a collection of continuous functions $f \colon U \to \mathbb{C}$. If $\mathcal{F}$ is bounded and equi-continuous at all $z_0 \in U$, then $\mathcal{F}$ is normal.
-    \end{theorem}
-    \noindent Now, we can prove Montel's Theorem.
-    \begin{theorem}[Montel's Theorem]
-        Let $U \subseteq \mathbb{C}$ be open and $\mathcal{F}$ be a collection of holomorphic functions $f \colon U \to \mathbb{C}$. If $\mathcal{F}$ is bounded, then $\mathcal{F}$ is normal.
-    \end{theorem}
-    \begin{proof}
-        By Arzela-Ascoli Theorem, it suffices to show that $\mathcal{F}$ is equi-continuous at all $a \in U$. So, let $a \in U$, $r > 0$ such that $\overline{D}_r(a) \subseteq U$, and let $M > 0$ such that $|f(z)| < M$ for all $f \in \mathcal{F}$ and $z \in U$. Now, let $R > r$ such that $\overline{D}_R(a) \subseteq U$. By Cauchy's Integral Formula, we find that for all $z \in D_r(a)$,
-        \begin{align*}
-            f(z) - f(a) &= \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w)}{w - z} \ dw - \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w)}{w - a} \ dw\\
-            &= \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w) (z - a)}{(w - z) (w - a)} \ dw.
-        \end{align*}
-        Hence, 
-        \begin{align*}
-            |f(z) - f(a)| &\leq \frac{M |z - a|}{2\pi} \sup_{w \in \partial D_R(a)} \frac{1}{(w - z)(w - a)} \cdot 2\pi R \\
-            &= M|z - a| \sup_{w \in \partial D_R(a)} \frac{1}{w - z} \\
-            &\leq \frac{M}{R - r} |z - a|.
-        \end{align*}
-        % TODO: Explain the steps
-        So, now, let $\varepsilon > 0$. Set $\delta = \min (\frac{R - r}{M}, r)$. Then, for all $z \in U$ and $f \in \mathcal{F}$, if $|z - a| < \delta$< then $z \in D_r(a)$, and so
-        \[|f(z) - f(a)| \leq \frac{M}{R - r} |z - a| < \varepsilon.\]
-        Hence, $\mathcal{F}$ is equi-continuous at $a$.
-    \end{proof}
+    % Next, we will consider Arzela-Ascoli Theorem, a generalisation of the Heine-Borel Theorem.
+    % \begin{theorem}[Arzela-Ascoli Theorem]
+    %     Let $U \subseteq \mathbb{C}$ be open and $\mathcal{F}$ be a collection of continuous functions $f \colon U \to \mathbb{C}$. If $\mathcal{F}$ is bounded and equi-continuous at all $z_0 \in U$, then $\mathcal{F}$ is normal.
+    % \end{theorem}
+    % \noindent Now, we can prove Montel's Theorem.
+    % \begin{theorem}[Montel's Theorem]
+    %     Let $U \subseteq \mathbb{C}$ be open and $\mathcal{F}$ be a collection of holomorphic functions $f \colon U \to \mathbb{C}$. If $\mathcal{F}$ is bounded, then $\mathcal{F}$ is normal.
+    % \end{theorem}
+    % \begin{proof}
+    %     By Arzela-Ascoli Theorem, it suffices to show that $\mathcal{F}$ is equi-continuous at all $a \in U$. So, let $a \in U$, $r > 0$ such that $\overline{D}_r(a) \subseteq U$, and let $M > 0$ such that $|f(z)| < M$ for all $f \in \mathcal{F}$ and $z \in U$. Now, let $R > r$ such that $\overline{D}_R(a) \subseteq U$. By Cauchy's Integral Formula, we find that for all $z \in D_r(a)$,
+    %     \begin{align*}
+    %         f(z) - f(a) &= \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w)}{w - z} \ dw - \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w)}{w - a} \ dw\\
+    %         &= \frac{1}{2\pi i} \int_{\partial D_R(a)} \frac{f(w) (z - a)}{(w - z) (w - a)} \ dw.
+    %     \end{align*}
+    %     Hence, 
+    %     \begin{align*}
+    %         |f(z) - f(a)| &\leq \frac{M |z - a|}{2\pi} \sup_{w \in \partial D_R(a)} \frac{1}{(w - z)(w - a)} \cdot 2\pi R \\
+    %         &= M|z - a| \sup_{w \in \partial D_R(a)} \frac{1}{w - z} \\
+    %         &\leq \frac{M}{R - r} |z - a|.
+    %     \end{align*}
+    %     % TODO: Explain the steps
+    %     So, now, let $\varepsilon > 0$. Set $\delta = \min (\frac{R - r}{M}, r)$. Then, for all $z \in U$ and $f \in \mathcal{F}$, if $|z - a| < \delta$< then $z \in D_r(a)$, and so
+    %     \[|f(z) - f(a)| \leq \frac{M}{R - r} |z - a| < \varepsilon.\]
+    %     Hence, $\mathcal{F}$ is equi-continuous at $a$.
+    % \end{proof}
 
-    We will now use Montel's Theorem to show that a collection $\mathcal{F}$ is normal. So, define the collection $\mathcal{F}$ by $f_n(z) = z^n + z$ for $z \in \mathbb{Z}_{\geq 1}$ on $\mathbb{D}$. We know that all the functions in $\mathcal{F}$ are holomorphic, so we just need to show that they are bounded. So, for $z \in \mathbb{D}$ and $f_n \in \mathcal{F}$, we find that
-    \[|f(z)| = |z^n + z| \leq |z|^n + |z| < 2.\]
-    Hence, the collection is bounded, so Montel's Theorem tells us that it is normal.
+    % We will now use Montel's Theorem to show that a collection $\mathcal{F}$ is normal. So, define the collection $\mathcal{F}$ by $f_n(z) = z^n + z$ for $z \in \mathbb{Z}_{\geq 1}$ on $\mathbb{D}$. We know that all the functions in $\mathcal{F}$ are holomorphic, so we just need to show that they are bounded. So, for $z \in \mathbb{D}$ and $f_n \in \mathcal{F}$, we find that
+    % \[|f(z)| = |z^n + z| \leq |z|^n + |z| < 2.\]
+    % Hence, the collection is bounded, so Montel's Theorem tells us that it is normal.
 
-    We will now prove the Riemann Mapping Theorem using Montel's Theorem.
-    \begin{proof}[Proof of the Riemann Mapping Theorem]
-        Let 
-        \[\mathcal{F} = \{\psi \colon U \to \mathbb{D} \mid \psi \textrm{ holomorphic and injective}\}.\]
-        We first show that $\mathcal{F}$ is not empty. Let $w_0 \in \mathbb{C} \setminus U$. We know that the map $z \mapsto z - w_0$ is holomorphic in $U$ with no zeros. Thus, there exists a holomorphic function $f \colon U \to \mathbb{C}$ such that $f(z)^2 = z - w_0$ for all $z \in U$.
-        % TODO: Explain why
-        We claim that $f \in \mathcal{F}$. Note that for $z_1, z_2 \in U$, if $f(z_1) = f(z_2)$, then 
-        \[z_1 - w_0 = f(z_1)^2 = f(z_2)^2 = z_2 - w_0,\]
-        meaning that $z_1 = z_2$. So, $f$ is injective. By the Open Mapping Theorem, we know that $f(U)$ is open and hence contains a disc $D_r(a)$ such that $0 < r < |a|$. We know that there are no $z_1, z_2 \in U$ with $z_1 \neq z_2$ such that $f(z_1) = -f(z_2)$. So, $D_r(-a) \cap D_r(a) = \varnothing$. Hence, define the function $\psi \colon U \to \mathbb{C}$ by $\psi(z) = \frac{r}{f(z) + a}$. Then, $\psi$ is holomorphic with
-        \[|\psi(z)| \leq \frac{r}{|f(z) + a|} < 1\]
-        for all $z \in U$. So, $\psi \in \mathcal{F}$.
+    % We will now prove the Riemann Mapping Theorem using Montel's Theorem.
+    % \begin{proof}[Proof of the Riemann Mapping Theorem]
+    %     Let 
+    %     \[\mathcal{F} = \{\psi \colon U \to \mathbb{D} \mid \psi \textrm{ holomorphic and injective}\}.\]
+    %     We first show that $\mathcal{F}$ is not empty. Let $w_0 \in \mathbb{C} \setminus U$. We know that the map $z \mapsto z - w_0$ is holomorphic in $U$ with no zeros. Thus, there exists a holomorphic function $f \colon U \to \mathbb{C}$ such that $f(z)^2 = z - w_0$ for all $z \in U$.
+    %     % TODO: Explain why
+    %     We claim that $f \in \mathcal{F}$. Note that for $z_1, z_2 \in U$, if $f(z_1) = f(z_2)$, then 
+    %     \[z_1 - w_0 = f(z_1)^2 = f(z_2)^2 = z_2 - w_0,\]
+    %     meaning that $z_1 = z_2$. So, $f$ is injective. By the Open Mapping Theorem, we know that $f(U)$ is open and hence contains a disc $D_r(a)$ such that $0 < r < |a|$. We know that there are no $z_1, z_2 \in U$ with $z_1 \neq z_2$ such that $f(z_1) = -f(z_2)$. So, $D_r(-a) \cap D_r(a) = \varnothing$. Hence, define the function $\psi \colon U \to \mathbb{C}$ by $\psi(z) = \frac{r}{f(z) + a}$. Then, $\psi$ is holomorphic with
+    %     \[|\psi(z)| \leq \frac{r}{|f(z) + a|} < 1\]
+    %     for all $z \in U$. So, $\psi \in \mathcal{F}$.
 
-        Now, we show that $\mathcal{F}$ is normal. For all $\psi \in \mathcal{F}$ and $z \in U$, we find that $|\psi(z)| < 1$, meaning that $\mathcal{F}$ is bounded. So, Montel's Theorem tells us that $\mathcal{F}$ is normal.
+    %     Now, we show that $\mathcal{F}$ is normal. For all $\psi \in \mathcal{F}$ and $z \in U$, we find that $|\psi(z)| < 1$, meaning that $\mathcal{F}$ is bounded. So, Montel's Theorem tells us that $\mathcal{F}$ is normal.
 
-        Next, we claim that if $\psi \in \mathcal{F}$ not surjective, then for all $z_0 \in U$, there exists a $\psi_1 \in \mathcal{F}$ such that $|\psi_1'(z_0)| > |\psi'(z_0)|$. So, let $\psi \in \mathcal{F}$ not surjective, and $\alpha \in \mathbb{D}$ with $\alpha \not\in \psi(U)$. Then, we know that $\varphi_\alpha \circ \psi \in \mathcal{F}$ and $\varphi_\alpha \circ \psi$ has no zeros in $U$ (since $\alpha$ is the unique zero of $\varphi_\alpha$). Hence, so there exists a holomorphic function $g \colon U \to \mathbb{C}$ such that $g^2 = \varphi_\alpha \circ \psi$. Since $\psi$ is injective, we find that $g$ is injective. Therefore, $g \in \mathcal{F}$. Now, define $\psi_1 = \varphi_\beta \circ g$, where $g(z_0) = \beta$. Let $s \colon U \to \mathbb{C}$ be the function $s(w) = w^2$. Then,
-        \[\psi = \varphi_{-\alpha} \circ s \circ g = \varphi_{-\alpha} \circ s \circ \varphi_{-\beta} \circ \psi_1.\]
-        Since $\psi_1(z_0) = 0$, we can apply the chain rule to find that $
-        \psi'(z_0) = F'(0) \psi_1'(z_0)$, where $F = \varphi_{-\alpha} \circ s \circ \varphi_{-\beta}$. We know that $F$ maps $\mathbb{D}$ to $\mathbb{D}$, and $F$ is not injective. Thus, the Schwarz Lemma tells us that $|F'(0)| < 1$. Hence, $|\psi_1'(z_0)| > |\psi'(z_0)|$. Note that $\psi'(z_0) \neq 0$ since $\psi$ is holomorphic and injective in $U$.
+    %     Next, we claim that if $\psi \in \mathcal{F}$ not surjective, then for all $z_0 \in U$, there exists a $\psi_1 \in \mathcal{F}$ such that $|\psi_1'(z_0)| > |\psi'(z_0)|$. So, let $\psi \in \mathcal{F}$ not surjective, and $\alpha \in \mathbb{D}$ with $\alpha \not\in \psi(U)$. Then, we know that $\varphi_\alpha \circ \psi \in \mathcal{F}$ and $\varphi_\alpha \circ \psi$ has no zeros in $U$ (since $\alpha$ is the unique zero of $\varphi_\alpha$). Hence, so there exists a holomorphic function $g \colon U \to \mathbb{C}$ such that $g^2 = \varphi_\alpha \circ \psi$. Since $\psi$ is injective, we find that $g$ is injective. Therefore, $g \in \mathcal{F}$. Now, define $\psi_1 = \varphi_\beta \circ g$, where $g(z_0) = \beta$. Let $s \colon U \to \mathbb{C}$ be the function $s(w) = w^2$. Then,
+    %     \[\psi = \varphi_{-\alpha} \circ s \circ g = \varphi_{-\alpha} \circ s \circ \varphi_{-\beta} \circ \psi_1.\]
+    %     Since $\psi_1(z_0) = 0$, we can apply the chain rule to find that $
+    %     \psi'(z_0) = F'(0) \psi_1'(z_0)$, where $F = \varphi_{-\alpha} \circ s \circ \varphi_{-\beta}$. We know that $F$ maps $\mathbb{D}$ to $\mathbb{D}$, and $F$ is not injective. Thus, the Schwarz Lemma tells us that $|F'(0)| < 1$. Hence, $|\psi_1'(z_0)| > |\psi'(z_0)|$. Note that $\psi'(z_0) \neq 0$ since $\psi$ is holomorphic and injective in $U$.
 
-        Now, let $z_0 \in U$ and let
-        \[\eta = \sup_{\psi \in \mathcal{F}} |\psi'(z_0)|.\]
-        We know that for any $h \in \mathcal{F}$ such that $|h'(z_0)| = \eta$, $h$ is surjective. We will now construct such an $h$. By the supremum property, there exists a sequence $(\psi_n)_{n=1}^\infty$ in $\mathcal{F}$ such that $|\psi_n'(z_0)| \to \eta$ as $n \to \infty$. Since $\mathcal{F}$ is normal, we can find a subsequence $(\psi_{n_k})_{k=1}^\infty$ in $\mathcal{F}$ that converges uniformly (to some function $h \colon U \to \mathbb{C}$) on every compact subset of $U$. We know that $(\psi_{n_k})$ is a sequence of holomorphic functions, so $h$ is holomorphic. We claim that $h$ is injective. Since $\mathcal{F}$ is not empty, $\eta > 0$, meaning that $h$ is not a constant function. We know that $\psi_{n_k}(U) \subseteq \mathbb{D}$ for all $k \in \mathbb{Z}_{\geq 1}$, so the limit function $h(U) \subseteq \overline{\mathbb{D}}$. However, the open mapping theorem tells us that $h(U)$ is open, meaning that $h(U) \subseteq \mathbb{D}$. Since $|h'(z_0)| = \eta$, we find that $h$ is surjective. Now, we show that $h$ is injective. So, let $z_1, z_2 \in U$ with $z_1 \neq z_2$, and set $\alpha = h(z_1)$ and $\alpha_k = \psi_{n_k}(z_1)$ for all $k \in \mathbb{Z}_{\geq 1}$. Let $\overline{D}$ be a closed disc in $U$ centered at $z_0$ with $z_1 \not\in \overline{D}$ and $h - \alpha$ has no zeros on $\partial \overline{D}$. Then, $\psi_n - a_n \to h - \alpha$ uniformly on $\overline{D}$. Moreover, $\psi_n - \alpha_n$ has no zero in $D$ for all $n \in \mathbb{Z}_{\geq 1}$. Since $\psi_n - \alpha_n$ is injective and has a zero at $z_1$, Rouché's Theorem tells us that $h - \alpha$ has no zero in $D$. Hence, $h(z_2) \neq h(z_1)$, meaning that $h$ is injective. So, $h \in \mathcal{F}$ is surjective, meaning that it is a conformal mapping from $U$ to $\mathbb{D}$.
-    \end{proof}
+    %     Now, let $z_0 \in U$ and let
+    %     \[\eta = \sup_{\psi \in \mathcal{F}} |\psi'(z_0)|.\]
+    %     We know that for any $h \in \mathcal{F}$ such that $|h'(z_0)| = \eta$, $h$ is surjective. We will now construct such an $h$. By the supremum property, there exists a sequence $(\psi_n)_{n=1}^\infty$ in $\mathcal{F}$ such that $|\psi_n'(z_0)| \to \eta$ as $n \to \infty$. Since $\mathcal{F}$ is normal, we can find a subsequence $(\psi_{n_k})_{k=1}^\infty$ in $\mathcal{F}$ that converges uniformly (to some function $h \colon U \to \mathbb{C}$) on every compact subset of $U$. We know that $(\psi_{n_k})$ is a sequence of holomorphic functions, so $h$ is holomorphic. We claim that $h$ is injective. Since $\mathcal{F}$ is not empty, $\eta > 0$, meaning that $h$ is not a constant function. We know that $\psi_{n_k}(U) \subseteq \mathbb{D}$ for all $k \in \mathbb{Z}_{\geq 1}$, so the limit function $h(U) \subseteq \overline{\mathbb{D}}$. However, the open mapping theorem tells us that $h(U)$ is open, meaning that $h(U) \subseteq \mathbb{D}$. Since $|h'(z_0)| = \eta$, we find that $h$ is surjective. Now, we show that $h$ is injective. So, let $z_1, z_2 \in U$ with $z_1 \neq z_2$, and set $\alpha = h(z_1)$ and $\alpha_k = \psi_{n_k}(z_1)$ for all $k \in \mathbb{Z}_{\geq 1}$. Let $\overline{D}$ be a closed disc in $U$ centered at $z_0$ with $z_1 \not\in \overline{D}$ and $h - \alpha$ has no zeros on $\partial \overline{D}$. Then, $\psi_n - a_n \to h - \alpha$ uniformly on $\overline{D}$. Moreover, $\psi_n - \alpha_n$ has no zero in $D$ for all $n \in \mathbb{Z}_{\geq 1}$. Since $\psi_n - \alpha_n$ is injective and has a zero at $z_1$, Rouché's Theorem tells us that $h - \alpha$ has no zero in $D$. Hence, $h(z_2) \neq h(z_1)$, meaning that $h$ is injective. So, $h \in \mathcal{F}$ is surjective, meaning that it is a conformal mapping from $U$ to $\mathbb{D}$.
+    % \end{proof}
 
 \end{document}
