@@ -474,6 +474,53 @@
     \end{proof}
     \noindent This is a key result- assuming that the field is complete (which is true for $\mathbb{R}$ and $\mathbb{C}$), we have found an embedding of $V$ into a complete space $V^{**}$. Hence, we can identify its completion as a concrete subspace of $V^{**}$. There are cases when $V^{**}$ is also isometrically isometric, e.g. $L^p$ for $p > 1$, in which case we say that the vector space is \emph{reflexive}.
 
+    % (\ell^\infty)^* includes \ell^1, but (\ell^\infty)^* strictly includes \ell^1
+    % c \subseteq \ell^\infty; limit is a functional on c + Hahn-Banach to extend limit to \ell^\infty
+    % this cannot be an image of \ell^1
+
+    \newpage
+
+    \section{Baire-Category Theorem}
+    \begin{definition}
+        Let $X$ be a topological space and let $E \subseteq X$.
+        \begin{itemize}
+            \item We say that $E$ is \emph{open dense} if $E$ is open with closure $X$.
+            \item We say that $E$ is \emph{nowhere dense} if the complement of its closure $\overline{E}^c$ is open dense.
+            \item $E$ is a \emph{meagre} (or \emph{first category}) if it is a countable union of nowhere dense sets.
+            \item $E$ is of \emph{second category} if it is not of first category.
+        \end{itemize}
+    \end{definition}
+    
+    \begin{theorem}[Baire-Category Theorem]
+        Let $X$ be a complete metric space, and let $(U_n)_{n=1}^\infty$ be a sequence of open dense sets in $X$. Then, the intersection
+        \[\bigcap_{n=1}^\infty U_n\]
+        is dense in $X$.
+    \end{theorem}
+    \begin{proof}
+        Let $W \subseteq X$ be open. We show that for all $n \in \mathbb{Z}_{\geq 1}$, $U_n \cap W$ is non-empty. Since $U_1$ is open dense, we know that $U_1 \cap W$ is a non-empty open set. Hence, there exists an open ball $B_{r_0}(x_0) \subseteq U_1 \cap W$. Without loss of generality, assume that $r_0 \leq 1$. Now, since $U_2$ is open dense, we can find an open ball $B_{r_1}(x_1)$ such that $\overline{B_{r_1}(x_1)} \subseteq U_1 \cap B_{r_0}(x_0)$, with $r_1 < 2^{-1}$. We can continue on finding open balls $(B_{r_n}(x_n))_{n=0}^\infty$ such that $\overline{B_{r_n}(x_n)} \subseteq U_n \cap B_{r_{n-1}}(x_{n-1})$ for $n \geq 1$. 
+        
+        We now claim that the sequence $(x_n)_{n=0}^\infty$ is a Cauchy sequence. Let $\varepsilon > 0$. Select an $N \in \mathbb{Z}_{\geq 1}$ such that $2^{N+1} > \frac{1}{\varepsilon}$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq N$, then we know that $x_m, x_n \in U_{N+1} \cap B_{r_N}(x_N)$, in which case
+        \[|x_m - x_n| \leq |x_m - x_N| + |x_N - x_n| < r_N + r_N = 2 \cdot \frac{\varepsilon}{2} = \varepsilon.\]
+        So, $(x_n)$ is Cauchy.
+        
+        Since $X$ is complete, $x_n \to x$ for some $x \in X$. By construction, we have 
+        \[x \in \bigcap_{n=1}^\infty \overline{B}_{r_n}(x_n) \subseteq \bigcap_{n=0}^\infty U_n \cap B_{r_{n-1}}(x_{n-1}) \subseteq \bigcap_{n=0}^\infty U_n \cap W.\]
+        So, the intersection is non-empty, meaning that it is dense in $X$.
+    \end{proof}
+    
+    \begin{corollary}
+        Let $X$ be a complete metric space. Then, it is of second category.
+    \end{corollary}
+    \begin{proof}
+        Let $(E_1)_{n=1}^\infty$ be a sequence of nowhere dense sets. We show that the union
+        \[\bigcup_{n=1}^\infty E_n \subsetneq X.\]
+        We know that $(\overline{E}_n^c)$ is a sequence of open dense sets. By Baire-Category Theorem, we know that the intersection
+        \[\bigcap_{n=1}^\infty \overline{E}_n^c\]
+        is dense in $X$. In particular, the intersection is non-empty, meaning that its complement
+        \[\bigcup_{n=1}^\infty E_n \subseteq \bigcup_{n=1}^\infty \overline{E}_n \neq X.\]
+        So, $X$ cannot be of first category.
+    \end{proof}
+
 \end{document}
 
 % \begin{document}
