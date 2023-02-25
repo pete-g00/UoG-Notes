@@ -100,7 +100,7 @@
     \section{Creating a Django project}
     We will create a Django project called polls on PythonAnywhere. PythonAnywhere allows us to host web applications. It has an integrated bash console.
 
-    \noindent First, we create the virtual environment \texttt{polls}. This can be done using \texttt{conda create -n polls}. Then, we create the Django project. This can be done using \texttt{django-admin startproject mysite}. In the \texttt{mysite} directory, this creates the files:
+    First, we create the virtual environment \texttt{polls}. This can be done using \texttt{conda create -n polls}. Then, we create the Django project. This can be done using \texttt{django-admin startproject mysite}. In the \texttt{mysite} directory, this creates the files:
     \begin{itemize}
         \item \texttt{manage.py},
         \item \texttt{mysite/\_\_init\_\_.py},
@@ -132,7 +132,7 @@ def index(request):
 \end{lstlisting}
     A view receives \texttt{HttpRequest} and returns \texttt{HttpResponse} objects. There are many ways in returning the Http response object- the one above is the simplest way.
 
-    \noindent At this point, there is no url mapping to this view. So, we now visit the \texttt{urls.py} in the \texttt{mysite} folder to make use of the \texttt{polls} app:
+    At this point, there is no url mapping to this view. So, we now visit the \texttt{urls.py} in the \texttt{mysite} folder to make use of the \texttt{polls} app:
 \begin{lstlisting}[language=python]
 from django.urls import include, path
 from django.contrib import admin
@@ -153,7 +153,7 @@ urlpatterns = [
 \end{lstlisting}
     Note that the \texttt{index} view now maps to \texttt{polls/}. When the url gets checked at \texttt{mysite}, we get redirected to \texttt{polls} with the empty string- this maps to the \texttt{index} view in the \texttt{polls} app. It is also possible to omit the final \texttt{/}. 
 
-    \noindent The \texttt{path} function takes 3 parameters:
+    The \texttt{path} function takes 3 parameters:
     \begin{itemize}
         \item the route, which is a URL string. We go through the urlpatterns list until we find the first matching route;
         \item the view, which is the function that django calls (when the route matches) that takes in an \texttt{HttpRequest} as an argument;
@@ -182,9 +182,9 @@ class Choice(models.Model):
     A model we create has to extend the model \texttt{models.Model}. 
     Here, we have a 1-to-many relation between \texttt{Question} and \texttt{Choice}. In that case, we have the field \texttt{question} (one) in the class \texttt{Choice} (many). Moreover, we set the \texttt{on\_delete} parameter to be \texttt{models.CASCADE}- this means that when a \texttt{Question} object gets deleted, all the \texttt{Option} objects associated with that \texttt{Question} also get deleted.
 
-    \noindent For us to make use of models in the \texttt{polls} app, we need to update the variable \texttt{INSTALLED\_APPS} in \texttt{settings.py} to include also \texttt{`polls'}. This includes the \texttt{polls} app in future database migrations. Now, we use the command \texttt{py manage.py makemigrations polls} to create these migrations. Then, we use the command \texttt{py manage.py migrate} to migrate the models.
+    For us to make use of models in the \texttt{polls} app, we need to update the variable \texttt{INSTALLED\_APPS} in \texttt{settings.py} to include also \texttt{`polls'}. This includes the \texttt{polls} app in future database migrations. Now, we use the command \texttt{py manage.py makemigrations polls} to create these migrations. Then, we use the command \texttt{py manage.py migrate} to migrate the models.
 
-    \noindent Next, we can manually create some data using the command \texttt{py manage.py shell}. Then, we can type the following in the command line and see their output:
+    Next, we can manually create some data using the command \texttt{py manage.py shell}. Then, we can type the following in the command line and see their output:
 \begin{lstlisting}[language=python]
 >>> from polls.models import Question, Choice
 >>> from django.utils import timezone
@@ -234,7 +234,7 @@ class Choice(models.Model):
 <QuerySet [<Question: "What's up?">]>
 \end{lstlisting}
 
-    \noindent Now, we define another function \texttt{was\_published\_recently} to the \texttt{Question} model:
+    Now, we define another function \texttt{was\_published\_recently} to the \texttt{Question} model:
 \begin{lstlisting}[language=python]
 from datetime import timedelta
 
@@ -243,7 +243,7 @@ def was_published_recently(self):
 \end{lstlisting}
     It returns \texttt{true} if the object was added in the last day. 
 
-    \noindent We continue manipulating the model from the shell:
+    We continue manipulating the model from the shell:
 \begin{lstlisting}[language=python]
 >>> from polls.models import Question, Choice
 >>> from django.utils import timezone
@@ -311,7 +311,7 @@ True
 \end{lstlisting}
     Note that the function \texttt{Question.objects.filter} returns a \texttt{QuerySet} object with multiple (or none) values matching the query, while the function \newline \texttt{Question.objects.get} returns a single \texttt{Question} that satisfies the query. If there are more than one (or none) that satisfy this property, then it raises an error.
 
-    \noindent We can create a population script to populate the database to create database content much faster. Another way of creating the content is using the django admin site. We can create a superuser using \texttt{py manage.py createsuperuser} and providing username/passsword. Then, we can navigate to the admin page. We can log in with the credentials we used previously and add/edit the models present.
+    We can create a population script to populate the database to create database content much faster. Another way of creating the content is using the django admin site. We can create a superuser using \texttt{py manage.py createsuperuser} and providing username/passsword. Then, we can navigate to the admin page. We can log in with the credentials we used previously and add/edit the models present.
     \begin{center}
         \includegraphics[scale=0.3]{src/Django3.PNG}
     \end{center}
@@ -359,7 +359,7 @@ def vote(request, question_id):
 \end{lstlisting}
     This is not the final look of the page- we are just creating the pages.
 
-    \noindent Then, we update the file \texttt{urls.py} in the \texttt{polls} app:
+    Then, we update the file \texttt{urls.py} in the \texttt{polls} app:
 \begin{lstlisting}[language=python]
 from django.urls import path
 from . import views
@@ -377,7 +377,7 @@ urlpatterns = [
 \end{lstlisting}
     We make use of \texttt{<int:question\_id>} to allow any integer to pass in. This integer also becomes the second parameter of the view function.
 
-    \noindent Next, we are now going to change the \texttt{index} view so that it returns the latest 3 questions:
+    Next, we are now going to change the \texttt{index} view so that it returns the latest 3 questions:
 \begin{lstlisting}[language=python]
 from .models import Question
 
@@ -424,7 +424,7 @@ def index(request):
     \begin{center}
         \includegraphics[scale=0.7]{src/Django8.PNG}
     \end{center}
-    \noindent At this point, clicking on any of the question shows a very basic details page. Now, we will use the \texttt{question\_id} to render content specific to that question. However, it is possible that there is no question with the id provided. In that case, we need to redirect to 404 page. So, we update the details view as follows:
+    At this point, clicking on any of the question shows a very basic details page. Now, we will use the \texttt{question\_id} to render content specific to that question. However, it is possible that there is no question with the id provided. In that case, we need to redirect to 404 page. So, we update the details view as follows:
 \begin{lstlisting}[language=python]
 from django.http import Http404
 
@@ -622,13 +622,13 @@ if __name__ == '__main__':
     \section{Creating tests}
     Tests are simple routines that check the operation of your code. Testing operates at different levels. With automated tests, the testing work is done by the system. We create a set of tests once. As we make changes to our app, we can check the code still works as we originally intended.
 
-    \noindent Tests save us time. Tests do not just identify the problems. They also help us prevent them. Tests make the code more attractive (to others). Also, tests help teams work together.
+    Tests save us time. Tests do not just identify the problems. They also help us prevent them. Tests make the code more attractive (to others). Also, tests help teams work together.
 
-    \noindent In test-driven development, we write a test before coding. It might seem counter-intuitive, but it is similar to what we do already. We describe a problem and create some code to solve it. Test-driven development formalises the problem in a Python test case. It is easier to write tests as we create the code rather than later.
+    In test-driven development, we write a test before coding. It might seem counter-intuitive, but it is similar to what we do already. We describe a problem and create some code to solve it. Test-driven development formalises the problem in a Python test case. It is easier to write tests as we create the code rather than later.
 
-    \noindent The polls app already has a bug! The function \texttt{was\_published\_recently} in the class \texttt{Question} within \texttt{models.py} is supposed to return \texttt{True} if it was published in the last day. However, it returns \texttt{True} even if the \texttt{date} is in the future.
+    The polls app already has a bug! The function \texttt{was\_published\_recently} in the class \texttt{Question} within \texttt{models.py} is supposed to return \texttt{True} if it was published in the last day. However, it returns \texttt{True} even if the \texttt{date} is in the future.
 
-    \noindent Now, we add to the file \texttt{tests.py} to expose the bug:
+    Now, we add to the file \texttt{tests.py} to expose the bug:
 \begin{lstlisting}[language=python]
 from datetime import timedelta
 
@@ -647,9 +647,9 @@ class QuestionMethodTests(TestCase):
 \end{lstlisting}
     We can run this file using the command \texttt{py manage.py test polls.test}. This test will fail because the function returns \texttt{True}. Testing makes use of a dummy database for each class; it does not affect the pre-existing database.
 
-    \noindent When we call \texttt{py manage.py test polls.test}, Django found a subclass of \texttt{django.test.TestCase}. It then created a special database for the purpose of testing. It then looks for test methods. These are the methods whose name begins with test. The \texttt{test\_was\_published\_recently\_with\_future\_question} test created a \texttt{Question} whose \texttt{date} was 30 days in the future. Using the method \texttt{assertIs}, we then discovered that it returned \texttt{True} when we called the method \texttt{was\_published\_recently}, even though we wanted it to return \texttt{False}. 
+    When we call \texttt{py manage.py test polls.test}, Django found a subclass of \texttt{django.test.TestCase}. It then created a special database for the purpose of testing. It then looks for test methods. These are the methods whose name begins with test. The \texttt{test\_was\_published\_recently\_with\_future\_question} test created a \texttt{Question} whose \texttt{date} was 30 days in the future. Using the method \texttt{assertIs}, we then discovered that it returned \texttt{True} when we called the method \texttt{was\_published\_recently}, even though we wanted it to return \texttt{False}. 
 
-    \noindent Now, we will fix the bug in \texttt{models.py}:
+    Now, we will fix the bug in \texttt{models.py}:
 \begin{lstlisting}[language=python]
 def was_published_recently(self):
     now = timezone.now()
@@ -749,7 +749,7 @@ class QuestionViewTest(TestCase):
 \end{lstlisting}
     We can add more tests similar to those already present. We could also improve our application in other ways, while adding tests to check those features. For example, we could ensure that questions cannot be published without choices. Our views could check this, and exclude such questions. Our tests would create a question without choices and then test that it's not published. Also, perhaps logged-in admin users should be allowed to see unpublished questions, but not ordinary visitors. Again, whatever needs to be added to the software to accomplish this should be accompanied by a test. Having too many tests is not an issue.
 
-    \noindent We might need to update the test, e.g. if we amend our views so that only questions with choices are published. It doesn't matter if tests are redundant. Tests should be arranged so that they are manageable. There should be a separate TestClass for each model or view. We should also have a separate test method for each set of conditions we want to test. We should give test methods intuitive names that describe their function.
+    We might need to update the test, e.g. if we amend our views so that only questions with choices are published. It doesn't matter if tests are redundant. Tests should be arranged so that they are manageable. There should be a separate TestClass for each model or view. We should also have a separate test method for each set of conditions we want to test. We should give test methods intuitive names that describe their function.
     \newpage
 
     \section{Static Files}
