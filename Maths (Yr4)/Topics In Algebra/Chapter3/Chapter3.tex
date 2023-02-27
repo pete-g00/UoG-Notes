@@ -68,19 +68,19 @@
         \[\varphi(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) = \alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n.\]
         Since $G$ is abelian, the map is a homomorphism. Moreover, since $S$ generates $G$, the map is surjective. Now, let $(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) \in \ker \varphi$. In that case,
         \[\alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n = 0.\]
-        Since $S$ is a basic, we find that $\alpha_i x_i = 0$ for all $1 \leq i \leq n$. Hence, 
+        Since $S$ is a basis, we find that $\alpha_i x_i = 0$ for all $1 \leq i \leq n$. Hence, 
         \[(\alpha_1 x_1, \alpha_2 x_2, \dots, \alpha_n x_n) = (0, 0, \dots, 0).\]
         This implies that the kernel is trivial. So, 
         \[G \cong \langle x_1 \rangle \times \langle x_2 \rangle \times \dots \times \langle x_n \rangle.\]
     \end{proof}
 
     \begin{lemma}
-        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ generate $G$, and let $c_1, c_2, \dots, c_n \in \mathbb{Z}_{\geq 0}$ with $\gcd(c_1, c_2, \dots, c_n) = 1$. Denote $y_1 = c_1x_1 + c_2x_2 + \dots + c_nx_n$. Then, there exists $y_2, y_3, \dots, y_n \in G$ such that $G = \langle y_1, y_2, \dots, y_n \rangle$.
+        Let $G$ be an abelian group, and let $S = \{x_1, x_2, \dots, x_n\}$ generate $G$, and let $c_1, c_2, \dots, c_n \in \mathbb{Z}_{\geq 0}$ with $\gcd(c_1, c_2, \dots, c_n) = 1$. Then, there exists $y_2, y_3, \dots, y_n \in G$ such that $G = \langle y_1, y_2, \dots, y_n \rangle$, where $y_1 = c_1x_1 + c_2x_2 + \dots + c_nx_n$.
     \end{lemma}
     \begin{proof}
         We will show this by induction on $s = c_1 + c_2 + \dots + c_n \geq 1$. If $s = 1$, then we know that $c_i = 1$ for some $1 \leq i \leq n$, and $c_j = 0$ for all $1 \leq j \leq n$ with $i \neq j$. Hence, $y_1 = x_i$. In that case, we can set $y_2, y_3, \dots, y_n$ to be the remaining elements in $x_1, x_2, \dots, x_n$, and the statement holds. 
         
-        Now, assume that $s \geq 2$. Since $\gcd(c_1, c_2, \dots, c_n) = 1$, we find that there exist two elements $x_i, x_j \neq 0$. Without loss of generality, assume that $x_1 \geq x_2 > 0$. We claim that $M = \langle x_1, x_1 + x_2, x_3, \dots, x_k \rangle$. For $x \in M$, we know that there exist $\alpha_i \in \mathbb{Z}$ for $1 \leq i \leq n$ such that
+        Now, assume that $s \geq 2$. Since $\gcd(c_1, c_2, \dots, c_n) = 1$, we find that there exist two elements $c_i, c_j \neq 0$. Without loss of generality, assume that $c_1 \geq c_2 > 0$. We claim that $M = \langle x_1, x_1 + x_2, x_3, \dots, x_n \rangle$. For $x \in M$, we know that there exist $\alpha_i \in \mathbb{Z}$ for $1 \leq i \leq n$ such that
         \[x = \alpha_1 x_1 + \alpha_2 x_2 + \dots + \alpha_n x_n.\]
         Hence,
         \[x = (\alpha_1 - \alpha_2) x_1 + \alpha_2 (x_1 + x_2) + \dots + \alpha_n x_n \in \langle x_1, x_1 + x_2, \dots, x_n \rangle.\]
@@ -101,7 +101,7 @@
         Let $G$ be a finitely generated abelian group. Then, $G$ has a basis. In particular, $G$ is a direct product of cyclic groups.
     \end{theorem}
     \begin{proof}
-        We will use induction on the length of the shortest generating set. If the length is 1, then $G = \langle x_1 \rangle$, for some $x_1 \in G$. Hence, $\{x_1\}$ is a basis for $G$. Now, assume that the shortest generating set of $G$ has length is $n$. So, fix $G = \langle x_1, x_2, \dots, x_n \rangle$, where for any other $y_1, y_2, \dots, y_n \in G \setminus \{0\}$ with $G = \langle y_1, y_2, \dots, y_n \rangle$, we have $1 < |x_1| \leq |y_1|$. Assume, for a contradiction, that $G \not\cong \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$. Define the map $\varphi: G \to \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$ by $\varphi(\alpha_1 x_1, w) = \alpha_1 x_1 + w$. This is a surjective homomorphism, so it cannot be injective. So, let $(\alpha_1 x_1, w) \in \ker \varphi$ be a non-trivial element. We must have $\alpha_1 \neq 0$. Denote
+        We will use induction on the length of the shortest generating set. If the length is 1, then $G = \langle x_1 \rangle$, for some $x_1 \in G$. Hence, $\{x_1\}$ is a basis for $G$. Now, assume that the shortest generating set of $G$ has length is $n$. So, fix $G = \langle x_1, x_2, \dots, x_n \rangle$, where for any other $y_1, y_2, \dots, y_n \in G \setminus \{0\}$ with $G = \langle y_1, y_2, \dots, y_n \rangle$, we have $1 < |x_1| \leq |y_1|$.\sidefootnote{We can get rid of $x_1$ if $|x_1| = 1$, which contradicts the minimality of $n$.} We show that $G \cong \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$. So, assume, for a contradiction, that $G \not\cong \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle$. Define the map $\varphi: \langle x_1 \rangle \times \langle x_2, \dots, x_n \rangle \to G$ by $\varphi(\alpha_1 x_1, w) = \alpha_1 x_1 + w$. This is a surjective homomorphism, so it cannot be injective. So, let $(\alpha_1 x_1, w) \in \ker \varphi$ be a non-trivial element. If $\alpha_1 = 0$, then $\alpha_1 x_1 = 0$ and $w = - \alpha_1 x_1 = 0$ as well, so we must have $\alpha_1 \neq 0$. Denote
         \[w = \alpha_2 x_2 + \dots + \alpha_n x_n.\]
         By changing $x_i$ to $-x_i$ if needed, we can assume that $\alpha_i \geq 0$ for all $1 \leq i \leq n$. We can further assume that $\alpha_1 < |x_1|$. We have $d = \gcd(\alpha_1, \alpha_2, \dots, \alpha_n) > 0$. So, define $c_i = \alpha_i/d$. Then, the lemma tells us that there exist $y_2, \dots, y_n$ with
         \[y_1 = c_1 x_1 + \dots + c_n x_n\]
@@ -125,9 +125,63 @@
         Hence, $G$ is cyclic.
     \end{proof}
 
+    \begin{corollary}
+        Let $F$ be a field and let $G \leq F^\times$ be finite. Then, $G$ is cyclic.
+    \end{corollary}
+    \begin{proof}
+        Let $n \in \mathbb{Z}_{\geq 1}$. We know that the equation $x^n - 1 \in F[x]$ has at most $n$ roots. This implies that there are at most $n$ elements of order dividing $n$. Using the result above, it follows that $G$ is cyclic.
+    \end{proof}
+
     \newpage
 
     \section{The Fundamental Theorem}
+    \begin{lemma}
+        Let $G$ be an abelian group such that
+        \[G \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \dots \times \mathbb{Z}_{p_n^{\alpha_ n}},\]
+        where $\alpha_i \geq 2$ and $p_i$ prime for $1 \leq i \leq k$ and $r \geq 0$, let $p$ be a prime and let $k \in \mathbb{Z}_{\geq 1}$. Then, $p^k$ divides an element in $\{p_1, \dots, p_n\}$ if and only if $G$ has an element of order $p^k$.
+    \end{lemma}
+    \begin{proof}
+        Assume that $p^k$ divides an element in $\{p_1^{\alpha_1}, \dots, p_n^{\alpha_n}\}$. Without loss of generality, assume further that $p^k \mid p_1$. In that case, consider the element $x = (p_1^{\alpha_1-k}, 0, \dots, 0)$. We find that $x \neq 0$ with 
+        \[p^k x = (p_1^{\alpha_1}, 0, \dots, 0) = 0.\]
+        Hence, $x \in G$ has order $p^k$.
+
+        Now, assume that $G$ has an element $x$ of order $p^k$. Let $x = (a_1, \dots, a_n)$. We know that $p^{k-1} x \neq 0$, so without loss of generality, assume that $p^{k-1} a_1 \neq 0$. Moreover, since $x$ has order $p^k$, we find that
+        \[p^k x = (p^k a_1, \dots, p^k a_n) = 0.\]
+        So, $p^k a_1 = 0$. Hence, $|a_1| = p^k$. By Lagrange, we find that $p^k \mid p_1^{\alpha_1}$. 
+    \end{proof}
+
+    % \begin{lemma}
+    %     Let $G$ be an abelian group such that
+    %     \[G \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \dots \times \mathbb{Z}_{p_n^{\alpha_ n}},\]
+    %     where $\alpha_i \geq 2$ and $p_i$ prime for $1 \leq i \leq k$ and $r \geq 0$, and let $p$ be a prime. Then, $p$ occurs $a$ times in the collection $p_1, \dots, p_n$ if and only if $G$ has $p^a$ elements of order dividing $p$.
+    % \end{lemma}
+    % \begin{proof}
+    %     First, assume that $p$ occurs $a$ times in the collection $p_1, \dots, p_n$. Without loss of generality, assume that the first $a$ primes are $p$. Since $\mathbb{Z}_{p_i^{\alpha_i}}$ are cyclic groups, it follows that they have a (unique) subgroup of order $p$, for $1 \leq i \leq a$. In particular, there are $p$ elements of order dividing $p$. Since every combination of these elements leads to an element of order dividing $p$ (and for any prime $q \neq p$, there is just one element of order dividing $p$- the identity element), it follows that $G$ has precisely $p^a$ elements of order dividing $p$.
+
+    %     Now, assume that $G$ has $p^a$ elements of order $p$. We know that in the cyclic group $\mathbb{Z}_{p_i^{\alpha_i}}$, if $p_i = p$, then the group has $p$ elements of order dividing $p$, and if $p_i \neq p$, then the group has $1$ element of order dividing $p$. Since there are $p^a$ elements in $G$ of order $p$, we find that $p$ must appear $a$ times in the collection $p_1, \dots, p_n$.
+    % \end{proof}
+
+    \begin{lemma}
+        Let $G$ be an abelian group such that
+        \[G \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \dots \times \mathbb{Z}_{p_n^{\alpha_ n}},\]
+        where $\alpha_i \geq 2$ and $p_i$ prime for $1 \leq i \leq k$ and $r \geq 0$, let $p$ be a prime. Then, for all $k \in \mathbb{Z}_{\geq 1}$, $p^k$ divides $a_k$ values in the collection $p_1^{\alpha_1}, \dots, p_n^{\alpha_n}$ if and only if $G$ has 
+        \[(p^k)^{a_k} \cdot (p^{k-1})^{a_{k-1} - a_k} \dots (p)^{a_2 - a_1} = p^{a_1 + a_2 + \dots + a_k}\]
+        elements of order dividing $p^k$.
+    \end{lemma}
+    \begin{proof}
+        First, assume that $p^k$ divides $a_k$ elements in the collection $p_1^{\alpha_1}, \dots, p_n^{\alpha_n}$ for all $k \in \mathbb{Z}_{\geq 1}$. In a cyclic group, there is at most one subgroup of some order. Since there are $a_k$ elements in the collection $p_1^{\alpha_1}, \dots, p_n^{\alpha_n}$ that $p^k$ divides, it follows that $G$ has $a_k$ subgroups of order $p^k$. In general, $G$ has $a_i$ subgroups of order $p^i$ for $0 \leq i \leq k$. Since a subgroup of order $p^i$ has a single subgroup of order $p^{i-1}$, and it is maximal, it follows that $G$ has 
+        \[(p^k)^{a_k} \cdot (p^{k-1})^{a_{k-1} - a_k} \dots (p)^{a_2 - a_1}\]
+        elements of order dividing $p^k$.
+
+        % First, assume that $p$ occurs $a$ times in the collection $p_1, \dots, p_n$. Without loss of generality, assume that the first $a$ primes are $p$. Since $\mathbb{Z}_{p_i^{\alpha_i}}$ are cyclic groups, it follows that they have a (unique) subgroup of order $p$, for $1 \leq i \leq a$. In particular, there are $p$ elements of order dividing $p$. Since every combination of these elements leads to an element of order dividing $p$ (and for any prime $q \neq p$, there is just one element of order dividing $p$- the identity element), it follows that $G$ has precisely $p^a$ elements of order dividing $p$.
+
+        Now, assume that $G$ has 
+        \[(p^k)^{a_k} \cdot (p^{k-1})^{a_{k-1} - a_k} \dots (p)^{a_2 - a_1}\]
+        elements of order dividing $p^k$. We know that a cyclic group of order dividing $p^k$ has $p^k$ elements of order $p^k$. Moreover, these are counted twice for a cyclic group of order $p^{k-1}$, so we need to remove them. Hence, it follows that $p^k$ divides $a_k$ values in the collection $p_1^{\alpha_1}, \dots, p_n^{\alpha_n}$.
+
+        % Now, assume that $G$ has $p^a$ elements of order $p$. We know that in the cyclic group $\mathbb{Z}_{p_i^{\alpha_i}}$, if $p_i = p$, then the group has $p$ elements of order dividing $p$, and if $p_i \neq p$, then the group has $1$ element of order dividing $p$. Since there are $p^a$ elements in $G$ of order $p$, we find that $p$ must appear $a$ times in the collection $p_1, \dots, p_n$.
+    \end{proof}
+
     \begin{theorem}[Fundamental Theorem of Finitely Generated Abelian Groups]
         Let $G$ be a non-trivial finitely generated abelian group. Then, 
         \[G \cong \mathbb{Z}^r \times \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k},\]
@@ -139,9 +193,9 @@
         \end{itemize}
     \end{theorem}
     \begin{proof}
-        By the previous result, we know that
-        \[G \cong \mathbb{Z}^r \times \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k}.\]
-        We first show that the rank is uniquely determined by $G$. So, let $p$ be a prime such that $p \nmid n_i$ for $1 \leq i \leq k$. Then, 
+        We have shown that
+        \[G \cong \mathbb{Z}^r \times \mathbb{Z}_{n_1} \times \dots \times \mathbb{Z}_{n_k}\]
+        since these are precisely the cyclic groups. We first show that the rank is uniquely determined by $G$. So, let $p$ be a prime such that $p \nmid n_i$ for all $1 \leq i \leq k$. Then, 
         \[G/pG \cong (\mathbb{Z}_p)^r\]
         since $\mathbb{Z}_{n_i} = p\mathbb{Z}_{n_i}$ for all $1 \leq i \leq k$- we have $(p, n_i) = 1$. The space $(\mathbb{Z}_p)^r$ is a vector space over the field $\mathbb{F}_p$. We have
         \[r = \dim_{\mathbb{F}_p} (G/pG)^r,\]
@@ -182,4 +236,11 @@
         \noindent We combine each column to construct the invariant factors. In this case, we have
         \[G \cong \mathbb{Z}_2 \times \mathbb{Z}_{36} \times \mathbb{Z}_{5616}.\]
     \end{example}
+
+    % TODO: In a group expressed as a product of cyclic groups of prime power order, we counted number of elements or order dividing a certain prime power.
+
+    % Discussed and showed that every finitely generated abelian group is the quotient of Zn/Zm for some m ≤ n.
+
+    % TODO: Smith Normal Form
+
 \end{document}

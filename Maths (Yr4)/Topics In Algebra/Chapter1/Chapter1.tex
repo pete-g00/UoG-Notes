@@ -115,7 +115,18 @@
         \[|HK| = \frac{|H| |K|}{|H \cap K|}.\]
     \end{proposition}
     \begin{proof}
-        
+        We know that 
+        \[HK = \{hk \mid h \in H, k \in K\} = \bigcup_{h \in H} hK.\]
+        So, the cardinality of $HK$ is the number of distinct left cosets $hK$ for $h \in H$. We know that for all $h_1, h_2 \in H$,
+        \begin{align*}
+            h_1K = h_2K &\iff h_2^{-1}h_1 = K \\
+            &\iff h_2^{-1}h_1 = H \cap K \\
+            &\iff h_1(H \cap K) = h_2(H \cap K).
+        \end{align*}
+        Hence, the number of distinct left cosets $hK$ for $h \in H$ is equal to the number of distinct left cosets $h(H \cap K)$ for $h \in H$. We note that $H \cap K \leq H$, with the number of left cosets given by
+        \[[H : H \cap K] = \frac{|H|}{|H \cap K|}.\]
+        Hence, there are $\frac{|H|}{|H \cap K|}$ distinct left cosets $hK$ for $h \in H$. Since each coset has $|K|$ elements, it follows that 
+        \[|HK| = \frac{|H| |K|}{|H \cap K|}.\]
     \end{proof}
     \newpage
     
