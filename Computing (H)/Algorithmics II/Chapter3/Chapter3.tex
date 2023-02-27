@@ -58,7 +58,7 @@
 
 \lstdefinelanguage{pseudocode}{ 
     keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, max},
-    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, Edge, Graph, Queue, Vertex, Network, Student, Lecturer},
+    ndkeywords={int, char, bool, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, Edge, Graph, Queue, Vertex, Network, Student, Lecturer, Stack},
     sensitive=true,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
@@ -1471,7 +1471,7 @@ void fordFulkerson(Network network) {
             \end{tabular}
         \end{subtable}
     \end{table}
-    \noindent So, we have the following pairs: $(\texttt{s}_1, \texttt{l}_1), (\texttt{s}_2, \texttt{l}_3), (\texttt{s}_3, \texttt{l}_2), (\texttt{s}_4, \texttt{l}_4)$ . This is not an optimal matching- $(\texttt{s}_1, \texttt{l}_4)$ is a matching where both the student and the lecturer prefer each other. This is called a \emph{blocking pair}. The following is an optimal (stable) matching:
+    \noindent So, we have the following pairs: $(\texttt{s}_1, \texttt{l}_1), (\texttt{s}_2, \texttt{l}_3), (\texttt{s}_3, \texttt{l}_2), (\texttt{s}_4, \texttt{l}_4)$ . This is not an optimal matching- $(\texttt{s}_1, \texttt{l}_4)$ is a matching where both the student and the lecturer prefer each other over the current matching. This is called a \emph{blocking pair}. The following is an optimal (stable) matching:
     \begin{table}[H]
         \centering
         \begin{subtable}{0.45\textwidth}
@@ -1494,9 +1494,9 @@ void fordFulkerson(Network network) {
             \end{tabular}
         \end{subtable}
     \end{table}
-    \noindent We will now show that it is a stable matching and has no blocking pairs. Clearly, $\texttt{s}_2$ and $\texttt{s}_3$ have their first choice, so they cannot lead to a blocking pair. Although $\texttt{s}_1$ would prefer $\texttt{l}_2$ over $\texttt{l}_4$, the lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$. The same is the case for $\texttt{s}_4$, which means that no student is part of a blocking pair, and hence there are no blocking pairs.
+    \noindent We will now show that it is a stable matching and has no blocking pairs. Clearly, $\texttt{s}_2$ and $\texttt{s}_3$ have their first choice, so they cannot lead to a blocking pair. Although $\texttt{s}_1$ would prefer $\texttt{l}_2$ over $\texttt{l}_4$, the lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$. The same is the case for $\texttt{s}_4$, which means that no student is part of a blocking pair, and hence there are no blocking pairs. So, this is a stable matching.
 
-    Given a matching, we can check whether it is stable by checking whether any student is part of a blocking pair. That is, we iterate through all the students and check whether any lecturer they prefer to the one they are currently assigned would also prefer the student over their current assignee. We can do this in $O(n^2)$ time- in the worst case, the student has been assigned their last choice, so we have to look through almost all the lecturers, so the loop is $O(n^2)$. The body of the loop can be $O(1)$- we can make use of a data structure to check whether a lecturer prefers a student over another one in constant time.
+    Given a matching, we can check whether it is stable by checking whether any student is part of a blocking pair. That is, we iterate through all the students and check whether any lecturer they prefer to the one they are currently assigned would also prefer the student over their current assignee. We can do this in $O(n^2)$ time- in the worst case, the student has been assigned their last choice, so we have to look through almost all the lecturers, so the loop is $O(n^2)$. The body of the loop can be $O(1)$- we can make use of an efficient data structure to check whether a lecturer prefers a student over another one in constant time.
 
     We will now consider an algorithm to find the stable matching- the Gale-Shapley Algorithm. The following is the algorithm:
 \begin{lstlisting}[language=pseudocode]
@@ -1511,11 +1511,11 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
             matches.add(s, l);
         } else if (l.prefers(s, students[l.currentChoice])) {
             Student prevS = students[l.currentChoice];
-            prevS.currentChoice = prevS.getNextChoice();
+            prevS.currentChoice = prevS.nextChoice;
             unmatched.add(prevS);
             matches.add(s, l);
         } else {
-            s.currentChoice = s.getNextChoice();
+            s.currentChoice = s.nextChoice;
             unmatched.add(s);
         }
     }
@@ -1618,13 +1618,13 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
             \end{tabular}
         \end{subtable}
     \end{table}
-    \noindent Next, we try to match $\texttt{s}_3$. Its first choice is $\texttt{l}_2$, but they are currently paired with $\texttt{s}_1$. The lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$, so $\texttt{l}_2$ rejects $\texttt{s}_1$. 
+    \noindent Next, we try to match $\texttt{s}_3$. Their first choice is $\texttt{l}_2$, but they are currently paired with $\texttt{s}_1$. The lecturer $\texttt{l}_2$ prefers $\texttt{s}_3$ over $\texttt{s}_1$, so $\texttt{l}_2$ rejects $\texttt{s}_1$. 
     \begin{table}[H]
         \centering
         \begin{subtable}{0.45\textwidth}
             \centering
             \begin{tabular}{c|cccc}
-                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_1$ & {\color{blue!60} $\texttt{l}_2$} & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ \\
                 $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
                 $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
                 $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
@@ -1647,7 +1647,7 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
         \begin{subtable}{0.45\textwidth}
             \centering
             \begin{tabular}{c|cccc}
-                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_1$ & {\color{blue!60} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
                 $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
                 $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
                 $\texttt{s}_4$ & $\texttt{l}_4$ & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
@@ -1670,7 +1670,7 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
         \begin{subtable}{0.45\textwidth}
             \centering
             \begin{tabular}{c|cccc}
-                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_1$ & {\color{blue!60} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
                 $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
                 $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
                 $\texttt{s}_4$ & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
@@ -1693,10 +1693,10 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
         \begin{subtable}{0.45\textwidth}
             \centering
             \begin{tabular}{c|cccc}
-                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_1$ & {\color{blue!60} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
                 $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
                 $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
-                $\texttt{s}_4$ & {\color{gray} $\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
+                $\texttt{s}_4$ & {\color{blue!60} $\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ & $\texttt{l}_2$
             \end{tabular}
         \end{subtable}
         \hfill
@@ -1716,10 +1716,10 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
         \begin{subtable}{0.45\textwidth}
             \centering
             \begin{tabular}{c|cccc}
-                $\texttt{s}_1$ & {\color{gray} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
+                $\texttt{s}_1$ & {\color{blue!60} $\texttt{l}_2$} & \underline{$\texttt{l}_4$} & $\texttt{l}_1$ & $\texttt{l}_3$ \\
                 $\texttt{s}_2$ & \underline{$\texttt{l}_3$} & $\texttt{l}_1$ & $\texttt{l}_4$ & $\texttt{l}_2$ \\
                 $\texttt{s}_3$ & \underline{$\texttt{l}_2$} & $\texttt{l}_3$ & $\texttt{l}_1$ & $\texttt{l}_4$ \\
-                $\texttt{s}_4$ & $\texttt{l}_4$ & \underline{$\texttt{l}_1$} & $\texttt{l}_3$ & $\texttt{l}_2$
+                $\texttt{s}_4$ & {\color{blue!60}$\texttt{l}_4$} & \underline{$\texttt{l}_1$} & $\texttt{l}_3$ & $\texttt{l}_2$
             \end{tabular}
         \end{subtable}
         \hfill
@@ -1729,7 +1729,7 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
                 $\texttt{l}_1$ & $\texttt{s}_2$ & $\texttt{s}_1$ & \underline{$\texttt{s}_4$} & $\texttt{s}_3$ \\
                 $\texttt{l}_2$ & $\texttt{s}_4$ & \underline{$\texttt{s}_3$} & $\texttt{s}_1$ & $\texttt{s}_2$ \\
                 $\texttt{l}_3$ & $\texttt{s}_1$ & $\texttt{s}_4$ & $\texttt{s}_3$ & \underline{$\texttt{s}_2$} \\
-                $\texttt{s}_4$ & {\color{gray} $\texttt{l}_4$} & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
+                $\texttt{s}_4$ & $\texttt{s}_2$ & \underline{$\texttt{s}_1$} & $\texttt{s}_4$ & $\texttt{s}_3$
             \end{tabular}
         \end{subtable}
     \end{table}
@@ -1737,9 +1737,9 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
 
     We will now show that the Gale-Shapley algorithm terminates with every student assigned. In particular, we claim that no student gets rejected by all the lecturers. Assume, for a contradiction, that the student $s$ gets rejected by all the lecturers. This can only happen if all the lecturers have been assigned to a student at that point during the algorithm. However, if a lecturer is assigned at some point, they remain assigned (they might change who they are matched to, but they do not become unmatched). This implies that when $s$ was rejected by the last lecturer in its preference list, all the lecturers were assigned. However, there are the same number of students and lecturers, and a student cannot be assigned to more than one lecturer. This is a contradiction- no student can be rejected by all the lecturers. Hence, every student gets accepted by some lecturer, meaning that the algorithm terminates. 
     
-    In the worst case, a student might only be accepted by the last lecturer in its list, so the while loop can run $O(n^2)$ times. The body of the while loop is constant time (we can check whether a lecturer prefers a student over another in constant time). A student applies to a student just once, so the algorithm has $O(n^2)$ time complexity. Note that the algorithm is linear in size of the input- the input is the preference list which has $O(n^2)$ space complexity for both students and lecturers.
-
     Next, we show that the algorithm terminates with the stable matching. When the algorithm terminates, we have a matching containing all the students. Let $s$ be a student and let $l$ be a lecturer that $s$ prefers over its matching. This means that, at some point during the algorithm, $s$ applied to $l$. Moreover, since $(s, l)$ is not in the matching, we know that $l$ rejected $s$ at some point. The only reason this could happen is if $l$ got an offer from a student that they preferred over $s$. Hence, $(s, l)$ cannot be a blocking pair. So, there is no blocking pair in the matching- it is stable. This also shows that every instance of the Stable Marriage Problem has a stable matching.
+    
+    We now consider the complexity of the algorithm. In the worst case, a student might only be accepted by the last lecturer in its list, so the while loop can run $O(n^2)$ times. The body of the while loop is constant time (we can check whether a lecturer prefers a student over another in constant time). A student applies to a student just once, so the algorithm has $O(n^2)$ time complexity. Note that the algorithm is linear in size of the input- the input is the preference list which has $O(n^2)$ space complexity for both students and lecturers.
 
     The Gale-Shapley algorithm given above is non-deterministic- the order in which the students apply to the lecturers is not specified. But, it turns out that this does not affect the final outcome of the algorithm- every ordering in which the students apply will give the same result. Moreover, in the student-oriented Gale-Shapley algorithm, every student gets their best lecturer choice, while every lecturer gets their worst student choice.
 
@@ -1836,6 +1836,7 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
     \[D_k[i, j] = \min (D_{k-1}[i, j], D_{k-1}[i, k] + D_{k-1}[k, j]).\]
     This follows from what we mentioned above- the distance from vertex $v_i$ to $v_j$ is either the previous distance, or the distance going through vertex $v_k$.
 
+    We now consider the algorithm.
 \begin{lstlisting}[language=pseudocode]
 List<List<int>> floydWarshall(Graph graph) {
     List<List<int>> dPrev = List.filled(graph.vertices.length, 
@@ -1857,9 +1858,8 @@ List<List<int>> floydWarshall(Graph graph) {
         );
         for (int i=0; i<graph.vertices.length; i++) {
             for (int j=0; j<graph.vertices.length; j++) {
-                dNext[i, j] = min(dPrev[k-1][i, j],
-                    dPrev[k-1][i, k] + 
-                    dPrev[k-1][k, j]
+                dNext[i, j] = min(dPrev[i, j],
+                    dPrev[i, k] + dPrev[k, j]
                 );
             }
         }
@@ -1877,7 +1877,7 @@ List<List<int>> floydWarshall(Graph graph) {
         \texttt{null} & i = j \\
         i & (v_i, v_j) \in E \\
         \texttt{null} & \text{otherwise},
-    \end{cases} \qquad \Pi_k[i, j] = \begin{cases}
+    \end{cases} \quad \Pi_k[i, j] = \begin{cases}
         \Pi_{k-1}[i, j] & D_k[i, j] = D_{k-1}[i, j] \\
         \Pi_k[k, j] & \text{otherwise}.
     \end{cases}\]
@@ -1927,7 +1927,7 @@ List<List<int>> floydWarshall(Graph graph) {
             \draw[-stealth] (4) -- node[below] {$3$} (3);
         \end{tikzpicture}
     \end{figure}
-    \noindent So, the edges we have access to are $(v_4, v_1)$ and $(v_1, v_2)$. So, the only path we can improve is the one from $v_4$ to $v_2$- the current weight is $-1$, but we can make it $-2$ through this path.
+    \noindent So, the edges we have access to are $(v_4, v_1)$ and $(v_1, v_2)$. The only path we can improve is the one from $v_4$ to $v_2$- the current weight is $-1$, but we can make it $-2$ through this path.
     \[D_1 = \begin{bmatrix}
         0 & -5 & \infty & \infty \\
         \infty & 0 & 2 & \infty \\
