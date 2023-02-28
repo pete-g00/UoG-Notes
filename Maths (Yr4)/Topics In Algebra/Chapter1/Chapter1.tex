@@ -238,7 +238,7 @@
     \begin{definition}
         Let $G$ be a group. We say that $G$ is \emph{solvable} if there exists a subnormal series
         \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_{n-1} \leq H_n = G\]
-        such that for all $i \in \{1, 2, \dots, n-1\}$, $H_i/H_{i+1}$ is abelian.
+        such that for all $0 \leq i < n$, $H_{i+1}/H_i$ is abelian.
     \end{definition}
 
     \begin{example}
@@ -248,6 +248,35 @@
         A composition series for $S_5$ is:
         \[\{e\} \leq A_5 \leq S_5.\]
         The quotients are $A_5$ and $\mathbb{Z}_2$. By Jordan-Holder, we know that any composition series of $S_5$ will have these quotients. Since $A_5$ is not abelian, we find that $S_5$ is not solvable.
+    \end{proof}
+
+    \begin{proposition}
+        Let $G$ be a group and let $N \vartriangleleft G$. Then, $G$ is solvable if and only if $N$ and $G/N$ are solvable.
+    \end{proposition}
+    \begin{proof}
+        First, assume that $N$ and $G/N$ are solvable. In that case, we can find a subnormal series
+        \[\{e\} = N_0 \leq N_1 \leq \dots \leq N_{k-1} \leq N_k = N\]
+        such that for all $0 \leq i < k$, $N_{i+1}/N_i$ is abelian. Moreover, there exists a subnormal series 
+        \[\{N\} = G_0/N \leq G_1/N \leq \dots \leq G_l/N = G/N\]
+        such that for all $0 \leq i < l$, $(G_{i+1}/N)/(G_i/N)$ is abelian. Now, consider the group series
+        \[\{e\} = L_0 \leq L_1 = N_1 \leq \dots \leq L_k = N_k \leq L_{k+1} = G_1 \leq \dots \leq L_{k+l} = G.\]
+        We claim that for all $0 \leq i < k+l$, $L_{i+1}/L_i$ is abelian. Clearly, this holds if $0 \leq i < k$. Now, we find that for $k < i < k+l$,
+        \[L_{i+1}/L_i = (G_{i-k+1}/N)/(G_{i-k}/N) \cong G_{i-k+1}/G_{i-k}\]
+        by the third isomorphism theorem. Finally, we know that $G_1/N$ is abelian since $G_0/N$ is trivial. Hence, it is a group series with abelian factors. This implies that $G$ is solvable.
+
+        Now, assume that $G$ is solvable. So, we can find a subnormal series
+        \[\{e\} = G_0 \leq G_1 \leq \dots \leq G_{k-1} \leq G_k = G\]
+        such that for all $0 \leq i < k$, $G_{i+1}/G_i$ is abelian. Now, for each $0 \leq i \leq k$, define the group $N_i = G_i \cap N$. Consider the group series
+        \[\{e\} = N_0 \leq N_1 \leq \dots \leq N_{k-1} \leq N_k = N.\]
+        We know that for all $0 \leq i < n$, $G_i \vartriangleleft G_{i+1}$. So, the second isomorphism theorem tells us that $N_i = N \cap G_i \vartriangleleft N$. Hence, $N_i \vartriangleleft N \cap G_{i+1} = N_{i+1}$. Next, consider the quotient map $\varphi \colon N_{i+1} \to N_{i+1}/G_i$. We find that
+        \[\ker \varphi = \{g \in N_{i+1} \mid gG_i = G_i\} = N_{i+1} \cap G_i = N_i.\]
+        Hence, the first isomorphism theorem tells us that
+        \[N_{i+1}/N_i \cong N_{i+1}/G_i \leq G_{i+1}/G_i.\]
+        Since $G_{i+1}/G_i$ is abelian, it follows that $N_{i+1}/N_i$ is abelian. Hence, $N$ is solvable. Next, consider the group series
+        \[\{N\} = G_0/N \leq G_1/N \leq \dots \leq G_{k-1}/N \leq G_k/N = G/N.\]
+        By the third isomorphism theorem, we know that for all $0 \leq i < k$,
+        \[(G_i/N)/(G_{i+1}/N) \cong G_i/G_{i+1}.\]
+        Hence, $(G_i/N)/(G_{i+1}/N)$ is abelian. So, $G/N$ is also solvable.
     \end{proof}
 
     \begin{definition}
@@ -297,4 +326,8 @@
         \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_n = G\]
         such that $H_{i+1}/H_i$ is abelian. In particular, we have $[H_{i+1}, H_{i+1}] \leq H_i$. Since $[H_{i+1}, H_{i+1}] \vartriangleleft H_{i+1}$, we find that $[H_{i+1}, H_{i+1}] \vartriangleleft H_i$. So, we can refine the subnormal series to its derived series. This implies that the derived series terminates.
     \end{proof}
+
+    \begin{definition}
+        Let $G$ be a group. We say that $G$ is \emph{perfect} if its commutator subgroup $[G, G] = G$.
+    \end{definition}
 \end{document}
