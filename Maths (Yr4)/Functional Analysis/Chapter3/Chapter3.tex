@@ -520,6 +520,99 @@
         \[\bigcup_{n=1}^\infty E_n \subseteq \bigcup_{n=1}^\infty \overline{E}_n \neq X.\]
         So, $X$ cannot be of first category.
     \end{proof}
+    \newpage
+
+    \section{Open Mapping Theorem}
+
+    \begin{definition}
+        Let $X$ and $Y$ be topological spaces and let $f \colon X \to Y$ be a map. We say that $f$ is \emph{open} if for all $U \subseteq X$ open, $f(U) \subseteq Y$ is open.
+    \end{definition}
+
+    % \begin{proposition}
+    %     Let $V$ and $W$ be normed vector spaces and let $T \colon V \to W$ be a linear map. Then, $T$ is open if and only if $T(U)$ is open, where $U \subseteq V$ is the unit open ball.
+    % \end{proposition}
+    % \begin{proof}
+    %     If $T$ is open, then we know that $T(U)$ is open. So, now, assume that $T(U)$ is open, and let $A \subseteq V$ be open. We show that $T(A) \subseteq V$ is open. So, let $x \in T(A)$. In that case, there exists an $a \in A$ such that $x = T(a)$. Since $A$ is open, we can find a $r > 0$ such that $B_r(x) \subseteq A$. In that case, 
+    % \end{proof}
+
+    \begin{proposition}
+        Let $X$ and $Y$ be metric spaces and let $f: X \to Y$ be a function. Then, $f$ is an open map if and only if for every $x \in X$ and $\delta > 0$, there exists an $\varepsilon > 0$ such that for $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon$, then there exists a $z \in X$ such that $d_X(x, z) < \delta$ with $f(y) = f(z)$.
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item Assume that $f$ is an open map. Let $x \in X$ and $\delta > 0$. Let
+            \[U = B_X(x, \delta).\]
+            Since $f$ is an open map, we know that $f(U)$ is open. We have $f(x) \in f(U)$. In that case, there exists an $\varepsilon > 0$ such that for $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon$, then $f(y) \in f(B_X(x, \delta))$. So, there exists a $z \in X$ with $d_X(x, z) < \delta$ with $f(y) = f(z)$. That is, for all $x \in X$ and $\delta > 0$, there exists an $\varepsilon > 0$ such that for $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon$, then there exists a $z \in X$ such that $d_X(x, z) < \delta$ with $f(y) = f(z)$.
+            
+            \item Assume that for every $x \in X$ and $\delta > 0$, there exists an $\varepsilon > 0$ such that for $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon$, then there exists a $z \in X$ such that $d_X(x, z) < \delta$ with $f(y) = f(z)$. Let $U \subseteq X$ be open. We show that $f(U)$ is open. So, let $x \in U$. Since $U$ is open, there exists a $\delta_x > 0$ such that for all $y \in X$, if $d_X(x, y) < \delta_x$, then $y \in U$. Now, we can find an $\varepsilon_x > 0$ such that for $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon_x$, then there exists a $z \in X$ such that $d_X(x, z) < \delta_x$ with $f(y) = f(z)$. This implies that $z \in U$. So, $f(y) = f(z) \in f(U)$. In that case, for all $x \in X$, there exists an $\varepsilon_x$ such that for all $y \in X$, if $d_Y(f(x), f(y)) < \varepsilon_x$, then $f(y) \in f(U)$. This implies that $f(U)$ is open. In other words, $f$ is an open map.
+        \end{itemize}
+    \end{proof}
+    \noindent Another way of writing this is the following- $f: X \to Y$ is an open map if and only if for every $x \in X$ and $\delta > 0$, there exists an $\varepsilon > 0$ such that
+    \[B_Y(f(x), \varepsilon) \subseteq f(B_X(x, \delta)).\]
+
+    \begin{proposition}
+        Let $V$ and $W$ be normed vector spaces, and let $T: V \to W$ be a linear operator. Then, $T$ is an open map if and only if there exists an $\varepsilon > 0$ such that for $\bm{v} \in V$, if $\lVert T(\bm{v}) \rVert_W < \varepsilon$, then there exists a $\bm{u} \in V$ such that $\lVert \bm{u} \rVert_V < 1$ with $T(\bm{u}) = T(\bm{v})$.
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{itemize}
+            \item Assume that $T$ is an open map. Set $\bm{x} = \bm{0}$ and $\delta = 1$. In that case, there exists an $\varepsilon > 0$ such that for $\bm{v} \in V$, if $\lVert T(\bm{v}) - T(\bm{x}) \rVert_W < \varepsilon$, then there exists a $\bm{u} \in V$ such that $\lVert \bm{u} - \bm{x} \rVert_V < \delta$ with $T(\bm{u}) = T(\bm{v})$. That is, there exists an $\varepsilon > 0$ such that for $\bm{v} \in V$, if $\lVert T(\bm{v}) \rVert_W < \varepsilon$, then there exists a $\bm{u} \in V$ such that $\lVert \bm{u} \rVert_V < 1$ with $T(\bm{u}) = T(\bm{v})$.
+            
+            \item Assume that there exists an $\varepsilon > 0$ such that for $\bm{v} \in V$, if $\lVert T(\bm{v}) \rVert_W < \varepsilon$, then there exists a $\bm{u} \in V$ such that $\lVert \bm{u} \rVert_V < 1$ with $T(\bm{u}) = T(\bm{v})$. We show that $T$ is an open map. Let $\bm{x} \in V$ and $\delta > 0$. We can find an $\varepsilon > 0$ such that for $\bm{v} \in V$, if $\lVert T(\bm{v} - \bm{x}) \rVert_W < \frac{\varepsilon}{\delta}$, then there exists a $\bm{u} \in V$ such that $\lVert \frac{1}{\delta}\bm{u} \rVert_V < 1$ with $T(\bm{u}) = T(\bm{v} - \bm{x})$. Using linearity and replacing $\bm{u}$ with $\bm{u} + \delta\bm{x}$; $\bm{v}$ with $\delta \bm{v}$; $\bm{x}$ with $\delta \bm{x}$, we find that for $\bm{v} \in V$, if $\lVert T(\bm{v}) - T(\bm{x}) \rVert_W < \varepsilon$, then there exists a $\bm{u} \in V$ such that $\lVert \bm{u} - \bm{x} \rVert_V < \delta$ with $T(\bm{u}) = T(\bm{v})$. So, $T$ is an open map.
+        \end{itemize}
+    \end{proof}
+    % \noindent Another way of writing this is the following- $T: V \to W$ is an open map if and only if there exists an $\varepsilon > 0$ such that
+    % \[B_W(0, \varepsilon) \subseteq f(B_V(0, 1)).\]
+
+    \begin{theorem}[Open Mapping Theorem]
+        Let $V$ and $W$ be Banach spaces and let $T \colon V \to W$ be a surjective linear operator. Then, $T$ is open.
+    \end{theorem}
+    \begin{proof}
+        
+    \end{proof}
+
+    \begin{corollary}
+        Let $V$ and $W$ be Banach spaces and let $T \colon V \to W$ be a bijective linear operator. Then, $T$ is an isomorphism.
+    \end{corollary}
+    \begin{proof}
+        Since $T$ is surjective, we know that $T$ is an open map. We know that $T^{-1} \colon W \to V$ is a linear operator, so we show that $T^{-1}$ is continuous. So, let $U \subseteq V$ be open. Since $T$ is an open map, we know that $T(U) \subseteq W$ is open. Now, we know that for $w \in W$,
+        \[w \in (T^{-1})^{-1}(U) \iff T^{-1}(w) \in U \iff w \in T(U).\]
+        Hence, we find that $(T^{-1})^{-1}(U) = T(U)$ is open. So, $T^{-1}$ is bounded operator, meaning that $T$ is an isomorphism.
+    \end{proof}
+    \newpage
+
+    \section{Closed Graph Theorem}
+    In this section, we will be proving the closed graph theorem. We begin by defining graphs.
+    \begin{definition}
+        Let $V$ and $W$ be sets and $T \colon V \to W$ be a function. Then, the \emph{graph} of $T$ is the set
+        \[\operatorname{Graph}(T) = \{(v, Tv) \mid v \in V\} \subseteq V \times W.\]
+    \end{definition}
+    \noindent If $V$ and $W$ have structure, then this structure can be easily extended to $V \times W$. In particular, 
+    \begin{itemize}
+        \item if $V$ and $W$ are vector spaces, then $\operatorname{Graph}(T)$ is a subspace of $V \times W$;
+        \item if $V$ and $W$ are normed vector spaces, then the function $\lVert \cdot \rVert \colon V \times W \to [0, \infty)$ given by $\lVert (v, w) \rVert = \max(\lVert v \rVert_V, \lVert w \rVert_W)$ is a norm on $V \times W$; and 
+        \item if $V$ and $W$ are complete (metric) spaces, then $V \times W$ is a complete (metric) space.
+    \end{itemize}
+    
+    We can show that in metric spaces, $\operatorname{Graph}(T)$ is closed in $V \times W$.
+    \begin{proposition}
+        Let $V$ and $W$ be metric spaces and let $T \colon V \to W$ be continuous. Then, $\operatorname{Graph}(T)$ is closed in $V \times W$.
+    \end{proposition}
+    \begin{proof}
+        Let $(v_n, Tv_n)_{n=1}^\infty$ be a sequence in $\operatorname{Graph}(T)$ that converges to $(v, w) \in V \times W$. We show that $(v, w) \in \operatorname{Graph}(T)$, i.e. $w = Tv$. By the definition of the product metric, we know that $v_n \to v$ and $Tv_n \to w$. Since $T$ is continuous, it follows that $Tv_n \to Tv$. Since limits are unique, we find that $w = Tv$, meaning that $(v, w) \in \operatorname{Graph}(T)$. So, $\operatorname{Graph}(T)$ is closed.
+    \end{proof}
+    \noindent We can now ask the converse- if $\operatorname{Graph}(T)$ is closed, then does this imply that $T$ is bounded. This is what the closed graph theorem answers.
+    \begin{theorem}[Closed Graph Theorem]
+        Let $V$ and $W$ be Banach spaces and let $T \colon V \to W$ be a linear operator such that $\operatorname{Graph}(T)$ is closed. Then, $T$ is bounded.
+    \end{theorem}
+    \begin{proof}
+        Since $V$ and $W$ are complete, we find that $V \times W$ is complete. Hence, $\operatorname{Graph}(T)$ is a Banach space. Now, consider the projection maps $\pi_V \colon V \times W \to V$ and $\pi_W \colon V \times W \to W$ given by $\pi_V(v, w) = v$ and $\pi_W(v, w) = w$. By definition, $\pi_V$ and $\pi_W$ are linear operators. Moreover, for all $(v, w) \in V$,
+        \[\lVert \pi_V(v, w) \rVert_V = \lVert v \rVert_V \leq \lVert (v, w) \rVert,\]
+        meaning that $\pi_V$ is bounded. Similarly, $\pi_W$ is bounded. Now, consider the restriction $\pi_V \colon \operatorname{Graph}(T) \to V$. This is a bijection, with inverse $\pi_V^{-1}(v) = (v, Tv)$. Since $\operatorname{Graph}(T)$ is a Banach space, the Open Mapping Theorem tells us that $\pi_V^{-1}$ is bounded. Now, for all $v \in V$, we find that 
+        \[\pi_W(\pi_V^{-1}(v)) = \pi_W(v, Tv) = Tv.\]
+        So, $\pi_W \circ \pi_V^{-1} = T$. Since both $\pi_W$ and $\pi_V^{-1}$ are bounded, it follows that $T$ is bounded.
+    \end{proof}
 
 \end{document}
 
