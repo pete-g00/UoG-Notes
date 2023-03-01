@@ -324,10 +324,19 @@
 
         Now, assume that $G$ is solvable. In that case, there exists a subnormal series
         \[\{e\} = H_0 \leq H_1 \leq \dots \leq H_n = G\]
-        such that $H_{i+1}/H_i$ is abelian. In particular, we have $[H_{i+1}, H_{i+1}] \leq H_i$. Since $[H_{i+1}, H_{i+1}] \vartriangleleft H_{i+1}$, we find that $[H_{i+1}, H_{i+1}] \vartriangleleft H_i$. So, we can refine the subnormal series to its derived series. This implies that the derived series terminates.
+        such that $H_{i+1}/H_i$ is abelian. Hence, we have $[H_{i+1}, H_{i+1}] \leq H_i$. Since $[H_{i+1}, H_{i+1}] \vartriangleleft H_{i+1}$, we find that $[H_{i+1}, H_{i+1}] \vartriangleleft H_i$. So, we can refine the subnormal series to its derived series. This implies that the derived series terminates.
     \end{proof}
 
     \begin{definition}
         Let $G$ be a group. We say that $G$ is \emph{perfect} if its commutator subgroup $[G, G] = G$.
     \end{definition}
+
+    \begin{proposition}
+        Let $G$ be a simple non-abelian group. Then, $G$ is perfect.
+    \end{proposition}
+    \begin{proof}
+        If the commutator $[G, G] = \{e\}$, then we find that for all $x,y \in G$, 
+        \[xyx^{-1}y^{-1} = e \iff xy = yx.\]
+        So, $G$ would be abelian. Hence, $[G, G]$ cannot be trivial. Moreover, we know that $[G, G] \vartriangleleft G$. Hence, we must have that $[G, G] = G$, since the commutator is a normal subgroup. So, $G$ is perfect.
+    \end{proof}
 \end{document}

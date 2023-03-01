@@ -231,5 +231,14 @@
         We have $|H_{i+1}/H_i| = p$, so the quotient is abelian. Hence, $G$ is solvable.
     \end{proof}
 
-    
+    \begin{proposition}
+        Let $G$ be a finite abelian group and let $m \in \mathbb{Z}_{\geq 1}$ divide $|G|$. Then, $G$ has a subgroup of order $m$.
+    \end{proposition}
+    \begin{proof}
+        Let the prime factorisation of $m$ be:
+        \[m = p_1^{\alpha_1} \dots p_n^{\alpha_n}.\]
+        By Sylow I, we know that $G$ has a subgroup $P_i \leq G$ of order $p_i^{\alpha_i}$ for all $1 \leq i \leq n$. Since $G$ is abelian, we know that $P_i \vartriangleleft G$. So, we find that 
+        \[P = P_1 P_2 \dots P_n\]
+        is a (normal) subgroup of $G$. By Lagrange, we find that for $1 \leq i, j \leq n$, if $i \neq j$, then $P_i \cap P_j = \{e\}$. So, it follows that $|P| = p_1^{\alpha_1} \dots p_n^{\alpha_n} = m$.
+    \end{proof}
 \end{document}
