@@ -602,7 +602,7 @@ int knapsack(List<int> weights, List<int> profits, int capacity) {
     For a problem $\Pi$ in $NPO$, an \emph{exact} (or \emph{optimising}) algorithm finds an optimal solution given any instance $x$ of $\Pi$. An \emph{approximation} algorithm $A$ returns a feasible solution $A(x)$ for any instance $x$ of $\Pi$ in polynomial time. This is particular interesting if $\Pi$ is $NP$-hard. We say that an approxmiation algorithm $A$ has a \emph{performance guarantee} of $c \geq 1$ if:
     \begin{itemize}
         \item $\texttt{GOAL} = \min$ and $m(x, A(x)) \leq c \cdot m^*(x)$ for all instances $x$ of $\Pi$ or
-        \item $\texttt{GOAL} = \max$ and $m(x, A(x)) \geq 1/c \cdot m^*(X)$ for all instances $x$ of $\Pi$.
+        \item $\texttt{GOAL} = \max$ and $m(x, A(x)) \geq 1/c \cdot m^*(x)$ for all instances $x$ of $\Pi$.
     \end{itemize}
     If so, we say that $A$ is a \emph{$c$-approximation algorithm}. The closer $c$ gets to $1$, the better the approximation algorithm (and possibly the less efficient the algorithm).
 
@@ -737,10 +737,10 @@ int approximateMAXSAT(CNF b) {
             \node[circle, draw, inner sep=1.5pt, fill=black] (e) at (-0.75, 0.25) {};
             \node[circle, draw, inner sep=1.5pt, fill=black] (f) at (-1, 1.25) {};
 
-            \draw (f) -- (d);
-            \draw (d) -- (e);
-            \draw (e) -- (a);
-            \draw (a) -- (c);
+            \draw (f) -- (e);
+            \draw (e) -- (c);
+            \draw (c) -- (a);
+            \draw (d) -- (a);
             \draw (a) -- (b);
         \end{tikzpicture}
     \end{figure}
@@ -903,8 +903,8 @@ int subsetSum(List<int> values, int target) {
         List<int> newAchieved = achieved.map(
             (e) => e + values[i]);
         // merge the two lists achieved and newAchieved,
-        // and remove those greater than t
-        achieved = merge(achieved, newAchieved, t);
+        // and remove those greater than target
+        achieved = merge(achieved, newAchieved, target);
     }
     // return the largest value we have found
     return achieved[achieved.length-1];
@@ -919,14 +919,14 @@ int subsetSum(List<int> values, int target) {
     \end{itemize}
     So, after the $i$-th iteration, we have the list $[0, 1, \dots, 2^i]$, which means that the \texttt{merge} function takes $2^i$ iterations. This means that the entire algorithm has complexity $O(2^n)$. 
     
-    To find an approximation algorithm for SSO that runs in polynomial time, we adapt this exact algorithm. In parrticular, we \textit{trim} enough numbers from the list \texttt{achieved} to ensure that it has polynomial time complexity while still giving a close-to-optimal solution. First, we consider the algorithm \texttt{trim} that removes points with respect to some value $\delta$:
+    To find an approximation algorithm for SSO that runs in polynomial time, we adapt this exact algorithm. In particular, we \textit{trim} enough numbers from the list \texttt{achieved} to ensure that it has polynomial time complexity while still giving a close-to-optimal solution. First, we consider the algorithm \texttt{trim} that removes points with respect to some value $\delta$:
 \begin{lstlisting}[language=pseudocode]
 List<int> trim(List<int> values, double delta) {
     List<int> trimmed = [values[0]];
     int prevVal = values[0];
     for (int i=1; i<values.length; i++) {
-        // if the next number is far enough from the previous number, keep it
-        // otherwise, this number gets trimmed
+        // if the next number is far enough from the previous 
+        // number, keep it; otherwise, this number gets trimmed
         if ((1 - delta) * values[i] > prevVal) {
             trimmed.add(values[i]);
             prevVal = values[i];
@@ -1055,6 +1055,6 @@ int subsetSumApproximation(List<int> values, int t, double delta){
     % TODO: Illustrate
     There are at least $n-1$ other edges we take, and each edge has length $\geq 1$. Hence,
     \[m(G, A(G)) \geq (1 + nc) + (n - 1) = nc + n > nc.\]
-    This implies that $m(G, A(G)) \leq nc$ if and only if $G$ has a HC. This gives us a polynomial-time algorithm to solve the HC problem, which leads to a contradiction.
+    This implies that $m(G, A(G)) \leq nc$ if and only if $G$ has a HC. This gives us a polynomial-time algorithm to solve the HC problem, which leads to a contradiction. So, TSP cannot have a $c$-approximation algorithm.
 
 \end{document}
