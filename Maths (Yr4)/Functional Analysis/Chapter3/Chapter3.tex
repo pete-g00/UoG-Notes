@@ -297,25 +297,37 @@
         Define the map $T \colon \ell^\infty \to (\ell^1)^*$ by $T(x) = f_x$, where $f_x \colon \ell^1 \to \mathbb{C}$ is given by 
         \[f_x(y) = \sum_{n=1}^\infty x_n y_n.\]
         We first show that $f_x$ is well-defined, i.e. $f_x(y) \in (\ell^1)^*$. By construction, $f_x$ is linear. Now, let $y \in \ell^1$. We know that $|x_n| \leq \lVert x \rVert_\infty$ for all $n \in \mathbb{Z}_{\geq 1}$, meaning that
-        \[|f_x(y)| = \left| \sum_{n=1}^\infty x_n y_n \right| \leq \sum_{n=1}^{\infty} |x_n y_n| \leq \lVert x \rVert_\infty \sum_{n=1}^\infty |y_n|.\]
-        Since $y \in \ell^1$, this implies that $f_x(y) \in \ell^1$. So, $f_k$ is well-defined. Now, we show that $T$ is bounded. So, let $y \in \ell^1$. Then,
-        \[\lVert f_x(y) \rVert_1 = \sum_{n=1}^\infty |x_n y_n| \leq \lVert x \rVert_\infty \sum_{n=1}^\infty |y_n| = \lVert x \rVert_\infty \lVert y \rVert_1.\]
-        Hence, $f_x$ is bounded with $\lVert f_x \rVert \leq \lVert x \rVert_\infty$
+        \[|f_x(y)| = \left| \sum_{n=1}^\infty x_n y_n \right| \leq \sum_{n=1}^{\infty} |x_n y_n| \leq \lVert x \rVert_\infty \sum_{n=1}^\infty |y_n| = \lVert x \rVert_\infty \lVert y \rVert_1.\]
+        Since $y \in \ell^1$, this implies that $f_x(y) \in \ell^1$. So, $f_k$ is well-defined. Moreover, this shows that $f_x$ is bounded, with $\lVert f_x \rVert \leq \lVert x \rVert_\infty$.
 
-        We now show that $T$ is an isometry. So, let $x = (x_n)_{n=1}^\infty \in \ell^\infty$. Define the sequences $(r_n)_{n=1}^\infty, (\theta_n)_{n=1}^\infty$ by the polar decomposition of $x_n$, i.e. $x_n = r_n e^{i \theta_n}$. For each $k \in \mathbb{Z}_{\geq 1}$, define the sequence $(y^{(k)}_n)_{n=1}^\infty$
-        \[y^{(k)}_n = \begin{cases}
-            e^{-i\theta_n} & n = k \\
+        We now show that $T$ is an isometry. So, let $x = (x_n)_{n=1}^\infty \in \ell^\infty$, and let $\varepsilon > 0$. By the supremum property, we can find an $n \in \mathbb{Z}_{\geq 1}$ such that 
+        \[\lVert x \rVert_\infty - \varepsilon < |x_n| \leq \lVert x \rVert_\infty.\]
+        Then, define the sequence $e = (e_k)_{k=1}^\infty$ by 
+        \[e_k = \begin{cases}
+            1 & n = k \\
             0 & \textrm{otherwise}.
         \end{cases}\]
-        Then, $\lVert y^{(k)} \rVert_\infty = 1$, with
-        \[\lVert f_x(y^{(k)}) \rVert_1 = \sum_{n=1}^\infty |x_n y_n| = |x_n e^{-i \theta_n}| = r_n = |x_n|.\]
-        So, we find that 
-        \[\{|x_n| \mid n \in \mathbb{Z}_{\geq 1}\} \subseteq \{\lVert f_x(y) \rVert_1 \mid \lVert y \rVert_1 = 1\}.\]
-        So, the supremum property tells us that 
-        \[\lVert x \rVert_\infty = \sup_{n = 1}^\infty |x_n| \leq \sup_{\lVert y \rVert_1 = 1} \lVert f_x(y) \rVert_1 = \lVert f_x \rVert.\]
-        Hence, it follows that 
-        \[\lVert f_x \rVert = \lVert x \rVert_\infty.\]
-        This implies that $T$ is isometric.
+        In that case, we have $e \in \ell^1$, with 
+        \[\lVert e \rVert_1 = \sum_{k=1}^\infty |e_k| = 1.\]
+        Moreover,
+        \[|f_x(e)| = \left| \sum_{k=1}^\infty x_k e_k \right| = |x_n|.\]
+        This implies that 
+        \[\lVert f_x \rVert \geq |x_n| > \lVert x \rVert_\infty - \varepsilon .\]
+        Since the result holds for all $\varepsilon > 0$, it follows that $\lVert f_x \rVert \geq \lVert x \rVert_\infty$. So, $\lVert f_x \rVert = \lVert x \rVert_\infty$, meaning that $T$ is an isometry.
+        % Define the sequences $(r_n)_{n=1}^\infty, (\theta_n)_{n=1}^\infty$ by the polar decomposition of $x_n$, i.e. $x_n = r_n e^{i \theta_n}$. For each $k \in \mathbb{Z}_{\geq 1}$, define the sequence $(y^{(k)}_n)_{n=1}^\infty$
+        % \[y^{(k)}_n = \begin{cases}
+        %     e^{-i\theta_n} & n = k \\
+        %     0 & \textrm{otherwise}.
+        % \end{cases}\]
+        % Then, $\lVert y^{(k)} \rVert_\infty = 1$, with
+        % \[\lVert f_x(y^{(k)}) \rVert_1 = \sum_{n=1}^\infty |x_n y_n| = |x_n e^{-i \theta_n}| = r_n = |x_n|.\]
+        % So, we find that 
+        % \[\{|x_n| \mid n \in \mathbb{Z}_{\geq 1}\} \subseteq \{\lVert f_x(y) \rVert_1 \mid \lVert y \rVert_1 = 1\}.\]
+        % So, the supremum property tells us that 
+        % \[\lVert x \rVert_\infty = \sup_{n = 1}^\infty |x_n| \leq \sup_{\lVert y \rVert_1 = 1} \lVert f_x(y) \rVert_1 = \lVert f_x \rVert.\]
+        % Hence, it follows that 
+        % \[\lVert f_x \rVert = \lVert x \rVert_\infty.\]
+        % This implies that $T$ is isometric.
 
         Finally, we show that $T$ is surjective. So, let $f \in (\ell^1)^*$. Define the sequence $x = (x_n)_{n=1}^\infty$ in $\mathbb{C}$ by $x_n = f(e_n)$. Then, for all $n \in \mathbb{Z}_{\geq 1}$, we find that 
         \[|x_n| = |f(e_n)| \leq \lVert f \rVert \lVert e_n \rVert_1 = \lVert f \rVert.\]
