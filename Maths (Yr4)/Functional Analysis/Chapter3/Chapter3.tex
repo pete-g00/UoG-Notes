@@ -625,6 +625,241 @@
         \[\pi_W(\pi_V^{-1}(v)) = \pi_W(v, Tv) = Tv.\]
         So, $\pi_W \circ \pi_V^{-1} = T$. Since both $\pi_W$ and $\pi_V^{-1}$ are bounded, it follows that $T$ is bounded.
     \end{proof}
+    \newpage
+
+    \section{Hilbert Spaces}
+    In this section, we look at Hilbert spaces. Hilbert spaces are complete inner product spaces. Examples include the dot product in $\mathbb{C}^n$, i.e.
+    \[\langle x, y \rangle = \sum_{i=1}^n x_i \overline{y}_i.\]
+    Moreover, in $L^2[0, 1]$, we have the inner product
+    \[\langle f, g \rangle = \int_{[0, 1]} fg \ d\lambda.\]
+    Note that this integral is finite since
+    \[\int |fg| \ d\lambda \leq \frac{1}{2} \left(\int_{[0, 1]} |f|^2 + |g|^2 \ d\lambda\right) < \infty.\]
+    A Hilbert space $\mathcal{H}$ satisfies the Cauchy-Schwarz Inequality, i.e. 
+    \[|\langle x, y \rangle| \leq \lVert x \rVert \lVert y \rVert\]
+    for all $x, y \in \mathcal{H}$. Hence, the inner product map $\langle \cdot, \cdot \rangle \colon \mathcal{H} \times \mathcal{H} \to \mathbb{C}$ is continuous.
+
+    A characterisation of a Hilbert space is the \emph{Parallelogram law}. It states that a norm on a vector space $V$ is induced by an inner product if and only if for all $x, y \in X$,
+    \[\lVert x + y \rVert^2 + \lVert x - y \rVert^2 = 2\lVert x \rVert^2 + 2\lVert y \rVert^2.\]
+
+    The main property that a Hilbert space adds to a Banach space is \emph{orthogonality}. We say that two vectors $x, y$ in a Hilbert space $\mathcal{H}$ are \emph{orthogonal} if $\langle x, y \rangle = 0$. We can define the orthogonal complement of a subset $E \subseteq \mathcal{H}$ by
+    \[E^\perp = \{y \in \mathcal{H} \mid \langle x, y \rangle = 0 \ \forall x \in E\}.\]
+    This is a closed subspace of $\mathcal{H}$.
+
+    By the property of orthogonality, we can generalise Pythagoras' Theorem.
+    \begin{theorem}[Pythagoras' Theorem]
+        Let $\mathcal{H}$ be a Hilbert space and let $(x_i)_{i=1}^n$ be a sequence of mutually orthogonal vectors in $\mathcal{H}$, i.e. $\langle x_i, x_j \rangle = 0$ for all $1 \leq i, j \leq n$ if $i \neq j$. Then,
+        \[\left \lVert \sum_{i=1}^n x_i \right \rVert^2 = \sum_{i=1}^{n} \lVert x_i \rVert^2.\]
+    \end{theorem}
+    \begin{proof}
+        We have 
+        \[\left\lVert \sum_{i=1}^n x_i \right\rVert^2 = \left\lVert \sum_{i=1}^n x_i, \sum_{j=1}^n x_j \right\rVert = \sum_{i=1}^n \sum_{j=1}^n \langle x_i, x_j \rangle.\]
+        By orthogonality, we have $\langle x_i, x_j \rangle = 0$ if $i \neq j$. Hence,
+        \[\sum_{i=1}^n \sum_{j=1}^n \langle x_i, x_j \rangle = \sum_{i=1}^n \langle x_i, x_i \rangle = \sum_{i=1}^n \lVert x_i \rVert^2.\]
+        So, the result follows.
+    \end{proof}
+
+    \begin{theorem}[Decomposition Theorem]
+        Let $\mathcal{H}$ be a Hilbert space and let $M \subseteq \mathcal{H}$ be a closed subspace. Then, $\mathcal{H} = M \oplus M^\perp$. That is, for all $x \in \mathcal{H}$, there exist unique $y \in M$ and $z \in M^\perp$ such that $x = y + z$.
+    \end{theorem}
+    \begin{proof}
+        Let $x \in \mathcal{H}$ and let
+        \[\delta = \inf_{y \in M} \lVert x - y \rVert.\]
+        By the infimum property, we can find a sequence $(y_n)_{n=1}^\infty$ in $M$ such that $\lVert x - y_n \rVert \to \delta$. Then, the Parallelogram Law tells us that 
+        \begin{align*}
+            2\lVert y_n - x \rVert + 2\lVert y_m - x \rVert &= \lVert y_n - y_m \rVert^2 + \lVert y_n + y_m - 2x \rVert^2 \\
+            &= \lVert y_n - y_m \rVert^2 + 4 \lVert \tfrac{1}{2} (y_n + y_m) - x \rVert^2
+        \end{align*}
+        for all $m, n \in \mathbb{Z}_{\geq 1}$. We have $\frac{1}{2}(y_n + y_m) \in M$. So,
+        \[\lVert \tfrac{1}{2} (y_n + y_m) - x \rVert^2 \geq \delta.\]
+        Hence,
+        \begin{align*}
+            \lVert y_n - y_m \rVert^2 &= 2\lVert y_n - x \rVert + 2\lVert y_m - x \rVert -  4\lVert \tfrac{1}{2} (y_n + y_m) - x \rVert^2 \\
+            &\leq 2\lVert y_n - x \rVert + 2\lVert y_m - x \rVert - 4\delta^2.
+        \end{align*}
+        We have $\lVert y_n - x \rVert \to \delta$, so $2\lVert y_n - x \rVert + 2\lVert y_m - x \rVert \to 4\delta^2$. Hence, $\lVert y_n - y_m \rVert^2 \to 0$, meaning that $(y_n)$ is Cauchy. Since $M$ is complete, there exists a $y \in M$ such that $y_n \to y$. Now, define $z = y - x$. 
+        
+        We claim that $z \in M^\perp$. So, let $y' \in M$.
+        % TODO: Finish
+    \end{proof}
+
+    \begin{lemma}
+        Let $\mathcal{H}$ be a Hilbert space and let $y \in \mathcal{H}$. Define the map $f_y \colon \mathcal{H} \to \mathbb{C}$ by $f_y(x) = \langle x, y \rangle$. Then, $f_y \in \mathcal{H}^*$ with $\lVert f_y \rVert = \lVert y \rVert$.
+    \end{lemma}
+    \begin{proof}
+        For $x_1, x_2 \in \mathcal{H}$, we have 
+        \[f_y(x_1 + x_2) = \langle x_1 + x_2, y \rangle = \langle x_1, y \rangle + \langle x_2, y \rangle = f_y(x_1) + f_y(x_2),\]
+        and for $x \in \mathcal{H}$ and $\lambda \in \mathbb{C}$, we have 
+        \[f_y(\lambda x) = \langle \lambda x, y \rangle = \lambda \langle x, y \rangle = \lambda f_y(x)\]
+        by Cauchy-Schwarz inequality. So, $f_y$ is linear. Moreover, for all $x \in \mathcal{H}$,
+        \[|f_y(x)| = |\langle x, y \rangle| \leq \lVert x \rVert \lVert y \rVert.\]
+        Hence, $f_y$ is bounded, with $\lVert f_y \rVert \leq \lVert y \rVert$. We also have
+        \[|f_y(y)| = |\langle y, y \rangle| = \lVert y \rVert \lVert y \rVert,\]
+        meaning that $\lVert f_y \rVert \geq \lVert y \rVert$. This implies that $\lVert f_y \rVert = \lVert y \rVert$.
+    \end{proof}
+
+    \begin{theorem}[Riesz Representation Theorem]
+        Let $\mathcal{H}$ be a Hilbert space. Then, $\mathcal{H}$ is isometrically isomorphic to its dual $\mathcal{H}^*$.
+    \end{theorem}
+    \begin{proof}
+        Define the map $T \colon \mathcal{H} \to \mathcal{H}^*$ by $T(y) = f_y$, with $f_y(x) = \langle x, y \rangle$. We have shown that $T$ is an isometry, so it suffices to show that $T$ is surjective.
+
+        So, let $f \in \mathcal{H}^*$. If $f = 0$, then we have $f = f_0 = T(0)$. Otherwise, let $K = \ker f$. This is a closed proper subspace of $\mathcal{H}$. In that case, we can find a $z \in K^\perp$ with $\lVert z \rVert = 1$. Next, let $x \in \mathcal{H}$. Define $u_x = f(x)z - f(z)x$. Then,
+        \[f(u_x) = f(x) f(z) - f(z)f(x) = 0,\]
+        meaning that $u_x \in K$. Hence,
+        \begin{align*}
+            0 &= \langle u_x, z \rangle \\
+            &= \langle f(x)z - f(z)x, z \rangle \\
+            &= f(x) \langle z, z \rangle - f(z) \langle x, z \rangle \\
+            &= f(x) \lVert z \rVert^2 - f(z) \langle x, z \rangle \\
+            &= f(x) - f(z) \langle x, z \rangle.
+        \end{align*}
+        This implies that $f(x) = f(z) \langle x, z \rangle = \langle x, \overline{f(z)}z \rangle$. So, we find that $f = f_{\overline{f(z)}z}$. Hence, $T$ is surjective. So, $T$ is an isometric isomorphism.
+    \end{proof}
+
+    We say that a sequence $(u_n)_{n=1}^\infty$ in a Hilbert space is \emph{orthonormal} if for all $n \in \mathbb{Z}_{\geq 1}$, $\lVert u_n \rVert = 1$, and $\langle u_n, u_m \rangle = 0$ for all $m, n \in \mathbb{Z}_{\geq 1}$ if $m \neq n$.
+
+    \begin{theorem}[Gram-Schmidt Decomposition]
+        Let $(x_n)_{n=1}^\infty$ be a sequence of linearly independent sequence in a Hilbert space $\mathcal{H}$. Then, there exists a sequence $(y_n)_{n=1}^\infty$ of orthonormal vectors in $\mathcal{H}$ such that 
+        \[\operatorname{span}(u_1, u_2, \dots) = \operatorname{span}(e_1, e_2, \dots).\]
+    \end{theorem}
+    \begin{proof}
+        Define the sequence $(z_n)_{n=1}^\infty$ in $\mathcal{H}$ inductively, as follows: $z_1 = x_1$ and 
+        \[z_n = x_n - \sum_{i=1}^{n-1} \langle x_n, z_i \rangle z_i.\]
+        Then, $(z_n)$ is an orthogonal sequence with equal span. So, we can now define the normalised sequence $(y_n)_{n=1}^\infty$ of $(z_n)$- this is an orthonormal sequence with equal span.
+    \end{proof}
+
+    \begin{proposition}[Bessel's Inequality]
+        Let $(u_n)_{n=1}^\infty$ be a sequence of orthonormal vectors in a Hilbert space $\mathcal{H}$. Then, for any $x \in \mathcal{H}$,
+        \[\sum_{n=1}^\infty |\langle u_n, x \rangle|^2 \leq \lVert x \rVert^2.\]
+    \end{proposition}
+    \begin{proof}
+        Let $N \in \mathbb{Z}_{\geq 1}$. Then, we find that
+        \begin{align*}
+            0 &\leq \left \lVert x - \sum_{n=1}^N \langle u_n, x \rangle u_n \right \rVert^2 \\
+            &= \left\langle x - \sum_{n=1}^N \langle u_n, x \rangle u_n, x - \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rangle \\
+            &= \langle x, x \rangle - 2\operatorname{Re} \left\langle  x, \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rangle + \left\langle \sum_{n=1}^N \langle u_n, x \rangle u_n, \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rangle \\
+            &= \lVert x \rVert^2 - 2\operatorname{Re} \sum_{n=1}^N \langle x, \langle u_n, x \rangle u_n \rangle + \left\lVert \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rVert^2.
+        \end{align*}
+        By Pythagoras' Theorem, we find that 
+        \[\left\lVert \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rVert^2 = \sum_{n=1}^N |\langle u_n, x \rangle|^2 \lVert u_n \rVert^2 = \sum_{n=1}^N |\langle u_n, x \rangle|^2.\]
+        Moreover,
+        \[\sum_{n=1}^N \langle x, \langle u_n, x \rangle u_n \rangle = \sum_{n=1}^N \langle x, u_n \rangle \langle u_n, x \rangle = \sum_{n=1}^N \overline{\langle u_n, x \rangle} \langle u_n, x \rangle = \sum_{n=1}^N |\langle u_n, x \rangle|^2.\]
+        This implies that 
+        \[\left\lVert \sum_{n=1}^N \langle u_n, x \rangle u_n \right\rVert^2 - 2\operatorname{Re} \sum_{n=1}^N \langle x, \langle u_n, x \rangle u_n \rangle = - \sum_{n=1}^N |\langle u_n, x \rangle|^2.\]
+        Hence, for all $N \in \mathbb{Z}_{\geq 1}$,
+        \[\sum_{n=1}^N |\langle u_n, x \rangle| \leq \lVert x \rVert^2 .\]
+        Taking limits, we find that 
+        \[\sum_{n=1}^\infty |\langle u_n, x \rangle| \leq \lVert x \rVert^2.\]
+    \end{proof}
+
+    \begin{proposition}
+        Let $(u_n)_{n=1}^\infty$ be a sequence of orthonormal vectors in a Hilbert space $\mathcal{H}$. Then, the following are equivalent:
+        \begin{enumerate}
+            \item \emph{completeness}: for all $x \in \mathcal{H}$, if $\langle x, u_n \rangle = 0$ for all $n \in \mathbb{Z}_{\geq 1}$, then $x = 0$;
+            \item \emph{Parseval's Identity}: for all $x \in \mathcal{H}$,
+            \[\sum_{n=1}^\infty |\langle x, u_n \rangle|^2 = \lVert x \rVert^2;\]
+            \item for all $x \in \mathcal{H}$,
+            \[\sum_{n=1}^\infty \langle x, u_n \rangle u_n = x.\]
+        \end{enumerate}
+    \end{proposition}
+    \begin{proof}
+        \hspace*{0pt}
+        \begin{enumerate}
+            \item[$(1) \implies (3)$] We know that 
+            \[\sum_{n=1}^\infty \lVert \langle u_n, x \rangle u_n \rVert^2 = \sum_{n=1}^\infty |\langle u_n, x \rangle|^2.\]
+            % \leq \lVert x \rVert,\]
+            By Bessel's Inequality, the series $\sum_{n=1}^\infty |\langle u_n, x \rangle|^2$ is convergent. Hence, the sequence of partial sums is Cauchy. That is, for every $\varepsilon > 0$, there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$ with $m \geq n$,
+            \[\sum_{n=N}^M |\langle x, u_n \rangle|^2 < \varepsilon.\]
+            Since $(u_n)_{n=1}^\infty$ is a sequence of orthogonal vectors, we can apply Pythagoras' Theorem to conclude that
+            \[\left\lVert \sum_{n=N}^M \langle x, u_n \rangle u_n \right\rVert^2 < \varepsilon.\]
+            Since $\mathcal{H}$ is complete, we find that the series $\sum \langle x, u_n \rangle u_n$ converges (absolutely). 
+            % TODO: Why is the convergence absolute and not direct?
+            Now, let 
+            \[y = x - \sum_{n=1}^\infty \langle x, u_n \rangle u_n.\]
+            Then, for all $m \in \mathbb{Z}_{\geq 1}$,
+            \[\langle y, u_m \rangle = \langle x, u_m \rangle - \sum_{n=1}^\infty \langle x, u_n \rangle \langle u_n, u_m \rangle = \langle x, u_m \rangle - \langle x, u_m \rangle = 0.\]
+            Hence, by assumption, it follows that $y = 0$.
+            
+            \item[$(3) \implies (2)$] By Bessel's Inequality, we know that for all $N \in \mathbb{Z}_{\geq 1}$,
+            \[\lVert x \rVert^2 - \sum_{n=1}^N |\langle x, u_n \rangle|^2 = \lVert x - \sum_{n=1}^N \langle u_n, x \rangle u_n \rVert^2 = 0.\]
+            Taking limits, it follows that 
+            \[\lVert x \rVert^2 - \sum_{n=1}^\infty |\langle x, u_n \rangle|^2 = 0.\]
+            
+            \item[$(2) \implies (1)$] Let $x \in \mathcal{H}$. Then,
+            \[\lVert x \rVert^2 = \sum_{n=1}^\infty |\langle x, u_n \rangle| = \sum_{n=1}^\infty 0 = 0.\]
+            So, $x = 0$.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{definition}
+        Let $\mathcal{H}$ be a Hilbert space and let $(u_n)_{n=1}^\infty$ be a sequence of orthonormal vectors in $\mathcal{H}$. We say that $(u_n)$ is an \emph{orthonormal basis} if for all $x \in \mathcal{H}$,
+        \[\sum_{n=1}^\infty \langle x, u_n \rangle = x.\]
+    \end{definition}
+
+    \begin{theorem}
+        Let $\mathcal{H}$ be a Hilbert space. Then, $\mathcal{H}$ is separable if and only if $\mathcal{H}$ has a countable orthonormal basis.
+    \end{theorem}
+    \begin{proof}
+        First, assume that $\mathcal{H}$ is separable. In that case, there exists a countable dense subset $(x_n)_{n=1}^\infty$. So, we can remove entries from the sequence so that $(v_n)_{n=1}^\infty$ is linearly independent- we remove the fewest entries to achieve this. By applying Gram-Schmidt, we can construct an orthonormal sequence $(u_n)_{n=1}^\infty$. This is an orthonormal basis for $\mathcal{H}$.
+
+        Now, assume that $\mathcal{H}$ has a countable orthonormal basis $(u_n)_{n=1}^\infty$. In that case, the span of the basis is dense- this is not equal since the span only considers finite sums. Since $\mathbb{C}$ is separable, we can find a countable dense subset $A \subseteq \mathbb{C}$. Then, we can consider the $A$-span of $(u_n)$. This is a countable dense subset of $\mathcal{H}$. Hence, $\mathcal{H}$ is separable.
+    \end{proof}
+
+    \begin{definition}
+        Let $(\mathcal{H}_1, \langle \cdot, \cdot \rangle_1)$ and $(\mathcal{H}_2, \langle \cdot, \cdot \rangle_2)$ be Hilbert spaces, and let $T \colon \mathcal{H}_1 \to \mathcal{H}_2$ be a linear map. We say that $T$ is \emph{unitary} if for all $x, y \in \mathcal{H}_1$, $\langle Tx, Ty \rangle_2 = \langle x, y \rangle_1$.
+    \end{definition}
+
+    % \begin{proposition}
+    %     Let $\mathcal{H}_1$ and $\mathcal{H}_2$ be two isometrically isomorphic Hilbert spaces. Then, $\mathcal{H}_1$ and $\mathcal{H}_2$ are unitarily isomorphic.
+    % \end{proposition}
+    % \begin{proof}
+        
+    % \end{proof}
+
+    \begin{corollary}
+        Let $\mathcal{H}$ is an infinite-dimensional separable Hilbert space. Then, $\mathcal{H}$ is unitarily isomorphic to $\ell^2$.
+    \end{corollary}
+    \begin{proof}
+        Let $(u_n)_{n=1}^\infty$ be a countable orthonormal basis for $\mathcal{H}$. Define the map $\phi \colon \mathcal{H} \to \ell^2$ by $\phi(x) = \hat{x}$, where $\hat{x}_n = \langle x, u_n\rangle$. Since the inner product map is linear in the first variable, we find that $\phi$ is linear. Moreover, since $(u_n)$ is an orthonormal basis, we find that
+        \[\lVert \hat{x} \rVert^2 = \sum_{n=1}^\infty |\langle x, u_n \rangle|^2 = \lVert x \rVert^2\]
+        by Parseval's Identity. Hence, $\hat{x} \in \ell^1$, meaning that $T$ is well-defined. Moreover, $T$ is an isometry. Furthermore, for $x, y \in \mathcal{H}$, we find that
+        \begin{align*}
+            \langle x, y \rangle &= \left\langle \sum_{n=1}^\infty \langle x, u_n \rangle u_n, \sum_{m=1}^\infty \langle y, u_m \rangle u_m \right\rangle \\
+            &= \sum_{n=1}^\infty \langle x, u_n \rangle \langle y, u_m \rangle \langle u_n, u_m \rangle \\
+            &= \sum_{n=1}^\infty \langle x, u_n \rangle \langle y, u_n \rangle = \langle \hat{x}, \hat{y} \rangle.
+        \end{align*}
+        Hence, $T$ is unitary.
+
+        Now, we show that $T$ is surjective. So, let $y \in \ell^2$. Consider the series
+        \[\sum_{n=1}^\infty y_n u_n.\]
+        For all $M, N \in \mathbb{Z}_{\geq 1}$ with $M \geq N$, we find that
+        \[\left\lVert \sum_{n=N}^M y_n u_n \right\rVert = \sum_{n=N}^M \lVert y_n u_n \rVert = \sum_{n=N}^M |y_n|\]
+        by Pythagoras' Theorem. Since $y \in \ell^2$, this implies that the series is Cauchy, meaning that it converges (absolutely). So, let
+        \[x_n = \sum_{n=1}^\infty y_n u_n.\]
+        Then, we find that $\phi(x) = \hat{x}$, with
+        \[\hat{x}_n = \langle x, u_n \rangle = \sum_{m=1}^\infty \langle y_n u_n, u_m \rangle = y_n \sum_{m=1}^\infty \langle u_m , u_n \rangle = y_n.\]
+        So, $T$ is surjective, meaning that $\mathcal{H}$ is unitarily isomorphic to $\ell^2$.
+    \end{proof}
+    \newpage
+
+    \section{Adjoint Operators}
+    \begin{proposition}
+        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be bounded. Then, there exists a unique bounded operator $T^* \colon \mathcal{H} \to \mathcal{H}$ such that $\langle Tx, y \rangle = \langle x, T^*y \rangle$ for all $x, y \in \mathcal{H}$.
+    \end{proposition}
+    % \begin{proof}
+        
+    % \end{proof}
+
+    \begin{definition}
+        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be bounded. Then, the map $T^*$ is the \emph{adjoint} of $T$.
+    \end{definition}
+
+    \begin{proposition}
+        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be a map. Then, $T$ is unitary if and only if $T$ is bijectve, with $T^{-1} = T^*$.
+    \end{proposition}
+    \begin{proof}
+        
+    \end{proof}
 
 \end{document}
 
