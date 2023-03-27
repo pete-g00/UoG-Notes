@@ -232,5 +232,166 @@
     The first one allows us to substitute via communication, while the second one takes the $\tau$ choice (which can always be chosen). We extend these using the following inference rules:
     \[\frac{P \to Q}{(\nu \ x)P \to (\nu \ x)Q} \textrm{RNew} \qquad \frac{P \to Q}{P \mid R \to Q \mid R} \textrm{RPar}\]
     \[\frac{P' \equiv P \quad P \to R \quad Q \equiv Q'}{P' \equiv Q'} \textrm{RStruct}\]
+    \newpage
+
+    \section{Modelling and Computation}
+    There are two directions we can go with $\pi$-calculus:
+    \begin{itemize}
+        \item We can model systems by adding data and computation (e.g. integers and operations) when we need them. In this view, $\pi$-calculus is a concurrency layer on top of an assumed computational base.
+        \item We can study $\pi$-calculus as a foundation for all computation, like $\lambda$-calculus.
+    \end{itemize}
+    
+    \subsection{Modelling in $\pi$-calculus}
+    The mobile phones example is a classic $\pi$-calculus example that illustrates \emph{dynamic} communication topology. Note that the key feature of $\pi$-calculus is mobility.
+
+    Here, we have a car, two transmitters and a controller. At any time, the car communicates with only one of the transmitters. The controller tells a transmitter to \textit{lose} or \textit{gain} connection to the car.
+
+    % TODO: Add figure
+
+    We will use parametrised recursive program definitions instead of replication and send/receive with multiple messages. We will later see how to translate recursive definitions into replication. 
+    
+    \textit{Trans} is parametrised by the channels it shares with \textit{Control}, which are \textit{lose} and \textit{gain}. On the other hand, \textit{Car} is parametrised by \textit{talk} and \textit{switch}. It can either \textit{talk} or obey an instruction to \textit{lose} the connection.
+
+    \textit{IdTrans} is the idle transmitter. It is parametrised by the channels it shares with \textit{Control}, i.e. \textit{lose} and \textit{gain}. It can obey an instruction to gain a connection.
+
+    Putting this all together, we get:
+    \begin{align*}
+        \textit{Trans}(\textit{talk}, \textit{switch}, \textit{gain}, \textit{lose}) &= \textit{talk}().\textit{Trans}(\textit{talk}, \textit{switch}, \textit{gain}, \textit{lose}) \\
+        &+ \textit{lose}(t, s).\overline{\textit{switch}}\langle t, s \rangle.\textit{IdTrans}(\textit{gain}, \textit{lose}) \\
+        \textit{IdTrans}(\textit{gain}, \textit{lose}) &= \textit{gain}(t, s).\textit{Trans}(t, s, \textit{gain}, \textit{lose})
+    \end{align*}
+
+    \textit{Control} will either be $\textit{Control}_1$ or $\textit{Control}_2$. \textit{Control} can tell one transmitter to lose a connection and the other to gain a connection. We ignore how it decides this. So, we have:
+    \begin{align*}
+        \textit{Control}_1 &= \overline{\textit{lose}_1} \langle \textit{talk}_2, \textit{switch}_2 \rangle.\overline{\textit{gain}_2} \langle \textit{talk}_2, \textit{switch}_2 \rangle.\textit{Control}_2 \\
+        \textit{Control}_2 &= \overline{\textit{lose}_2} \langle \textit{talk}_1, \textit{switch}_1 \rangle.\overline{\textit{gain}_1} \langle \textit{talk}_1, \textit{switch}_1 \rangle.\textit{Control}_1
+    \end{align*}
+    We treat $\textit{lose}_i$, $\textit{talk}_i$ and $\textit{switch}_i$ channels as global variables for $i \in \{1, 2\}$. We will define a system in which they are declared in a scope that includes \textit{Control}.
+
+    Now, the \textit{Car} can either \textit{talk} or \textit{switch} to a new pair of channels. We would expect \textit{switch} to have priority over \textit{talk}, but this is not enforced. The definition of \textit{Car} is therefore the following:
+    \[\textit{Car}(\textit{talk}, \textit{switch}) = \overline{\textit{talk}}().\textit{Car} (\textit{talk}, \textit{switch}) + \textit{switch} (t, s).\textit{Car}(t, s)\]
+
+    Finally, we define the \textit{System}, with the starting state $\textit{Trans}_1$. This is given by:
+    \begin{align*}
+        \textit{System}_1 &= (\nu \ \textit{talk}_1, \textit{switch}_1, \textit{gain}_1, \textit{lose}_1, \textit{talk}_2, \textit{switch}_2, \textit{gain}_2, \textit{lose}_2) \\
+        &\quad (\textit{Car}(\textit{talk}_1, \textit{switch}_1) \mid \textit{Trans}_1 \mid \textit{IdTrans}_2 \mid \textit{Control}_1)
+    \end{align*}
+    where for $i \in \{1, 2\}$,
+    \begin{align*}
+        \textit{Trans}_i &= \textit{Trans}(\textit{talk}_i, \textit{switch}_i, \textit{gain}_i, \textit{lose}_i) \\
+        \textit{IdTrans}_i &= \textit{IdTrans}(\textit{gain}_i, \textit{lose}_i) 
+    \end{align*}
+
+    Using this definition, we can reduce $\textit{System}_1$ reduces to $\textit{System}_2$:
+    % TODO: Reduce
+
+    % TODO: Modify the definition so that the new \textit{switch} and \textit{talk} channels are created every time the active \textit{Trans} changes.
+
+    We defined \textit{Car} as follows:
+    \[\textit{Car}(\textit{talk}, \textit{switch}) = \overline{\textit{talk}}().\textit{Car} (\textit{talk}, \textit{switch}) + \textit{switch} (t, s).\textit{Car}(t, s)\]
+    This is recursive parametrised definition of \textit{Car}. We can write it using replication using a replicated process that receives \textit{talk} and \textit{switch} on a channel called \textit{start}. We first define \textit{NewCar}:
+    \[\textit{NewCar} = !(\textit{start}(t, s).(
+        \overline{\textit{talk}}.\overline{\textit{start}}\langle t, s \rangle.0 + 
+        \textit{switch}(x, y).\overline{start} \langle x, y \rangle.0
+    ))\]
+    We can now replace $\textit{Car}(\textit{talk}_1, \textit{switch}_1)$ with:
+    \[(\nu \ \textit{start})(\overline{\textit{start}} \langle \textit{talk}_1, \textit{switch}_1 \rangle.0 \mid \textit{NewCar})\]
+
+    That way, we can reduce the following process:
+    \[\overline{\textit{start}} \langle \textit{talk}_1, \textit{switch}_1 \rangle.0 \mid \textit{NewCar} \mid \textit{talk}_1().0\]
+    % TODO
+    \[\overline{\textit{start}} \langle \textit{talk}_1, \textit{switch}_1 \rangle.0 \mid \textit{NewCar}\]
+
+    \subsection{Computation in $\pi$-calculus}
+    In this section, we discuss how we can represent booleans and natural numbers in $\pi$-calculus.
+
+    In $\pi$-calculus, we can represent a boolean value by a process that is given two channels and communicates on one of them. This is similar to the $\lambda$-calculus representation, but we now also need to specify a channel for interaction with the boolean; this is called its \emph{location}. We have
+    \[\textit{True}(a) = a(t, f).\overline{t}\langle\rangle.0 \qquad \textit{False}(a) = a(t, f).\overline{f}\langle\rangle.0\]
+    We can abbreviate definitions by omitting the $0$ at the end and empty braces. For instance, we have
+    \[\textit{True}(a) = a(t, f).\overline{t}\]
+
+    We can define a choice between processes $P$ and $Q$ on a boolean located at channel $a$. This is given by:
+    \[\textit{Cond}(P, Q)(a) = (\nu \ t, f)\overline{a} \langle t, f \rangle.(t.P + f.Q)\]
+    We illustrate how this works with an example. In particular, consider the following reduction:
+    \[\textit{True}(a) \mid \textit{Cond}(P, Q)(a)\]
+    % TODO: Reduce to P
+
+    Similarly,
+    \[\textit{False}(a) \mid \textit{Cond}(P, Q)(a) \to^* Q\]
+
+    Next, we can define the process $\textit{Not}(a, b)$, where $b$ is where the boolean currently is located, and $a$ is where it will be after the negation process. This process is given by:
+    \[\textit{Not}(a, b) = (\nu \ t, f)(\overline{b} \langle t, f \rangle.(
+        t.\textit{False}(a) + f.\textit{True}(a)
+    ))\]
+    We illustrate this with the following reduction:
+    \[\textit{Not}(a, b) \mid \textit{True}(b)\]
+    % TODO: Reduce to False(a)
+
+    We now define the process $\texttt{And}(a, b, c)$, which takes in two booleans at $b$ and $c$ and produces a boolean at $a$. This is given by:
+    \[\textit{And}(a, b, c) = (\nu t, f)(\overline{b} \langle t, f \rangle.(
+        f.\textit{False}(a) + t.\overline{c} \langle t, f \rangle.(
+            f.\textit{False}(a) + t.\textit{True}(b)
+        )
+    ))\]
+    We illustrate this with the following reduction:
+    \[\textit{And}(a, b, c) \mid \textit{True}(b) \mid \textit{False}(c)\]
+    % TODO: Reduce to True(a)
+
+    We will now use a similar idea to represent natural numbers. It is more direct than in $\lambda$-calculus since we do not need \textit{pair}. We define it recursively, with
+    \begin{align*}
+        Z(n_0) &= n_0(z, s).\overline{z} \\
+        S(n_k, N(n_{k-1})) &= (\nu \ n_{k-1})(n_k(z, s).\overline{s} \langle n_{k-1} \rangle \mid N(n_{k-1}))
+    \end{align*}
+    This way, we represent the value $\textit{One}$ as follows:
+    \[\textit{One}(n_1) = S(n_1, Z(n_0)) = (\nu \ n_1)(n_0(z, s) \overline{s} \langle n_1 \rangle \mid n_1(z, s).\overline{z})\]
+    
+    Like \textit{Cond} for booleans, we can define a case-analysis process for natural numbers, as follows:
+    \[\textit{Case}(P, Q)(a, n) = (\nu \ z, s)\overline{a} \langle z, s \rangle.(z.P + s(n).Q(n)).\]
+    The process \textit{Cases} interacts with a number located at $a$. If it is zero, it will next perform $P$; if it is instead $S(n)$, then it will continue as $Q(n)$. Using this, we can define the \textit{IsZero} process:
+    \[\textit{IsZero}(a, n) = \textit{Cases}(\textit{True}(a), \textit{False}(a))(a, n).\]
+    % TODO: IsZero(a, n) | Zero \to^* True(a)
+    % TODO: IsZero(a, n) | One(n) \to^* False(a) | G (garbage; cannot interact with anything)
+
+    We will now define the \textit{even} process in $\pi$-calculus. Formally, the \textit{even} function can be defined as follows:
+    \begin{align*}
+        \textit{even}(Z) &= \textit{true} \\
+        \textit{even}(S(n)) &= \textit{not}(\textit{even}(n))
+    \end{align*}
+    In $\pi$-calculus, we can define \textit{Even} using replication. This is given as follows:
+    \begin{align*}
+        \textit{Even} &= !(\textit{even}(a, n).\textit{Cases}(\textit{True}(a), 
+            (\nu \ b)(\textit{Not}(a, b) \mid \overline{\textit{even}} \langle b, m \rangle)(n, m)
+        ))
+    \end{align*}
+    The channel where we check is \textit{even}. The value that we are checking is $n$, and the result is outputted into channel $a$.
+    % TODO: Even(Z) \to^* True(a), Even(S(Z)) \to^* False
+
+    The example of the even function looks complicated because it combined two ideas:
+    \begin{itemize}
+        \item the encoding of natural numbers as processes; and
+        \item the use of replication to express a recursive function definition.
+    \end{itemize}
+    We can explain the second point more easily if we assume that we extend $\pi$-calculus with integers, booleans, expressions formed from standard operations, reduction of boolean and integer expressions, and a condition construct
+    \[\textit{if } e \textit{ then } P \textit{ else } Q.\]
+    It has the following reduction rules:
+    \[\textit{if } \texttt{true} \textit{ then } P \textit{ else } Q \to P \qquad \textit{if } \texttt{false} \textit{ then } P \textit{ else } Q \to Q \]
+    \[\frac{e \to e'}{\textit{if } e \textit{ then } P \textit{ else } Q \to \textit{if } e' \textit{ then } P \textit{ else } Q}\]
+    That way, we can write the \textit{even} process as follows:
+    \[\textit{Even} = !(
+        \textit{even}(n).(\textit{if IsZero(n) then }\texttt{true} \textit{ else not(Even(n-1))})
+    )\]
+    We can write the factorial function in a similar manner:
+    \[\textit{Fact} = !(
+        \textit{fact}(a, n).if isZero(n) then \overline{a} \langle 1 \rangle 
+        else (\nu \ b)(\overline{fact} \langle b, n-1 \rangle \mid b(x).\overline{a} \langle n \cdot x \rangle)
+    )\]
+    % TODO: Check that fact(a, 1) = \overline{a} \langle 1 \rangle \mid Fact
+
+    Note that the functions defined above consume the number they interact with. This makes it impossible to define functions that use their arguments more than once. It is possible to define persistent versions of the booleans and natural numbers, by using replication, e.g. $\textit{True}(a) = !(a(t, f).\overline{t})$.
+
+    Using these examples, and a formal proof, we can see that $\pi$-calculus can express all computable functions. It is possible to prove this by defining a translation from $\lambda$-calculus into $\pi$-calculus, or by directly showing that all recursive functions on natural numbers can be defined in $\pi$-calculus.
+
+    There is an argument that $\pi$-calculus is more fundamental than $\lambda$-calculus because $\pi$-calculus can easily express functional behaviour in terms of communication, whereas modeling concurrency behaviour in $\lambda$-calculus would require elaborate encodings.
+
 
 \end{document}
