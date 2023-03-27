@@ -840,26 +840,107 @@
         \[\hat{x}_n = \langle x, u_n \rangle = \sum_{m=1}^\infty \langle y_n u_n, u_m \rangle = y_n \sum_{m=1}^\infty \langle u_m , u_n \rangle = y_n.\]
         So, $T$ is surjective, meaning that $\mathcal{H}$ is unitarily isomorphic to $\ell^2$.
     \end{proof}
+
+    % TODO: Fourier Analysis business
     \newpage
 
     \section{Adjoint Operators}
     \begin{proposition}
         Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be bounded. Then, there exists a unique bounded operator $T^* \colon \mathcal{H} \to \mathcal{H}$ such that $\langle Tx, y \rangle = \langle x, T^*y \rangle$ for all $x, y \in \mathcal{H}$.
     \end{proposition}
-    % \begin{proof}
-        
-    % \end{proof}
+    \begin{proof}
+        % TODO: Proof by Riesz Representation Theorem
+    \end{proof}
 
     \begin{definition}
         Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be bounded. Then, the map $T^*$ is the \emph{adjoint} of $T$.
     \end{definition}
 
+    % TODO: Unitary = Isometry by the Parallelogram Law
+
     \begin{proposition}
-        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be a map. Then, $T$ is unitary if and only if $T$ is bijectve, with $T^{-1} = T^*$.
+        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be a bijective map. Then, $T$ is unitary if and only if $T^{-1} = T^*$.
     \end{proposition}
     \begin{proof}
-        
+        First, assume that $T$ is bijective with $T^{-1} = T^*$. In that case, for $x, y \in \mathcal{H}$, we find that
+        \[\langle Tx, Ty \rangle = \langle x, T^*T y \rangle = \langle x, y \rangle.\]
+        Hence, $T$ is unitary.
+
+        Now, assume that $T$ is unitary, and let $y \in \mathcal{H}$. In that case, for all $x \in \mathcal{H}$,
+        \[\langle x, T^{-1} y \rangle = \langle Tx, TT^{-1} y\rangle = \langle x, T^*y \rangle.\]
+        Hence, $T^{-1}y = T^*y$, meaning that $T^{-1} = T^*$.
     \end{proof}
+
+    \begin{definition}
+        Let $\mathcal{H}$ be a Hilbert space and let $P \colon \mathcal{H} \to \mathcal{H}$ be a bounded operator. We say that $P$ is an \emph{orthogonal projection} if $P = P^2 = P^*$.
+    \end{definition}
+    \newpage
+
+    \section{Compact Operators}
+    \begin{definition}
+        Let $V, W$ be normed vector spaces and let $T \colon V \to W$ be a linear operator. We say that $T$ is \emph{compact} if for every bounded sequence $(v_n)_{n=1}^\infty$ in $V$, the sequence $(Tv_n)$ has a convergent subsequence.
+    \end{definition}
+
+    \begin{proposition}
+        Let $\lambda_1, \dots, \lambda_n \in \mathbb{C}$, and define the map $T \colon \ell^p \to \ell^p$ by
+        \[Tx = (\lambda_1 x_1, \dots, \lambda_n x_n, 0, \dots).\]
+        Then, $T$ is compact.
+    \end{proposition}
+    \begin{proof}
+        We know that the image of $T$ is finite-dimensional. So, let $(x^{(k)})_{k=1}^\infty$ be a sequence in $\ell^p$. We know that $(Tx^{(k)})$ is a sequence in $\ell^p$ with only the first $n$ entries non-zero. Moreover, since 
+        \[\lVert T \rVert = \max(\lambda_1, \dots, \lambda_n),\]
+        we find that $(Tx^{(k)})$ is bounded. Hence, we conclude that $(Tx^{(k)})$ has a convergent subsequence, since it can be thought of as a bounded sequence in $\mathbb{C}^n$.
+    \end{proof}
+
+    \begin{proposition}
+        Let $V, W$ be normed vector spaces and let $T \colon V \to W$ be a compact operator. In that case, $T$ is bounded.
+    \end{proposition}
+    \begin{proof}
+        Assume that $T$ is not bounded. In that case, there exists a sequence $(v_n)_{n=1}^\infty$ in $V$ such that $\lVert Tv_n \rVert = n$ for all $n \in \mathbb{Z}_{\geq 1}$. In that case, for $m, n \in \mathbb{Z}_{\geq 1}$ with $m \geq n$,
+        \[\lVert Tv_m - Tv_n \rVert \geq |\lVert Tv_m \rVert - \lVert Tv_n \rVert| = m - n.\]
+        Hence, $(Tv_m)$ cannot have a convergent subsequence.
+    \end{proof}
+
+    \begin{proposition}
+        Let $V$ be a normed vector space and $W$ a Banach space. Then, the space of compact operators $K(V, W)$ is a closed subspace of the bounded operators $B(V, W)$.
+    \end{proposition}
+    \begin{proof}
+        We know that $K(V, W)$ is a subspace of $B(V, W)$. Now, let $(T_n)_{n=1}^\infty$ be a sequence in $K(V, W)$ that converges to some $T \in B(V, W)$. We show that $T$ is compact. So, let $(x_n)_{n=1}^\infty$ be a bounded sequence in $V$. We show that $Tx_n$ admits a Cauchy subsequence. So, let $\varepsilon > 0$. There exists a $c > 0$ such that $\lVert x_n \rVert \leq c$ for all $n \in \mathbb{Z}_{\geq 1}$. We know that $T_n \to T$, so there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$ then 
+        \[\lVert T_n - T \rVert < \frac{\varepsilon}{3c}.\]
+        We know that $T_N$ is compact. Hence, $(Tv_n)$ has a convergent subsequence $(Tv_{k_n})$. So, there exists a $K \in \mathbb{Z}_{\geq 1}$ such that for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq K$, then 
+        \[\lVert T_N x_{k_m} - T_N x_{k_n} \rVert < \frac{\varepsilon}{3}.\]
+        Then, for $m, n \in \mathbb{Z}_{\geq 1}$, if $m, n \geq K$, we find that
+        \begin{align*}
+            \lVert Tx_{k_m} - Tx_{k_n} \rVert &\leq \lVert T x_{k_m} - T_N x_{k_m} \rVert + \lVert T_N x_{k_m} - T_N x_{k_n} \rVert + \lVert T_N x_{k_n} - T x_{k_n} \rVert \\
+            &= \lVert T - T_N \rVert \lVert x_{k_m} \rVert + \lVert T x_{k_m} - T_N x_{k_m} \rVert + \lVert T_N- T \rVert \lVert  x_{k_n} \rVert \\
+            &< \frac{\varepsilon}{3c} \cdot c + \frac{\varepsilon}{3} + \frac{\varepsilon}{3c} \cdot c = \varepsilon.
+        \end{align*}
+        So, $(Tx_{k_n})$ is Cauchy. Since $W$ is complete, this implies that it is a convergent subsequence of $(Tx_n)$. Hence, $T$ is compact.
+    \end{proof}
+
+    \begin{proposition}
+        Let $(\lambda_n)_{n=1}^\infty$ be a bounded sequence in $\mathbb{C}$. Then, the function $T \colon \ell^p \to \ell^p$ by 
+        \[Tx = (\lambda_1x_1, \lambda_2x_2, \dots)\]
+        is compact if and only if $\lambda x_n \to 0$.
+    \end{proposition}
+    \begin{proof}
+        We note that for $x \in \ell^p$,
+        \[\sum_{n=1}^\infty |\lambda_n x_n|^p \leq \sup_{n=1}^\infty |\lambda_n|^p \sum_{n=1}^\infty |x_n|^p < \infty.\]
+        Hence, $T$ is well-defined. Now, for each $N \in \mathbb{Z}_{\geq 1}$, define the map $T_N \colon \ell^p \to \ell^p$ by 
+        \[T_N x = (\lambda_1 x_1, \dots, \lambda_n x_n, 0, \dots).\]
+        By the result above, we know that $T_N$ is compact. 
+
+        We claim that for all $N \in \mathbb{Z}_{\geq 1}$,
+        \[\lVert T - T_N \rVert = \sup_{n=N+1}^\infty |\lambda_n|.\]
+        % TODO
+
+        % TODO: Then show that if T_N \not\to T, then it must diverge
+    \end{proof}
+
+    \begin{theorem}[Spectral Theorem]
+        Let $\mathcal{H}$ be a Hilbert space and let $T \colon \mathcal{H} \to \mathcal{H}$ be a compact, self-adjoint operator in $\mathcal{H}$. Then, there exists an orthonormal basis for $\mathcal{H}$ consisting of eigenvectors of $T$. In particular, the orthogonal complement of $\ker (T)$ admits a countably infinite (or finite), orthonormal basis $(x_n)_{n=1}^\infty$ of eigenvectors of $T$, with corresponding eigenvalues $\lambda_n \to 0$ such that 
+        \[Tx = \sum_{k=1}^\infty \lambda_k \langle y, x_k \rangle x_k.\]
+    \end{theorem}
 
 \end{document}
 
