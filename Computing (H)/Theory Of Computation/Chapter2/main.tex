@@ -392,6 +392,157 @@
     Using these examples, and a formal proof, we can see that $\pi$-calculus can express all computable functions. It is possible to prove this by defining a translation from $\lambda$-calculus into $\pi$-calculus, or by directly showing that all recursive functions on natural numbers can be defined in $\pi$-calculus.
 
     There is an argument that $\pi$-calculus is more fundamental than $\lambda$-calculus because $\pi$-calculus can easily express functional behaviour in terms of communication, whereas modeling concurrency behaviour in $\lambda$-calculus would require elaborate encodings.
+    \newpage
 
+    \section{Equivalence of Process}
+    Part of the motivation for the topic of process calculus is to be able to reason about \emph{communicating concurrent systems}: to specify how they behave and verify that they behave correctly.
 
+    The first step is to define the syntax and operational semantics (the reduction relation), which we have done. We have also seen how to define some interesting computational scenarios involving concurrency and communication.
+
+    We will now introduce a theory of equivalence of processes, which means equivalence of ongoing interactive behaviour (in contrast, to equivalence of a final result, as in $\lambda$-calculus).
+
+    Previously, we define the processes $\textit{True}(x)$ and $\textit{False}(x)$, and $\textit{Not}(x, y)$. We would like to have a theory in which
+    \[(\nu \ y)(\textit{Not}(x, y) \mid \textit{True}(y)) = \textit{False}(x).\]
+    The fact that $\textit{False}(x)$ represents the boolean value \textit{false} is to do with the way it interacts on the channel $x$, so the definition of equivalent must take that into account. Moreover, applying \texttt{Not} twice should be the identity function on booleans, i.e.
+    \[x(t, f).\overline{y} \langle t, f \rangle = (\nu \ z)(\textit{Not}(x, z) \mid \textit{Not}(z, y))\]
+
+    To develop the theory of equivalence, we will simplify $\pi$-calculus by assuming that all messages are empty. To reduce syntax, we will omit the empty messages and just write $x$ or $\overline{x}$. We will refer to $x$ and $\overline{x}$ as actions. This means that we are working in an earlier process calculus called CCS-calculus of Communication Systems. We will start with examples and then give proper definitions.
+
+    Reductions of the form $P \to Q$ tell us how a process evolves by \emph{internal} communication. We need to be able to describe \emph{potential} interaction between a process and its environment. We do this by introducing \emph{labelled} transitions, e.g.
+    \[a.P \xrightarrow{a} P \qquad \overline{a}.Q \xrightarrow{\overline{a}} Q\]
+    We can describe actual interactions using $\tau$ transitions, e.g.
+    \[a.P \mid \overline{a}.Q \xrightarrow{\tau} P \mid Q\]
+
+    We will now define labelled transitions. Let $\alpha$ range over $\{a, \overline{a}, \tau\}$. The the inference rules for labelled transitions are given as follows:
+    \[\overline{\alpha.P \xrightarrow{\alpha} P}\]
+    \[\frac{P \xrightarrow{a} P' \quad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{P \mid Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P \mid Q \xrightarrow{\alpha} P \mid Q'}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{P + Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P + Q \xrightarrow{\alpha} P \mid Q'}\]
+    \[\frac{P \xrightarrow{\alpha} P' \quad \alpha \in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
+
+    We can now talk about \emph{traces} of a process, which are its possible sequences of actions. The empty trace $\epsilon$ is always a possibility. We look at some examples:
+    \begin{itemize}
+        \item $a.b.0$ has traces $\epsilon$, $a$, $ab$;
+        \item $a.0 + b.0$ has traces $\epsilon$, $a$, $b$;
+        \item $a.\overline{b}.0 + b.0$ has traces $\epsilon$, $a$, $b$, $a\overline{b}$; and
+        \item $a.b.0 + b.\overline{c}.0 + \overline{c}.0$ has traces $\epsilon$, $a$, $b$, $\overline{c}$, $ab$, $b\overline{c}$.
+    \end{itemize}
+
+    We can show the labelled transitions of a process in a diagram, with or without the process terms. We can then read off the traces. For example, the process $a.\overline{b}.0 + b.0$ corresponds to the following figure:
+    % TODO: Add figure
+
+    A simple equivalence between processes is \emph{trace equivalence}. We say that $P =_{tr} Q$ if they have the same traces. For example, $(\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ and $a.\tau.c.0$ are trace equivalent since they have the same traces:
+    % TODO: Add figure
+
+    There is an issue with trace equivalence- it is too weak. To see this, consider the two processes $P = a.b.0 + a.c.0$ and $Q = a.(b.0 + c.0)$. They have the following trace diagrams:
+    % TODO: Add figure
+    Both the processes have traces $\epsilon$, $a$, $ab$ and $ac$. Hence, they are trace equivalent. However, $P$ can go into a state in which only one of $b$ and $c$ is available, whereas $Q$ offers both $b$ and $c$ from the same state. 
+
+    Next, define $R = \overline{a}.\overline{b}.0$. We have that $Q \mid R$ can communicate on $a$ then $b$, and both processes reach $0$. On the other hand, $P \mid R$ can communicate with $a$, with $P$ becoming either $b.0$ or $c.0$. In the second case, no further communication is possible. This is a deadlock. We would like a definition of equivalence in which $P$ and $Q$ are \emph{not} equivalent.
+    % TODO: Illustrate using reduction.
+
+    To do this, we define \emph{bisimulation}. This concept is fundamental in process calculus and concurrency theory. There are many forms of it. We look at \emph{strong bisimulation}. The idea is that for processes $P$ and $Q$ to be bisimilar, it must be that:
+    \begin{itemize}
+        \item for any action $\alpha \in \{a, \overline{a}, \tau\}$, if $P \xrightarrow{\alpha} P'$, then there is a $Q'$ such that $Q \xrightarrow{\alpha} Q'$ and $P'$ and $Q'$ are bisimilar;
+        \item this holds the other way as well, i.e. when $Q \xrightarrow{\alpha} Q'$, then there exists a $P'$ bisimilar to $Q'$ such that $P \xrightarrow{\alpha} P'$ as well.
+    \end{itemize}
+
+    We now consider the processes $P = (\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ and $Q = a.\tau.c.0$. We previously saw that the two processes were trace equivalent. We will now see that they are also bisimilar, since they evolve in the following manner:
+    % TODO: Draw transition figure (and label each one)
+
+    Now, we can work from the end to prove that $P$ and $Q$ are bisimilar. We use the symbol $\sim$ for strong bisimulation. In this case, $P_3 \sim Q_3$ because neither of them has any transitions; they are both structurally congruent to $0$. So, there is nothing to check here. Now, consider $P_2$ and $Q_2$. We have $P_2 \xrightarrow{c} P_3$, which can be matched by $Q_2 \xrightarrow{c} Q_3$, and we know that $P_3 \sim Q_3$. In the other direction, the only transition of $Q_2$ is $Q_2 \xrightarrow{c} Q_3$, which can equally be matched by $P_2 \xrightarrow{c} P_3$, with $P_3 \sim Q_3$.
+
+    Similarly, we can show that $P_1 \sim Q_1$- the only transition of $P_1$ is $P_1 \xrightarrow{\tau} P_2$ from communication on $b$. This can be matched by $Q_1 \xrightarrow{\tau} Q_2$, and we know that $P_2 \sim Q_2$. In the other direction, the only transition of $Q_1$ is $Q_1 \xrightarrow{\tau} Q_2$, which can be matched by $P_1 \xrightarrow{\tau} P_2$, and we know that $P_2 \sim Q_2$.
+
+    Finally, we consider the transitions of $P$ and $Q$ in the same way. We can see that each process has an $a$-transition that can match the $a$-transition of the other process, resulting in $P_1$ and $Q_1$, with $P_1 \sim Q_1$. We conclude that $P \sim Q$.
+
+    Now, consider $P = a.b.0 + a.c.0$ and $Q = a.(b.0 + c.0)$. We saw that $P$ and $Q$ were trace equivalent. However, they are not bisimilar- consider the trace diagram for $P$ and $Q$.
+    % TODO: Add figure
+    We see that $P$ has two transitions- $P \xrightarrow{a} P_1$ and $P \xrightarrow{a} P_2$. We can match $P \xrightarrow{a} P_1$ by $Q \xrightarrow{a} Q_1$, so we would need $P_1 \sim Q_1$. Also, $P \xrightarrow{a} P_2$ is matched by $Q \xrightarrow{a} Q_1$. But, $Q_1$ has a transition $Q_1 \xrightarrow{b} 0$, which cannot be matched by $P_2$. So, we cannot have $P \sim Q$.
+
+    We have found two processes that are trace equivalent but not strongly bisimilar. Strong bisimulation is a better definition of equivalence when we have non-determinism. This is because it takes into account how a process can interact with other processes. If two processes are strongly bisimilar, then they are also trace equivalent. If two deterministic processes are trace equivalent, then they are also strongly bisimilar.
+
+    Note that the term `strong' means that we include $\tau$ transitions when matching. Sometimes, this is undesirable because $\tau$ transitions are supposed to be internal unobservable actions. There is another form of equivalence, \emph{weak bisimulation}, which ignores $\tau$ transitions.
+
+    We will now aim to define strong bisimulation. A first attempt might be the following:
+    \begin{definition}
+        We say that $P$ and $Q$ are \emph{strongly bisimilar}, denoted $P \sim Q$ if for every action $\alpha$:
+        \begin{itemize}
+            \item if $P \xrightarrow{\alpha} P'$, then there is a $Q'$ such that $Q \xrightarrow{\alpha} Q'$ and $P' \sim Q'$; and
+            \item if $Q \xrightarrow{\alpha} Q'$, then there is a $P'$ such that $P \xrightarrow{\alpha} P'$ and $P' \sim Q'$.
+        \end{itemize}
+    \end{definition}
+    This definition is recursive in nature, but does not have a base case. Moreover, there is no reason that $P'$ and $Q'$ are 'smaller' than $P$ and $Q$.
+
+    For instance, consider the process $P = !a.0$. We want $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
+    \[P \xrightarrow{a} 0 \mid !a.0 \equiv 0 \mid P.\]
+    Applying the attempted definition of strong bisimulation to $P$ and $P$, we see that they can match each other's actions. Checking the subsequent processes tells us that $P \sim P$ depends on $0 \mid P \sim 0 \mid P$. This is circular and not a valid definition. Moreover, the reduced process is equivalent to itself, meaning that it does not get smaller.
+
+    Instead of defining bisimulation for $\pi$-calculus processes, we can work with more abstract \emph{labelled transition systems} (LTS). An LTS is a directed graph in which edges are labelled with actions. We use the transition notation
+    \[m \xrightarrow{a} n\]
+    where $m$ and $n$ are nodes in the graph. We can think of an LTS as a transition diagram for processes, in which the nodes have $\pi$-calculus processes associated with them.
+
+    The first step is to consider a general relation $\mathcal{R}$ on processes (or nodes of an LTS). If $P_1$ and $P_2$ are processes related by $\mathcal{R}$, we write $(P_1, P_2) \in \mathcal{R}$ or $P_1 \mathcal{R} P_2$. Now, we define the property of being a strong bisimulation, which is a property that a relation might or might not have.
+    \begin{definition}
+        A relation $\mathcal{R}$ on processes (or on nodes of an LTS) is a \emph{strong bisimulation} if whenever $P \mathcal{R} Q$, for every action $\alpha$, it is the case that
+        \begin{itemize}
+            \item if $P \xrightarrow{\alpha} P'$, then there is $Q'$ such that $Q \xrightarrow{\alpha} Q'$, and $P' \mathcal{R} Q'$; and
+            \item if $Q \xrightarrow{\alpha} Q'$, then there is $P'$ such that $P \xrightarrow{\alpha} P'$, and $P' \mathcal{R} Q'$.
+        \end{itemize}
+    \end{definition}
+
+    Consider a labelled transition system as follows.
+    % TODO: Show
+    \begin{itemize}
+        \item The empty relation $\varnothing$ is a strong bisimulation- this is trivially the case.
+        \item The relation $\{(P_2, Q_2)\}$ is not a strong bisimulation- we have $P_2 \xrightarrow{b} P_2$, but in $Q_2$, the only $b$-transition is to $Q_3$, but $(P_2, Q_3) \not\in \mathcal{R}$.
+        \item The relation $\{(P_2, P_2)\}$ is a strong bisimulation since it can only reduce to itself.
+        \item The relation $\{(P_2, Q_2), (P_2, Q_3)\}$ is a strong bisimulation- we have $P_2 \xrightarrow{b} P_2$ matching $Q_2 \xrightarrow{b} Q_3$ and $Q_3 \xrightarrow{b} Q_2$; and $P_2 \xrightarrow{a} P_2$ matching $Q_2 \xrightarrow{a} Q_2$ and $Q_3 \xrightarrow{a} Q_3$.
+        \item The relation $\{(P_2, Q_2), (P_2, Q_3), (Q_2, P_2), (Q_3, P_2)\}$ is a strong bisimulation- we have added the symmetrical cases.
+        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3)\}$ is a strong bisimulation since $P_1 \xrightarrow{c} P_2$ is matched by $Q_1 \xrightarrow{c} Q_2$.
+        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3), (Q_1, P_1), (Q_2, P_2), (Q_3, P_2)\}$ is a strong bisimulation.
+    \end{itemize}
+
+    For a given LTS (or a set of processes), there can be several relations that satisfy the conditions to be a strong bisimulation. We say that \emph{strong bisimilarity}, denoted by $\sim$, is the largest strong bisimulation. We say that processes $P$ and $Q$ are strong bisimilar, denoted $P \sim Q$, if $(P, Q)$ is in the largest strong bisimulation. To prove this, it is sufficient to find any bisimulation containing $(P, Q)$.
+
+    We have previously used inductive definitions, e.g. the definitions of reduction and typing judgments. An inductive definition is when we define a set or relation to be the smallest entity satisfying certain conditions. Ordinary recursive function definitions are also in this category. A \emph{coninductive} definition is when we define a set or a relation to be the largest entity satisfying certain conditions, such as strong bisimilarity.
+
+    % TODO: Exercise => find the largest strong bisimulation in this example!
+
+    We will now look at processes in the syntax $\pi$-calculus, rather than abstract LTS. When defining labelled transitions for $\pi$-calculus, we did not take structural congruence into account. So, if we want to show something like $P \mid Q$ and $Q \mid P$ to be bisimilar, we have to prove it by constructing a strong bisimulation that contains $(P \mid Q, Q \mid P)$. 
+    
+    \begin{proposition}
+        Let $P$ and $Q$ be processes. Then $P \mid Q \sim Q \mid P$.
+    \end{proposition}
+    \begin{proof}
+        To prove this, it suffices to show that there is a relation containing $(P \mid Q, Q \mid P)$. So, define the relation
+        \[\mathcal{R} = \{(P \mid Q, Q \mid P) \mid P, Q \textrm{ processes}\}.\]
+        We show that $\mathcal{R}$ is a strong bisimulation. So, let $(P \mid Q, Q \mid P) \in \mathcal{R}$ There are 3 transitions for $P \mid Q$:
+        \begin{itemize}
+            \item First assume that $P \mid Q \xrightarrow{\alpha} P' \mid Q$ because $P \xrightarrow{\alpha} P'$. In that case, we find that $Q \mid P \xrightarrow{\alpha} Q \mid P'$ by definition of parallel composition. We know that $(P' \mid Q, Q \mid P') \in \mathcal{R}$ by definition of $\mathcal{R}$.
+            
+            \item The same result follows if $P \mid Q \xrightarrow{\alpha} P \mid Q'$ because $Q \xrightarrow{\alpha} Q'$.
+            
+            \item Finally, assume that $P$ is $a.P_1 + P_2$ and $Q$ is $\overline{a}.Q_1 + Q_2$, and $P \mid Q \xrightarrow{\tau} P_1 \mid Q_1$. Then, we also have $Q \mid P \xrightarrow{\tau} Q_1 \mid P_1$, and we have $(P_1 \mid Q_1, Q_1 \mid P_1) \in \mathcal{R}$.
+        \end{itemize}
+        So, it follows that $\mathcal{R}$ is a strong bisimulation. Since $(P \mid Q, Q \mid P) \in \mathcal{R}$, we conclude that $P \mid Q \sim Q \mid P$.
+    \end{proof}
+    \noindent We can do the same thing to show that structural congruence is included within strong bisimulation.
+    % TODO: P \mid 0 \sim P
+
+    Now, let $P = (\nu \ b, c)((a.b.0 + c.d.0) \mid \overline{b}.0)$ and $Q = a.\tau.0$. We show that $P$ and $Q$ are strongly bisimilar. In $P$, $b$ and $c$ are private channels, so we cannot transition using these channels. This means that our only option is:
+    \[P \xrightarrow{a} P_1 = (\nu \ b, c)(b.0 \mid \overline{b}.0).\]
+    Then, we have
+    \[P_1 \xrightarrow{\tau} P_2 = (\nu \ b, c)(0 \mid 0).\]
+    So, the relation we want is:
+    \[\mathcal{R} = \{(P, Q), (P_1, \tau.0), (P_2, 0)\}.\]
+    We note that $P_2$ and $0$ are strongly bisimilar since they has no transitions. This means that $\mathcal{R}$ is a strong bisimulation. Hence, $P$ and $Q$ are strongly bisimilar.
+
+    There are many extensions to strong bisimulation, including:
+    \begin{itemize}
+        \item allowing messages, including mobile names- this requires a more complex version of the labelled transition rules; and
+        \item defining \emph{weak bisimulation}, which ignores $\tau$-transitions. This allows internal interaction to be ignored and focuses on observable input-output.
+    \end{itemize}
+    
 \end{document}
