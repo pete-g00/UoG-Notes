@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{mathtools}
 
 \usepackage{booktabs}
 \usepackage{fancyhdr}
@@ -15,6 +16,10 @@
 \usepackage[linewidth=1pt]{mdframed}
 \usepackage{multicol}
 \usepackage{fancyvrb}
+\usepackage{xcolor}
+
+\usepackage[usestackEOL]{stackengine}
+\stackMath
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -231,7 +236,7 @@
     \end{align*}
     The first one allows us to substitute via communication, while the second one takes the $\tau$ choice (which can always be chosen). We extend these using the following inference rules:
     \[\frac{P \to Q}{(\nu \ x)P \to (\nu \ x)Q} \textrm{RNew} \qquad \frac{P \to Q}{P \mid R \to Q \mid R} \textrm{RPar}\]
-    \[\frac{P' \equiv P \quad P \to R \quad Q \equiv Q'}{P' \equiv Q'} \textrm{RStruct}\]
+    \[\frac{P' \equiv P \qquad P \to R \qquad Q \equiv Q'}{P' \equiv Q'} \textrm{RStruct}\]
     \newpage
 
     \section{Modelling and Computation}
@@ -274,7 +279,7 @@
     Finally, we define the \textit{System}, with the starting state $\textit{Trans}_1$. This is given by:
     \begin{align*}
         \textit{System}_1 &= (\nu \ \textit{talk}_1, \textit{switch}_1, \textit{gain}_1, \textit{lose}_1, \textit{talk}_2, \textit{switch}_2, \textit{gain}_2, \textit{lose}_2) \\
-        &\quad (\textit{Car}(\textit{talk}_1, \textit{switch}_1) \mid \textit{Trans}_1 \mid \textit{IdTrans}_2 \mid \textit{Control}_1)
+        &\qquad (\textit{Car}(\textit{talk}_1, \textit{switch}_1) \mid \textit{Trans}_1 \mid \textit{IdTrans}_2 \mid \textit{Control}_1)
     \end{align*}
     where for $i \in \{1, 2\}$,
     \begin{align*}
@@ -415,11 +420,11 @@
 
     We will now define labelled transitions. Let $\alpha$ range over $\{a, \overline{a}, \tau\}$. The the inference rules for labelled transitions are given as follows:
     \[\overline{\alpha.P \xrightarrow{\alpha} P}\]
-    \[\frac{P \xrightarrow{a} P' \quad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
+    \[\frac{P \xrightarrow{a} P' \qquad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \qquad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{P \mid Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P \mid Q \xrightarrow{\alpha} P \mid Q'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{P + Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P + Q \xrightarrow{\alpha} P \mid Q'}\]
-    \[\frac{P \xrightarrow{\alpha} P' \quad \alpha \in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
-    \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
+    \[\frac{P \xrightarrow{\alpha} P' \qquad \alpha \in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \qquad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
 
     We can now talk about \emph{traces} of a process, which are its possible sequences of actions. The empty trace $\epsilon$ is always a possibility. We look at some examples:
     \begin{itemize}
@@ -544,5 +549,275 @@
         \item allowing messages, including mobile names- this requires a more complex version of the labelled transition rules; and
         \item defining \emph{weak bisimulation}, which ignores $\tau$-transitions. This allows internal interaction to be ignored and focuses on observable input-output.
     \end{itemize}
+    \newpage
+
+    \section{Types in $\pi$-calculus}
+    In general, static typechecking aims to eliminate errors. In terms of $\pi$-calculus, we want to ensure that whenever a message is sent, the sender and receiver agree on its structure. In particular, we would like to eliminate processes such as:
+    \begin{itemize}
+        \item $\overline{a} \langle u, v \rangle.0 \mid a(x).P$, where the two subprocesses do not agree on the number of parameters; and
+        \item $\overline{a} \langle \textit{true}, \textit{false} \rangle.0 \mid a(x, y).\overline{a} \langle x + y \rangle.0$, where the two subprocesses do not agree on type.
+    \end{itemize}
+
+    We will now look at \emph{simple} type system for $\pi$-calculus. It deals with these two issues by specifying:
+    \begin{itemize}
+        \item the number of components of messages on the channel and
+        \item the type of each component.
+    \end{itemize}
+    We illustrate this with an example. So, assume that the channel $a$ is of type $\texttt{Chan}[\textit{int}, \textit{bool}]$, denoted by $a \colon \texttt{Chan}[\textit{int}, \textit{bool}]$. Then,
+    \begin{itemize}
+        \item $\overline{a} \langle 1 + 2, \textit{true} \rangle$ is well-typed;
+        \item $a(x, y).P$ is well-typed if $x \colon \textit{int}$ and $y \colon \textit{bool}$ in $P$; while
+        \item $\overline{a} \langle 1 \rangle$, $\overline{a} \langle true, 1, false \rangle$ and $a(x)$ are incorrect.
+    \end{itemize}
+    Instead, if $a \colon \texttt{Chan}[\texttt{Chan}[\textit{int}]]$. Then, $a(x).x(y).Q$ is well-typed if $y \colon \textit{int}$ in $Q$.
+
+    Formally, types are specified by the following grammar:
+    \begin{align*}
+        T &:: == \texttt{Chan}[T, \dots, T] \\
+        &\mid \textit{bool} \\
+        &\mid \dots,
+    \end{align*}
+    where the final line can be used for any types we would want the $\pi$-calculus to have, e.g. \textit{int}.
+
+    As for $\lambda$-calculus, we modify the syntax of processes so that binding occurences are annotated with types, e.g.
+    \[a(x_1 \colon T_1, \dots, x_n \colon T_n) \qquad (\nu \ x \colon T)\]
     
+    We will consider \emph{polyadic $\pi$-calculus}. This means that a message has zero or more components. We will also assume that we have an expression language which we will not define precisely, but contains primitives such as integers and booleans. We also assume that the expression language has a type system with types \textit{int} and \textit{bool}, along with a reduction relation.
+
+    Now, we define the modified syntax of $\pi$-calculus, including processes $P$, values $v$ and expressions $e$:
+    \begin{align*}
+        P &::= 0  & \textrm{terminated process} \\
+        &\mid \overline{x} \langle e_1, \dots, e_n \rangle.P & \textrm{output/send} \\
+        &\mid x(y_1 \colon T_1, \dots, y_n \colon T_n).P & \textrm{input/receive} \\
+        &\mid (\nu  \ x \colon T)P & \textrm{scope/restriction} \\
+        &\mid P \mid Q & \textrm{parallel composition} \\
+        &\mid P + Q & \textrm{choice} \\
+        &\mid \dots \\
+        v &::= x & \textrm{channel names} \\
+        &\mid \textit{true}, \textit{false} & \textrm{boolean values} \\
+        &\mid \dots \\
+        e &::= v & \textrm{values} \\
+        &\mid e == e & \textrm{equality expressions} \\
+        &\mid \dots
+    \end{align*}
+    The dots allow for expansion of the syntax as required.
+
+    Assuming \emph{call-by-value}, the reduction rule for communication, with polyadic messages, is:
+    \begin{align*}
+        (x(y_1 \colon T_1, \dots, y_n \colon T_n).P + \dots) &\mid 
+        (\overline{x}\langle v_1, \dots, v_n \rangle.P + \dots) \to \\
+        P[y_1 := v_1, \dots, y_n := v_n] &\mid Q
+    \end{align*}
+    If $n = 0$, then we do not send/receive any message- this is synchronisation. If we have a send and a receive on the same channel with different number of components in message, then there is no reduction. This is a communication error. We define the type system in a way that avoids such errors.
+
+    Let $\Gamma = x_1 \colon T_1, \dots, x_n \colon T_n$ be a \emph{typing context or environment}. We have typing judgment for processes and expressions.
+    \begin{itemize}
+        \item The \emph{typing judgment for processes} is $\Gamma \vdash P$ (i.e. under $\Gamma$, $P$ is a process). A process does not have a type- the judgment just says that it uses channels in $\Gamma$ correctly. 
+        \item The \emph{typing judgment for expressions} is $\Gamma \vdash e \colon T$ (i.e. under $\Gamma$, the expression $e$ has type $T$). This is similar to simply typed $\lambda$-calculus. It includes the case where $e$ is just a channel name.
+    \end{itemize}
+    
+    We now define the typing rules. The process $0$ is well-typed in any environment:
+    \[\overline{\Gamma \vdash 0} \textrm{TNil}.\]
+    Well-typed processes can be put in parallel, or used as alternatives.
+    \[\frac{\Gamma \vdash P \qquad \Gamma \vdash Q}{\Gamma \vdash P \mid Q} \textrm{TPar} \qquad \frac{\Gamma \vdash P \qquad \Gamma \vdash Q}{\Gamma \vdash P + Q} \textrm{TPlus}\]
+    An output must send a message of the correct structure.
+    \[\frac{\Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \qquad \Gamma \vdash e_1 \colon T_1, \dots, e_n \colon T_n \qquad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n\rangle.P} \textrm{TOut}\]
+    In an input, the message must have the correct structure, and its components must be used correctly.
+    \[\frac{\Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \qquad \Gamma, y_1 \colon T_1, \dots, y_n \colon T_n \vdash P}{\Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P} \textrm{TIn}\]
+    When a new channel is created, it must be used correctly.
+    \[\frac{\Gamma, x \colon \texttt{Chan}[T_1, \dots, T_n] \vdash P}{\Gamma \vdash (\nu \ x) \colon \texttt{Chan}[T_1, \dots, T_n] P} \textrm{TNew}\]
+
+    We now illustrate the types with an example. So, consider the following processes:
+    \begin{align*}
+        \textit{Server} &= a(x).x(y).\overline{x} \langle y + 1 \rangle.0 \\
+        \textit{Client} &= (\nu \ c)\overline{a} \langle c \rangle.\overline{c} \langle 2 \rangle.c(x).0
+    \end{align*}
+    % TODO: Construct $\Gamma$ such that $\Gamma \vdash \textit{Server} \mid \textit{Client}$
+
+    The simple type system for $\pi$-calculus has issues. In particular, 
+    \begin{itemize}
+        \item deadlock procesess are typeable, e.g. $\overline{b}\langle \textit{true} \rangle.0 \mid c(y \colon \textit{int}).0$; and
+        \item recursive processes are not typeable, even though they should be.
+    \end{itemize}
+    
+    Nonetheless, we will show that the simple type system is safe. This can be done by showing:
+    \begin{itemize}
+        \item type preservation: if $\Gamma \vdash P$ and $P \to Q$, then $\Gamma \vdash Q$;
+        \item absence of immediate communication errors: if $\Gamma \vdash P$ at the top level, $P$ does not have an input and an output in parallel on the same channel with different number of message components (and types).
+    \end{itemize}
+    Proving these theorems allows us to show that well-typed processes do not generate communication errors.
+
+    To prove these theorems, we need some auxiliary results.
+    \begin{lemma}[Substitution in Processes]
+        If $\Gamma, x_1, \colon T_1, \dots, x_n \colon T_n$ and for each $1 \leq i \leq n$, $\Gamma \vdash v_i \colon T_i$, then 
+        \[\Gamma \vdash P[x_1 := v_1, \dots, x_n := v_n].\]
+    \end{lemma}
+    \noindent If $v_i$ are only allowed to be channel names, then we can prove this by induction on the derivation of $\Gamma \vdash P$.
+
+    Next, to handle values in the expression language, we need a similar lemma for substitution in expressions.
+    \begin{lemma}[Substitution in Expressions]
+        If $\Gamma, x_1 \colon T_1, \dots, x_n \colon T_n \vdash e \colon T$ and for $1 \leq i \leq n$, $\Gamma \vdash v_i \colon T_i$, then
+        \[\Gamma \vdash e[x_1 := v_1, \dots, x_n := v_n] \colon T.\]
+    \end{lemma}
+    \noindent This can also be proved using induction.
+
+    Because reduction allows the use of structural congruence, we need to prove that this does not affect typeability.
+    \begin{lemma}
+        If $\Gamma \vdash P$ and $P \equiv Q$, then $\Gamma \vdash Q$.
+    \end{lemma}
+    \noindent We can prove this by structural induction on $\equiv$. In particular, we consider that $P$ is typeable and then show that $Q$ is typeable, and vice versa.
+    \begin{proof}[Proof for scope expansion]
+        The rule for structural congruence tells us that for processes $P$ and $Q$, and a channel $x \not\in FV(P)$,
+        \[(\nu \ x)(P \mid Q) \equiv P \mid (\nu \ x)Q.\]
+        If the left hand side is typeable, then we have
+        \[\cfrac{\Gamma, x \colon T \vdash P \qquad \Gamma, x \colon T \vdash Q}{\cfrac{\Gamma, x \colon T \vdash P \mid Q}{\Gamma \vdash (\nu \ x \colon T)(P \mid Q)}}\]
+        using TPar and then TNew. Hence, we need $\Gamma, x \colon T \vdash P$ and $\Gamma, x \colon T \vdash Q$ for the left hand side to be typeable. Since $x \not\in FV(P)$, we can show that $\Gamma \vdash P$. Hence,
+        \[\cfrac{\Gamma, x \colon T \vdash Q}{\cfrac{\Gamma \vdash P \qquad \Gamma \vdash (\nu \ x \colon T)Q}{\Gamma \vdash P \mid (\nu \ x \colon T)Q}}\]
+        using TNew and then TPar. So, if the left hand side is typeable, then so is the right hand side. Using the reverse argument, we can show that if the right hand side is typeable, then so is the left hand side.
+    \end{proof}
+
+    We now prove type preservation.
+    \begin{theorem}[Type Preservation]
+        If $\Gamma \vdash P$ and $P \to Q$, then $\Gamma \vdash Q$.
+    \end{theorem}
+    We prove this using structural induction on $P \to Q$, by considering each case for the reduction step. In each case, we then analyse the structure of the derivation of $\Gamma \vdash P$ and use the component parts to show that $\Gamma \vdash Q$. The key case is that of communication, where we have
+    \[x(y_1 \colon T_1, \dots, y_n \colon T_n).P \mid \overline{x} \langle v_1, \dots, v_n \rangle.Q \to P[y_1 := v_1, \dots, y_n := v_n] \mid Q.\]
+    We ignore non-deterministic choice for simplicity. The typing derivation of the left hand side has the following form:
+    \[
+    \setstackgap{S}{4pt}
+    \cfrac{
+        \cfrac{\Shortstack[c]
+            {
+                \Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \\
+                \Gamma, y_1 \colon T_1, \dots, y_n \colon T_n  \vdash P 
+            }
+        }{
+            \Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P
+        } \textrm{TIn} \qquad \cfrac{\Shortstack[c]
+            {
+                \Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \\
+                \Gamma \vdash v_1 \colon T_1, \dots, v_n \colon T_n \qquad \Gamma \vdash Q 
+            }
+        }{
+            \Gamma \vdash \overline{x} \langle v_1, \dots, v_n \rangle.Q 
+        } \textrm{TOut}
+    }{
+        \Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P \mid \overline{x} \langle v_1, \dots, v_n \rangle.Q
+    } \textrm{TPar}\]
+    Using the Substitution Lemma 1 and the typing derivations, we get that
+    \[\Gamma \vdash P[y_1 := v_1, \dots, y_n := v_n]\]
+    Using TPar, we can derive that
+    \[\Gamma \vdash P[y_1 := v_1, \dots, y_n := v_n] \mid Q,\]
+    hence the right hand side is well-typed. The other cases use induction in a similar manner.
+
+    We will now give a precise statement that \emph{a well-typed process does not have immediate communication errors}. First, we can use scope expansion to write any process in the form
+    \[(\nu \ x_1) \dots (\nu \ x_n)(P_1 \mid \dots \mid P_n),\]
+    where immediate communications among the $P_i$ are at the top level and not within $\nu$ operators.
+    \begin{theorem}[Absence of immediate communication errors]
+        If 
+        \[\Gamma \vdash (\nu \ x_1 \colon T_1, \dots, x_k \colon T_k)(x(y_1 \colon U_1, \dots, y_r \colon U_r).P \mid \overline{x} \langle v_1, \dots, v_n \rangle.Q)\]
+        then
+        \begin{itemize}
+            \item $n = r$ and
+            \item $\Gamma \vdash v_i \colon U_i$ for all $1 \leq i \leq n$.
+        \end{itemize}
+    \end{theorem}
+    \noindent So, the number of message components is the same as in the input and the output, and the messages/values components are of the types expected by the input.
+    \begin{proof}
+        The typing derivation must have the form
+        \[\Gamma_1 = \Gamma, x_1 \colon T_1, \dots, x_n \colon T_m.\]
+        % TODO: Draw the derivation
+        Considering $\Gamma \vdash x(y_1 \colon U_1, \dots, y_r \colon U_r).P$, $\Gamma_1$ must contain $x \colon \texttt{Chan}[U_1, \dots, U_r]$. Moreover, since $\Gamma \vdash \overline{x} \langle v_1, \dots, v_n \rangle.Q$, we see that $x \colon \texttt{Chan}[U_1, \dots, U_r]$ in the derivation. Hence, $n = r$ and $\Gamma \vdash v_i \colon U_i$ for $1 \leq i \leq n$.
+    \end{proof}
+
+    The simple type system for $\pi$-calculus provides a way of statically checking that communication channels are used consistently throughout a program. This eliminates a certain class of communication error.
+    
+    Several type systems have been developed for the $\pi$-calculus. Some aim to classify channels in more precise ways (input/output, linear, polymorphic, etc.). Others aim to eliminate more complex behavioural errors, such as deadlocks and livelocks. Lastly, behavioural type systems specify \emph{order} and \emph{sequence} of send and receive.
+    
+    \subsection{Advanced Types}
+    We will now look at an advanced type system for $\pi$-calculus that aims to classify channels in a more precise way.
+
+    A fairly straightforward refinement of the simple type system introduces two new channel type constructors:
+    \begin{itemize}
+        \item $\texttt{In}[T_1, \dots, T_n]$ is the type of channels that can be used to \emph{input} messages of type $T_1, \dots, T_n$; and
+        \item $\texttt{Out}[T_1, \dots, T_n]$ is the type of channels that can be used to \emph{output} messages of type $T_1, \dots, T_n$.
+    \end{itemize}
+    Now, types are specified by the following grammar:
+    \begin{align*}
+        T &::= \texttt{Chan}[T_1, \dots, T_n] \\
+        &\mid \texttt{In}[T_1, \dots, T_n] \\
+        &\mid \texttt{Out}[T_1, \dots, T_n] \\
+        &\mid \dots
+    \end{align*}
+    
+    Input/output channel types introduce a notion of \emph{subtyping}. A subtyping relation connects the new constructors and the original constructor:
+    \begin{align*}
+        \texttt{Chan}[T_1, \dots, T_n] &<: \texttt{In}[T_1, \dots, T_n] \\
+        \texttt{Chan}[T_1, \dots, T_n] &<: \texttt{Out}[T_1, \dots, T_n] 
+    \end{align*}
+
+    The following defines the subtyping rules in general- we have reflexivity and transitivity, which make it a partial order:
+    \[\frac{}{T <: T} \textrm{SRefl} \qquad \frac{R <: S \qquad S <: T}{R <: T} \textrm{STrans}\]
+    We also have the rules we saw above:
+    \[\frac{}{\texttt{Chan}[T_1, \dots, T_n] <: \texttt{In}[T_1, \dots, T_n]} \textrm{SChanIn}\]
+    \[\frac{}{\texttt{Chan}[T_1, \dots, T_n] <: \texttt{Out}[T_1, \dots, T_n]} \textrm{SChanOut}\]
+    We have covariance in subtyping with respect to input:
+    \[\frac{S_1 <: T_1 \qquad \dots \qquad S_n <: T_n}{\texttt{In}[S_1, \dots, S_n] <: \texttt{In}[T_1, \dots, T_n]} \textrm{SInIn}\]
+    In terms of programming, consider the types \textit{num} and its subtype \textit{num}. Then, a channel accepting \textrm{num} can accept a value of type \textit{int}. We have contravariance in subtyping with respect to output:
+    \[\frac{T_1 <: S_1 \qquad \dots \qquad T_n <: S_n}{\texttt{Out}[S_1, \dots, S_n] <: \texttt{Out}[T_1, \dots, T_n]} \textrm{SOutSOut}\]
+    In terms of programming, a channel that outputs an \textit{int} can be thought of as a channel that outputs \textit{num}. For subtyping with a general channel, we require both covariance and contravariance:
+    \[\frac{S_1 <: T_1 \qquad \dots \qquad S_n <: T_n \qquad T_1 <: S_1 \qquad \dots \qquad T_n <: S_n}{\texttt{Chan}[S_1, \dots, S_n] <: \texttt{In}[T_1, \dots, T_n]} \textrm{SChanChan}\]
+    To make use of subtyping, the typing judgment can be extended with the subsumption rule:
+    \[\frac{\Gamma \vdash x \colon S \qquad S <: T}{\Gamma \vdash T} \textrm{TSub}\]
+
+    An output must send a message of the correct structure on a channel having an output channel type. The inference rule is now:
+    \[\frac{\Gamma \vdash x \colon {\color{red}\texttt{Out}[T_1, \dots, T_n]} \qquad \Gamma \vdash e_1 \colon T_1, \dots, e_n \colon T_n \qquad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n \rangle.P} \textrm{TOut}\]
+    The change is highlighted in red- we have \texttt{Out} instead of \texttt{Chan}. 
+
+    In an input, the message must have the correct structure and its components must be used correctly.
+    \[\frac{\Gamma \vdash x \colon {\color{red}\texttt{In}[T_1, \dots, T_n]} \qquad \Gamma, y_1 \colon T_1, \dots, y_n \colon T_n \vdash P}{\Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P} \textrm{TIn}\]
+    A channel can only be created of type \texttt{Chan} in TNew; it cannot be the other way round.
+
+    In addition to capabilities of input/output, channel types can be refined by introducing \emph{multiplicities} for linear and shared channels. \emph{Linearity} restricts channel usage exactly once, in accordance with its capability:
+    \begin{itemize}
+        \item linear input type $\ell_i[\cdot]$ can only be used once in input;
+        \item linear output type $\ell_o[\cdot]$ can only be used once in out; and
+        \item linear channel type $\ell_{\textit{Chan}}[\cdot]$ can only be used once in input and output.
+    \end{itemize}
+    Linear types allow for resource-aware programming and have inspired ownership types and unique types in PLs. The updated types are the following:
+    \begin{align*}
+        T &::= \texttt{Chan}[T_1, \dots, T_n] \\
+        &\mid \ell_i[T_1, \dots, T_n] \\
+        &\mid \ell_o[T_1, \dots, T_n] \\
+        &\mid \ell_{\textit{Chan}}[T_1, \dots, T_n] \\
+        &\mid \dots
+    \end{align*}
+
+    In order to respect linearity, a linear type system must keep track of the resources used, without duplicating or discarding any. We need a notion of \emph{type combination} on types, contexts and ultimately on typing rules. We will use the symbol $\uplus$ for the type combination operator, or simply $+$.
+
+    The combination `$\uplus$' of types is a symmetric operation and is defined by the following rules:
+    \begin{align*}
+        \ell_i[T_1, \dots, T_n] \uplus \ell_o[T_1, \dots, T_n] &\triangleq \ell_{\textit{Chan}}[T_1, \dots, T_n] \\
+        \texttt{Chan}[T_1, \dots, T_n] \uplus \texttt{Chan}[T_1, \dots, T_n] &\triangleq \texttt{Chan}[T_1, \dots, T_n] \\
+        \textit{bool} \uplus \textit{bool} &\triangleq \textit{bool} \\
+        T \uplus T' &\triangleq \texttt{undef} & \textrm{otherwise}.
+    \end{align*}
+    Now, we extend `$\uplus$' on typing contexts based on these rules:
+    \[(\Gamma_1 \uplus \Gamma_2)(x) \triangleq \begin{cases}
+        \Gamma_1(x) \uplus \Gamma_2(x) & \textrm{if both } \Gamma_1(x) \textrm{ and } \Gamma_2(x) \textrm{ are defined} \\
+        \Gamma_1(x) & \textrm{if } \Gamma_1(x) \textrm{ is defined but } \Gamma_2(x) \textrm{ is not defined} \\
+        \Gamma_2(x) & \textrm{if } \Gamma_2(x) \textrm{ is defined but } \Gamma_1(x) \textrm{ is not defined} \\
+        \texttt{undef} & \textrm{otherwise}.
+    \end{cases}\]
+    
+    We also add typing rules for linear output and input.
+    \[\frac{\Gamma_0 \vdash x \colon {\color{red}\ell_o[T_1, \dots, T_n]} \qquad \Gamma_1 \vdash e_1 \colon T_1 \quad \dots \quad \Gamma_n \colon  e_n \colon T_n \qquad \Gamma_m \vdash P}{\Gamma_0 \uplus \Gamma_i \uplus \Gamma_m \vdash \overline{x} \langle e_1, \dots, e_n \rangle.P} \textrm{TOut}\]
+    \[\frac{\Gamma_0 \vdash x \colon {\color{red}\ell_i[T_1, \dots, T_n]} \qquad \Gamma_1, y_1 \colon T_1, \dots, y_n \colon T_n \vdash P}{\Gamma_0 \uplus \Gamma_1 \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P} \textrm{TIn}\]
+    Also, when a new channel is created, this must be a linear channel.
+    \[\frac{\Gamma, x \colon {\color{red} \ell_{\textit{Chan}}[T_1, \dots, T_n]} \vdash P}{\Gamma \vdash (\nu \ x) \colon \ell_{\textit{Chan}}[T_1, \dots, T_n] P} \textrm{TNew}\]
+
+    Linear type systems guarantee that resources will be used exactly once. However, a process can be built in such a way that resources are not used at all! For instance, consider the following linear process:
+    \[a \colon \ell_i[\textit{bool}] \vdash (\nu \ b\colon \texttt{Chan}[\textit{bool}] )\overline{b} \langle \textit{false} \rangle.a(x).0\]
+    Although this is a well-typed process under the linear type system, it is deadlocked. Further extension to types and type systems for $\pi$-calculus deal with this, along with lock freedom and termination.
+
 \end{document}

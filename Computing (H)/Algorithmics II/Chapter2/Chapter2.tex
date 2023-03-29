@@ -586,7 +586,7 @@
     Now, we define the suffix tree for some string $S$. We first append $\$$ to the string and construct all the suffixes that satisfy the following properties:
     \begin{itemize}
         \item each edge has a string label;
-        \item all branch nodes have at most 2 children;
+        \item all branch nodes have at least 2 children;
         \item no two children of a branch node have two edges that started with the same character;
         \item there is a bijection between the leaf nodes and the suffixes, i.e. we can descend from the root to a leaf to recover the suffix. The entire label (from root to a node) is called its \emph{path label}.
     \end{itemize}
