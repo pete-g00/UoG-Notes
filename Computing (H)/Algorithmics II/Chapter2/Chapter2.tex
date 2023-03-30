@@ -58,7 +58,7 @@
 
 \lstdefinelanguage{pseudocode}{ 
     keywords={new, return, this, null, if, in, while, else, for, get, set, class, and, or, not, max},
-    ndkeywords={int, char, bool, String, NDFA, void, double, true, false, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
+    ndkeywords={int, char, bool, String, NDFA, void, double, true, false, Set, Line, LineSegment, Point, Rectangle, List, Map, BTree, BNode, VLine, HLine},
     sensitive=true,
     comment=[l]{//},
     morecomment=[s]{/*}{*/},
@@ -1575,7 +1575,7 @@ bool match(String string, NDFA ndfa) {
     Set<NDFAState> y = {ndfa.startState};
     Set<NDFAState> x = extendByEpsilon(y);
     
-    // if the ndfa accepts the empty string, there os a match
+    // if the ndfa accepts the empty string, there is a match
     if (x.contains(ndfa.haltState)) {
         return true;
     }
@@ -1823,11 +1823,37 @@ int lcs(String s1, String s2, int i, int j,
 }
 \end{lstlisting}
     Although this algorithm takes more space, it avoids initialising the table of values- it is truly lazy. This technique is called \emph{virtual initialisation} (inserting values at unpredictable positions and deciding whether an entry is garbage).
-    % TODO: Example?
+    
+    We illustrate virtual initialisation with an example. To keep things simple, we assume that we will only look at the 1D version. So, initially, we have some array of values, an array of pointers for values and another array of pointers for values.
+    \begin{align*}
+        \texttt{values} \quad& \texttt{[-35, 6, 24, -1, 18, 4]} \\
+        \texttt{arrayPointer} \quad& \texttt{[4, 18, -5, 20, 2, -7]} \\
+        \texttt{valuePointer} \quad& \texttt{[3, -11, 9, -16, 5, -8]}
+    \end{align*}
+    When we initialise these arrays, they contain garbage values. The point of keeping the pointer arrays is to be able to differentiate between garbage and non-garbage values in the \texttt{values} array as we insert to it at unpredictable positions, i.e. not from left to right. So, assume that we first add \texttt{values[2] = 19}. Then, all 3 arrays change to the following state:
+    \begin{align*}
+        \texttt{values} \quad& \texttt{[-35, 6, {\color{red} 19}, -1, 18, 4]} \\
+        \texttt{arrayPointer} \quad& \texttt{[4, 18, {\color{red} 0}, 20, 2, -7]} \\
+        \texttt{valuePointer} \quad& \texttt{[{\color{red} 2}, 11, 9, 16, 5, -8]}
+    \end{align*}
+    The non-garbage values are given in red. We have added \texttt{19} at the right index. We have also added to \texttt{arrayPointer[2]} the index \texttt{0}; and to \texttt{valuePointer[0]} the index \texttt{2}. As we can see, the two pointer arrays point to each other. We will now add 2 further values- \texttt{values[5] = 12} and then \texttt{values[0] = 25}.
+    \begin{align*}
+        \texttt{values} \quad& \texttt{[{\color{red} 25}, 6, {\color{red} 19}, -1, 18, {\color{red} 12}]} \\
+        \texttt{arrayPointer} \quad& \texttt{[{\color{red} 2}, 18, {\color{red} 0}, 20, 2, {\color{red} 1}]} \\
+        \texttt{valuePointer} \quad& \texttt{[{\color{red} 2}, {\color{red} 5}, {\color{red} 0}, 16, 5, -8]}
+    \end{align*}
+    We will now check if some entries in \texttt{values} are garbage or not:
+    \begin{itemize}
+        \item We first check index \texttt{1}- we find that \texttt{arrayPointer[1] = 18}. We know that we have only inserted 3 values at this point, so a valid \texttt{arrayPointer} entry must be between \texttt{0} and \texttt{2}. Hence, this value is garbage.
+        \item We now check index \texttt{4}- we find that \texttt{arrayPointer[4] = 2}. Since \texttt{2} is a valid index, we check \texttt{valuePointer[2]} and find that it has value \texttt{0}. Since this is not \texttt{4}, \texttt{values[4]} must be garbage.
+        \item Finally, we check index \texttt{0}- we find that \texttt{arrayPointer[0] = 2}, and that \texttt{valuePointer[2] = 0}. Since we are filling \texttt{valuePointer} in a \emph{predictable} manner (left to right), we know that \texttt{valuePointer[2] = 0} is not garbage. So, the indices complement each other, we can conclude that the value at index \texttt{0} is not garbage.
+    \end{itemize}
+    Therefore, we are able to check whether a value is garbage or not in $O(1)$ time.
+    
     \newpage
 
     \section{Local Similarity in Strings}
-    In the section above, we saw local common subsequence between two strings- this is a measure of how globally similar two strings are. We will now consider the concept of local string similarity, which will lead us to the Smith-Waterman algorithm.
+    In the section above, we saw longest common subsequence between two strings- this is a measure of how globally similar two strings are. We will now consider the concept of local string similarity, which will lead us to the Smith-Waterman algorithm.
 
     Consider the two strings \texttt{GAACTACATCATCTACTC} and \texttt{CGCATGTGACAGCTTCA}. A longest common subsequence of the two strings has length 10, given in the alignment below:
     \begin{table}[H]
@@ -1846,7 +1872,7 @@ int lcs(String s1, String s2, int i, int j,
         1 + \texttt{t}_{i-1, j-1} & s1[i-1] = s2[j-1] \\
         \max(0, \max(\texttt{t}_{i-1, j-1}, \texttt{t}_{i, j-1}, \texttt{t}_{i-1, j}) - 1) & \text{otherwise}.
     \end{cases}\]
-    In the base case, we have $\texttt{t}_{i, 0} = 0$ and $\texttt{t}_{0, j} = 0$. Since the empty string is always locally similar between the two strings, and has length 0, the local similarity is always non-negative. If there is a match, the score increases by 1. Otherwise, the score decreases by 1 from the best one corresponding to a mismatch, but stays bigger than 0. We keep track of the best score in the table- this corresponds to the end of the locally similar substrings.
+    In the base case, we have $\texttt{t}_{i, 0} = 0$ and $\texttt{t}_{0, j} = 0$. Since the empty string is locally similar between the two strings, and has length 0, the local similarity is always non-negative. If there is a match, the score increases by 1. Otherwise, the score decreases by 1 from the best one corresponding to a mismatch, but stays bigger than 0. We keep track of the best score in the table- this corresponds to the end of the locally similar substrings.
 
 
     We will illustrate the DP table with an example. Below, we compute the local similarity for \texttt{ADGGAGTAC} and \texttt{DGACTA}:
@@ -1941,7 +1967,7 @@ int smithWaterman(String s1, String s2) {
     \begin{itemize}
         \item if the value is 0, then we are at the origin, i.e. if $\texttt{t}_{i, j} = 0$, then $\texttt{x}_{i, j} = i$;
         \item if the values match, then we incremented the diagonal score, meaning that the origin is the same as for the diagonal, i.e. if $s1[i-1] = s2[j-1]$, then $\texttt{x}_{i, j} = \texttt{x}_{i-1, j-1}$;
-        \item if we decreased the value in case of a mismatch, then we take the score that we took. In this case, we give precedence to deletion, then insertion and finally substitution; this order can be changed to get the right extent.
+        \item if we decreased the value in case of a mismatch, then we take the score that we took. In this case, we give precedence to deletion, then insertion and finally substitution; this order can be changed to get a different, but equally valid, extent.
     \end{itemize}
 
     We saw above that the following was the DP table used to find best scoring local similarity for \texttt{ADGGAGTAC} and \texttt{DGACTA}:

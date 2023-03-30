@@ -18,6 +18,7 @@
 \usepackage{fancyvrb}
 \usepackage{xcolor}
 
+\usepackage{cmll}
 \usepackage[usestackEOL]{stackengine}
 \stackMath
 
@@ -819,5 +820,257 @@
     Linear type systems guarantee that resources will be used exactly once. However, a process can be built in such a way that resources are not used at all! For instance, consider the following linear process:
     \[a \colon \ell_i[\textit{bool}] \vdash (\nu \ b\colon \texttt{Chan}[\textit{bool}] )\overline{b} \langle \textit{false} \rangle.a(x).0\]
     Although this is a well-typed process under the linear type system, it is deadlocked. Further extension to types and type systems for $\pi$-calculus deal with this, along with lock freedom and termination.
+    \newpage
+
+    \section{Session Types}
+    In complex distributed systems, communicating participants agree on a protocol to follow, specifying \emph{type} and \emph{direction} of data exchanged. \emph{Session types} are a type formalism used to model structured communication-based programming. They guarantee \emph{privacy}, \emph{communication safety} and \emph{session fidelity}. It was initially designed for $\pi$-calculus, but has now been designed for functional languages, object-oriented languages, and more!
+
+    Session types were introduced in the early 90s. Since their appearance, they have developed into a significant theme in programming languages. This is because computing has now moved from the era of data processing to the era of communication. \emph{Data types} codify the structure of \emph{data} and make it available to programming tools. Similarly, \emph{session types} codify the structure of \emph{communication} and make it available to programming tools.
+
+    We will now have a look at an example of session types using a server and a client. The session type for the server is given as follows:
+    \begin{align*}
+        S \triangleq \&  \{ &\textit{add} \colon ?\textit{int}. ?\textit{int}. !\textit{int}. S \\
+        & \textit{neg} \colon ?\textit{int}. !\textit{int}. S \\
+        & \textit{quit} \colon \texttt{end} \}
+    \end{align*}
+    The symbol $\&$ denotes that the server $S$ is offering 3 services- \textit{add}, \textit{neg} and \textit{quit}. This is called \emph{external choice} (i.e. the client chooses). The \textit{quit} service would end in termination of the protocol. On the other hand, the \textit{add} service takes in 2 integers (as denoted by $?\textit{int}$) and then returns an integer (as denoted by $!\textit{int}$). Similarly, \textit{neg} takes an integer and returns an integer.
+
+    From the client endpoint, the session type is the following:
+    \begin{align*}
+        C \triangleq \oplus \{ &\textit{add} \colon !\textit{int}. !\textit{int}. ?\textit{int}. C \\
+        & \textit{neg} \colon !\textit{int}. ?\textit{int}. C \\
+        & \textit{quit} \colon \texttt{end} \}
+    \end{align*}
+    The symbol $\oplus$ denotes that the client must select one of the 3 services. This is called \emph{internal choice}. Note that a send in the server is a receive in the client and vice versa. This is called \emph{duality}, and is denoted $S = \overline{C}$.
+
+    We will now instantiate a server $srv$. It is parametrised on the channel endpoint:
+    \begin{align*}
+        srv(x \colon S) = x \vartriangleright \{ &\textit{add} \colon x(a \colon \textit{int}). x(b \colon\textit{int}). \overline{x} \langle a + b \rangle. srv(x) \\
+        & \textit{neg} \colon x(a \colon \textit{int}). \overline{x}\langle -a \rangle. srv(x) \\
+        & \textit{quit} \colon 0 \}
+    \end{align*}
+    Next, we instantiate a client $clt$. It is of type $C$:
+    \[clt(x \colon C) = x \vartriangleleft \textit{neg}.\overline{x} \langle 2 \rangle.x(a \colon \textit{int}).x \vartriangleleft \textit{quit}.P(a)\]
+    Note that since $\oplus$ denotes an internal choice, the client $clt$ has already chosen a sequence- it first chooses the \textit{neg} service and then \textit{quit}.
+
+    We can put $srv$ and $clt$ in parallel for communication to occur, using the reduction rules:
+    \begin{align*}
+        (\nu \ c \colon S)(srv(c^+) &\mid clt(c^-)) \\
+        &\downarrow \\
+        (\nu \ c \colon ?\textit{int}.!\textit{int}.S)(c^+(a \colon \textit{int}).\overline{c^+}\langle -a \rangle.srv(c^+) &\mid \overline{c^-}\langle 2 \rangle. c^-(a \colon \textit{int}).c^{-} \vartriangleleft \textit{quit}.P(a)) \\
+        &\downarrow \\
+        (\nu \ c \colon !\textit{int}.S)(\overline{c^+}\langle -2 \rangle.srv(c^+) &\mid c^-(a \colon \textit{int}). c^- \vartriangleleft \textit{quit}.P(a)) \\
+        &\downarrow \\
+        (\nu \ c \colon S)(srv(c^+) &\mid c^- \vartriangleleft \textit{quit}.P(-2)) \\
+        &\downarrow \\
+        (\nu \ c \colon \texttt{end})(0 &\mid P(-2)) \\
+        &\equiv \\
+        & P(-2)
+    \end{align*}
+    The communication occurs at channel $c$. The server and the client are at the opposite ends of the channel. To distinguish this, we make use of polarities- $c^+$ for one and $c^-$ for the other. We keep track of the type using the server; the client type could have also been used here. Note that the type of the channel $c$ changes during the reduction process.
+
+    As we can see, the communication occurs in a private channel $c$. To accommodate this, the server listens on a standard channel $a$ of type $\texttt{Chan}[S]$ and receives a session channel for $srv$ to use. That is,
+    \[\textit{server}(a) = a(x \colon S).srv(x)\]
+    The global declaration $a \colon \texttt{Chan}[S]$ advertises the server and its protocol. The client creates a session channel and sends it to the server, i.e.
+    \[\textit{client}(a) = (\nu \ c \colon S)(\overline{a}\langle c^+ \rangle.clt(c^-))\]
+    After one step reduction, execution proceeds as above.
+
+    The main features of session types are the following:
+    \begin{itemize}
+        \item \emph{Duality}- the relationship between types of opposite endpoints of a session channel;
+        \item \emph{Linearity}- each channel endpoint occurs exactly once in a collection of parallel processes;
+        \item The \emph{structure} of session types matches the structure of communication;
+        \item Session types \emph{change} as communication occurs;
+        \item \emph{Connection} is established among participants before communication begins.
+    \end{itemize}
+    Session types guarantee the following:
+    \begin{itemize}
+        \item \emph{communication safety}- the exchanged data has the expected type;
+        \item \emph{session fidelity}- the session channel has the expected structure; and
+        \item \emph{privacy}- the session channel is owned only by the communicating parties.
+    \end{itemize}
+    This allows us to conclude that, at runtime, communication follows the protocol.
+
+    We will now define session types using a grammar:
+    \begin{align*}
+        S &::= \texttt{end} & \textrm{termination} \\
+        & !T.S & \textrm{send} \\
+        &?T.S & \textrm{receive} \\
+        &\oplus \{I_i \colon S_i\}_{i \in I} & \textrm{select} \\
+        &\& \{I_i \colon S_i\}_{i \in I} & \textrm{branch} 
+    \end{align*}
+    The value $T$ refers to a type. Now, session types are also types in $\pi$-calculus. The syntax of the processes has also changed, to the following grammar:
+    \begin{align*}
+        P, Q &::= 0 & \textrm{inaction} \\
+        & P \mid Q & \textrm{composition} \\
+        & (\nu \ x)P & \textrm{restriction} \\
+        & \overline{x^p} \langle v^q \rangle.P & \textrm{output} \\
+        & x^p (y).P & \textrm{input} \\
+        & x^p \vartriangleleft l_j.P & \textrm{selection} \\
+        & x^p \vartriangleright \{I_i \colon P_i\}_{i \in I} & \textrm{branching}
+    \end{align*}
+    The value $v$ refers to values, which includes channel names and other values (e.g. booleans). The values $p$ and $q$ are optional polarities for channels (i.e. $+$ or $-$).
+
+    The typing rules are given as follows:
+    \begin{align*}
+        \frac{\Gamma_1 \vdash P \quad \Gamma_2 \vdash Q}{\Gamma_1 + \Gamma_2 \vdash P \mid Q} & \textrm{TPar} \\
+        \frac{\Gamma, x^p \colon S, x^{\overline{p}} \colon \overline{S} \vdash P}{\Gamma \vdash (\nu \ x)P} & \textrm{TRes} \\
+        \frac{\Gamma, x^p \colon S, y \colon T \vdash P}{\Gamma, x^p \colon ?T.S \vdash x^p(y).P} &\textrm{TIn} \\
+        \frac{\Gamma_1, x^p \colon S \vdash P \quad \Gamma_2 \vdash v^q \colon T}{(\Gamma_1, x^p \colon !T.S) + \Gamma_2 \vdash \overline{x^p} \langle v^q \rangle.P} &\textrm{TOut} \\
+        \frac{\Gamma, x^p \colon S_i \vdash P_i}{\Gamma, x^p \colon \& \{I_i \colon S_i\}_{i \in I} \vdash x^p \vartriangleright \{I_i \colon P_i\}_{i \in I}} & \textrm{TBrch} \\
+        \frac{j \in I \quad \Gamma, x^p \colon S_j \vdash P}{\Gamma, x^p \colon \oplus \{I_i \colon S_i\}_{i \in I} \vdash x^p \vartriangleleft I_j.P} & \textrm{TSel}
+    \end{align*}
+    For a polarity $p$, its dual is denoted by $\overline{p}$. Note that the types change as we saw above.
+
+    We define the combination $+$ operation on typing judgments as follows:
+    \begin{align*}
+        \Gamma + x^+ \colon S &= \Gamma, x^+ \colon S & \textrm{if } x, x^+ \not\in \operatorname{dom}(\Gamma) \\
+        \Gamma + x^- \colon S &= \Gamma, x^- \colon S & \textrm{if } x, x^- \not\in \operatorname{dom}(\Gamma) \\
+        \Gamma + x \colon S &= \Gamma, x \colon S & \textrm{if } x, x^+, x^- \not\in \operatorname{dom}(\Gamma) \\
+        (\Gamma, x \colon T) + x \colon T &= \Gamma, x \colon T & \textrm{if } T \textrm{ is not a session type}
+    \end{align*}
+
+    We will now have a look at some terms and see whether they are well-typed:
+    \begin{itemize}
+        \item The process
+        \[(\nu \ x)(x^+(t \colon \textit{bool}).0 \mid \overline{x^-} \langle \textit{true} \rangle.0)\]
+        is well-typed since the types of $x^+$ and $x^-$ are dual.
+
+        \item The process
+        \[(\nu \ x)(\overline{x^+} \langle t \rangle.0 \mid \overline{x^-}\langle \textit{true} \rangle.0)\]
+        is not well-typed since both $x^+$ and $x^-$ send a \textit{bool}, and hence are not dual of each other.
+        
+        \item The process
+        \[(\nu \ x)(\overline{x^-} \langle \textit{false} \rangle.0 \mid x^+ (t \colon \textit{bool}).0 \mid x^+(w \colon \textit{bool}).0)\]
+        is not well-typed since it violates linearity- there can only be one occurrence of $x^+$ and $x^-$.
+
+        \item The process
+        \[(\nu x)(\nu y)(x^+(z \colon \textit{int}).\overline{y^-}\langle 42 \rangle.0 \mid \overline{x^-} \langle 11 \rangle.y^+(w \colon \textit{int}).0)\]
+        is well-typed since the types of $x^-, x^+$ and $y^-, y^+$ are dual.
+
+        \item The process
+        \[(\nu x)(\nu y)(\overline{y^-}\langle 42 \rangle.x^+(z \colon \textit{int}).0 \mid \overline{x^-} \langle 11 \rangle.y^+(w \colon \textit{int}).0)\]
+        is well-typed since the types of $x^-, x^+$ and $y^-, y^+$ are dual, even though the process is actually deadlocked.
+
+        \item The process
+        \[(\nu \ x)(x^- \vartriangleleft k.0 \mid x^+ \vartriangleright \{I_i \colon P_i\}_{i \in I}.0)\]
+        is well-typed if and only if $k = I_i$ for some $i \in I$.
+    \end{itemize}
+
+    \subsection{Standard types and session types}
+    We will now aim to connect standard types (e.g. the simple type system $\pi$-calculus) on $\pi$-calculus and session types. We saw the following types:
+    \begin{itemize}
+        \item $\texttt{Chan}[T_1, \dots, T_n]$ for input/output for data of type $T_1, \dots, T_n$;
+        \item $\texttt{In}[T_1, \dots, T_n]$ and $\texttt{Out}[T_1, \dots, T_n]$ for only input or only output for data of type $T_1, \dots, T_n$;
+        \item $\ell_i[T_1, \dots, T_n]$ and $[\ell_o[T_1, \dots, T_n]]$ for only linear input or linear output (i.e. transmit data exactly once); and
+        \item $\langle l_1 \colon T_n, \dots, l_n \colon T_n \rangle$ for a disjoint union of types that are labelled.
+    \end{itemize}
+    On the other hand, session types have:
+    \begin{enumerate}
+        \item structure;
+        \item duality;
+        \item restriction; and
+        \item branch/select.
+    \end{enumerate}
+    This can also be seen in standard $\pi$-calculus. In particular,
+    \begin{enumerate}
+        \item \emph{linearity} forces a channel to be used exactly once;
+        \item we have the \emph{capability} to split a channel into input/output channels;
+        \item we have \emph{restriction} that allows for creation of private channels; and
+        \item \emph{variant type} allows for choice.
+    \end{enumerate}
+    Because of the similarities, we might ask about the difference in expressivity of standard $\pi$-calculus and session types. It turns out that they have equal expressivity.
+
+    We can make use of standard $\pi$-calculus within session types. Hence, to prove that they have equal expressivity, we just need to show that we can convert a process that makes use of session types to a process without the session types, but the same functionality. 
+    
+    The encoding is based on:
+    \begin{itemize}
+        \item \emph{linearity} of channel types;
+        \item \emph{input} and \emph{output} channel capabilities;
+        \item the \emph{continuation-passing} principle; and
+        \item \emph{variant types}.
+    \end{itemize}
+    The way the encoding works, informally, is as follows:
+    \begin{itemize}
+        \item session types are encoded as linear channels;
+        \item $?$ and $!$ are encoded as $\ell_i$ and $\ell_o$ respectively;
+        \item $\& \{I_i \mid S_i\}_{i \in I}$ and $\oplus \{I_i \mid S_i\}_{i \in I}$ are encoded using variant types;
+        \item continuation of a session type becomes the carried type; and
+        \item dual operations in continuation become equal when carried.
+    \end{itemize}
+    
+    We will now consider the encoding process with an example. So, assume that $S$ is a process with session type:
+    \[S = ?\textit{int}.?\textit{int}.!\textit{bool}.\texttt{end}\]
+    Then, it is encoded as the following type in standard $\pi$-calculus:
+    \[\lVert S \rVert = \ell_i[\textit{int}, \ell_i[\textit{int}, \ell_o [\textit{bool}, \varnothing]]]\]
+    As we can see, an input type $?\textit{int}$ becomes $\ell_i[\textit{int}, \cdot]$, where $\cdot$ contains the continuation process. Similarly, an output type $!\textit{int}$ becomes $\ell_o[\textit{int}, \cdot]$. Finally, \texttt{end} is denoted by the empty symbol $\varnothing$.
+
+    Now, consider the dual type of $S$:
+    \[\overline{S} = !\textit{int}.!\textit{int}.?\textit{bool}.\texttt{end}\]
+    Then, it is encoded as the following type:
+    \[\lVert \overline{S} \rVert = \ell_o[\textit{int}, \ell_i[\textit{int}, \ell_o[\textit{bool}, \varnothing]]]\]
+    Note that although the first $?\textit{int}$ has been converted into $\ell_o[\textit{int}, \cdot]$, this is not the case for the second one. This is because both $S$ and its dual $\overline{S}$ have to agree on the type of input/output for them to be able to communicate. Hence, the second parameter of the dual $\overline{S}$ must be the same as the second parameter of $S$. We can also think of this as encoding its dual after a receive type. We can think of this in general- in session types, dual types have opposite types throughout, whereas in normal $\pi$-calculus, only the topmost type is of opposite type.
+
+    Formally, the algorithm for encoding is given as follows:
+    \begin{align*}
+        \lVert \texttt{end} \rVert &\triangleq \varnothing[] \\
+        \lVert ?T.S \rVert &\triangleq \ell_i[\lVert T \rVert, \lVert S\rVert] \\
+        \lVert !T.S \rVert &\triangleq \ell_o[\lVert T\rVert, \lVert\overline{S}\rVert] \\
+        \lVert \& \{I_i \mid S_i\}_{i \in I} \rVert &\triangleq \ell_i[\langle l_i \mid \lVert S_i \rVert \rangle_{i \in I}] \\
+        \lVert \oplus \{I_i \mid S_i\}_{i \in I} \rVert &\triangleq \ell_o[\langle l_i \mid \lVert \overline{S_i}\rVert \rangle_{i \in I}]
+    \end{align*}
+    
+    The encoding obeys many properties, such as:
+    \begin{itemize}
+        \item it preserves typeability of programs;
+        \item it preserves evaluation of programs; and
+        \item encoding of dual session types gives dual linear $\pi$-types.
+    \end{itemize}
+
+    The encoding has quite powerful applications, including:
+    \begin{itemize}
+        \item large usability of standard typed $\pi$-calculus theory;
+        \item derivation of processes for session $\pi$-calculus from the standard $\pi$-calculus (e.g. type safety);
+        \item elimination of redundancy in the syntax of types and terms, and in theory;
+        \item the robustness of the encoding (subtyping, polymorphism and higher-order);
+        \item expressivity result for session types;
+        \item implementation of session types in mainstream programming languages.
+    \end{itemize}
+
+    \subsection{Curry-Howard Isomorphism}
+    We will now look at the Curry-Howard isomorphism for session types. Since the beginning of linear logic, there were suggestions that it should be relevant to concurrency. The logically approach for session types has been studied since the 1990s. It has been extended to dependent types, failures, sharing and races.
+
+    The correspondence between session types as linear logic is the following:
+    \begin{itemize}
+        \item propositions are equivalent to session types;
+        \item proofs are equivalent to $\pi$-procesess; and
+        \item proof normalisation and cut elimination are equivalent to communication.
+    \end{itemize}
+    Moreover,
+    \begin{itemize}
+        \item the proposition $A \parr B$ is interpreted as `input $A$ then behave like $B$', i.e. $?A.B$;
+        \item the proposition $A \otimes B$ is interpreted as `output $A$ then behave like $B$', i.e. $!A.B$;
+        \item $\&$ and $\oplus$ are interpreted to branch and select.
+    \end{itemize}
+    The correspondence has lead to a re-examination of all aspects of session types from a logical viewpoint.
+
+    These are the connections between session types and classical linear logic.
+    \begin{align*}
+        \frac{{\color{red} P} \vdash \vartriangle {\color{red} y} \colon A, {\color{red} x} \colon B}{{\color{red}x(y).P} \vdash \vartriangle, x \colon A \parr B} & \textrm{T}\parr \\
+        \frac{{\color{red} P} \vdash \vartriangle, {\color{red} y} \colon A \quad {\color{red} Q} \vdash \vartriangle', {\color{red} x} \colon B}{{\color{red} \overline{x} \langle y \rangle.(P \mid Q)} \vdash \vartriangle, \vartriangle', {\color{red} x} \colon A \otimes B} & \textrm{T}\otimes \\
+        \frac{P \vdash \vartriangle, x \colon \overline{A} \quad Q \vdash \vartriangle', x \colon A}{(\nu \ x)(P \mid Q) \vdash \vartriangle, \vartriangle'} & \textrm{TCut} \\
+        \frac{P_i \vdash \vartriangle, x \colon A_i}{x \vartriangleright \{l_i \colon P_i\}_{i \in I} \vdash \vartriangle, x \colon \&\{I_i \colon A_i\}_{i \in I}} & \textrm{T} \& \\
+        \frac{P \vdash \vartriangle, x \colon A_j \quad j \in I}{x \vartriangleleft l_j.P \vdash \oplus \{I_i \mid A_i\}_{i \in I}} & \textrm{T}\oplus 
+    \end{align*}
+    % TODO: Finish colouring (and reverse it)
+    The red values are propositions, while the black ones are classical linear logic. Note that the judgment is reversed.
+
+    The session type system based on classical linear logic propositions guarantees:
+    \begin{itemize}
+        \item type preservation (or subject reduction)- well-typed processes reduce to well-typed processes;
+        \item deadlock-freedom (by design)- if a process $P$ is well-typed and it is a \emph{cut}, then there is some $Q$ such that $P$ reduces to $Q$ and $Q$ is not a \emph{cut}.
+    \end{itemize}
+
+    Curry-Howard correspondences between session-typed languages and linear logic are a vivid research area. Recent work includes extending these correspondences to include more expressive processes-containing `good' cycles, sharing, recursion, dependent types and so on.
 
 \end{document}
