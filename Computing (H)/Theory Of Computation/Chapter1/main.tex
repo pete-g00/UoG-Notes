@@ -39,38 +39,40 @@
 \begin{document}
     \chapter{Lambda Calculus}
     \section{Introduction to Lambda Calculus}
-    In this section, we will study the syntax and the sematics of Lambda Calculus, along with some of its properties. Lambda Calculus (denoted $\lambda$-calculus) is a mathematical theory of functions, including:
+    In this section, we will study the syntax and the semantics of \emph{Lambda Calculus}, along with some of its properties. Lambda Calculus (denoted $\lambda$-calculus) is a mathematical theory of \emph{functions}, including:
     \begin{itemize}
         \item a formal syntax for defining functions;
         \item a formal semantics of how functions can be evaluated; and
         \item a formal theory of function equivalence.
     \end{itemize}
 
-    We now define the syntax of $\lambda$-calculus. We denote by the set $\Lambda$ the set of $\lambda$-terms. It is the smallest set satisfying the following properties:    
+    We first define the syntax of $\lambda$-calculus. We denote by the set $\Lambda$ the set of all $\lambda$-terms. It is the \emph{smallest} set satisfying the following properties:
     \begin{itemize}
-        \item If $x$ is a variable, then $x \in \Lambda$ (there are infinitely many variables);
-        \item If $M \in \Lambda$, then $(\lambda x M) \in \Lambda$ (called \emph{abstraction});
-        \item If $M, N \in \Lambda$, then $(MN) \in \Lambda$ (called \emph{application}).
+        \item If $x$ is a \emph{variable}, then $x \in \Lambda$ (i.e. there are infinitely many variables);
+        \item If $M \in \Lambda$, then the \emph{abstraction} $(\lambda x M) \in \Lambda$;
+        \item If $M, N \in \Lambda$, then the \emph{application} $(MN) \in \Lambda$.
     \end{itemize}
-    This is an inductive definition for $\Lambda$. An abstraction represents a function, e.g. $(\lambda x x)$ can be thought of as the Haskell function $\backslash \texttt{x -> x}$. We can define $\lambda$-calculus using BNF as well:
+    This is an inductive definition for $\Lambda$. An abstraction represents a function, e.g. the $\lambda$-term $(\lambda x x)$ can be thought of as the Haskell function $\backslash \texttt{x -> x}$. 
+    
+    We can define $\lambda$-calculus using BNF as well:
     \begin{align*}
         M &::= x \\
         &| \ (\lambda x M) \\
         &| \ (MM)
     \end{align*}
-    Further, we can use inference rules to define it:
+    Note that in the last line, although we have the application $(MM)$, the two $M$ values need not be the same. Further, we can use inference rules to define it:
     \[\frac{\textrm{if } x \textrm{ is a variable}^*}{x \in \Lambda} \qquad \frac{M \in \Lambda \textrm{ and } x \textrm{ is a variable}^*}{(\lambda x M) \in \Lambda} \qquad \frac{M, N \in \Lambda}{(MN) \in \Lambda}.\]
 
-    We typically avoid using brackets for $\lambda$-terms (or terms). Moreover, an abstraction $(\lambda x M)$ is denoted $\lambda x.M$. If we have multiple abstractions, we write
+    We typically avoid using brackets for $\lambda$-terms. Moreover, an abstraction $(\lambda x M)$ is denoted $\lambda x.M$. If we have multiple abstractions, we write
     \[\lambda x_1 \dots x_k . M \equiv \lambda \vec{x}. M \equiv (\lambda x_1 (\dots (\lambda x_k M) \dots ))\]
-    So, abstraction is right-associative. Now, if we have multiple applications, we write
+    The symbol $\equiv$ denotes syntactic equivalence. Note that abstraction is \emph{right-associative}. Now, if we have multiple applications, we write
     \[M N_1 \dots N_k \equiv M \vec{N} \equiv (((M N_1) \dots ) N_k)\]
-    So, application is left-associative. The equivalence symbol $\equiv$ denotes syntactic equality.
+    Note that application is \emph{left-associative}.
 
     \subsection{Free and Bound Variables}
-    The symbol $\lambda$ binds variables, i.e. it gives rise to local variables. As such, different terms (e.g. $\lambda x. x$ and $\lambda y. y$) are equivalent. Moreover, this gives rise to free variables (not bound by $\lambda$) and bound variables (those bound by $\lambda$).
+    The symbol $\lambda$ is a \emph{variable binder}, i.e. it gives rise to local variables. As such, different terms are equivalent, e.g. $\lambda x. x$ and $\lambda y. y$. Moreover, this gives rise to \emph{free variables} (not bound by $\lambda$) and \emph{bound variables} (those bound by $\lambda$).
 
-    We will now define the set of bound variables for a term. It is a function $BV \colon \Lambda \to \mathcal{P}(Var)$, where $Var$ is the set of variables. It is defined inductively:
+    We will now define the set of bound variables formally. It is a function $BV \colon \Lambda \to \mathcal{P}(\textit{Var})$, where $\textit{Var}$ is the set of variables, and $\mathcal{P}(\textit{Var})$ is the set of all subsets of variables. It is defined recursively:
     \begin{align*}
         BV \ x &= \varnothing \\
         BV \ \lambda x. M &= (BV \ M) \cup \{x\} \\
@@ -86,7 +88,7 @@
         &= \{x, y\}.
     \end{align*}
 
-    Next, we define free variables. It too is a function $FV \colon \Lambda \to \mathcal{P}(Var)$, given by:
+    Next, we define free variables. It too is a function $FV \colon \Lambda \to \mathcal{P}(\textit{Var})$, given by:
     \begin{align*}
         FV \ x &= \{x\} \\
         FV \ \lambda x. M &= (FV \ M) \setminus \{x\} \\
@@ -102,7 +104,7 @@
         &= \{y, z\}.
     \end{align*}
 
-    Now, we define subterms of a term. It is a function $Sub \colon \Lambda \to \mathcal{P}(\Lambda)$ defined by:
+    We now define \emph{subterms} of a term. It is a function $Sub \colon \Lambda \to \mathcal{P}(\Lambda)$ defined by:
     \begin{align*}
         Sub \ x &= \{x\} \\
         Sub \ \lambda x. M &= (Sub \ M) \cup \{\lambda x. M\} \\
@@ -120,7 +122,7 @@
     \end{align*}
 
     \subsection{Structural Induction}
-    We will now look at proofs involving structural induction for $\lambda$-calculus.
+    We will now look at proofs involving structural induction for $\lambda$-calculus. We start wth an easy example.
     \begin{proposition}
         A term in $\Lambda$ has balanced parentheses.
     \end{proposition}
@@ -143,14 +145,14 @@
             \item In the base case, we have $M = x$, for some variable $x$. Then,
             \[FV \ M = \{x\} \subseteq \{x\} = Sub \ M.\]
 
-            \item Now, assume that $M = N_1 N_2$, for terms $N_1$ and $N_2$ that satisfy $FV \ N_1 \subseteq Sub \ N_1$ and $FV \ N_2 \subseteq Sub \ N_2$. In that case,
+            \item Now, assume that $M = N_1 N_2$, for terms $N_1$ and $N_2$. By the inductive hypothesis, we know that $FV \ N_1 \subseteq Sub \ N_1$ and $FV \ N_2 \subseteq Sub \ N_2$. Hence,
             \begin{align*}
                 FV \ M &= (FV \ N_1) \cup (FV \ N_2) \\
                 &\subseteq (Sub \ N_1) \cup (Sub \ N_2) \\
                 &\subseteq (Sub \ N_1) \cup (Sub \ N_2) \cup \{M\} = Sub \ M.
             \end{align*}
 
-            \item Finally, assume that $M = \lambda x. N$, for some term $N$ satisfying $FV \ N \subseteq Sub \ N$. Then,
+            \item Finally, assume that $M = \lambda x. N$, for some term $N$. By the inductive hypothesis, $FV \ N \subseteq Sub \ N$. Then,
             \begin{align*}
                 FV \ M &= (FV \ N) \setminus \{x\} \\
                 &\subseteq FV \ N \\
@@ -162,16 +164,22 @@
     \end{proof}
 
     \subsection{Contexts}
-    A context is a term containing a \emph{hole}, which is represented by $[]$. This hole can be filled by a term, to make the context a term. It is defined as follows:
+    A \emph{context} is a term containing a \emph{hole}, which is represented by $[]$. This hole can be filled by a term, to make the context a term. It is defined as follows:
     \begin{align*}
         C[] &::= x \\
         &| \ [] \\
         &| \ (\lambda x C[]) \\
         &| \ (C[] C[])
     \end{align*}
-    The variable has no hole; the empty context is $[]$. The context $C[] C'[]$ has two holes. We will now illustrate how to fill a context with a term. So, consider the context $C[] = ((\lambda x. [] x) M)$. Then, $C[\lambda y.y] = ((\lambda x.(\lambda y.y) x) M)$.
+    The variable has no hole; the empty context is $[]$. The context $C[] C'[]$ has two holes. 
+    
+    We will now illustrate how to fill a context with a term. So, consider the context 
+    \[C[] = ((\lambda x. [] x) M).\]
+    Then, 
+    \[C[\lambda y.y] = ((\lambda x.(\lambda y.y) x) M).\]
+    We have replaced the hole $[]$ with the given term.
 
-    We can fill contexts with a hole given one term.
+    In general, we can fill contexts with a hole given one term.
     \begin{proposition}
         Let $C[]$ be a context with one hole and $M$ a term. Then, $C[M]$ is a term.
     \end{proposition}
@@ -183,7 +191,9 @@
         \end{itemize}
         So, the result follows from structural induction.
     \end{proof}
-    \noindent In general, we can fill a context with $n$ holes given $n$ terms- this follows from the result above and mathematical induction.
+    \noindent Note that we only considered 2 of the cases from the definition of a context- a variable $x$ has no holes, while the context $(C[] C[])$ has two.
+    
+    In general, we can fill a context with $n$ holes given $n$ terms- this follows from the result above and mathematical induction.
 
     \newpage
 
@@ -191,13 +201,13 @@
     In this section, we will consider how we can evaluate $\lambda$-terms, using the $\beta$-rule in a cumbersome manner, and later using $\beta$-rule with $\alpha$-equivalence to make it compact and efficient.
 
     \subsection{$\beta$-reduction}
-    The key definition for expressing computation in $\lambda$-calculus is the $\beta$ rule. It states:
+    The key definition for expressing computation in $\lambda$-calculus is the $\beta$-rule. It states:
     \[(\lambda x. M) N \to_\beta M[x := N]\]
-    The notation $M[x := N]$ is substitution- every occurrence of $x$ in $M$ is replaced by $N$. For example,
-    \[(\lambda x. x+1) 2 \to_\beta 2 + 1.\]
-    We could further reduce this to $3$ by extending mathematical operations, like the language Expr. The $\beta$ rule expresses how we would like to pass parameters into a function.
+    The notation $M[x := N]$ refers to substitution- every occurrence of $x$ in $M$ is replaced by $N$. For example,
+    \[(\lambda x. x+1) 2 \to_\beta (x + 1)[x := 2] \equiv 2 + 1.\]
+    We could further reduce this to $3$ by extending mathematical operations, like in the language \textit{Expr}. The $\beta$-rule expresses how we would like to pass parameters into a function.
 
-    Substitution is the main aspect of $\beta$-reduction. However, naive substitution is not necessarily what we want in general. For instance, if we have the term $(\lambda x.\lambda y.yx) y$, then we can $\beta$-reduce it to $\lambda y. yy$. However, this is not what we would like- the first $y$ is meant to be bound by the local $y$, but the second one is not- it is the value we have just substituted. This would not have happened if we have the term $(\lambda x. \lambda y. yx)z$, in which case we get $\lambda y.yz$. In particular, this happens in the term $(\lambda x. \lambda y. yx)y$ because $y$ is both a free and a bound variable in the term.
+    Substitution is the main aspect of $\beta$-reduction. However, naive substitution is not necessarily what we want in general. For instance, if we have the term $(\lambda x.\lambda y.yx) y$, then we can $\beta$-reduce it to $\lambda y. yy$. However, this is not what we would like- the first $y$ is meant to be bound by the local $y$, but the second one is not- it is the value we have just substituted. This would not have happened if we have the term $(\lambda x. \lambda y. yx)z$, in which case we get $\lambda y.yz$. So, this happens in the term $(\lambda x. \lambda y. yx)y$ because $y$ is both a free and a bound variable in the term.
 
     Hence, we need to define substitution in a more careful manner. This is done as follows:
     \begin{enumerate}
@@ -205,22 +215,23 @@
         \item $y[x := N] \equiv y$ if $x$ and $y$ are distinct;
         \item $(\lambda x.M)[x := N] \equiv \lambda x.M$;
         \item $(\lambda y.M)[x := N] \equiv \lambda y. M[x := N]$ if $x$ is not a free variable in $M$ or $y$ is not a free variable in $N$;
-        \item $(\lambda y.M)[x := N] \equiv (\lambda z.M[y:=z])[x := N]$ if $x$ is a free variable in $M$ and $y$ a free variable in $N$;
+        \item $(\lambda y.M)[x := N] \equiv (\lambda z.M[y:=z])[x := N]$ if $x$ is a free variable in $M$ and $y$ a free variable in $N$, and $z$ is a new variable;
         \item $(M_1 M_2)[x := N] \equiv (M_1[x := N])(M_2[x := N])$.
     \end{enumerate}
+    In this definition, we are renaming bound variables if they are also free (at step 5). This is to avoid \emph{variable capture}.
     
-    Now, consider the term $(\lambda x.\lambda y.yx)y$. This $\beta$-reduces to
+    We illustrate the definition with an example. So, consider the term $(\lambda x.\lambda y.yx)y$. This $\beta$-reduces to
     \[(\lambda y.yx)[x := y].\]
     The variable $x$ is free in $\lambda y.yx$ and the variable $y$ is free in $y$. Hence, we apply rule 5 to get
     \[(\lambda y.yx)[x := y] \equiv (\lambda z.yx[y := z])[x := y].\]
     We have $yx[y := z] \equiv zx$ by rules 6 and 1, so
     \[(\lambda z.yx[y := z])[x := y] \equiv (\lambda z.zx)[x := y].\]
-    Now, although $x$ is free in $\lambda z.zx$, $z$ is not free in $y$, so we finally get
+    Now, although $x$ is free in $\lambda z.zx$, $z$ is not free in $y$, so we apply step 4 and get
     \[\lambda z.zy\]
-    In programming language terms, this is similar to renaming a variable in a local scope so that it does not mask a variable in an outer scope.
+    In programming language terms, this is similar to renaming a local variable so that it does not override a global variable.
     
     \subsection{$\alpha$-equivalence}
-    We will now give another, simpler, definition for substitution. This works by assuming that bound variables have been renamed so that they are different from any free variables. This ensures that variables cannot be captured. This is called Barendregt or variable convention. To define substitution, we define $\alpha$-equivalence.
+    We will now give another, simpler, definition for substitution. This works by assuming that bound variables have been renamed so that they are different from any free variables. This ensures that variables cannot be captured. This is called \emph{Barendregt convention} or \emph{variable convention}. To do so, we need define $\alpha$-equivalence.
     \begin{definition}
         Let $M$ and $M'$ be terms. We say that $M'$ is produced by $M$ by a \emph{change of bound variables} if $M \equiv C[\lambda x.N]$ and $M' \equiv C[\lambda y.N[x := y]]$, where $y$ does not occur in $N$, and $C[]$ is a context with one hole.
     \end{definition}
@@ -228,7 +239,11 @@
     \begin{definition}
         Let $M$ and $N$ be terms. We say that $M$ is \emph{$\alpha$-equivalent} to $N$ if $N$ is produced from $M$ by a series of changes of bound variable.
     \end{definition}
-    \noindent For instance, $\lambda x.xy \equiv_\alpha \lambda z.zy$ since we can let $C[] = []y$, and then $C[\lambda x.x] \equiv \lambda x.xy$ and $C[\lambda z.x[x := z]] \equiv \lambda z.zy$. However, $\lambda x.xy$ is not $\alpha$-equivalent to $\lambda x.xx$. We consider $\alpha$-equivalent terms to be the same as each other.
+    \noindent We use the symbol $\equiv_\alpha$ to denote $\alpha$ equivalence. 
+    
+    We illustrate $\alpha$-equvalence with an example. We claim that $\lambda x.xy \equiv_\alpha \lambda z.zy$. To see this, let $C[] = []y$, and then 
+    \[C[\lambda x.x] \equiv \lambda x.xy \qquad \textrm{and} \qquad C[\lambda z.x[x := z]] \equiv C[\lambda z.z] \equiv \lambda z.zy.\] 
+    However, $\lambda x.xy$ is not $\alpha$-equivalent to $\lambda x.xx$. We consider $\alpha$-equivalent terms to be the same as each other.
 
     From now, we will assume that the terms obey variable convention, i.e. all bound variables are different from each other and from all free variables. If this is not the case, we can achieve this using $\alpha$-equivalence. With this convention, the definition of substitution simplifies to the following:
     \begin{enumerate}
@@ -309,14 +324,14 @@
         Hence, the result follows from induction.
     \end{proof}
 
-    We can now complete the definition on evaluating $\lambda$-terms. First, we define one-step $\beta$-reduction $\to_\beta$, given by the following inference rules:
+    We can now complete the definition on evaluating $\lambda$-terms. First, we define \emph{one-step $\beta$-reduction} $\to_\beta$ by the following inference rules:
     \begin{align*}
         & \frac{}{(\lambda x.M)N \to_\beta M[x := N]} & \frac{M \to_\beta N}{MZ \to_\beta NZ} \\
         & \frac{M \to_\beta N}{ZM \to_\beta ZN} & \frac{M \to_\beta N}{\lambda x.M \to_\beta \lambda x.N}
     \end{align*}
     We have seen the first definition before. The other three allow us to apply the $\beta$-rule in larger terms.
 
-    We can define the $\beta$-reduction, denoted by $\twoheadrightarrow_\beta$ that is the reflexive and transitive closure of one-step $\beta$-reduction. This is defined by the following inference rules:
+    We can define the \emph{$\beta$-reduction}, denoted by $\twoheadrightarrow_\beta$ that is the \emph{reflexive and transitive closure} of one-step $\beta$-reduction. So, the $\beta$-reduction allows for zero or more $\beta$-step reductions. This is defined by the following inference rules:
     \begin{align*}
         \frac{}{M \twoheadrightarrow_\beta M} && \frac{M \to_\beta N}{M \twoheadrightarrow_\beta N} && \frac{M \twoheadrightarrow_\beta N \quad N \twoheadrightarrow_\beta L}{M \twoheadrightarrow_\beta L}.
     \end{align*}
@@ -329,7 +344,7 @@
         We prove this by structural induction on the context $C[]$:
         \begin{itemize}
             \item First, let $C[] = []$. In that case, if $M \to_\beta N$, then $C[M] = M \to_\beta N = C[N]$.
-            \item Now, let $C[] = \lambda x.C'[]$, where $C'[]$ is another context such that $C'[M] \to_\beta C'[N]$. In that case, applying rule 4 of $\to_\beta$, we find that $C[M] = \lambda x.C'[M] \to \lambda x.C'[N] = C[N]$.
+            \item Now, let $C[] = \lambda x.C'[]$, where $C'[]$ is another context. By the inductive hypothesis, we know that $C'[M] \to_\beta C'[N]$. In that case, applying rule 4 of $\to_\beta$, we find that $C[M] = \lambda x.C'[M] \to \lambda x.C'[N] = C[N]$.
         \end{itemize}
         So, the result follows from induction.
     \end{proof}
@@ -341,19 +356,22 @@
         \begin{itemize}
             \item If $M \equiv N$, then $C[M] \equiv C[N]$. Hence, $C[M] \twoheadrightarrow_\beta C[N]$.
             \item Instead, if $M \to_\beta N$, then by the result above, we have $C[M] \to_\beta C[N]$. Hence, $C[M] \twoheadrightarrow_\beta C[N]$.
-            \item Otherwise, we have $M \twoheadrightarrow_\beta L$ and $L \twoheadrightarrow_\beta N$, with $C[M] \twoheadrightarrow_\beta C[L]$ and $C[L] \twoheadrightarrow_\beta C[N]$. Hence, we can apply the third inference rule of $\twoheadrightarrow_\beta$ to conclude that $C[M] \twoheadrightarrow_\beta C[N]$.
+            \item Otherwise, we have $M \twoheadrightarrow_\beta L$ and $L \twoheadrightarrow_\beta N$. By the inductive hypothesis, we find that $C[M] \twoheadrightarrow_\beta C[L]$ and $C[L] \twoheadrightarrow_\beta C[N]$. Hence, we can apply the third inference rule of $\twoheadrightarrow_\beta$ to conclude that $C[M] \twoheadrightarrow_\beta C[N]$.
         \end{itemize}
         So, the result follows from structural induction.
     \end{proof}
+    \noindent This property is called \emph{computability}.
     \newpage
 
     \section{Theory of Equality}
-    In this section, we will define the theory of equality between $\lambda$-terms. $\beta$-reduction is part of the equality, e.g. we say
+    In this section, we will define the \emph{theory of equality} between $\lambda$-terms. $\beta$-reduction is part of the equality, e.g. we say
     \[(\lambda x.x + 1) 1 = 2.\]
     We assume that mathematical computations are part of the $\lambda$-calculus. Unlike $\beta$-reduction, we also have
     \[(\lambda x.x + 1) 2 = (\lambda x.x + 2) 1\]
 
-    We denote the $\lambda$ formal theory $\lambda \vdash M = N$. This is a collection of axioms and inference rules. The theory of equality must satisfy the following:
+    We denote the $\lambda$ formal theory by 
+    \[\lambda \vdash M = N,\]
+    which means that in $\lambda$-calculus, we can derive $M = N$. This is a collection of axioms and inference rules. The theory of equality must satisfy the following:
     \begin{itemize}
         \item an application term must be equal to the result obtained by applying the function part of the term to the argument.
         \item equality must be an equivalence relation.
@@ -361,13 +379,16 @@
     \end{itemize}
     
     We will now go through the rules of $\lambda$-theory. The first axiom is $\beta$-reduction:
-    \[\frac{}{(\lambda x.M)N = M[x := N]}.\]
-    Now, we have reflexivity axiom, and the symmetry and the transitivity inference rules to make equality an equivalence relation.
-    \[\frac{}{M = M} \qquad \frac{M = N}{N = M} \qquad \frac{M = N \qquad N = L}{M = L}.\]
-    The remaining rules cover reduction in applications and abstractions.
-    \[\frac{M = N}{MZ = NZ} \qquad \frac{M = N}{ZM = ZN} \qquad \frac{M = N}{\lambda x.M = \lambda x.N}.\]
+    \[\frac{}{(\lambda x.M)N = M[x := N]}\]
+    This is the $\beta$-rule. Now, we have \emph{reflexivity} axiom, and the \emph{symmetry} and the \emph{transitivity} inference rules to make equality an equivalence relation.
+    \[\frac{}{M = M} \qquad \frac{M = N}{N = M} \qquad \frac{M = N \quad N = L}{M = L}.\]
+    The remaining rules cover extend equality to applications and abstractions.
+    \[\frac{M = N}{MZ = NZ} \qquad \frac{M = N}{ZM = ZN} \qquad \frac{M = N}{\lambda x.M = \lambda x.N}\]
+    \noindent These are the $\xi$-rules, and ensure that equal terms are equal in every context. Note that the first two rules are required since function application is not commutative (i.e. $MZ \neq ZM$).
 
-    If $M = N$ can be derived from the axioms and the inference rules of $\lambda$-theory, then we write $\lambda \vdash M = N$. The \emph{true statements} derived from applying axioms and inference rules of $\lambda$, are called \emph{theorems}. In this case, $M = N$ is a \emph{theorem}, and we say that $M$ and $N$ are \emph{convertible}. Note that if $M \equiv N$, then $M = N$, but not the other way around, e.g. $(\lambda x.x) y = y$, but they are not syntactically equivalent.
+    If $M = N$ can be derived from the axioms and the inference rules of $\lambda$-theory, then we write $\lambda \vdash M = N$. The \emph{true statements} derived from applying axioms and inference rules of $\lambda$, are called \emph{theorems}. In this case, $M = N$ is a \emph{theorem}, and we say that $M$ and $N$ are \emph{convertible}. 
+    
+    Note that if $M \equiv N$, then $M = N$, it is not necessarily true the other way around. For instance, $(\lambda x.x) y = y$, but they are not syntactically equivalent.
 
     We will now show that equal terms are equal in any context.
     \begin{theorem}
@@ -384,12 +405,12 @@
 
             \item Now, let $C[] = \lambda x.C'[]$, where $C'[]$ is a context satisfying $C'[M] = C'[N]$. Hence,
             \[C[M] \equiv \lambda x.C'[M] = \lambda x.C'[N] \equiv C[N],\]
-            applying the rule
+            applying the $\xi$-rule
            \[\frac{C'[M] = C'[N]}{\lambda x.C'[M] = \lambda x.C'[N]}\] 
 
            \item Finally, let $C[] = C_1[] C_2[]$, where $C_1[]$ and $C_2[]$ are contexts satisfying $C_1[M] = C_1[N]$ and $C_2[M] = C_2[N]$. Then,
            \[C[M] \equiv C_1[M] C_2[M] = C_1[N] C_2[M] = C_1[N] C_2[N] \equiv C[N].\]
-           We apply the following rules:
+           To do so, we apply the following $\xi$-rules:
            \[\frac{M = N}{C_1[M] C_2[M] = C_1[N] C_2[M]} \qquad \frac{M = N}{C_1[N] C_2[M] = C_1[N] C_2[N]}\]
            and
            \[\frac{C_1[M] C_2[M] = C_1[N] C_2[M] \qquad C_1[N] C_2[M] = C_1[N] C_2[N]}{C_1[M] C_2[M] = C_1[N] C_2[N]}.\]
@@ -410,9 +431,10 @@
         \hspace*{0pt}
         \begin{itemize}
             \item By definition, we have
-            \[M[x := N] \equiv (\lambda x.M)N.\]
-            Since $M = M'$, we have $\lambda x.M = \lambda x.M'$. Moreover, since $\lambda x.M = \lambda x.M'$, we find that $(\lambda x.M)N = (\lambda x.M')N$ . Hence,
-            \[M[x := N] \equiv (\lambda x.M)N = (\lambda x.M')N \equiv M'[x := N].\]
+            \[M[x := N] = (\lambda x.M)N.\]
+            Since $M = M'$, we have $\lambda x.M = \lambda x.M'$ by the $\xi$-rule. Moreover, this implies that $(\lambda x.M)N = (\lambda x.M')N$ by the $\xi$-rule again. Hence,
+            \[M[x := N] = (\lambda x.M)N = (\lambda x.M')N = M'[x := N].\]
+            So, by transitivity, it follows that $M[x := N] = M'[x := N]$.
 
             \item We show this by structural induction on substitution.
             \begin{itemize}
@@ -445,14 +467,22 @@
         \end{itemize}
     \end{proof}
 
+    We will now consider fixed points in $\lambda$-calculus.
     \begin{theorem}[Fixed Point Theorem]
         Let $F \in \Lambda$ be a term. Then, there exists a term $X \in \Lambda$ such that $FX = X$.
     \end{theorem}
     \begin{proof}
         Let $W \equiv \lambda x.F(xx)$ and $X \equiv WW$. Then,
-        \[X \equiv WW \equiv (\lambda x.F(xx)) W = F(WW) \equiv FX.\]
+        \begin{align*}
+            X &\equiv WW \\
+            &\equiv (\lambda x.F(xx)) W \\
+            &= F(WW) & (\beta) \\
+            &\equiv FX.
+        \end{align*}
     \end{proof}
-    \noindent We say that $X$ is a \emph{fixed point} of $X$. The identity function $I \equiv \lambda x.x$ fixes every term, i.e. $IM \equiv (\lambda x.x)M = M$. We will now use the theorem to find a fixed point for the term $F = \lambda xy.xy$. We define
+    \noindent We say that $X$ is a \emph{fixed point} of $X$. The identity function $I \equiv \lambda x.x$ fixes every term, i.e. $IM \equiv (\lambda x.x)M = M$. 
+    
+    We will now use the algorithm given in the theorem to find a fixed point for the term $F = \lambda xy.xy$. We define
     \[W \equiv \lambda x.F(xx) \equiv \lambda x.((\lambda xy.xy)(xx)) = \lambda x.\lambda y.(xx)y \equiv \lambda xy.(xx)y\]
     So, the fixed point is
     \[X \equiv WW \equiv (\lambda xy.(xx)y)(\lambda xy.(xx)y)\]
@@ -460,49 +490,55 @@
     \begin{align*}
         FX &\equiv (\lambda xy.xy)((\lambda xy.(xx)y)(\lambda xy.(xx)y)) \\
         &= \lambda y.((\lambda xy.(xx)y)(\lambda xy.(xx)y))y \\
-        &= (\lambda xy.(xx)y)(\lambda xy.(xx)y) \equiv X.
+        &= (\lambda xy.(xx)y)(\lambda xy.(xx)y) \\
+        &\equiv X
     \end{align*}
     
-    The fixed point for the identity function is $(\lambda x.xx)(\lambda x.xx)$. We will see this term later. In the fixed point theorem, we have self-application, i.e. subterms of the form $xx$. This is not typically seen in programming languages, but has huge consequences in $\lambda$-calculus.
+    In the fixed point theorem, we have self-application, i.e. subterms of the form $xx$. This is not typically seen in programming languages, but has huge consequences in $\lambda$-calculus.
 
     Now, we will see an application of the fixed point theorem-defining recursive functions. The normal definition of the factorial function is the following:
     \[\texttt{fac(n) = if n == 0 then 1 else n*fac(n-1)}\]
     Since $\lambda$-terms do not have the concept of recursion, we will have to implement this algorithm using the fixed point theorem. To do so, define the term
-    \[F = \lambda f.\lambda n.\texttt{if} (\texttt{eq}(n)(0)) (1) (\texttt{mul}(n)(f(n-1))).\]
-    In this term, assume that the $\lambda$-calculus has the terms \texttt{if}, \texttt{eq} and \texttt{mul} with their expected meaning. Then, let \texttt{fac} be a fixed point of $F$. We can evaluate factorial of 1 using this term:
+    \[F = \lambda f.\lambda n.\textit{if} (\textit{eq}(n)(0)) (1) (\textit{mul}(n)(f(n-1))).\]
+    In this term, assume that the $\lambda$-calculus has the terms \textit{if}, \textit{eq} and \textit{mul} with their expected meaning. Then, let \textit{fac} be a fixed point of $F$. We can evaluate factorial of 1 using this term:
     \begin{align*}
-        \texttt{fac}(1) &= F(\texttt{fac})(1) \\
-        &\equiv (\lambda f.\lambda n.\texttt{if} (\texttt{eq} \ n \ 0) 1 (\texttt{mul} \ n (f(n-1))))(\texttt{fac})(1) \\
-        &= \texttt{if} (\texttt{eq} \ 1 \ 0) 1 (\texttt{mul} \ 1 (\texttt{fac}(0))) \\
-        &= \texttt{fac}(0) \\
-        &= F(\texttt{fac})(0) \\
-        &\equiv (\lambda f.\lambda n.\texttt{if} (\texttt{eq} \ n \ 0) 1 (\texttt{mul} \ n (f(n-1))))(\texttt{fac})(0) \\
-        &= \texttt{if} (\texttt{eq} \ 0 \ 0) 1 (\texttt{mul} \ 1 (\texttt{fac}(-1)))  \\
-        &= 1.
+        \textit{fac}(1) &= F(\textit{fac})(1) \\
+        &\equiv (\lambda f.\lambda n.\textit{if} (\textit{eq} \ n \ 0) \ 1 \ (\textit{mul} \ n \ (f(n-1))))(\textit{fac})(1) \\
+        &= \textit{if} (\textit{eq} \ 1 \ 0) 1 (\textit{mul} \ 1 \ (\textit{fac}(0))) \\
+        &= \textit{mul} \ 1 \ \textit{fac}(0) \\
+        &= \textit{mul} \ 1 \ F(\textit{fac})(0) \\
+        &\equiv \textit{mul} \ 1 \ (\lambda f.\lambda n.\textit{if} (\textit{eq} \ n \ 0) \ 1 \ (\textit{mul} \ n (f(n-1))))(\textit{fac})(0) \\
+        &= \textit{mul} \ 1 \ \textit{if} (\textit{eq} \ 0 \ 0) 1 (\textit{mul} \ 1 (\textit{fac}(-1)))  \\
+        &= \textit{mul} \ 1 \ 1 = 1.
     \end{align*}
     \noindent Clearly, this formula can be used to evaluate higher factorials as well.
     
     \subsection{Extensionality}
-    The concept of equality we have defined is the convertibility relationship. It says that two terms are equal if they encode the same algorithm. However, there are some terms we would naturally consider to be equal, but we cannot prove that they are equal in $\lambda$-theory. For instance, $\lambda x.Mx = M$ cannot be shown in $\lambda$. In the extensionality relationship, two terms are considered equal if they give equal results to equal arguments.
+    The concept of equality we have defined is the \emph{convertibility} relationship. It says that two terms are equal if they encode the same algorithm. However, there are some terms we would naturally consider to be equal, but we cannot prove that they are equal in $\lambda$-theory. For instance, $\lambda x.Mx = M$ cannot be shown in $\lambda$. In the extensionality relationship, two terms are considered equal if they give equal results to equal arguments.
 
-    We can extend the $\lambda$-theory to derive $\lambda x.Mx = M$. We can directly add it as a new axiom, called the $\eta$-axiom- it states that $\lambda x.Mx = M$ if $x$ is not free in $M$. This is the $\lambda \eta$ theory. Another way of doing this is using the $ext$ rule:
-    \[\frac{Mx = Nx}{M = N}\]
-    if $x$ is not free in $M$ and $N$. This is the $\lambda + ext$ theory. We will show that the two theories are equivalent.
+    There are two ways of extending $\lambda$-theory so that $\lambda x.Mx$:
+    \begin{itemize}
+        \item We can extend the $\lambda$-theory to derive $\lambda x.Mx = M$. We can directly add it as a new axiom, called the $\eta$-axiom- it states that $\lambda x.Mx = M$ if $x$ is not free in $M$. This is the $\lambda \eta$ theory.
+        \item Another way of doing this is using the $ext$ rule:
+        \[\frac{Mx = Nx}{M = N}\]
+        if $x$ is not free in $M$ and $N$. This is the $\lambda + ext$ theory. 
+    \end{itemize}
+    We will show that the two theories are equivalent.
     \begin{theorem}
         $\lambda \eta$ and $\lambda + ext$ are equivalent.
     \end{theorem}
     \begin{proof}
         Since $\lambda \eta$ and $\lambda + ext$ both extend $\lambda$, it suffices to show that their extensions are equivalent.
 
-        We first show that $\lambda \eta \vdash Mx = Nx \implies M = N$ if $x$ is not free in $M$ and $N$. So, let $M, N$ be terms and $x$ a variable not free in $M$ such that $Mx = Nx$. This implies that $\lambda x.Mx = \lambda x.Nx$. Hence, by $\lambda \eta$, we find that
+        We first show that $\lambda \eta \vdash Mx = Nx \implies M = N$ if $x$ is not free in $M$ and $N$. So, let $M, N$ be terms and $x$ a variable not free in $M$ and $N$ such that $Mx = Nx$. This implies that $\lambda x.Mx = \lambda x.Nx$ by $(\xi)$. Hence, by $(\eta)$, we find that
         \[M = \lambda x.Mx = \lambda x.Nx = N.\]
         So, $\lambda \eta \vdash \lambda + ext$.
 
-        Now, we show that $\lambda + ext \vdash \lambda x.Mx = M$ if $x$ is not free in $M$. So, let $M$ be a term and let $x$ be a variable not free in $M$. We know that $(\lambda x.Mx)x = Mx$. Hence, by $ext$, we find that $\lambda x.Mx = M$. So, $\lambda + ext \vdash \lambda \eta$.
+        Now, we show that $\lambda + ext \vdash \lambda x.Mx = M$ if $x$ is not free in $M$. So, let $M$ be a term and let $x$ be a variable not free in $M$. By $(\beta)$, we know that $(\lambda x.Mx)x = Mx$. Hence, by $ext$, it follows that $\lambda x.Mx = M$. So, $\lambda + ext \vdash \lambda \eta$.
     \end{proof}
 
     \subsection{Consistency}
-    For a theory to be useful, nothing every equation can hold- there must be theorems (satisfied equations) and non-theorems (equations not satisfied).
+    For a theory to be useful, not every equation can hold- there must be theorems (satisfied equations) and non-theorems (equations not satisfied).
     \begin{definition}
         An \emph{equation} is a formula of the form $M = N$, for terms $M$ and $N$. It is \emph{closed} if it has no free variables.
     \end{definition}
@@ -510,7 +546,7 @@
         Let $\mathcal{T}$ be a theory with equations as formulae. We say that $\mathcal{T}$ is \emph{consistent}, denoted by $\operatorname{Con}(\mathcal{T})$, if it does not prove every closed equation. If $\mathcal{T}$ is a set of equations, then $\lambda + \mathcal{T}$ is formed by adding the equations of $\mathcal{T}$ as axioms to $\lambda$, denoted bt $\operatorname{Con}(\lambda + \mathcal{T})$. 
     \end{definition}
 
-    The theories $\lambda$ and $\lambda \eta$ are consistent. It is quite easily possible to lose consistency, e.g. by adding just a single equation. For instance, define
+    The theories $\lambda$ and $\lambda \eta$ are consistent. It is quite easily possible to lose consistency, e.g. by just adding a single equation. For instance, define
     \begin{align*}
         S &\equiv \lambda xyz.xz(yz) \\
         K &\equiv \lambda xy.x \\
@@ -553,14 +589,15 @@
     \[P = M(NO)P = (MN)OP = OP.\]
     So, if $P = N = I$ and $O$ arbitrary, we find that $O = I$. So, this theory is inconsistent.
 
+    \subsection{Normal Forms}
     We will now look at normal forms.
     \begin{definition}
         Let $M$ be a term.
         \begin{itemize}
-            \item We say that $M$ is a $\beta$-normal form, denoted $\beta$-nf. or nf, if $M$ has no subterms of the form $(\lambda x.R)S$.
-            \item We say that $M$ has a $\beta$-normal form if there exists an $N = M$ such that $N$ is $\beta$-nf.
-            \item We say that $M$ is a $\beta \eta$-normal form if $M$ is a $\beta$-n.f. with no subterms of the form $(\lambda x.Rx)$ where $x$ is free in $R$.
-            \item We say that $M$ has a $\beta \eta$-normal form if there exists an $N = M$ such that $N$ is $\beta \eta$-nf.
+            \item We say that $M$ is a \emph{$\beta$-normal form}, denoted $\beta$-nf. or nf, if $M$ has no subterms of the form $(\lambda x.R)S$.
+            \item We say that $M$ \emph{has} a \emph{$\beta$-normal form} if there exists an $N = M$ such that $N$ is $\beta$-nf.
+            \item We say that $M$ is a $\beta \eta$-normal form if $M$ is a $\beta$-nf. with no subterms of the form $\lambda x.Rx$ where $x$ is free in $R$.
+            \item We say that $M$ \emph{has} a $\beta \eta$-normal form if there exists an $N = M$ such that $N$ is $\beta \eta$-nf.
         \end{itemize}
     \end{definition}
     The basic idea of $\lambda$-calculus as a programming language is that computation consists of applying the $\beta$-rule from left to right and converting $(\lambda x.M)N$ to $M[x := N]$ until we reach a $\beta$-nf, which is the result. We show this with some examples:
@@ -580,7 +617,9 @@
             \item If $M$ and $N$ are distinct $\beta \eta$-nfs, then $M \# N$.
         \end{itemize}
     \end{proposition}
-    \noindent Note the final equation states that any two distinct $\beta \eta$-nfs cannot be set equal without making the theory inconsistent. Hence, $\beta \eta$ is the weakest consistent form of equality. This is the property of completeness, given below.
+    \noindent The final equation states that any two distinct $\beta \eta$-nfs cannot be set equal without making the theory inconsistent. Hence, $\beta \eta$ is the weakest consistent form of equality. Note that this does not holds for just $\beta$-nfs: $y$ and $\lambda x.yx$ are two distinct $\beta$-nfs, but do not lead to inconsistency (since they share the $\beta \eta$-nf). 
+    
+    $\beta \eta$ normal forms having the equal-or-inconsistent property is the property of \emph{completeness}, which is given below.
     \begin{proposition}
         Let $M$ and $N$ be $\lambda$-terms. Then, either $\lambda \eta \vdash M = N$ or $\lambda \eta + (M = N)$ is inconsistent.
     \end{proposition}

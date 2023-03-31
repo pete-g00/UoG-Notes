@@ -31,16 +31,15 @@
 \begin{document}
     \chapter{Preliminaries for ToC}
 
-    \section{Inference Rules and Induction}
-    \subsection{Inference Rules}
+    \section{Inference Rules}
     An \emph{inference rule} is a function from a set of premises to a single conclusion. This is denoted as follows:
-    \[\frac{\textrm{premise 1} \dots \textrm{premise } n}{\textrm{conclusion}} \textrm{Rule } 1.\]
+    \[\frac{\textrm{premise 1} \quad \dots \quad \textrm{premise } n}{\textrm{conclusion}} \textrm{Rule } 1.\]
     The rule `Rule 1' states that if all premises $1, 2, \dots, n$ hold, then the conclusion holds. We can have $n \geq 0$ premises. In particular, if $n = 0$, then the rule is an \emph{axiom}. In formal systems, the inference rules can be thought of as proofs, and the premises the hypotheses of the proof.
 
     We will now go through some inference rules. The Modus Ponens in propositional logic can be denoted as follows:
-    \[\frac{A \to B \qquad A}{B} MP.\]
+    \[\frac{A \to B \quad A}{B} MP.\]
     Similarly, Modus Tollenz is denoted as follows:
-    \[\frac{A \to B \qquad \lnot B}{\lnot A} MT.\]
+    \[\frac{A \to B \quad \lnot B}{\lnot A} \textrm{MT}.\]
 
     We can use the inference rules to define a natural number. In words, the following is a definition for them:
     \begin{itemize}
@@ -48,143 +47,158 @@
         \item if $n$ is a natural number, then its successor $n+1$ is also a natural number.
     \end{itemize}
     The inference rules in this case are given below:
-    \[\frac{}{0 \textrm{ nat}} zero \qquad \frac{n \textrm{ nat}}{succ(n) \textrm{ nat}} succ.\]
+    \[\frac{}{0 \textrm{ nat}} \textrm{zero} \qquad \frac{n \textrm{ nat}}{\textit{succ}(n) \textrm{ nat}} \textrm{succ}.\]
     Note that the first rule is an axiom.
 
     A \emph{formal system} is a set of inference rules with at least one axiom, e.g. the definition of the natural numbers. Inference rules can be used to define semantics and type systems.
+    \newpage
 
-    \subsection{Mathematical and Structural Induction}
-    We will now look at mathematical induction. It turns out that many of the proofs we will see in future follow a similar structure to induction, called structural induction.
+    \section{Mathematical and Structural Induction}
+    We will now look at \emph{mathematical induction}. It turns out that many of the proofs we will see in the course follow a similar structure to induction, called \emph{structural induction}.
 
     We can use mathematical induction to prove a property $P(n)$ holds for all natural numbers $n \in \mathbb{N}$. Its inference rule is:
-    \[\frac{P(0) \qquad P(k) \to P(k+1) \ k \in \mathbb{N}}{P(n) \ n \in \mathbb{N}} MI.\]
+    \[\frac{P(0) \quad P(k) \to P(k+1) \ \forall k \in \mathbb{N}}{P(n) \ \forall n \in \mathbb{N}} \textrm{MI}.\]
     That is, if $P(0)$ holds and for all $k \in \mathbb{N}$, $P(k)$ implies $P(k+1)$, then $P(n)$ holds for all $n \in \mathbb{N}$. This follows logically from a domino effect ($P(0)$ implies $P(1)$; $P(1)$ implies $P(2)$; and so on).
 
-    We will now illustrate mathematical induction with an example. We shall prove that for all $n \in \mathbb{N}$,
+    We will now illustrate mathematical induction with an example. We prove that for all $n \in \mathbb{N}$,
     \[0 + 1 + \dots + n = \frac{n(n+1)}{2}.\]
     If $n = 0$, then we find that
     \[0 = \frac{0 \cdot 1}{2},\]
-    so the statement holds in this case. Now, assume that for some $n \in \mathbb{N}$, we have
-    \[0 + 1 + \dots + n = \frac{n(n+1)}{2}.\]
+    so $P(0)$ holds. Now, assume that for some $k \in \mathbb{N}$, $P(k)$ holds, i.e. we have
+    \[0 + 1 + \dots + k = \frac{k(k+1)}{2}.\]
     In that case,
     \begin{align*}
-        0 + 1 + \dots + n + (n+1) &= \frac{n(n+1)}{2} + (n+1) \\
-        &= \frac{n(n+1) + (n+1) \cdot 2}{2} \\
-        &= \frac{(n+1)(n+2)}{2} \\
-        &= \frac{(n+1)((n+1) + 1)}{2}.
+        0 + 1 + \dots + k + (k+1) &= \frac{k(k+1)}{2} + (k+1) \\
+        &= \frac{k(k+1) + (k+1) \cdot 2}{2} \\
+        &= \frac{(k+1)(k+2)}{2} \\
+        &= \frac{(k+1)((k+1) + 1)}{2}.
     \end{align*}
-    So, if the statement holds for some $n$, it holds for $n+1$. Hence, by mathematical induction, the statement holds for all $n \in \mathbb{N}$.
+    So, if $P(k)$ holds, then $P(k+1)$ holds. Hence, by mathematical induction, the statement $P(n)$ holds for all $n \in \mathbb{N}$.
 
-    We will now consider a different version of induction- structural induction. It generalises the concept of mathematical induction on different (inductive/recursive) structures we shall define. 
+    We now consider a different version of induction- structural induction. It generalises the concept of mathematical induction, and can be used on different structures we shall define in the course, such as recursive structures.
     
-    We will illustrate how to prove something using structural induction. So, assume that $X$ is a recursively-defined structure, and let $P$ be the property we want to show. We will first show that $P(x)$ holds for all $x \in X$ that are the base case (e.g. leaves on a tree). Now, by assuming the proof holds for a substructure in $X$, we show that the property holds for a bigger structure. We will see examples following this technique later.
+    We will illustrate how to prove something using structural induction. So, assume that $X$ is a recursively-defined structure, and let $P$ be the property we want to show.
+    \begin{itemize}
+        \item We will first show that $P(x)$ holds for all $x \in X$ that are the base case (e.g. the number $0$).
+        \item Now, by assuming the proof holds for a substructure in $X$ (e.g. the number $k$), we show that the property holds for a bigger structure (e.g. the number $k+1$).
+    \end{itemize}
+    We will see examples following this technique later.
+
     \newpage
 
-    \section{Syntax and Semantics}
-    \subsection{Syntax}
-    To specify the syntax of nested phrases, e.g. expressions and commands, we need a context-free grammar. The grammar of a language is a set of rules that specify how the phrases are formed. Each rule specifies how a phrase can be formed from symbols (e.g. keywords and punctuation) and simpler phrases.
+    \section{Syntax}
+    To specify the syntax of nested phrases, e.g. expressions and commands, we need a \emph{context-free grammar}. The grammar of a language is a set of rules that specify how the phrases are formed. Each rule specifies how a phrase can be formed from symbols (e.g. keywords and punctuation) and simpler phrases.
 
     A (context-free) grammar consists of:
     \begin{itemize}
-        \item a set of terminal symbols;
-        \item a set of non-terminal symbols (representing a phrase);
-        \item a sentence symbol (a non-terminal symbol representing a sentence); and
-        \item a set of production rules (how phrases are composed from terminal symbols and sub-phrases).
+        \item a set of \emph{terminal symbols};
+        \item a set of \emph{non-terminal symbols} (representing a phrase);
+        \item a \emph{sentence symbol} (a non-terminal symbol representing a sentence); and
+        \item a set of \emph{production rules} (how phrases are composed from terminal symbols and sub-phrases).
     \end{itemize}
 
-    We will use the Backus Naur Form (BNF) notation to express a grammar. It is denoted
+    We will use the \emph{Backus Naur Form} (BNF) notation to express a grammar. It is denoted
     \[S ::= \alpha \mid \beta \mid \gamma.\]
     Here, the rule $S$ states that a term of type $S$ can be either $\alpha$, $\beta$ or $\gamma$ (each of which is a sequence of terminal or non-terminal symbols).
 
-    We will illustrate the grammar using the language Expr.
-    Here,
+    We will illustrate the grammar using a simple programming language called \textit{Expr}. Here,
     \begin{itemize}
-        \item the terminal symbols are the natural numbers $0, 1, \dots$, $\texttt{true}, \texttt{false}, +, -, =$;
+        \item the terminal symbols are the natural numbers $0, 1, \dots$, $\textit{true}, \textit{false}, +, -, =$;
         \item the non-terminal symbols are: $exp$ and $val$;
         \item the sentence symbol is $exp$;
         \item the production rules are:
         \begin{align*}
             exp &::= val \mid exp + val \mid exp - val \mid exp = val \\
-            val &::= 0 \mid 1 \mid \dots \mid \texttt{true} \mid \texttt{false}.
+            val &::= 0 \mid 1 \mid \dots \mid \textit{true} \mid \textit{false}.
         \end{align*}
     \end{itemize}
-    The grammar above defines the formal syntax of a language for the language Expr, which allows us to write mathematical expressions. The grammar defines the smallest set of entities containing natural number, \texttt{true}, \texttt{false}, and is closed under the production rules.
+    The grammar above defines the formal syntax of a language for the language \textit{Expr}. In particular, we can write mathematical expressions in this language. The grammar defines the \emph{smallest} set of entities containing natural numbers and booleans, and is closed under the production rules.
+    \newpage
 
-    \subsection{Sematics}
-    Semantics studies the meaning of a (programming) language or a calculus. In particular, it gives a non-ambiguous meaning to a program. There are 2 types of semantics:
+    \section{Semantics}
+    \emph{Semantics} studies the meaning of a programming language (PL) or a calculus. In particular, it gives a non-ambiguous meaning to a program. There are 2 types of semantics:
     \begin{itemize}
-        \item Static semantics (called type system) assigns types to language terms;
-        \item Dynamic semantics gives meaning to programs in a language based on their behaviour during execution- this is independent of the compiler.
+        \item \emph{Static semantics} (called type system) assigns types to language terms;
+        \item \emph{Dynamic semantics} gives meaning to programs in a language based on their behaviour during execution- this is independent of the compiler.
     \end{itemize}
     In practice, PLs have informal (but not imprecise) or semi-formal semantics. We typically only find formal semantics for calculi.
 
     There are 3 types of dynamic semantics:
     \begin{itemize}
-        \item Operational semantics defines how a program is executed, one step at a time, to produce a result/observable behaviour.
-        \item Denotational semantics defines the meaning of a program as a mathematical object, e.g. treating them as a function.
-        \item Axiomatic semantics defines a logic for pre- and post-conditions, and a proof system; the meaning of a program is what can be proved about its behaviour.
+        \item \emph{Operational semantics} defines how a program is executed, one step at a time, to produce a result/observable behaviour.
+        \item \emph{Denotational semantics} defines the meaning of a program as a mathematical object, e.g. treating them as a function.
+        \item \emph{Axiomatic semantics} defines a logic for pre- and post-conditions, and a proof system; the meaning of a program is what can be proved about its behaviour.
     \end{itemize}
     We will mostly consider operational semantics.
 
-    For the language Expr, we can define the operational semantics by formalising its evaluations. We write $exp \to exp'$ to denote that $exp$ reduces to $exp'$ by one-step evaluation. Reductions are only possible if they can be derived from the set of reduction rules, which is given by a set of inference rules.
+    \subsection{Reduction rules}
+    For the language \textit{Expr}, we can define the operational semantics by formalising its evaluations. We write $exp \to exp'$ to denote that $exp$ reduces to $exp'$ by one-step evaluation. Reductions are only possible if they can be derived from the set of reduction rules. The reduction rules will be given by a set of inference rules.
 
     The meaning of an expression $exp$ is calculated by reducing it:
     \[exp \to exp_1 \to exp_2 \to \dots\]
-    until we reach a stuck expression (if possible). A stuck expression is either:
+    until we reach a \emph{stuck expression}. A stuck expression is either:
     \begin{itemize}
-        \item a value (representing the meaning of the original expression). In Expr, a value is produced by $val ::==$;
-        \item a non-value which cannot be reduced any further (e.g. $1 + \texttt{true}$, representing a run-time error).
+        \item a value (representing the meaning of the original expression). In \textit{Expr}, a value is produced by $val ::== \cdot$; or
+        \item a non-value which cannot be reduced any further (e.g. $1 + \textit{true}$, representing a run-time error).
     \end{itemize}
-    The use of inference rules following the structure of the syntax to define reductions is known as Structural Operational Semantics.
+    The use of inference rules following the structure of the syntax to define reductions is known as \emph{Structural Operational Semantics}.
 
-    In the language Expr, we want $+$, $-$ and $=$ to represent their mathematical operations, i.e. $1 + 1 \to 2$, $3 - 2 \to 1$ and $2 = 2 \to \texttt{true}$. This allows us to define the reduction rules for the operators:
+    In the language \textit{Expr}, we want $+$, $-$ and $=$ to represent their mathematical operations, i.e. 
+    \begin{itemize}
+        \item $1 + 1 \to 2$;
+        \item $3 - 2 \to 1$; and
+        \item $2 = 2 \to \textit{true}$. 
+    \end{itemize}
+    To do so, we define reduction rules, starting with $+$ and $-$:
     \begin{align*}
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are integer literals and } val_3 \textrm{ is their sum}^*}{val_1 + val_2 \to val_3} \textit{R-Sum} \\
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are integer literals and } val_3 \textrm{ is their difference}^*}{val_1 - val_2 \to val_3} \textit{R-Diff}.
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are integer literals and } val_3 \textrm{ is their sum}^*}{val_1 + val_2 \to val_3} \textrm{R-Sum} \\
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are integer literals and } val_3 \textrm{ is their difference}^*}{val_1 - val_2 \to val_3} \textrm{R-Diff}.
     \end{align*}
-    We denote by $*$ the side-conditions. These are not premises, but we require them for the inference rule to be applied on top of the premises. In particular, the rules above are axioms. We can similarly define the rule for $=$:
+    We denote by $*$ the side-conditions. These are not premises, but we require them for the inference rule to be applied on top of the premises. So, the rules above are axioms. We can similarly define the rule for $=$:
     \begin{align*}
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \texttt{true}} \textit{R-Eq}_1 \\
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \texttt{false}} \textit{R-Eq}_2.
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \textit{true}} \textrm{R-Eq}_1 \\
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \textit{false}} \textrm{R-Eq}_2.
     \end{align*}
-    We can now define inference rules on expressions:
+    The inference rules can also be extended to expressions in general.
     \begin{align*}
-        \frac{exp \to exp'}{exp + val \to exp' + val} \textit{R-expSum} \\
-        \frac{exp \to exp'}{exp - val \to exp' - val} \textit{R-expDiff} \\
-        \frac{exp \to exp'}{exp = val \to exp' = val} \textit{R-expEq}.
+        \frac{exp \to exp'}{exp + val \to exp' + val} \textrm{R-expSum} \\
+        \frac{exp \to exp'}{exp - val \to exp' - val} \textrm{R-expDiff} \\
+        \frac{exp \to exp'}{exp = val \to exp' = val} \textrm{R-expEq}.
     \end{align*}
 
-    From the reduction rules given, for any operational semantics for Expr, we would either get a value (e.g. $1 + 5 - 2$) or stuck expressions (e.g. $1 + \texttt{true}$). To avoid these run-time errors, we enhance the language with static semantics- a type system. This ensures that ill-formed expressions are ruled out.
+    \subsection{Type System}
+    From the reduction rules given, for any operational semantics for \textit{Expr}, we would either get a value (e.g. $1 + 5 - 2$) or stuck expressions (e.g. $1 + \textit{true}$). To avoid these run-time errors, we enhance the language with static semantics- a \emph{type system}. This ensures that ill-formed expressions are ruled out.
 
-    We will now define a type system for Expr. We do so using inference rules. First, we define the syntax of types:
-    \[T ::= \texttt{bool} \mid \texttt{int}.\]
-    A type judgment for Expr is of the form 
+    We will now define a type system for \textit{Expr}. We do so using inference rules. First, we define the syntax of types:
+    \[T ::= \textit{bool} \mid \textit{int}.\]
+    A \emph{type judgment} for \textit{Expr} is of the form 
     \[\vdash expr \colon T.\]
-    This denotes that the expression $expr$ is of type $T$, with respect to the typing context (empty in this case). In general, the typing context is non-empty, and of the form: $\Gamma \vdash term \colon type$, with $\Gamma$ a typing constraint.
+    This denotes that the expression $expr$ is of type $T$, with respect to the typing context (which is empty in this case). In general, the typing context is non-empty, and of the form: 
+    \[\Gamma \vdash \textit{term} \colon \textit{type}.\]
+    Hee, $\Gamma$ is a \emph{typing constraint}, meaning that it has some type assumptions, e.g. for variables. This means that under $\Gamma$, the \textit{term} has the given \textit{type}.
 
-    The type system for Expr is given with the following rules:
+    The type system for \textit{Expr} is given with the following rules:
     \begin{align*}
-        \frac{}{\vdash \texttt{true} \colon \texttt{bool}} \textit{T-True} \\
-        \frac{}{\vdash \texttt{false} \colon \texttt{bool}} \textit{T-False} \\
-        \frac{\textrm{if } val \textrm{ is an integer literal}^*}{\vdash val \colon \texttt{bool}} \textit{T-Int} \\
-        \frac{\vdash exp \colon \texttt{int} \qquad \vdash val \colon \texttt{int}}{\vdash exp + val \colon \texttt{int}} \textit{T-Sum} \\
-        \frac{\vdash exp \colon \texttt{int} \qquad \vdash val \colon \texttt{int}}{\vdash exp - val \colon \texttt{int}} \textit{T-Diff} \\
-        \frac{\vdash exp \colon \texttt{int} \qquad \vdash val \colon \texttt{int}}{\vdash exp = val \colon \texttt{bool}} \textit{T-Eq}.
+        \frac{}{\vdash \textit{true} \colon \textit{bool}} \textrm{T-True} \\
+        \frac{}{\vdash \textit{false} \colon \textit{bool}} \textrm{T-False} \\
+        \frac{\textrm{if } val \textrm{ is an integer literal}^*}{\vdash val \colon \textit{bool}} \textrm{T-Int} \\
+        \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp + val \colon \textit{int}} \textrm{T-Sum} \\
+        \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp - val \colon \textit{int}} \textrm{T-Diff} \\
+        \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp = val \colon \textit{bool}} \textrm{T-Eq}.
     \end{align*}
 
-    In summary, the Expr language has been defined using:
+    In summary, the \textit{Expr} language has been defined using:
     \begin{itemize}
-        \item Syntax- using a grammar in BNF;
-        \item Dynamic semantics- meaning of terms of the language (as behaviour).
-        \item Type system- assigning types to terms of the language.
+        \item \textit{syntax}- using a grammar in BNF;
+        \item \textit{dynamic semantics}- meaning of terms of the language (as behaviour); and
+        \item \textit{type system}- assigning types to terms of the language.
     \end{itemize}
 
-    A type system for a PL gives us guarantees about programs during run time. In particular, they ensure that unwanted type errors are ruled out. This intuition is formalised in the type safety property, which tells us that well-typed programs don't go wrong. In particular, there are 2 theorems that make up the type safety property:
+    A type system for a PL gives us guarantees about programs during runtime. In particular, they ensure that unwanted type errors are ruled out. This intuition is formalised in the \emph{type safety} property, which tells us that well-typed programs don't go wrong. In particular, there are 2 theorems that make up the type safety property:
     \begin{itemize}
-        \item Type Preservation- if a term is well-typed and reduces, then it reduces to a well-typed term;
-        \item Progress- if a term is well-typed, then it either reduces or is a value.
+        \item \emph{type preservation}- if a term is well-typed and reduces, then it reduces to a well-typed term;
+        \item \emph{progress}- if a term is well-typed, then it either reduces or is a value.
     \end{itemize}
     Note that this doesn't guarantee termination of the reduction process.
-
 
 \end{document}

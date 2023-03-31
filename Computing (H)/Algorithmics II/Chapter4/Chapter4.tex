@@ -78,7 +78,7 @@
     \chapter{Algorithms for Hard Problems}
     In this chapter, we will look at finding algorithms for hard problems and approximations. A problem is hard is connected to it being NP-complete. In particular, we will focus on giving a feasible algorithm that solves a hard problem while allowing it to not be perfect, i.e. approximate. We will also formalise approximation algorithms and their limitations.
 
-    A decision problem is an algorithm that returns true or false. The class $P$ is the set of decision problems that can be solved in polynomial time (with respect to the input size). The class $NP$ is the set of decision problems for which a proposed solution can be verified in polynomial time. Clearly, $P \subseteq NP$, but it is widely believed, but not proven, that $P \neq NP$.
+    A decision problem is an algorithm that returns true or false. The class $P$ is the set of decision problems that can be solved in polynomial time (with respect to the input size). The class $NP$ is the set of decision problems for which a proposed solution can be verified in polynomial time. Clearly, $P \subseteq NP$, and it is widely believed, but not proven, that $P \neq NP$.
 
     A decision problem $\Pi_1$ can be reduced in polynomial-time to a decision problem $\Pi_2$ if every instance of $\Pi_1$ can be converted to $\Pi_2$ with the same result. If $\Pi_1$ reduces to $\Pi_2$ and $\Pi_1 \in P$, then $\Pi_2 \in P$ as well. A problem $\Pi$ is $NP$-complete if it reduces to any other problem in $NP$ in polynomial-time. If a problem is in $P$ and $NP$-complete, then $P = NP$. Hence, if $P \neq NP$, then an $NP$-complete problem is not in $P$. We aim to find efficient algorithms to decide $NP$-complete decision problems.
 
@@ -404,7 +404,17 @@ bool isOkay(int i) {
         \item Given a partial travelling salesman tour of length $l$, a lower bound is $l$ added to the weight of the minimum spanning tree on the unvisited vertices, the current vertex and the starting vertex. In a travelling salesman tour, these cities must be linked by a path, which is a spanning tree. This gives a better bound in practice, but takes longer time since the minimum spanning tree must be computed for each choice at every iteration.
     \end{itemize}
     Using the lower bound, we can find out whether we can get a better length than the current one we have- if the lower bound is already greater than the best length we have found, then we can simply backtrack.
-    % TODO: Add example?
+    % TODO: Complete example
+    % \begin{figure}[H]
+    %     \centering
+    %     \begin{tikzpicture}
+    %         \draw [step=0.5, opacity=0.3] (0, 0) grid (2, 3);
+
+    %         \foreach \x in {(0, 2.5), (0.5, 1), (1.5, 0), (2, 1.5)} {
+    %             \filldraw \x circle (2.5pt);
+    %         }
+    %     \end{tikzpicture}
+    % \end{figure}
 
     \newpage
 
