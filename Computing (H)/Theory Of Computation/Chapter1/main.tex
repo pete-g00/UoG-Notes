@@ -15,6 +15,11 @@
 \usepackage[linewidth=1pt]{mdframed}
 \usepackage{multicol}
 \usepackage{fancyvrb}
+\usepackage{tikz}
+
+\newcommand{\nfrac}[2]{
+    {\displaystyle\frac{#1}{\strut #2}}
+  \kern-\nulldelimiterspace}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -626,36 +631,54 @@
     \newpage
 
     \section{Reduction and Normal Forms}
-    We defined one-step $\beta$-reduction by the rule
+    We defined \emph{one-step $\beta$-reduction} by the rule
     \[(\lambda x.M) N \to_\beta M[x := N]\]
-    The transitive and reflexive closure of one-step $\beta$-reduction gives the actual $\beta$-reduction, denoted $\twoheadrightarrow_\beta$. 
+    and other rules that ensure reduction can take place within any context. The transitive and reflexive closure of one-step $\beta$-reduction gives the actual \emph{$\beta$-reduction}, denoted $\twoheadrightarrow_\beta$. 
 
-    Intuitively, the aim of reduction is to simplify an expression as much as possible. We saw in the previous chapter that normal forms (nfs) are the simplest form of terms; they cannot be $\beta$-reduced any further. We also saw that not every term has a nf.
+    Intuitively, the aim of reduction is to simplify an expression as much as possible. We saw in the previous chapter that \emph{normal forms} (nfs) are the simplest form of terms; they cannot be $\beta$-reduced any further. We also saw that not every term has a nf.
 
-    Moreover, because $\beta$-reduction can be applied anywhere within a term, we might have a choice when applying reduction. For instance, consider the definition of the factorial function we saw above:
+    Moreover, because $\beta$-reduction can be applied anywhere within a term, we might have a choice when applying reduction. This can make a difference in how a program is executed, and gives rise to different \emph{reduction strategies}. 
+    
+    For instance, consider the definition of the factorial function we saw above:
     \begin{align*}
-        F &= \lambda f.\lambda n.\texttt{if}(\texttt{eq}(n)(0))(1)(n \cdot f(n-1)) \\
+        F &= \lambda f.\lambda n.\textit{if}(\textit{eq} \ n \ 0)(1)(\textit{mul} \ n \ f(n-1)) \\
         \texttt{fac} &= \texttt{fix}(F).
     \end{align*}
     Then, if we wanted to compute $\texttt{fac}(0)$, the following is a possible sequence of reduction:
     \[\texttt{fac}(0) = F(\texttt{fac})(0) = F(F(\texttt{fac}))(0) = \dots \]
-    Clearly, if we continued expanding like this, we will not get to the normal form. So, not every reduction sequence leads to its nf. However, we have seen that there \textit{is} a reduction sequence that does lead to the nf. So, we want to answer whether, and how, we can reach the nf if it exists. Note that there are some terms where each reduction sequence leads to the nf, e.g. $(\lambda xy. x + y)(1 + 2)(3 + 4)$.
+    Clearly, if we continued expanding like this, we will not get to the normal form. So, not every reduction sequence leads to its nf. However, we have seen that there \emph{is} a reduction sequence that does lead to the nf. So, we want to answer whether, and how, we can reach the nf if it exists. Note that there are some terms where each reduction sequence leads to the nf, e.g. $(\lambda xy. x + y)(1 + 2)(3 + 4)$.
 
     In this section, we aim to answer the following 2 questions:
     \begin{itemize}
         \item if a term has a nf, is it unique? and
-        \item does every term have a reduction sequence that leads to its nf?
+        \item does every term have a reduction sequence that leads to its nf, and is there a systematic manner of choosing the sequence?
     \end{itemize}
-    
+
+    \subsection{Church-Rosser}
     The Church-Rosser theorem helps us answer the first question.
     \begin{theorem}[Church-Rosser]
         If $L \twoheadrightarrow_\beta M$ and $L \twoheadrightarrow_\beta N$, then there exists a term $Z$ such that $M \twoheadrightarrow_\beta Z$ and $N \twoheadrightarrow_\beta Z$.
     \end{theorem}
-    \noindent This theorem states that if $L$ can be reduced to two different values, then these two values are in the middle of the computation, and we can reduce both of these values to some term $Z$. We can rewrite this result in terms of $\beta$-equality.
+    \noindent This theorem states that if $L$ can be reduced to two different values, then these two values are in the middle of the computation, and we can reduce both of these values to some term $Z$. The figure below illustrates this.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node (L) at (0, 0) {$L$};
+            \node (M) at (1.5, 0.5) {$M$};
+            \node (N) at (1.5, -0.5) {$N$};
+            \node (Z) at (3, 0) {$Z$};
+
+            \draw[->>] (L) -- (M);
+            \draw[->>] (L) -- (N);
+            \draw[->>] (M) -- (Z);
+            \draw[->>] (N) -- (Z);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We can rewrite this result in terms of $\beta$-equality.
     \begin{corollary}
         If $M =_\beta N$\sidefootnote{We use the equality symbol $=_\beta$ to denote equality arising from $\beta$-reduction $\twoheadrightarrow_\beta$.}, then there exists a term $Z$ such that $M \twoheadrightarrow Z$ and $N \twoheadrightarrow Z$.
     \end{corollary}
-    \noindent Now, we can answer the questions.
+    \noindent Now, we can answer the uniqueness question.
     \begin{corollary}
         Let $M$ be a term.
         \begin{enumerate}
@@ -666,9 +689,9 @@
     \begin{proof}
         \hspace*{0pt}
         \begin{enumerate}
-            \item We know that $M =_\beta N$. So, there exists a term $Z$ such that $M \twoheadrightarrow_\beta Z$ and $N \twoheadrightarrow_\beta Z$. Since $N$ is a $\beta$-nf, we find that $N \equiv Z$. Hence, $M \twoheadrightarrow_\beta N$.
+            \item We know that $M =_\beta N$. So, there exists a term $Z$ such that $M \twoheadrightarrow_\beta Z$ and $N \twoheadrightarrow_\beta Z$. Since $N$ is a $\beta$-nf, it cannot be reduced any further, meaning that $N \equiv Z$. Hence, $M \twoheadrightarrow_\beta N$.
             
-            \item We know that $M =_\beta N_1$ and $M =_\beta N_2$. This implies that $N_1 =_\beta N_2$. Hence, there exists a term $Z$ such that $N_1 \twoheadrightarrow_\beta Z$ and $N_2 \twoheadrightarrow_\beta Z$. Since $N_1$ and $N_2$ are nfs, we find that $N_1 \equiv Z$ and $N_2 \equiv Z$. So, $N_1 \equiv N_2$.
+            \item We know that $M =_\beta N_1$ and $M =_\beta N_2$. This implies that $N_1 =_\beta N_2$. Hence, there exists a term $Z$ such that $N_1 \twoheadrightarrow_\beta Z$ and $N_2 \twoheadrightarrow_\beta Z$. Since $N_1$ and $N_2$ are nfs, we find that $N_1 \equiv Z$ and $N_2 \equiv Z$. By transitivity, it follows that $N_1 \equiv N_2$.
         \end{enumerate}
     \end{proof}
     \noindent The first result tells us that there is a reduction sequence that reduces $M$ to its normal form. We are yet to find how this happens; we will come back to that question. The second result tells us that the $\beta$-nf is unique.
@@ -676,46 +699,63 @@
     We now prove the Church-Rosser Theorem. To do so, we will define some new concepts, starting with the diamond relation.
     \begin{definition}
         Let $\vartriangleright$ be a binary relation on $\lambda$-terms. We say that the relation $\vartriangleright$ satisfies the \emph{diamond property}, denoted $\vartriangleright {\vDash \diamond}$, if for terms $M, M_1, M_2$,
-        \[M \vartriangleright M_1, M \vartriangleright M_2 \implies \exists M_3 . (M_1 \vartriangleright M_3, M_2 \vartriangleright M_3).\]
+        \[M \vartriangleright M_1, M \vartriangleright M_2 \implies \exists M_3 . (M_1 \vartriangleright M_3 \land M_2 \vartriangleright M_3).\]
     \end{definition}
-    \noindent We will later set $\vartriangleright$ to be the reduction relation, which will allow us to conclude the Church-Rosser. Note that we can apply this to the transitive closure of the relation as well.
+    \noindent We will later set $\vartriangleright$ to be the reduction relation, which will allow us to conclude the Church-Rosser. Recall that the transitive closure of a relation is defined as follows:
+    \[\frac{}{M \vartriangleright^* M} \qquad \frac{M \vartriangleright N}{M \vartriangleright^* N} \qquad \frac{M \vartriangleright^* N \quad N \vartriangleright^* O}{M \vartriangleright^* O}\]
+    We can apply this to the transitive closure of the relation as well. 
     \begin{proposition}
         Let $\vartriangleright$ be a binary relation on $\lambda$-terms such that $\vartriangleright {\vDash \diamond}$. Then, the transitive closure $\vartriangleright^* {\vDash \diamond}$ as well.
     \end{proposition}
-    % \begin{proof}
-        % TODO?
-    % \end{proof}
 
     We will now connect the diamond to reduction types (e.g. $\to_\beta$, $\twoheadrightarrow_\beta$, etc.).
     \begin{definition}
         Let $R$ be a definition of reduction. We say that $R$ is \emph{Church-Rosser} if $\twoheadrightarrow_R {\vDash \diamond}$.
     \end{definition}
-    We can define equality for a reduction $R$ by the following infrence rules:
+    We can define equality for a reduction $R$ by extending it to an equivalence relation:
     \[\frac{M \twoheadrightarrow_R N}{M =_R N} \qquad \frac{M =_R N}{N =_R M} \qquad \frac{M =_R N \quad N =_R L}{M =_R L}\]
     \noindent We can prove Church-Rosser theorem for the relations that satisfy the Church-Rosser property.
     \begin{theorem}
         Let $R$ be Church-Rosser. If $M =_R N$, then there exists a term $Z$ such that $M \twoheadrightarrow_R Z$ and $N \twoheadrightarrow_R Z$.
     \end{theorem}
     \begin{proof}
-        We show this using structural induction. 
+        We show this using structural induction on $M =_R N$. 
         \begin{itemize}
             \item First, assume that $M =_R N$ since $M \twoheadrightarrow_R N$. Then, we can take $Z \equiv N$.
             
             \item Now, assume that $M =_R N$ since $N =_R M$. By the inductive hypothesis, we can find a term $Z$ such that $N \twoheadrightarrow_R Z$ and $M \twoheadrightarrow_R Z$. So, the result holds in this case as well.
             
-            \item Finally, assume that $M =_R N$ since $M =_R N$ and $N =_R L$. By the inductive hypothesis, we can find terms $Z_1, Z_2$ such that $M \twoheadrightarrow_R Z_1$, $N \twoheadrightarrow_R Z_1$, $N \twoheadrightarrow_R Z_2$ and $L \twoheadrightarrow_R L$. Since $R$ is Church-Rosser, we know that there exists a term $Z$ such that $Z_1 \twoheadrightarrow_R Z$ and $Z_2 \twoheadrightarrow_R Z$. Since $\twoheadrightarrow_R$ is transitive, we find that $M \twoheadrightarrow_R Z$ and $N \twoheadrightarrow_R Z$.
+            \item Finally, assume that $M =_R N$ since $M =_R L$ and $L =_R N$. By the inductive hypothesis, we can find terms $Z_1, Z_2$ such that $M \twoheadrightarrow_R Z_1$, $L \twoheadrightarrow_R Z_1$, $L \twoheadrightarrow_R Z_2$ and $N \twoheadrightarrow_R L$. Since $R$ is Church-Rosser, we know that there exists a term $Z$ such that $Z_1 \twoheadrightarrow_R Z$ and $Z_2 \twoheadrightarrow_R Z$. Since $\twoheadrightarrow_R$ is transitive, we find that $M \twoheadrightarrow_R Z$ and $N \twoheadrightarrow_R Z$. This is summarised in the figure below:
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \node (N) at (0, 0) {$N$};
+                    \node (L) at (0, -1) {$L$};
+                    \node (M) at (0, -2) {$M$};
+                    \node (Z1) at (1.5, -1.5) {$Z_1$};
+                    \node (Z2) at (1.5, -0.5) {$Z_2$};
+                    \node (Z) at (3, -1) {$Z$};
+
+                    \draw[->>] (N) -- (Z2);
+                    \draw[->>] (L) -- (Z2);
+                    \draw[->>] (L) -- (Z1);
+                    \draw[->>] (M) -- (Z1);
+                    \draw[->>] (Z1) -- (Z);
+                    \draw[->>] (Z2) -- (Z);
+                \end{tikzpicture}
+            \end{figure}
         \end{itemize}
     \end{proof}
 
-    We now want to show that $\twoheadrightarrow_\beta$ is Church-Rosser. We would like to do this by showing that $\to_\beta$ is Church-Rosser, but that does not hold. So, we have to define another reduction relation that is more powerful than $\to_\beta$, but its transitive closure is still $\twoheadrightarrow_\beta$. This is the grand reduction.
+    Now, we want to show that $\twoheadrightarrow_\beta$ is Church-Rosser. We would like to do this by showing that $\to_\beta$ is Church-Rosser, but that does not hold. So, we have to define another reduction relation that is more powerful than $\to_\beta$, but its transitive closure is still $\twoheadrightarrow_\beta$. This is the grand reduction.
     \begin{definition}
         The \emph{grand reduction} $\twoheadrightarrow_1$ is defined by the following inference rules:
-        \begin{align*}
-            & \frac{}{M \twoheadrightarrow_1 M} & \frac{M \twoheadrightarrow_1 M'}{\lambda x.M \twoheadrightarrow_1 \lambda x.M'} \\
-            & \frac{M \twoheadrightarrow_1 M' \quad N \twoheadrightarrow_1 N'}{MN \twoheadrightarrow_1 M'N'} & \frac{M \twoheadrightarrow_1 M' \quad N \twoheadrightarrow_1 N'}{(\lambda x.M)N \twoheadrightarrow_1 M'[x := N']}
-        \end{align*}
+        \[\frac{}{M \twoheadrightarrow_1 M} \qquad \frac{M \twoheadrightarrow_1 M'}{\lambda x.M \twoheadrightarrow_1 \lambda x.M'}\]
+        \[\frac{M \twoheadrightarrow_1 M' \quad N \twoheadrightarrow_1 N'}{MN \twoheadrightarrow_1 M'N'} \qquad \frac{M \twoheadrightarrow_1 M' \quad N \twoheadrightarrow_1 N'}{(\lambda x.M)N \twoheadrightarrow_1 M'[x := N']}\]
     \end{definition}
 
+    We now show that grand reduction subsumes normal reduction.
+    % TODO: Make use of inference rules directly (in all structural induction proofs)!
     \begin{proposition}
         Let $M$ and $N$ be terms such that $M \to_\beta N$. Then, $M \twoheadrightarrow_1 N$.
     \end{proposition}
@@ -736,6 +776,7 @@
         So, the result follows from induction.
     \end{proof}
 
+    We will now prove some properties of grand reduction that we need to show that grand reduction has the diamond property.
     \begin{proposition}
         Let $M, N, N'$ be terms such that $N \twoheadrightarrow_1 N'$. Then, $M[x := N] \twoheadrightarrow_1 M[x := N']$.
     \end{proposition}
@@ -823,62 +864,80 @@
         \[M \twoheadrightarrow_1 M_1, M \twoheadrightarrow_1 M_2 \implies \exists M_3 . (M_1 \twoheadrightarrow_ 1 M_3, M_2 \twoheadrightarrow_1 M_3).\]
     \end{proposition}
     \begin{proof}
-        We show this by induction on $M \twoheadrightarrow_1 M_1$.
-        % TODO: Complete
+        We show this by induction on $M$.
         \begin{itemize}
-            \item If $M \equiv M_1$, then let $M_3 \equiv M_2$. We know that $M_1 \equiv M \twoheadrightarrow_1 M_2$ and $M_2 \twoheadrightarrow_1 M_2$, so the result holds.
-            % \item Now, assume that $M \equiv \lambda x.P$ and $M_1 \equiv \lambda x.P_1$, where $P \twoheadrightarrow_1 P'$. By the inductive hypothesis, there exists a $P_3$ such that $P_1 \twoheadrightarrow_1 P_3$ and $M_2 \twoheadrightarrow_1 P_3$. Hence,
-            % \[M \equiv \]
+            \item First, assume that $M \equiv x$, where $x$ is a variable. Since $x$ is a normal form, it follows that $M_1 \equiv x$ and $M_2 \equiv x$. Hence, set $M_3 \equiv x$, and the result follows.
+
+            \item Now, assume that $M \equiv \lambda x.M'$. By the result above, it follows that $M_1 \equiv \lambda x.N_1$ and $M_2 \equiv \lambda x.N_2$, where $M' \twoheadrightarrow_1 N_1$ and $M' \twoheadrightarrow_1 N_2$. So, the inductive hypothesis tells us that there exists an $N'$ such that $N_1 \twoheadrightarrow_1 N'$ and $N_2 \twoheadrightarrow_1 N'$. Hence, set $M_3 \equiv \lambda x.N'$, and the result follows.
             
-            % By the inductive hypothesis, we know that there exists an $M_3$ such that $M_1 \twoheadrightarrow_1 M_3$
-            \item 
-            \item 
+            \item Finally, assume that $M \equiv PQ$. By the result above, we know that there are 2 choices here:
+            \begin{itemize}
+                \item First, let $M_1 \equiv P_1 Q_1$ and $M_2 \equiv P_2 Q_2$, where $P \twoheadrightarrow_1 P_1, P \twoheadrightarrow_2 P_2$, and $Q \twoheadrightarrow_1 Q_1, Q \twoheadrightarrow_2 Q_2$. By the inductive hypothesis, there exist $P'$ and $Q'$ such that $P_1 \twoheadrightarrow_1 P', P_2 \twoheadrightarrow_1 P'$ and $Q_1 \twoheadrightarrow_1 Q', Q_2 \twoheadrightarrow_1 Q'$. Hence, set $M_3 \equiv P' Q'$.
+                
+                \item Otherwise, we have $P \equiv \lambda x.P'$ and $M_1 \equiv P'[x := Q_1]$, where $Q \twoheadrightarrow_1 Q_1$. Hence, we must also have $M_2 \equiv P'[x := Q_2]$, where $Q \twoheadrightarrow_1 Q_2$. By the inductive hypothesis, there exists a $Q$ such that $Q_1 \twoheadrightarrow_1 Q$ and $Q_2 \twoheadrightarrow_1 Q'$. Hence, set $M_3 \equiv \lambda x.Q$.
+            \end{itemize}
         \end{itemize}
     \end{proof}
 
     \begin{theorem}
         The transitive closure of the relation $\twoheadrightarrow_1$ is $\twoheadrightarrow_\beta$.
     \end{theorem}
-    \noindent Now, we have shown that $\beta$-reduction satisfies the Church-Rosser, and hence the Church-Rosser Theorem holds.
+    \noindent Now, we have shown that $\beta$-reduction satisfies the Church-Rosser, and hence the Church-Rosser Theorem holds. That is,
+    \begin{itemize}
+        \item $\beta$-nfs are unique, and
+        \item if a term has a $\beta$-nf, then it is possible to reduce the term to that normal form.
+    \end{itemize}
+    This also allows us to prove that the $\lambda$-theory is consistent. If $M$ and $N$ are distinct nfs, then we cannot have $M = N$. Otherwise, there would be a term $Z$ that both $M$ and $N$ reduce to by Church-Rosser.
 
-    We now consider how to get the normal form.    
+    \subsection{Reduction Strategies}
+    We now focus on how to get the normal form.    
     \begin{theorem}[Normalisation Theorem]
         Let $M$ be a term. If it has a normal form, then iterated reductions of the leftmost redex leads to the normal form.
     \end{theorem}
-    \noindent The leftmost reduction strategy is called \emph{normalising}. It can be used to find the normal form for a term, or to show that a term has no normal form. There are two forms of normalisation:
+    \noindent The leftmost reduction strategy is therefore \emph{normalising}. It can be used to find the normal form for a term, or to show that a term has no normal form. There are two forms of normalisation:
     \begin{itemize}
-        \item Weak normalisation, where there exists a path that leads to the normal form, e.g. the factorial function.
-        \item Strong normalisation, where every path leads to the normal form, e.g. $(\lambda xy. x + y)(1 + 2)(3 + 4)$.
+        \item \emph{Weak normalisation}, where there exists a path that leads to the normal form, e.g. the factorial function.
+        \item \emph{Strong normalisation}, where every path leads to the normal form, e.g. $(\lambda xy. x + y)(1 + 2)(3 + 4)$.
     \end{itemize}
 
-    In $\lambda$-calculus, there are 2 reduction strategies, both of which are leftmost- call-by-value and call-by-need. A term of the form $\lambda x.M$ is considered a \emph{value}- it is the final result of a computation. Call-by-value uses leftmost innermost strategy (and is seen in Python), and call-by-need (or lazy evaluation, in Haskell) uses leftmost outermost strategy:
+    In $\lambda$-calculus, there are 2 reduction strategies, both of which are leftmost- \emph{call-by-value} and \emph{call-by-need}. A term of the form $\lambda x.M$ is considered a \emph{value}- it is the final result of a computation. Call-by-value uses \emph{leftmost innermost} strategy (and is seen in Python), and call-by-need (or lazy evaluation, in Haskell) uses \emph{leftmost outermost} strategy:
     \begin{itemize}
         \item By leftmost, we mean that in an application $MN$, $M$ is reduced first, and then $N$.
         \item By innermost, we mean that in the term $(\lambda x.M) N$, $N$ is reduced to a value before $M[x := N]$ is computed.
         \item By outermost, we mean that in the term $(\lambda x.M) N$, $M[x := N]$ is reduced to a value before $N$ is computed. 
     \end{itemize}
-    In leftmost outermost strategy, we might have to compute $N$ multiple times. To avoid this, we can compute it first, and then use the same value for other occurrences of $N$. If the expressions do not have side-effects, then this produces the same result as a pure leftmost outermost strategy, where $N$ is evaluated every time it appears.
+    In leftmost outermost strategy, we might have to compute $N$ multiple times. To avoid this, we can compute it first, and then use the same value for other occurrences of $N$. If expressions do not have side-effects, then this produces the same result as a pure leftmost outermost strategy, where $N$ is evaluated every time it appears.
     \newpage
 
     \section{Computability}
-    In this section, we consider computability. Computability requires a definition of computation. There are many notions of computation, including $\lambda$-calculus, automata, register machines. They all capture the same notion of computability. The Church-Turing Thesis states that collectively, these definitions are the `true' notion of computation.
+    In this section, we consider \emph{computability}. Computability requires a definition of computation. There are many notions of computation, including $\lambda$-calculus, automata and register machines. They all capture the same notion of computability. The \emph{Church-Turing Thesis} states that collectively, these definitions are the `true' notion of computation.
 
-    To formalise computability, we will consider ways of defining functions on positive integers. We can use $\lambda$-terms to represent natural numbers and booleans, and fixed-point operators to define recursive functions. We will show that recursive functions can be converted into $\lambda$-terms.
+    To formalise computability, we will consider ways of defining functions on positive integers (i.e. natural numbers). We can use $\lambda$-terms to represent natural numbers and booleans, and fixed-point operators to define recursive functions. We will show that recursive functions can be converted into $\lambda$-terms.
 
-    We start by defining primitive recursive functions. They can be defined using a set type of recursive functions. The primitive recursive functions are functions $\mathbb{N} \times \dots \times \mathbb{N} \to \mathbb{N}$ that can be defined using the following \emph{initial functions}:
+    \subsection{Primitive Recursive Functions}
+    We show that $\lambda$-calculus is the right model of computation by showing it is equivalent to recursive functions. We start by defining \emph{primitive recursive functions}. They can be defined using a fixed type of \emph{recursive functions}. The primitive recursive functions are functions $\mathbb{N} \times \dots \times \mathbb{N} \to \mathbb{N}$ that can be defined using the following \emph{initial functions}:
     \begin{itemize}
-        \item the constant zero function $Z(n) = 0$;
-        \item the successor function $S^+(n) = n+1$; and
-        \item the selector function $U_{i, p}(n_0, \dots, n_p) = n_i$ for $0 \leq i \leq p$ and $p \in \mathbb{N}$;
-        \item composition $F(\vec{n}) = H(G_1(\vec{n}), \dots, G_m(\vec{n}))$, where $H, G_1, \dots, G_m$ are primitive recursive functions.
+        \item the \emph{constant zero function} 
+        \[Z(n) = 0\]
+        \item the \emph{successor function} 
+        \[S^+(n) = n+1\]
+        \item the \emph{selector function} 
+        \[U_{i, p}(n_0, \dots, n_p) = n_i\]
+        for $0 \leq i \leq p$ and $p \in \mathbb{N}$;
+        \item \emph{composition} 
+        \[F(\vec{n}) = H(G_1(\vec{n}), \dots, G_m(\vec{n}))\]
+        where $H, G_1, \dots$, $G_m$ are primitive recursive functions.
     \end{itemize}
-    Now, we say that a function $F$ is primitive recursive if it is of the form
+    Now, we say that a function $F$ is \emph{primitive recursive} if it is of the form
     \begin{align*}
         F(0, \vec{n}) &= H(\vec{n}) \\
         F(k+1, \vec{n}) &= G(F(k, \vec{n}), k, \vec{n}),
     \end{align*}
-    where $H$ and $G$ are primitive recursive. In other words, $F(0, \vec{n})$ is the base case, and only depends on the `other' data $\vec{n}$, and the recursive case $F(k+1, \vec{n})$ depends on the previous result $F(k, \vec{n})$ along with the number $k$ and the data $\vec{n}$.
-
+    where $H$ and $G$ are primitive recursive. In other words, 
+    \begin{itemize}
+        \item $F(0, \vec{n})$ is the \emph{base case}, and only depends on the `other' data $\vec{n}$, and
+        \item the \emph{recursive case} $F(k+1, \vec{n})$ depends on the previous result $F(k, \vec{n})$ along with the number $k$ and the data $\vec{n}$.
+    \end{itemize}
     We now give examples of functions in primitive recursion:
     \begin{itemize}
         \item the identity function on $\mathbb{N}$ is given by $id(n) = U_{0, 0}(n)$.
@@ -888,43 +947,44 @@
             \operatorname{add}(0, n) &= id(n) \\
             \operatorname{add}(k+1, n) &= G(\operatorname{add}(k, n), k, n),
         \end{align*}
-        where $G(x, y, z) = S^+(U_{0, 2}(x, y, z))$.
+        where $G(x, y, z) = S^+(U_{0, 2}(x, y, z))$, i.e. $G(x, y, z) = x+1$.
 
         \item the multiplication function is given by
         \begin{align*}
-            \operatorname{mult}(0, n) &= 0 \\
+            \operatorname{mult}(0, n) &= Z(n) \\
             \operatorname{mult}(k+1, n) &= G(\operatorname{mult}(k, n), k, n),
         \end{align*}
-        where $G(x, y, z) = \operatorname{add}(U_{0, 2}(x, y, z), U_{2, 2}(x, y, z))$.
+        where $G(x, y, z) = \operatorname{add}(U_{0, 2}(x, y, z), U_{2, 2}(x, y, z))$, i.e. $G(x, y, z) = x + z$.
 
         \item the factorial function is given by
         \begin{align*}
             \operatorname{fact}(0) &= S^+(0) \\
             \operatorname{fact}(k+1) &= G(\operatorname{fact}(k), k),
         \end{align*}
-        where $G(x, y) = \operatorname{mult}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$.
+        where $G(x, y) = \operatorname{mult}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$, i.e. $G(x, y) = x * (y+1)$.
 
         \item the sum of the first $n$ numbers is given by
         \begin{align*}
             \operatorname{sum}(0) &= 0 \\
             \operatorname{sum}(k+1) &= G(\operatorname{sum}(k), k),
         \end{align*}
-        where $G(x, y) = \operatorname{sum}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$.
+        where $G(x, y) = \operatorname{add}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$, i.e. $G(x, y) = x + (y + 1)$.
     \end{itemize}
 
-    It turns out that primitive recursion is not the right definition for computability. To see this, consider the following function, called the Ackermann's function:
+    \subsection{Recursive functions and minimalisation}
+    It turns out that primitive recursion is not the right definition for computability. To see this, consider the following function, called the \emph{Ackermann's function}:
     \begin{align*}
         A(0, n) &= n + 1 \\
         A(m + 1, 0) &= A(m, 1) \\
         A(m+1, n+1) &= A(m, A(m+1, n)).
     \end{align*}
-    Because each $m$ or $n$ is decreasing at each step, we know that the computation $A(m, n)$ terminates for every natural number $m$ and $n$. However, the values of this function grow very fast, e.g. $A(4, 2)$ has about 20 000 digits! It turns out that Ackermann's function grows faster than any primitive recursive function, so it cannot be primitive recursive. However, we were able to give a recursive definition for it above, so primitive recursion is not the definition of computability we want.
+    Because each $m$ or $n$ is decreasing at each step, we know that the computation $A(m, n)$ terminates for every natural number $m$ and $n$. However, the values of this function grow very fast, e.g. $A(4, 2)$ has about 20 000 digits! It turns out that Ackermann's function grows faster than any primitive recursive function, so it cannot be primitive recursive. However, we \emph{were} able to give a recursive definition for it above, so primitive recursion is not the definition of computability we want.
 
-    To define the bigger class of recursive functions, we need one more notion. If $P(n)$ is a predicate on $\mathbb{N}$, i.e. a function $\mathbb{N} \to bool$, then we denote by $\min n[P(n)]$ the smallest number $n$ such that $P(n)$ holds; if there is no such number, then the value is undefined. We say that a function $F$ is \emph{recursive} if it can be defined using primitive recursion and minimalisation:
+    To define the bigger class of recursive functions, we need one more notion. If $P(n)$ is a predicate on $\mathbb{N}$, i.e. a function $\mathbb{N} \to bool$, then we denote by $\min n[P(n)]$ the smallest number $n$ such that $P(n)$ holds; if there is no such number, then the value is undefined. We say that a function $F$ is \emph{recursive} if it can be defined using primitive recursion and \emph{minimalisation}:
     \[F(\vec{n}) = \min m[H(\vec{n}, m) = 0],\]
     where for any $\vec{n}$, there is a natural number $m$ such that $H(\vec{n}, m) = 0$.
 
-    Intuitively, primitive recursion allows us to write bounded loops, i.e. for loops. In particular, the number of iterations is bounded by a value in the program, i.e. the initial value of the argument. Minimalisation corresponds to a while loop- we continue looping until the predicate becomes false. This is an intuitive argument as to why recursive functions are a good definition for computable functions. Although not clear, it is possible to write Ackermann's function using primitive recursion and minimalisation.
+    Intuitively, primitive recursion allows us to write bounded loops, i.e. \textit{for}-loops. In particular, the number of iterations is bounded by a value in the program, i.e. the initial value of the argument. Minimalisation corresponds to a \textit{while}-loop- we continue looping until the predicate becomes \textit{false}. This also gives an intuitive argument as to why recursive functions are a good definition for computable functions. Although not clear, it is possible to write Ackermann's function using primitive recursion and minimalisation.
 
     Now, we will show that $\lambda$-calculus can be used to write recursive functions. We can define the initial functions as follows:
     \begin{align*}
@@ -940,15 +1000,15 @@
         F(k+1, \vec{n}) &= G(F(k, \vec{n}), k, \vec{n}),
     \end{align*}
     where $H$ and $G$ are defined by $\lambda$-terms $H$ and $G$. Then, we can define $F$ to be the fixed point of the function $f$:
-    \[f \equiv \lambda f x \vec{y}. (\texttt{if}(\texttt{iszero} x)(H \vec{y})(G(f(Px) \vec{y})(Px)(\vec{y}))),\]
+    \[f \equiv \lambda f x \vec{y}. (\textit{if} \ (\textit{iszero} \ x) \ (H \ \vec{y}) \ (G(f(P\ x) \vec{y}) (P \ x)(\vec{y}))),\]
     where $P$ is the predecessor function.
 
-    Finally, we want to define minimalisation. To do so, let $P$ be the predicate. We define a function that iterates from a given number $n$ until $P n$ is true, and returns $n$. So, it can be the fixed point of the function
-    \[h_P \equiv \lambda hz.\texttt{if}(P z)(z)(h(S^+ z)).\]
-    So, $\min P \equiv \texttt{fix}(H_p)(Z)$, where $Z$ is zero. If $F$ is given by
+    Finally, we define minimalisation. To do so, let $P$ be the predicate. We define a function that iterates from a given number $n$ until $P \ n$ is true, and returns $n$. So, it can be the fixed point of the function
+    \[h_P \equiv \lambda hz.\textit{if} \ (P \ z) \ (z) \ (h(S^+ \ z)).\]
+    So, $\textit{min} P \equiv \texttt{fix}(h_p)(Z)$, where $Z \equiv \lambda x.x$ is zero. If $F$ is given by
     \[F(\vec{n}) = \min m[H(\vec{n}, m) = 0],\]
     where $H$ is defined by a $\lambda$-term $H$, then we can define $F$ by
-    \[F \equiv \lambda \vec{x}.\texttt{min}(\lambda y.\texttt{iszero} H \vec{x} y).\]
+    \[F \equiv \lambda \vec{x}.\textit{min} \ (\lambda y.\textit{iszero} \ H \ \vec{x} \ y).\]
     Hence, every recursion function can be defined in $\lambda$-calculus. This means that $\lambda$-calculus is sufficient for general recursion and can be used to extend primitive recursion instead of minimalisation.
 
     It is also true that every function $\mathbb{N} \times \dots \times \mathbb{N} \to \mathbb{N}$ that we can defined in $\lambda$-calculus can be defined in $\lambda$-calculus. To do so, we can encode $\lambda$-terms as numbers and define reduction as a function.
@@ -957,7 +1017,7 @@
     \section{Simply-typed $\lambda$-calculus}
     In this section, we introduce type checking for $\lambda$-calculus. We have presented $\lambda$-calculus as a foundation for functional programming, and shown how to represent data and define interesting functions. Many standard programming languages have static or compile-time type-checking. The types we add to $\lambda$-calculus give rise to \emph{simply-typed $\lambda$-calculus}, where simply refers to the fact that this is the simplest of its kind and we can build on it in many ways, e.g. by adding polymorphism.
 
-    Initially, we will not give concrete types such as \texttt{int} or \texttt{bool}. We will instead start with some type $A$, using which we define functions. Hence, types are defined by the following BNF rule:
+    Initially, we will not give concrete types such as \textit{int} or \textit{bool}. We will instead start with some type $A$, using which we define functions. Hence, types are defined by the following BNF rule:
     \begin{align*}
         T &::= A \\
         &| \hspace*{10pt} T \to T
@@ -969,53 +1029,58 @@
         \Gamma &::= \varnothing \\
         &| \hspace*{10pt} \Gamma, x \colon T.
     \end{align*}
-    In the second rule $\Gamma, x \colon T$, we have extended an existing typing context $\Gamma$ with a new variable-type pair: $x \colon T$.
+    The first rule presents a context with no variables. In the second rule $\Gamma, x \colon T$, we have extended an existing typing context $\Gamma$ with a new variable-type pair: $x \colon T$.
 
-    Now, let $\Gamma$ be a typing context and $M$ a term. If the term $M$ has type $T$ under the typing context $\Gamma$, then we denote this by $\Gamma \vdash M \colon T$. We introduce a variation on the syntax for bounded variables, i.e. $\lambda x \colon T.M$, which means that $x$ has type $T$. This is a \emph{Church-style definition}.
+    Now, let $\Gamma$ be a typing context and $M$ a term. If the term $M$ has type $T$ under the typing context $\Gamma$, then we denote this by $\Gamma \vdash M \colon T$. This is called \emph{typing judgment}. We introduce a variation on the syntax for bounded variables, i.e. $\lambda x \colon T.M$, which means that $x$ has type $T$. This is a \emph{Church-style definition}.
 
     We now define typing rules using inference rules:
-    \[\frac{x \colon T \in \Gamma}{\Gamma \vdash x \colon T}\textrm{TVar} \qquad \frac{\Gamma, x \colon T \vdash M \colon U}{\Gamma \vdash \lambda x \colon T.M \colon T \to U} \textrm{TAbs}\]
-    \[\frac{\Gamma \vdash M \colon T \to U \quad \Gamma \vdash N \to T}{\Gamma \vdash MN \colon U} \textrm{TApp}\]
-    Note that TVar is an axiom, i.e. $x \colon T \in \Gamma$ is a side condition. This is an inductive definition.
+    \[\frac{x \colon T \in \Gamma}{\Gamma \vdash x \colon T}\textrm{TVar} \] 
+    Note that this is an axiom, i.e. $x \colon T \in \Gamma$ is a side condition. The TVar rule states that if the typing context $\Gamma$ contains the rule $x \colon T$, then under $\Gamma$, $x$ has type $T$. 
+    \[\frac{\Gamma, x \colon T \vdash M \colon U}{\Gamma \vdash \lambda x \colon T.M \colon T \to U} \textrm{TAbs}\]
+    The TAbs rule extends a typing context to an abstraction. In particular, if under $\Gamma$ and $x \colon T$, $M$ has type $U$, then the abstraction $\lambda x \colon T. M$ has type $T \to U$ under $\Gamma$. We make use of a comma to denote union of typing contexts.    
+    \[\frac{\Gamma \vdash M \colon T \to U \quad \Gamma \vdash N \colon T}{\Gamma \vdash MN \colon U} \textrm{TApp}\]
+    Like with abstraction, we have the TApp rule for application. In this case, if we have $M$ of type $T \to U$ and $N$ of type $T$, then $MN$ has type $U$.
 
     We will now consider some typing derivations for $\lambda$-terms. We start with the term $\lambda x.x$:
-    \[\cfrac{x \colon A \in x \colon A}{\cfrac{x \colon A \vdash x \colon A}{\vdash \lambda x \colon A. x \colon A \to A} \textrm{TAbs}} \textrm{TVar}\]
+    \[\nfrac{\nfrac{x \colon A \in x \colon A}{x \colon A \vdash x \colon A} \textrm{TVar}}{\vdash \lambda x \colon A. x \colon A \to A} \textrm{TAbs}\]
     In this case, the typing context is empty, and is denoted by nothing to the left of $\vdash$. We typically do not keep the TVar applications in the inference rules. Next, we do the typing derivation for $\lambda xy.x$:
-    \[\cfrac{x \colon A, y \colon A \vdash x \colon A}{\cfrac{x \colon A \vdash \lambda y \colon A.x \colon A \to A}{\vdash \lambda x \colon A.\lambda y \colon A.x \colon A \to A \to A}\textrm{TAbs}}\textrm{TAbs}\]
+    \[\nfrac{\nfrac{x \colon A, y \colon A \vdash x \colon A}{x \colon A \vdash \lambda y \colon A.x \colon A \to A} \textrm{TAbs}}{\vdash \lambda x \colon A.\lambda y \colon A.x \colon A \to A \to A}\textrm{TAbs} \]
 
     We now add some concrete rules in all typing judgments. We start by adding some axioms:
-    \[\frac{}{\Gamma \vdash \texttt{true} \colon \texttt{bool}} \textrm{TTrue} \qquad \frac{}{\Gamma \vdash \texttt{false} \colon \texttt{bool}} \textrm{TFalse} \qquad \frac{v \textrm{ is an integer literal}}{\Gamma \vdash v \colon \texttt{int}}.\]
+    \[\frac{}{\Gamma \vdash \textit{true} \colon \textit{bool}} \textrm{TTrue} \quad \frac{}{\Gamma \vdash \textit{false} \colon \textit{bool}} \textrm{TFalse} \quad \frac{v \textrm{ is an integer literal}}{\Gamma \vdash v \colon \textit{int}} \textrm{TInt}\]
     Next, we add some mathematical operations and conditions.
-    \[\frac{\Gamma \vdash M \colon \texttt{bool} \quad \Gamma \vdash N \colon \texttt{bool}}{\Gamma \vdash M \textrm{ and } N \colon \texttt{bool}} \textrm{TAnd} \qquad \frac{\Gamma \vdash M \colon \texttt{int} \quad \Gamma \vdash N \colon \texttt{int}}{\Gamma \vdash M + N \colon \texttt{int}} \textrm{TPlus}\]
-    \[\frac{\Gamma \vdash M \colon \texttt{int} \quad \Gamma \vdash N \colon \texttt{int}}{\Gamma \vdash M == N \colon \texttt{bool}} \textrm{TEq}\]
-    \[\frac{\Gamma \vdash L \colon \texttt{bool} \quad \Gamma \vdash M \colon T \quad \Gamma \vdash N \colon T}{\Gamma \vdash \texttt{if } L \texttt{ then } M \texttt{ else } N \colon T} \textrm{TCond}\]
+    \[\frac{\Gamma \vdash M \colon \textit{bool} \quad \Gamma \vdash N \colon \textit{bool}}{\Gamma \vdash M \textrm{ and } N \colon \textit{bool}} \textrm{TAnd} \qquad \frac{\Gamma \vdash M \colon \textit{int} \quad \Gamma \vdash N \colon \textit{int}}{\Gamma \vdash M + N \colon \textit{int}} \textrm{TPlus}\]
+    \[\frac{\Gamma \vdash M \colon \textit{int} \quad \Gamma \vdash N \colon \textit{int}}{\Gamma \vdash M == N \colon \textit{bool}} \textrm{TEq}\]
+    \[\frac{\Gamma \vdash L \colon \textit{bool} \quad \Gamma \vdash M \colon T \quad \Gamma \vdash N \colon T}{\Gamma \vdash \texttt{if } L \texttt{ then } M \texttt{ else } N \colon T} \textrm{TCond}\]
+    These allow us to do mathematical reductions and ensure that we still have a type to assign to the result.
 
-    We will now show that well-typed programs do not go wrong. The point of introducing a static (compile-time) type system is that type checking guarantees the absence of runtime type errors. To show this, we first need to define wrong programs. This is achieved by adding the special term \textit{wrong} to the syntax of $\lambda$-terms, and modify the reduction rules, e.g. $1 + \texttt{true} \to_\beta \textit{wrong}$. This term models stuck computations that are not values.
+    We will now show that well-typed programs do not go wrong. The point of introducing a static (compile-time) type system is that type checking guarantees the absence of runtime type errors. To show this, we first need to define wrong programs. This is achieved by adding the special term \textit{wrong} to the syntax of $\lambda$-terms, and modify the reduction rules, e.g. 
+    \[1 + \textit{true} \to_\beta \textit{wrong}.\] 
+    This term models stuck computations that are not values.
 
-    To show that well-type programs don't go wrong, we require the Type Safety Theorem. This is given in two parts- type preservation and progress.
+    To show that well-type programs don't go wrong, we require the \emph{Type Safety Theorem}. This is given in two parts- \emph{type preservation} and \emph{progress}.
     \begin{theorem}[Type Preservation]
         If $\Gamma \vdash M \colon T$ and $M \to_\beta N$, then $\Gamma \vdash N \colon T$.
     \end{theorem}
     \begin{theorem}[Progress]
         If $\Gamma \vdash M \colon T$, then either $M$ is a value or there exists $M'$ such that $M \to_\beta M'$.
     \end{theorem}
-    \noindent We say that the term \textit{wrong} is untypable, i.e. if $\Gamma \vdash M \colon T$, then we cannot have $M \twoheadrightarrow_\beta \textit{wrong}$.
+    \noindent We say that the term \textit{wrong} is untypeable, i.e. if $\Gamma \vdash M \colon T$, then we cannot have $M \twoheadrightarrow_\beta \textit{wrong}$.
 
-    Unfortunately, simply-typed $\lambda$-calculus does not support recursion. This is because any $\operatorname{fix}$ term isn't typable. For instance, consider the following
+    Unfortunately, simply-typed $\lambda$-calculus does not support recursion. This is because any $\operatorname{fix}$ term isn't typeable. For instance, consider the following
     \[\operatorname{fix} = \lambda f.(\lambda y.f(\lambda z.yyz))(\lambda y.f(\lambda z.yyz))\]
-    The term $yyz$ is not typable since that implies $y$ is of the form $A \to A \to A$ and $A$ at the same time. Hence, we cannot define recursive functions.
+    The term $yyz$ is not typeable since that implies $y$ is of the form $A \to A \to A$ and $A$ at the same time. Hence, we recursive functions are not well-typed.
 
     So, in a typed functional programming, we have to add a built-in construct, by either adding the $\operatorname{fix}$ term to have type
     \[\operatorname{fix} \colon (T \to T) \to T\]
     for every type $T$, or by supporting recursive functions, e.g.
-    \[\operatorname{fac}(n \colon \texttt{int}) \colon \texttt{int} = \texttt{if } n == 0 \texttt{ then } 1 \texttt{ else } n * \operatorname{fac}(n-1).\]
+    \[\operatorname{fac}(n \colon \textit{int}) \colon \textit{int} = \textit{if } n == 0 \textit{ then } 1 \textit{ else } n * \operatorname{fac}(n-1).\]
     Adding recursion this way maintains the property that well-typed programs do not contain runtime type errors.
 
-    The simply-typed $\lambda$-calculus has an important property of \emph{strong normalisation}. This means that every typable term has a normal form, which can be reached by $\beta$-reduction. Because of the Church-Rosser Theorem, it doesn't matter which reduction strategy is used; we no longer have to worry about non-termination, so any strategy will eventually produce the unique normal form of a term. This is another way to see why $fix$ is untypable- if we could type $fix$, then we would be able to define recursive functions that fail to terminate, which contradicts the strong normalisation property.
+    The simply-typed $\lambda$-calculus has an important property of \emph{strong normalisation}. This means that every typeable term has a normal form, which can be reached by $\beta$-reduction. Because of the Church-Rosser Theorem, it doesn't matter which reduction strategy is used; we no longer have to worry about non-termination, so any strategy will eventually produce the unique normal form of a term. This is another way to see why fix is untypeable- if we could type fix, then we would be able to define recursive functions that fail to terminate, which contradicts the strong normalisation property.
 
-    It is possible to implement an algorithm to check whether or not a given term is \emph{typable} (type inference), and to check whether or not a given term \emph{has a given type} (type checking). Typability and type checking are different problems- the typability problem is solved by a type inference algorithm and finds the most general type of a given term, if typable. Type inference is used in Haskell.
+    It is possible to implement an algorithm to check whether or not a given term is typeable (\emph{type inference}), and to check whether or not a given term has a given type (\emph{type checking}). Typeability and type checking are different problems- the typeability problem is solved by a type inference algorithm and finds the most general type of a given term, if typeable. Type inference is used in Haskell.
 
-    Now, we consider the expressivity of simply-typed $\lambda$-calculus. We know that $\lambda$-calculus is able to express all computations, but this required the construction of recursive functions. Since simply-typed $\lambda$-calculus does not allow recursion, it is not Turing complete. We can add recursion in a type-safe manner to give us a typed programming language that is Turing complete.
-
+    Now, we consider the expressivity of simply-typed $\lambda$-calculus. We know that $\lambda$-calculus is able to express all computations, but this required the construction of recursive functions. Since simply-typed $\lambda$-calculus does not allow recursion, it is not Turing-complete. We can add recursion in a type-safe manner to give us a typed programming language that is Turing-complete.
     
 \end{document}

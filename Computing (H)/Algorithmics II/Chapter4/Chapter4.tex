@@ -492,6 +492,8 @@ bool subsetSum(List<int> x, int t) {
     \begin{table}[H]
         \centering
         \begin{tabular}{c|cccc}
+            item & 1 & 2 & 3 & 4 \\
+            \hline
             weight & 1 & 1 & 3 & 4 \\
             \hline
             profit & 7 & 5 & 9 & 6  \\
@@ -1022,15 +1024,30 @@ int subsetSumApproximation(List<int> values, int t, double delta){
         \item \textbf{Measure}: the number of bins $k$.
         \item \textbf{GOAL}: $\min$.
     \end{itemize}
+    For example, if we have items of capacity $1, 2, 3$ and bins of capacity $3$, we can fit them into 2 bins:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \foreach \i in {0, 2} {
+                \draw (\i, 1.6) -- (\i, 0) -- (\i+1, 0) -- (\i+1, 1.6);
+            }
 
-    % TODO: Add example
+            \draw (0, 0.5) -- (1, 0.5);
+            \draw (0, 1.5) -- (1, 1.5);
+            \filldraw[red, opacity=0.2] (0, 0) rectangle (1, 0.5);
+            \filldraw[green, opacity=0.2] (0, 0.5) rectangle (1, 1.5);
+            
+            \draw (2, 1.5) -- (3, 1.5);
+            \filldraw[blue, opacity=0.2] (2, 0) rectangle (3, 1.5);
+        \end{tikzpicture}
+    \end{figure}
 
     We will use the Partition Decision Problem when showing the inapproximability of the Bin-Packing Problem. The following is the problem:
     \begin{itemize}
         \item \textbf{Instance}: a sequence of positive integers $x_1, x_2, \dots, x_n$.
         \item \textbf{Question}: can we partition the sequence into two subsequences with equal sum?
     \end{itemize}
-    % TODO: Add example
+    For example, if we have the numbers $1, 2, 3$, then we can partition them into two subsequences of equal sum: $1, 2$ and $3$.
 
     We claim that the Bin-Packing Problem does not have a $c$-approximation algorithm for $c < \frac{3}{2}$. Assume, for a contradiction, that there exists a $c$-approximation algorithm $A$ for the Bin-Packing Problem for $c < \frac{3}{2}$. We will use this algorithm to construct a polynomial-time algorithm for the Partition Problem. So, assume that we are given the numbers $x_1, x_2, \dots, x_n$. We will convert this instance $P$ of the Partition Problem to an instance $B$ of the Bin-Packing Problem. The capacity of the bins is 
     \[S = \frac{1}{2} \sum_{i=1}^n x_i,\]
@@ -1045,13 +1062,44 @@ int subsetSumApproximation(List<int> values, int t, double delta){
         \item \textbf{Measure}: the length of the tour.
         \item \textbf{GOAL}: $\min$.
     \end{itemize}
-    % TODO: Add example
     We know that the TSP is $NP$-hard. To show inapproximability of the TSP, we will use the Hamiltonian Cycle Decision Problem, defined as follows:
     \begin{itemize}
         \item \textbf{Instance}: a graph $G$
         \item \textbf{Question}: Does $G$ have a cycle that visits all the vertices exactly once?
     \end{itemize}
-    % TODO: Add example
+    For instance, consider the two graphs below:
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- (1);
+                \draw (1) -- (3);
+                \draw (3) -- (2);
+                \draw (2) -- (0);
+            \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- (1);
+                \draw (1) -- (3);
+                \draw (3) -- (2);
+            \end{tikzpicture}
+        \end{subfigure}
+    \end{figure}
+    \noindent Then, the graph on the left has a Hamiltonian cycle while the one on the right does not.
 
     We shall now show that the TSP (without the triangle inequality) does not have a $c$-approximation algorithm for any $c \geq 1$. Assume, for a contradiction, that there exists a $c$-approximation algorithm $A$ for the TSP. We will use this algorithm to construct a polynomial-time algorithm for the Hamiltonian Cycle (HC) Problem. The HC problem asks whether, given a graph, there exists a cycle that visits all the vertices precisely once. So, we are given a graph $G = (V, E)$. Define the distance function $d \colon V \times V \to \mathbb{R}_{\geq 0}$ by
     \[d(u, v) = \begin{cases}
@@ -1059,11 +1107,76 @@ int subsetSumApproximation(List<int> values, int t, double delta){
         1 & \{u, v\} \in E \\
         1 + nc & \textrm{otherwise},
     \end{cases}\]
-    where $n = |V|$. If the graph $G$ has a HC, then it is possible to find a Travelling Salesman tour of length $n$.
-    % TODO: Illustrate
-    So, $m^*(G) = n$. Since $A$ has a performance guarantee of $c$, we find that $m(G, A(G)) \leq nc$. Now, if $G$ does not have a HC, then the the Travelling Salesman tour must take one of the edges not in $E$. 
-    % TODO: Illustrate
-    There are at least $n-1$ other edges we take, and each edge has length $\geq 1$. Hence,
+    where $n = |V|$. We illustrate this with an example below- to the left, we have a graph, and to the right, we have the distances given for all pairs of distinct vertices.
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- (1);
+                \draw (1) -- (3);
+                \draw (3) -- (2);
+                \draw (2) -- (0);
+            \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- node[left] {1} (1);
+                \draw (1) -- node[above] {1} (3);
+                \draw (3) -- node[right] {1} (2);
+                \draw (2) -- node[below] {1} (0);
+                \draw (0) -- node[above right, rotate=45] {$1 + 4c$} (3);
+                \draw (1) -- node[below right, rotate=-45] {$1 + 4c$} (2);
+            \end{tikzpicture}
+        \end{subfigure}
+    \end{figure}
+    \noindent We can see that if the graph $G$ has a HC, then we can find a Travelling Salesman tour of length $n$, i.e. $m^*(G) = n$. Since $A$ has a performance guarantee of $c$, we find that $m(G, A(G)) \leq nc$. Now, if $G$ does not have a HC, then the the Travelling Salesman tour must take one of the edges not in $E$. To see this, consider the following example graph.
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- (1);
+                \draw (1) -- (3);
+                \draw (3) -- (2);
+            \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[a]{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[circle, draw, fill, inner sep=1.5pt] (0) at (0, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (1) at (0, 2) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (2) at (2, 0) {};
+                \node[circle, draw, fill, inner sep=1.5pt] (3) at (2, 2) {};
+
+                \draw (0) -- node[left] {1} (1);
+                \draw (1) -- node[above] {1} (3);
+                \draw (3) -- node[right] {1} (2);
+                \draw (2) -- node[below] {$1 + 4c$} (0);
+                \draw (0) -- node[above right, rotate=45] {$1 + 4c$} (3);
+                \draw (1) -- node[below right, rotate=-45] {$1 + 4c$} (2);
+            \end{tikzpicture}
+        \end{subfigure}
+    \end{figure}
+    \noindent Clearly, it does not have a Travelling Salesman Tour of length $n$. Moreover, there are at least $n-1$ other edges we take, and each edge has length $\geq 1$. Hence,
     \[m(G, A(G)) \geq (1 + nc) + (n - 1) = nc + n > nc.\]
     This implies that $m(G, A(G)) \leq nc$ if and only if $G$ has a HC. This gives us a polynomial-time algorithm to solve the HC problem, which leads to a contradiction. So, TSP cannot have a $c$-approximation algorithm.
 
