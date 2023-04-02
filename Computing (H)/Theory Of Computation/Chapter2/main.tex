@@ -19,6 +19,7 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 
+\usepackage{array,multirow}
 \usepackage{cmll}
 \usepackage[usestackEOL]{stackengine}
 \stackMath
@@ -221,7 +222,7 @@
         P \mid (Q \mid R) &\equiv (P \mid Q) \mid R & \textrm{parallel is associative} \\
         P \mid 0 &\equiv P & \textrm{garbage collection} \\
         P + Q &\equiv Q + P & \textrm{choice is commutative} \\
-        P + (Q \mid R) &\equiv (P + Q) + R & \textrm{choice is associative} \\
+        P + (Q + R) &\equiv (P + Q) + R & \textrm{choice is associative} \\
         P + 0 &\equiv P & \textrm{garbage collection} \\
         (\nu \ x)(\nu \ y)P &\equiv (\nu \ y)(\nu \ x)P & \textrm{reordering } \nu \\
         (\nu \ x)0 &\equiv 0 & \textrm{garbage collection} \\
@@ -369,8 +370,17 @@
     We can define a choice between processes $P$ and $Q$ on a boolean located at channel $a$. This is given by:
     \[\textit{Cond}(P, Q)(a) = (\nu \ t, f)\overline{a} \langle t, f \rangle.(t.P + f.Q)\]
     We illustrate how this works with an example. In particular, consider the following reduction:
-    \[\textit{True}(a) \mid \textit{Cond}(P, Q)(a)\]
-    % TODO: Reduce to P
+    \begin{align*}
+        \textit{True}(a) &\mid \textit{Cond}(P, Q)(a) \\
+        &\equiv \\
+        (\nu \ t, f) (a(t, f).\overline{t} &\mid \overline{a} \langle t, f \rangle.(t.P + f.Q)) \\
+        &\downarrow \\
+        (\nu \ t, f) (\overline{t} &\mid t.P + f.Q) \\
+        &\downarrow \\
+        (\nu \ t, f) (0 &\mid P) \\
+        &\equiv \\
+        &P
+    \end{align*}
 
     Similarly,
     \[\textit{False}(a) \mid \textit{Cond}(P, Q)(a) \to^* Q\]
@@ -380,33 +390,69 @@
         t.\textit{False}(a) + f.\textit{True}(a)
     ))\]
     We illustrate this with the following reduction:
-    \[\textit{Not}(a, b) \mid \textit{True}(b)\]
-    % TODO: Reduce to False(a)
+    \begin{align*}
+        \textit{Not}(a, b) &\mid \textit{True}(b) \\
+        &\equiv \\
+        (\nu \ t, f)(\overline{b} \langle t, f \rangle.(t.\textit{False}(a) + f.\textit{True}(a)) &\mid b(t, f).\overline{t}) \\
+        &\downarrow \\
+        (\nu \ t, f)(t.\textit{False}(a) + f.\textit{True}(a) &\mid \overline{t} ) \\
+        &\downarrow \\
+        (\nu \ t, f)(\textit{False}(a) &\mid 0) \\
+        &\equiv \\
+        \textit{False}(a)
+    \end{align*}
 
-    We now define the process $\texttt{And}(a, b, c)$, which takes in two booleans at $b$ and $c$ and produces a boolean at $a$. This is given by:
+    We now define the process $\textit{And}(a, b, c)$, which takes in two booleans at $b$ and $c$ and produces a boolean at $a$. This is given by:
     \[\textit{And}(a, b, c) = (\nu t, f)(\overline{b} \langle t, f \rangle.(
         f.\textit{False}(a) + t.\overline{c} \langle t, f \rangle.(
-            f.\textit{False}(a) + t.\textit{True}(b)
+            f.\textit{False}(a) + t.\textit{True}(a)
         )
     ))\]
-    We illustrate this with the following reduction:
-    \[\textit{And}(a, b, c) \mid \textit{True}(b) \mid \textit{False}(c)\]
-    % TODO: Reduce to True(a)
+    We can reduce to find that
+    \begin{align*}
+        \textit{And}(a, b, c) \mid \textit{True}(b) \mid \textit{True}(c) &\to^* \textit{True}(a) \\
+        \textit{And}(a, b, c) \mid \textit{True}(b) \mid \textit{False}(c) &\to^* \textit{False}(a)
+    \end{align*}
 
-    We will now use a similar idea to represent natural numbers. It is more direct than in $\lambda$-calculus since we do not need \textit{pair}. We define it recursively, with
+    We will now use a similar idea to represent natural numbers. It is more direct than in $\lambda$-calculus since we do not need \texttt{pair}. We define it recursively, with
     \begin{align*}
         Z(n_0) &= n_0(z, s).\overline{z} \\
         S(n_k, N(n_{k-1})) &= (\nu \ n_{k-1})(n_k(z, s).\overline{s} \langle n_{k-1} \rangle \mid N(n_{k-1}))
     \end{align*}
     This way, we represent the value $\textit{One}$ as follows:
-    \[\textit{One}(n_1) = S(n_1, Z(n_0)) = (\nu \ n_1)(n_0(z, s) \overline{s} \langle n_1 \rangle \mid n_1(z, s).\overline{z})\]
+    \[\textit{One}(n_1) \equiv S(n_1, Z(n_0)) \equiv (\nu \ n_1)(n_1(z, s) \overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z})\]
     
     Like \textit{Cond} for booleans, we can define a case-analysis process for natural numbers, as follows:
-    \[\textit{Case}(P, Q)(a, n) = (\nu \ z, s)\overline{a} \langle z, s \rangle.(z.P + s(n).Q(n)).\]
-    The process \textit{Cases} interacts with a number located at $a$. If it is zero, it will next perform $P$; if it is instead $S(n)$, then it will continue as $Q(n)$. Using this, we can define the \textit{IsZero} process:
-    \[\textit{IsZero}(a, n) = \textit{Cases}(\textit{True}(a), \textit{False}(a))(a, n).\]
-    % TODO: IsZero(a, n) | Zero \to^* True(a)
-    % TODO: IsZero(a, n) | One(n) \to^* False(a) | G (garbage; cannot interact with anything)
+    \[\textit{Cases}(P, Q)(a, n) = (\nu \ z, s)\overline{a} \langle z, s \rangle.(z.P + s(n).Q(n)).\]
+    The process \textit{Cases} interacts with a number located at $a$. If it is zero, it will next perform $P$; if it is instead the successor of $n$, then it will continue as $Q(n)$. Using this, we can define the \textit{IsZero} process:
+    \[\textit{IsZero}(a, n) = \textit{Cases}(\textit{True}(a), \textit{False}(a))(n, m).\]
+    We illustrate how the process works with two examples, first running it in parallel with zero:
+    \begin{align*}
+        \textit{IsZero}(a, n_0) &\mid Z(n_0) \\
+        &\equiv \\
+        \textit{Cases}(\textit{True}(a), \textit{False}(a))(n_0, m) &\mid n_0(z, s).\overline{z} \\
+        &\equiv \\
+        (\nu \ z, s)(\overline{n_0} \langle z, s \rangle.(z.\textit{True}(a) + s(m).\textit{False}(a)) &\mid n_0(z, s).\overline{z}) \\
+        &\downarrow \\
+        (\nu \ z, s)(z.\textit{True}(a) + s(m).\textit{False}(a) &\mid \overline{z}) \\
+        &\downarrow \\
+        (\nu \ z, s)(\textit{True}(a) &\mid 0) \\
+        &\equiv \\
+        \textit{True}(a)
+    \end{align*}
+    Now, we run \textit{isZero} in parallel with \textit{One}:
+    \begin{align*}
+        \textit{IsZero}(a, n_1) &\mid \textit{One}(n_1) \\
+        &\equiv \\
+        (\nu \ z, s, n_1)(\overline{n_1} \langle z, s \rangle.(z.\textit{True}(a) + s(m).\textit{False}(a)) &\mid n_1(z, s). \overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z}) \\
+        &\downarrow \\
+        (\nu \ z, s, n_1)(z.\textit{True}(a) + s(m).\textit{False}(a) &\mid \overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z}) \\
+        &\downarrow \\
+        (\nu \ z, s, n_1)(\textit{False}(a) &\mid 0 \mid n_0(z, s).\overline{z}) \\
+        &\equiv \\
+        \textit{False}(a) &\mid n_0(z, s).\overline{z}
+    \end{align*}
+    We have gotten the \textit{False} result, and the two remaining processes cannot interact.
 
     We will now define the \textit{even} process in $\pi$-calculus. Formally, the \textit{even} function can be defined as follows:
     \begin{align*}
@@ -419,8 +465,40 @@
             (\nu \ b)(\textit{Not}(a, b) \mid \overline{\textit{even}} \langle b, m \rangle)(n, m)
         ))
     \end{align*}
-    The channel where we check is \textit{even}. The value that we are checking is $n$, and the result is outputted into channel $a$.
-    % TODO: Even(Z) \to^* True(a), Even(S(Z)) \to^* False
+    The channel where we check is \textit{even}. The value that we are checking is $n$, and the result is outputted into channel $a$. We run the process on some number $N$ at $n_k$ using the process
+    \[(\nu \ n_k)(\overline{\textit{even}}\langle a, n_k\rangle \mid N(n_k) \mid \textit{Even})\]
+    For instance, we can run it on the zero process as follows:
+    \begin{align*}
+        \overline{\textit{even}} \langle a, n_0\rangle \mid Z(n_0) &\mid \textit{Even} \\
+        &\equiv \\
+        \overline{\textit{even}} \langle a, n_0\rangle \mid n_0(z, s).\overline{z} \mid \textit{even}(a, n_0)\dots &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ z, s) (0 \mid n_0\langle z, s \rangle.\overline{z} \mid \overline{n_0}\langle z, s \rangle\dots) &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ z, s)(z \mid z.\textit{True}(a) + \dots) &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ z, s)(0 \mid \textit{True}(a)) &\mid \textit{Even} \\
+        &\equiv \\
+        \textit{True}(a) &\mid \textit{Even}
+    \end{align*}
+    Next, we run it on the \textit{One} process:
+    \begin{align*}
+        \overline{\textit{even}} \langle a, n_1 \rangle \mid \textit{One}(n_1) &\mid \textit{Even} \\
+        &\equiv \\
+        (\nu \ n_1)(\overline{\textit{even}} \langle a, n_1\rangle \mid n_1(z, s).\overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z} \mid \textit{even}(a, n_1)\dots) &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ z, s, n_1)(0 \mid n_1(z, s).\overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z} \mid n_1\langle z, s \rangle \dots) &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ b, z, s, n_1)(\overline{s} \langle n_0 \rangle \mid n_0(z, s).\overline{z} \mid \dots + s(m).(\textit{Not}(a, b) \mid \overline{\textit{even}}(b, m))) &\mid \textit{Even} \\
+        &\downarrow \\
+        (\nu \ z, s, n_1)(0 \mid n_0(z, s).\overline{z} \mid \textit{Not}(a, b) \mid \overline{\textit{even}}(b, n_0)) &\mid \textit{Even} \\
+        &\equiv \\
+        (\nu \ b)(\textit{Not}(a, b) \mid \overline{\textit{even}} \langle b, n_0\rangle \mid Z(n_0)) &\mid \textit{Even} \\
+        &\downarrow_* \\
+        (\nu \ b)(\textit{Not}(a, b) \mid \textit{True}(b)) &\mid \textit{Even} \\
+        &\downarrow_* \\
+        \textit{False}(a) &\mid \textit{Even}
+    \end{align*}
 
     The example of the even function looks complicated because it combined two ideas:
     \begin{itemize}
@@ -434,12 +512,12 @@
     \[\frac{e \to e'}{\textit{if } e \textit{ then } P \textit{ else } Q \to \textit{if } e' \textit{ then } P \textit{ else } Q}\]
     That way, we can write the \textit{even} process as follows:
     \[\textit{Even} = !(
-        \textit{even}(n).(\textit{if IsZero(n) then }\texttt{true} \textit{ else not(Even(n-1))})
+        \textit{even}(n).(\textit{if IsZero}(n)\textit{ then }\texttt{true} \textit{ else not(Even(n-1))})
     )\]
     We can write the factorial function in a similar manner:
     \[\textit{Fact} = !(
-        \textit{fact}(a, n).if isZero(n) then \overline{a} \langle 1 \rangle 
-        else (\nu \ b)(\overline{fact} \langle b, n-1 \rangle \mid b(x).\overline{a} \langle n \cdot x \rangle)
+        \textit{fact}(a, n).\textit{if isZero}(n)\textit{ then }\overline{a} \langle 1 \rangle 
+        \textit{ else }(\nu \ b)(\overline{\textit{fact}} \langle b, n-1 \rangle \mid b(x).\overline{a} \langle n \cdot x \rangle)
     )\]
     % TODO: Check that fact(a, 1) = \overline{a} \langle 1 \rangle \mid Fact
 
@@ -453,9 +531,9 @@
     \section{Equivalence of Process}
     Part of the motivation for the topic of process calculus is to be able to reason about \emph{communicating concurrent systems}: to specify how they behave and verify that they behave correctly.
 
-    The first step is to define the syntax and operational semantics (the reduction relation), which we have done. We have also seen how to define some interesting computational scenarios involving concurrency and communication.
+    The first step was to define the syntax and operational semantics, i.e. the reduction relation. We have also seen how to define some interesting computational scenarios involving concurrency and communication.
 
-    We will now introduce a theory of equivalence of processes, which means equivalence of ongoing interactive behaviour (in contrast, to equivalence of a final result, as in $\lambda$-calculus).
+    We will now introduce a \emph{theory of equivalence of processes}, which means equivalence of ongoing interactive behaviour. This is in contrast with $\lambda$-calculus, where we had an equivalence of the final result.
 
     Previously, we define the processes $\textit{True}(x)$ and $\textit{False}(x)$, and $\textit{Not}(x, y)$. We would like to have a theory in which
     \[(\nu \ y)(\textit{Not}(x, y) \mid \textit{True}(y)) = \textit{False}(x).\]
@@ -464,6 +542,7 @@
 
     To develop the theory of equivalence, we will simplify $\pi$-calculus by assuming that all messages are empty. To reduce syntax, we will omit the empty messages and just write $x$ or $\overline{x}$. We will refer to $x$ and $\overline{x}$ as actions. This means that we are working in an earlier process calculus called CCS-calculus of Communication Systems. We will start with examples and then give proper definitions.
 
+    \subsection{Trace Equivalence}
     Reductions of the form $P \to Q$ tell us how a process evolves by \emph{internal} communication. We need to be able to describe \emph{potential} interaction between a process and its environment. We do this by introducing \emph{labelled} transitions, e.g.
     \[a.P \xrightarrow{a} P \qquad \overline{a}.Q \xrightarrow{\overline{a}} Q\]
     We can describe actual interactions using $\tau$ transitions, e.g.
@@ -471,11 +550,11 @@
 
     We will now define labelled transitions. Let $\alpha$ range over $\{a, \overline{a}, \tau\}$. The the inference rules for labelled transitions are given as follows:
     \[\overline{\alpha.P \xrightarrow{\alpha} P}\]
-    \[\frac{P \xrightarrow{a} P' \qquad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \qquad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
+    \[\frac{P \xrightarrow{a} P' \quad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{P \mid Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P \mid Q \xrightarrow{\alpha} P \mid Q'}\]
-    \[\frac{P \xrightarrow{\alpha} P'}{P + Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P + Q \xrightarrow{\alpha} P \mid Q'}\]
-    \[\frac{P \xrightarrow{\alpha} P' \qquad \alpha \in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
-    \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \qquad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{P + Q \xrightarrow{\alpha} P' + Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P + Q \xrightarrow{\alpha} P + Q'}\]
+    \[\frac{P \xrightarrow{\alpha} P' \quad \alpha \not\in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
+    \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
 
     We can now talk about \emph{traces} of a process, which are its possible sequences of actions. The empty trace $\epsilon$ is always a possibility. We look at some examples:
     \begin{itemize}
@@ -486,41 +565,225 @@
     \end{itemize}
 
     We can show the labelled transitions of a process in a diagram, with or without the process terms. We can then read off the traces. For example, the process $a.\overline{b}.0 + b.0$ corresponds to the following figure:
-    % TODO: Add figure
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$a.\overline{b}.0 + b.0$}
+            child {
+                node {$\overline{b}.0$}
+                child {
+                    node {$0$}
+                    edge from parent[->] node[left] {$\overline{b}$}
+                }
+                edge from parent[->] node[left] {$a$}
+            }
+            child {
+                node {$0$}
+                edge from parent[->] node[right] {$b$}
+            };
+
+            \node[circle, fill, inner sep=1pt] at (4, 0) {}
+            child {
+                node[circle, fill, inner sep=1pt] {}
+                child {
+                    node[circle, fill, inner sep=1pt] {}
+                    edge from parent[->] node[left] {$\overline{b}$}
+                }
+                edge from parent[->] node[left] {$a$}
+            }
+            child {
+                node[circle, fill, inner sep=1pt] {}
+                edge from parent[->] node[right] {$b$}
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent On the left, we highlight all the processes, while on the right, we only show the traces.
 
     A simple equivalence between processes is \emph{trace equivalence}. We say that $P =_{tr} Q$ if they have the same traces. For example, $(\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ and $a.\tau.c.0$ are trace equivalent since they have the same traces:
-    % TODO: Add figure
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$(\nu \ b)(a.\overline{b}.0 \mid b.c.0)$}
+            child {
+                node {$(\nu \ b)(\overline{b}.0 \mid b.c.0)$}
+                child {
+                    node {$(\nu \ b)(0 \mid c.0)$}
+                    child {
+                        node {$(\nu \ b)(0 \mid 0)$}
+                        edge from parent[->] node[left] {$c$}
+                    }
+                    edge from parent[->] node[left] {$\tau$}
+                }
+                edge from parent[->] node[left] {$a$}
+            };
+            
+            \node at (4, 0) {$a.\tau.c.0$}
+            child {
+                node {$\tau.c.0$}
+                child {
+                    node {$c.0$}
+                    child {
+                        node {$0$}
+                        edge from parent[->] node[right] {$c$}
+                    }
+                    edge from parent[->] node[right] {$\tau$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Since the channel $b$ is private, note that $(\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ cannot have a $b$-trace.
 
+    \subsection{Informal introduction to bisimulation}
     There is an issue with trace equivalence- it is too weak. To see this, consider the two processes $P = a.b.0 + a.c.0$ and $Q = a.(b.0 + c.0)$. They have the following trace diagrams:
-    % TODO: Add figure
-    Both the processes have traces $\epsilon$, $a$, $ab$ and $ac$. Hence, they are trace equivalent. However, $P$ can go into a state in which only one of $b$ and $c$ is available, whereas $Q$ offers both $b$ and $c$ from the same state. 
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$a.b.0 + a.c.0$}
+            child {
+                node {$b.0$}
+                child {
+                    node {$0$}
+                    edge from parent[->] node[left] {$b$}
+                }
+                edge from parent[->] node[left] {$a$}
+            }
+            child {
+                node {$c.0$}
+                child {
+                    node {$0$}
+                    edge from parent[->] node[right] {$c$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
 
-    Next, define $R = \overline{a}.\overline{b}.0$. We have that $Q \mid R$ can communicate on $a$ then $b$, and both processes reach $0$. On the other hand, $P \mid R$ can communicate with $a$, with $P$ becoming either $b.0$ or $c.0$. In the second case, no further communication is possible. This is a deadlock. We would like a definition of equivalence in which $P$ and $Q$ are \emph{not} equivalent.
-    % TODO: Illustrate using reduction.
+            \node at (4, 0) {$a.(b.0 + c.0)$}
+            child {
+                node {$b.0 + c.0$}
+                child {
+                    node{$0$}
+                    edge from parent[->] node[left] {$b$}
+                }
+                child {
+                    node{$0$}
+                    edge from parent[->] node[right] {$c$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Both the processes have traces $\epsilon$, $a$, $ab$ and $ac$. Hence, they are trace equivalent. However, after an $a$-reduction, $P$ can go into a state in which only one of $b$ and $c$ is available, whereas $Q$ offers both $b$ and $c$. 
 
-    To do this, we define \emph{bisimulation}. This concept is fundamental in process calculus and concurrency theory. There are many forms of it. We look at \emph{strong bisimulation}. The idea is that for processes $P$ and $Q$ to be bisimilar, it must be that:
+    We illustrate the issue further. Define $R = \overline{a}.\overline{b}.0$. If we have the process $Q \mid R$, then we can reduce it as follows:
+    \begin{align*}
+        a.(b.0 + c.0) &\mid \overline{a}.\overline{b}.0 \\
+        &\downarrow \\
+        b.0 + c.0 &\mid \overline{b}.0 \\
+        &\downarrow \\
+        0 &\mid 0
+    \end{align*}
+    This is the only reduction possible from $Q \mid R$. So, every reduction leads to termination in this case. On the other hand, if we have the process $P \mid R$, it could reduce in two ways:
+    \begin{align*}
+        a.b.0 + a.c.0 &\mid \overline{a}.\overline{b}.0  & a.b.0 + a.c.0 &\mid \overline{a}.\overline{b}.0 \\
+        &\downarrow & &\downarrow \\
+        c.0 &\mid \overline{b}.0 & b.0 &\mid \overline{b}.0 \\
+        & & &\downarrow \\
+        & & 0 &\mid 0
+    \end{align*}
+    Since $\overline{a}.\overline{b}.0$ can communicate with $a.b.0$, there is nothing stopping the left reduction from happening. However, this reduction leads to a deadlock. On the other hand, no reduction of $Q \mid R$ leads to a deadlock. We would like the equivalence of process to be deadlock-invariant, i.e. if two processes are equivalent, then either they both can reduce to a deadlock or neither can.
+
+    To do this, we define \emph{bisimulation}. This concept is fundamental in process calculus and concurrency theory.
+
+    There are many forms of bisimulation. We look at \emph{strong bisimulation}. The idea is that for processes $P$ and $Q$ to be bisimilar, it must be that:
     \begin{itemize}
         \item for any action $\alpha \in \{a, \overline{a}, \tau\}$, if $P \xrightarrow{\alpha} P'$, then there is a $Q'$ such that $Q \xrightarrow{\alpha} Q'$ and $P'$ and $Q'$ are bisimilar;
         \item this holds the other way as well, i.e. when $Q \xrightarrow{\alpha} Q'$, then there exists a $P'$ bisimilar to $Q'$ such that $P \xrightarrow{\alpha} P'$ as well.
     \end{itemize}
 
-    We now consider the processes $P = (\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ and $Q = a.\tau.c.0$. We previously saw that the two processes were trace equivalent. We will now see that they are also bisimilar, since they evolve in the following manner:
-    % TODO: Draw transition figure (and label each one)
+    We now consider the processes $P = (\nu \ b)(a.\overline{b}.0 \mid b.c.0)$ and $Q = a.\tau.c.0$. We previously saw that the two processes were trace equivalent. We will now see that they are also bisimilar, since they have the same trace diagram:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$P = (\nu \ b)(a.\overline{b}.0 \mid b.c.0)$}
+            child {
+                node {$P_1 = (\nu \ b)(\overline{b}.0 \mid b.c.0)$}
+                child {
+                    node {$P_2 = (\nu \ b)(0 \mid c.0)$}
+                    child {
+                        node {$P_3 = (\nu \ b)(0 \mid 0)$}
+                        edge from parent[->] node[left] {$c$}
+                    }
+                    edge from parent[->] node[left] {$\tau$}
+                }
+                edge from parent[->] node[left] {$a$}
+            };
+            
+            \node at (4, 0) {$Q = a.\tau.c.0$}
+            child {
+                node {$Q_1 = \tau.c.0$}
+                child {
+                    node {$Q_2 = c.0$}
+                    child {
+                        node {$Q_3 = 0$}
+                        edge from parent[->] node[right] {$c$}
+                    }
+                    edge from parent[->] node[right] {$\tau$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
+        \end{tikzpicture}
+    \end{figure}
 
-    Now, we can work from the end to prove that $P$ and $Q$ are bisimilar. We use the symbol $\sim$ for strong bisimulation. In this case, $P_3 \sim Q_3$ because neither of them has any transitions; they are both structurally congruent to $0$. So, there is nothing to check here. Now, consider $P_2$ and $Q_2$. We have $P_2 \xrightarrow{c} P_3$, which can be matched by $Q_2 \xrightarrow{c} Q_3$, and we know that $P_3 \sim Q_3$. In the other direction, the only transition of $Q_2$ is $Q_2 \xrightarrow{c} Q_3$, which can equally be matched by $P_2 \xrightarrow{c} P_3$, with $P_3 \sim Q_3$.
+    We can work from the end to prove that $P$ and $Q$ are bisimilar. We use the symbol $\sim$ for strong bisimulation. In this case, $P_3 \sim Q_3$ because neither of them has any transitions; they are both structurally congruent to $0$. So, there is nothing to check here. Now, consider $P_2$ and $Q_2$. We have $P_2 \xrightarrow{c} P_3$, which can be matched by $Q_2 \xrightarrow{c} Q_3$, and we know that $P_3 \sim Q_3$. In the other direction, the only transition of $Q_2$ is $Q_2 \xrightarrow{c} Q_3$, which can equally be matched by $P_2 \xrightarrow{c} P_3$, with $P_3 \sim Q_3$.
 
     Similarly, we can show that $P_1 \sim Q_1$- the only transition of $P_1$ is $P_1 \xrightarrow{\tau} P_2$ from communication on $b$. This can be matched by $Q_1 \xrightarrow{\tau} Q_2$, and we know that $P_2 \sim Q_2$. In the other direction, the only transition of $Q_1$ is $Q_1 \xrightarrow{\tau} Q_2$, which can be matched by $P_1 \xrightarrow{\tau} P_2$, and we know that $P_2 \sim Q_2$.
 
     Finally, we consider the transitions of $P$ and $Q$ in the same way. We can see that each process has an $a$-transition that can match the $a$-transition of the other process, resulting in $P_1$ and $Q_1$, with $P_1 \sim Q_1$. We conclude that $P \sim Q$.
 
     Now, consider $P = a.b.0 + a.c.0$ and $Q = a.(b.0 + c.0)$. We saw that $P$ and $Q$ were trace equivalent. However, they are not bisimilar- consider the trace diagram for $P$ and $Q$.
-    % TODO: Add figure
-    We see that $P$ has two transitions- $P \xrightarrow{a} P_1$ and $P \xrightarrow{a} P_2$. We can match $P \xrightarrow{a} P_1$ by $Q \xrightarrow{a} Q_1$, so we would need $P_1 \sim Q_1$. Also, $P \xrightarrow{a} P_2$ is matched by $Q \xrightarrow{a} Q_1$. But, $Q_1$ has a transition $Q_1 \xrightarrow{b} 0$, which cannot be matched by $P_2$. So, we cannot have $P \sim Q$.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$P = a.b.0 + a.c.0$}
+            child {
+                node {$P_1 = b.0$}
+                child {
+                    node {$0$}
+                    edge from parent[->] node[left] {$b$}
+                }
+                edge from parent[->] node[left] {$a$}
+            }
+            child {
+                node {$P_2 = c.0$}
+                child {
+                    node {$0$}
+                    edge from parent[->] node[right] {$c$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
 
-    We have found two processes that are trace equivalent but not strongly bisimilar. Strong bisimulation is a better definition of equivalence when we have non-determinism. This is because it takes into account how a process can interact with other processes. If two processes are strongly bisimilar, then they are also trace equivalent. If two deterministic processes are trace equivalent, then they are also strongly bisimilar.
+            \node at (4, 0) {$Q = a.(b.0 + c.0)$}
+            child {
+                node {$Q_1 = b.0 + c.0$}
+                child {
+                    node{$0$}
+                    edge from parent[->] node[left] {$b$}
+                }
+                child {
+                    node{$0$}
+                    edge from parent[->] node[right] {$c$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We see that $P$ has two transitions- $P \xrightarrow{a} P_1$ and $P \xrightarrow{a} P_2$. We can match $P \xrightarrow{a} P_1$ by $Q \xrightarrow{a} Q_1$, so we would need $P_1 \sim Q_1$. Also, $P \xrightarrow{a} P_2$ is matched by $Q \xrightarrow{a} Q_1$. But, $Q_1$ has a transition $Q_1 \xrightarrow{b} 0$, which cannot be matched by $P_2$. So, we cannot have $P \sim Q$.
+
+    We have found that strong bisimulation is a better definition of equivalence when we have non-determinism. This is because it takes into account how a process can interact with other processes. If two processes are strongly bisimilar, then they are also trace equivalent. If two deterministic processes are trace equivalent, then they are also strongly bisimilar.
 
     Note that the term `strong' means that we include $\tau$ transitions when matching. Sometimes, this is undesirable because $\tau$ transitions are supposed to be internal unobservable actions. There is another form of equivalence, \emph{weak bisimulation}, which ignores $\tau$ transitions.
 
+    \subsection{Formal definition of bisimulation}
     We will now aim to define strong bisimulation. A first attempt might be the following:
     \begin{definition}
         We say that $P$ and $Q$ are \emph{strongly bisimilar}, denoted $P \sim Q$ if for every action $\alpha$:
@@ -531,9 +794,9 @@
     \end{definition}
     This definition is recursive in nature, but does not have a base case. Moreover, there is no reason that $P'$ and $Q'$ are 'smaller' than $P$ and $Q$.
 
-    For instance, consider the process $P = !a.0$. We want $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
+    We illustrate the issue further. So, consider the process $P = !a.0$. We would like $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
     \[P \xrightarrow{a} 0 \mid !a.0 \equiv 0 \mid P.\]
-    Applying the attempted definition of strong bisimulation to $P$ and $P$, we see that they can match each other's actions. Checking the subsequent processes tells us that $P \sim P$ depends on $0 \mid P \sim 0 \mid P$. This is circular and not a valid definition. Moreover, the reduced process is equivalent to itself, meaning that it does not get smaller.
+    Applying the above definition of strong bisimulation to $P$ both on the left and the right, we see that they can match each other's actions. Checking the subsequent processes tells us that $P \sim P$ depends on $0 \mid P \sim 0 \mid P$. This is circular and not a valid definition. Moreover, the reduced process is equivalent to itself, meaning that the reduced process does not get smaller.
 
     Instead of defining bisimulation for $\pi$-calculus processes, we can work with more abstract \emph{labelled transition systems} (LTS). An LTS is a directed graph in which edges are labelled with actions. We use the transition notation
     \[m \xrightarrow{a} n\]
@@ -548,23 +811,70 @@
         \end{itemize}
     \end{definition}
 
-    Consider a labelled transition system as follows.
-    % TODO: Show
+    Consider the labelled transition system given below.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node (p1) at (0, 0) {$P_1$};
+            \node (p2) at (0, -1.5) {$P_2$};
+
+            \draw[->] (p1) edge node[left] {$c$} (p2);
+            \draw[->] (p2) edge[loop below] node {$a$} (p2);
+            \draw[->] (p2) edge[loop right] node {$b$} (p2);
+
+            \node (q1) at (4, 0) {$Q_1$};
+            \node (q2) at (4, -1.5) {$Q_2$};
+            \node (q3) at (6, -1.5) {$Q_3$};
+
+            \draw[->] (q1) edge node[right] {$c$} (q2);
+            \draw[->] (q2) edge[bend left] node[above] {$b$} (q3);
+            \draw[->] (q3) edge[bend left] node[below] {$b$} (q2);
+            \draw[->] (q2) edge[loop below] node {$a$} (q2);
+            \draw[->] (q3) edge[loop below] node {$a$} (q3);
+        \end{tikzpicture}
+    \end{figure}
+    \noindent We consider which relations are bisimilar with respect to this LTS.
     \begin{itemize}
         \item The empty relation $\varnothing$ is a strong bisimulation- this is trivially the case.
         \item The relation $\{(P_2, Q_2)\}$ is not a strong bisimulation- we have $P_2 \xrightarrow{b} P_2$, but in $Q_2$, the only $b$-transition is to $Q_3$, but $(P_2, Q_3) \not\in \mathcal{R}$.
-        \item The relation $\{(P_2, P_2)\}$ is a strong bisimulation since it can only reduce to itself.
+        \item The relation $\{(P_2, P_2)\}$ is a strong bisimulation since it can match all of its transitions.
         \item The relation $\{(P_2, Q_2), (P_2, Q_3)\}$ is a strong bisimulation- we have $P_2 \xrightarrow{b} P_2$ matching $Q_2 \xrightarrow{b} Q_3$ and $Q_3 \xrightarrow{b} Q_2$; and $P_2 \xrightarrow{a} P_2$ matching $Q_2 \xrightarrow{a} Q_2$ and $Q_3 \xrightarrow{a} Q_3$.
         \item The relation $\{(P_2, Q_2), (P_2, Q_3), (Q_2, P_2), (Q_3, P_2)\}$ is a strong bisimulation- we have added the symmetrical cases.
-        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3)\}$ is a strong bisimulation since $P_1 \xrightarrow{c} P_2$ is matched by $Q_1 \xrightarrow{c} Q_2$.
-        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3), (Q_1, P_1), (Q_2, P_2), (Q_3, P_2)\}$ is a strong bisimulation.
+        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3)\}$ is a strong bisimulation since $P_1 \xrightarrow{c} P_2$ is matched by $Q_1 \xrightarrow{c} Q_2$, with $(P_2, Q_2) \in \mathcal{R}$.
+        \item The relation $\{(P_1, Q_1), (P_2, Q_2), (P_2, Q_3), (Q_1, P_1), (Q_2, P_2), (Q_3, P_2)\}$ is a strong bisimulation. Adding reflexivity (i.e. $(P, P)$ for all processes) to this relation would give us the largest possible set satisfying strong bisimulation.
     \end{itemize}
 
-    For a given LTS (or a set of processes), there can be several relations that satisfy the conditions to be a strong bisimulation. We say that \emph{strong bisimilarity}, denoted by $\sim$, is the largest strong bisimulation. We say that processes $P$ and $Q$ are strong bisimilar, denoted $P \sim Q$, if $(P, Q)$ is in the largest strong bisimulation. To prove this, it is sufficient to find any bisimulation containing $(P, Q)$.
+    For a given LTS (or a set of processes), there can be several relations that satisfy the conditions to be a strong bisimulation. We say that \emph{strong bisimilarity}, denoted by $\sim$, is the largest strong bisimulation. We say that processes $P$ and $Q$ are \emph{strongly bisimilar}, denoted $P \sim Q$, if $(P, Q)$ is in the largest strong bisimulation. To prove this, it is sufficient to find any bisimulation containing $(P, Q)$.
+
+    Now, consider the following LTS:
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node (p1) at (0, 0) {$P_1$};
+            \node (p2) at (0, -1.5) {$P_2$};
+
+            \draw[->] (p1) edge node[left] {$a$} (p2);
+            \draw[->] (p2) edge[loop below] node {$a$} (p2);
+
+            \node (q1) at (3, 0) {$Q_1$};
+            \draw[->] (q1) edge[loop below] node {$a$} (q1);
+        \end{tikzpicture}
+    \end{figure}
+    Then, the following are relations satisfying strong bisimulation:
+    \begin{itemize}
+        \item $\{(P_1, P_2), (P_2, P_2)\}$- we can match $P_1 \xrightarrow{a} P_2$ with $P_2 \xrightarrow{a} P_2$, and we have $(P_2, P_2) \in \mathcal{R}$, and vice versa;
+        \item $\{(P_2, Q_1)\}$- we can match $P_2 \xrightarrow{a} P_2$ with $Q_1 \xrightarrow{a} Q_1$, with $(P_2, Q_1) \in \mathcal{R}$;
+        \item $\{(P_1, Q_1), (P_2, Q_1)\}$- we can match $P_1 \xrightarrow{a} P_2$ with $Q_1 \xrightarrow{a} Q_1$, with $(P_2, Q_1) \in \mathcal{R}$.
+    \end{itemize}
+    By reflexivity and symmetry, the largest strong bisimulation is:
+    \begin{align*}
+        \{(P_1, P_1), (P_2, P_2), (Q_1, Q_1), (P_1, P_2), (P_2, P_1), \\
+        (P_1, Q_1), (Q_1, P_1) (P_2, Q_1), (Q_2, P_1)\}.
+    \end{align*}
+    This implies that every process is strongly bisimilar in this case.
 
     We have previously used inductive definitions, e.g. the definitions of reduction and typing judgments. An inductive definition is when we define a set or relation to be the smallest entity satisfying certain conditions. Ordinary recursive function definitions are also in this category. A \emph{coninductive} definition is when we define a set or a relation to be the largest entity satisfying certain conditions, such as strong bisimilarity.
 
-    % TODO: Exercise => find the largest strong bisimulation in this example!
 
     We will now look at processes in the syntax $\pi$-calculus, rather than abstract LTS. When defining labelled transitions for $\pi$-calculus, we did not take structural congruence into account. So, if we want to show something like $P \mid Q$ and $Q \mid P$ to be bisimilar, we have to prove it by constructing a strong bisimulation that contains $(P \mid Q, Q \mid P)$. 
     
@@ -580,22 +890,56 @@
             
             \item The same result follows if $P \mid Q \xrightarrow{\alpha} P \mid Q'$ because $Q \xrightarrow{\alpha} Q'$.
             
-            \item Finally, assume that $P$ is $a.P_1 + P_2$ and $Q$ is $\overline{a}.Q_1 + Q_2$, and $P \mid Q \xrightarrow{\tau} P_1 \mid Q_1$. Then, we also have $Q \mid P \xrightarrow{\tau} Q_1 \mid P_1$, and we have $(P_1 \mid Q_1, Q_1 \mid P_1) \in \mathcal{R}$.
+            \item Finally, assume that $P$ is $a.P_1 + P_2$ and $Q$ is $\overline{a}.Q_1 + Q_2$, and $P \mid Q \xrightarrow{\tau} P_1 \mid Q_1$. Then, we also have $Q \mid P \xrightarrow{\tau} Q_1 \mid P_1$, and we know that $(P_1 \mid Q_1, Q_1 \mid P_1) \in \mathcal{R}$.
         \end{itemize}
         So, it follows that $\mathcal{R}$ is a strong bisimulation. Since $(P \mid Q, Q \mid P) \in \mathcal{R}$, we conclude that $P \mid Q \sim Q \mid P$.
     \end{proof}
-    \noindent We can do the same thing to show that structural congruence is included within strong bisimulation.
-    % TODO: P \mid 0 \sim P
+    \noindent We can do the same thing to show that structural congruence is included within strong bisimulation. For instance, we can show that $P \mid 0 \sim P$ for all processes $P$.
+    \begin{proposition}
+        Let $P$ be a process. Then, $P \mid 0 \sim P$. 
+    \end{proposition}
+    \begin{proof}
+        Define the relation
+        \[\mathcal{R} = \{(P \mid 0, P) \mid P \textrm{ process}\}.\]
+        We show that $\mathcal{R}$ is a strong bisimulation. So, let $(P \mid 0, P) \in \mathcal{R}$. 
+        \begin{itemize}
+            \item First, let $P \xrightarrow{\alpha} P'$. In that case, the parallel rule tells us that $P \mid 0 \xrightarrow{\alpha} P' \mid 0$. By definition, we have $(P' \mid 0, P') \in \mathcal{R}$.
 
-    Now, let $P = (\nu \ b, c)((a.b.0 + c.d.0) \mid \overline{b}.0)$ and $Q = a.\tau.0$. We show that $P$ and $Q$ are strongly bisimilar. In $P$, $b$ and $c$ are private channels, so we cannot transition using these channels. This means that our only option is:
-    \[P \xrightarrow{a} P_1 = (\nu \ b, c)(b.0 \mid \overline{b}.0).\]
-    Then, we have
-    \[P_1 \xrightarrow{\tau} P_2 = (\nu \ b, c)(0 \mid 0).\]
-    So, the relation we want is:
-    \[\mathcal{R} = \{(P, Q), (P_1, \tau.0), (P_2, 0)\}.\]
-    We note that $P_2$ and $0$ are strongly bisimilar since they has no transitions. This means that $\mathcal{R}$ is a strong bisimulation. Hence, $P$ and $Q$ are strongly bisimilar.
+            \item Now, let $P \mid 0 \xrightarrow{\alpha} Q$. We know that $0$ has no transitions, so the only option we have is $Q \equiv P' \mid 0$. Hence, by the inference rule for transition, we must have $P \xrightarrow{\alpha} P'$. By definition, we have $(Q, P') = (P' \mid 0, P') \in \mathcal{R}$.
+        \end{itemize}
+        So, $\mathcal{R}$ is a strong bisimulation.
+    \end{proof}
 
-    There are many extensions to strong bisimulation, including:
+    Now, let $P = (\nu \ b, c)((a.b.0 + c.b.0) \mid \overline{b}.0)$ and $Q = a.\tau.0$. We show that $P$ and $Q$ are strongly bisimilar. So, consider the trace diagram for $P$ and $Q$ below.
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node at (0, 0) {$P = (\nu \ b, c)((a.b.0 + c.b.0) \mid \overline{b}.0)$}
+            child {
+                node {$P_1 = (\nu \ b, c)(b.0 \mid \overline{b}.0)$}
+                child {
+                    node {$P_2 = (\nu \ b, c)(0 \mid 0)$}
+                    edge from parent[->] node[left] {$\tau$}
+                }
+                edge from parent[->] node[left] {$a$}
+            };
+
+            \node at (4, 0) {$Q = a.\tau.0$}
+            child {
+                node {$Q_1 = \tau.0$}
+                child {
+                    node {$Q_2 = 0$}
+                    edge from parent[->] node[right] {$\tau$}
+                }
+                edge from parent[->] node[right] {$a$}
+            };
+        \end{tikzpicture}
+    \end{figure}
+    \noindent Note that $b$ and $c$ are private channels in $P$, meaning that they cannot be part of the trace diagram. In this case, the relation we want is:
+    \[\mathcal{R} = \{(P, Q), (P_1, Q_1), (P_2, Q_2)\}.\]
+    We note that $P_2$ and $Q_2$ are strongly bisimilar since they have no transitions. Moreover, since the other processes have just one transition, with the coupled result in $\mathcal{R}$, we conclude that $\mathcal{R}$ is a strong bisimulation. Hence, $P$ and $Q$ are strongly bisimilar.
+
+    There are many extensions to bisimulation, including:
     \begin{itemize}
         \item allowing messages, including mobile names- this requires a more complex version of the labelled transition rules; and
         \item defining \emph{weak bisimulation}, which ignores $\tau$-transitions. This allows internal interaction to be ignored and focuses on observable input-output.
@@ -624,16 +968,16 @@
 
     Formally, types are specified by the following grammar:
     \begin{align*}
-        T &:: == \texttt{Chan}[T, \dots, T] \\
+        T &:: = \texttt{Chan}[T, \dots, T] \\
         &\mid \textit{bool} \\
-        &\mid \dots,
+        &\mid \dots
     \end{align*}
     where the final line can be used for any types we would want the $\pi$-calculus to have, e.g. \textit{int}.
 
     As for $\lambda$-calculus, we modify the syntax of processes so that binding occurences are annotated with types, e.g.
     \[a(x_1 \colon T_1, \dots, x_n \colon T_n) \qquad (\nu \ x \colon T)\]
     
-    We will consider \emph{polyadic $\pi$-calculus}. This means that a message has zero or more components. We will also assume that we have an expression language which we will not define precisely, but contains primitives such as integers and booleans. We also assume that the expression language has a type system with types \textit{int} and \textit{bool}, along with a reduction relation.
+    We will consider \emph{polyadic $\pi$-calculus}. This means that a message has zero or more components. We will also assume that the expression language has a type system with types \textit{int} and \textit{bool}, along with appropriate reduction relations involving them.
 
     Now, we define the modified syntax of $\pi$-calculus, including processes $P$, values $v$ and expressions $e$:
     \begin{align*}
@@ -651,39 +995,68 @@
         &\mid e == e & \textrm{equality expressions} \\
         &\mid \dots
     \end{align*}
-    The dots allow for expansion of the syntax as required.
+    The dots ($\dots$) allow for expansion of the syntax as required.
 
     Assuming \emph{call-by-value}, the reduction rule for communication, with polyadic messages, is:
     \begin{align*}
         (x(y_1 \colon T_1, \dots, y_n \colon T_n).P + \dots) &\mid 
-        (\overline{x}\langle v_1, \dots, v_n \rangle.P + \dots) \to \\
+        (\overline{x}\langle v_1, \dots, v_n \rangle.Q + \dots) \\
+        &\downarrow \\
         P[y_1 := v_1, \dots, y_n := v_n] &\mid Q
     \end{align*}
-    If $n = 0$, then we do not send/receive any message- this is synchronisation. If we have a send and a receive on the same channel with different number of components in message, then there is no reduction. This is a communication error. We define the type system in a way that avoids such errors.
+    If $n = 0$, then we do not send/receive any message- this is synchronisation. If we have a send and a receive on the same channel with different number of components in message, then there is no reduction. This is a \emph{communication error}. We define the type system in a way that avoids such errors.
 
-    Let $\Gamma = x_1 \colon T_1, \dots, x_n \colon T_n$ be a \emph{typing context or environment}. We have typing judgment for processes and expressions.
+    Let $\Gamma = x_1 \colon T_1, \dots, x_n \colon T_n$ be a \emph{typing context} or \emph{typing environment}. We have typing judgment for processes and expressions.
     \begin{itemize}
-        \item The \emph{typing judgment for processes} is $\Gamma \vdash P$ (i.e. under $\Gamma$, $P$ is a process). A process does not have a type- the judgment just says that it uses channels in $\Gamma$ correctly. 
+        \item The \emph{typing judgment for processes} is $\Gamma \vdash P$ (i.e. under $\Gamma$, $P$ is a well-typed process). A process does not have a type- the judgment just says that it uses channels in $\Gamma$ correctly. 
         \item The \emph{typing judgment for expressions} is $\Gamma \vdash e \colon T$ (i.e. under $\Gamma$, the expression $e$ has type $T$). This is similar to simply typed $\lambda$-calculus. It includes the case where $e$ is just a channel name.
     \end{itemize}
     
     We now define the typing rules. The process $0$ is well-typed in any environment:
     \[\overline{\Gamma \vdash 0} \textrm{TNil}.\]
     Well-typed processes can be put in parallel, or used as alternatives.
-    \[\frac{\Gamma \vdash P \qquad \Gamma \vdash Q}{\Gamma \vdash P \mid Q} \textrm{TPar} \qquad \frac{\Gamma \vdash P \qquad \Gamma \vdash Q}{\Gamma \vdash P + Q} \textrm{TPlus}\]
+    \[\frac{\Gamma \vdash P \quad \Gamma \vdash Q}{\Gamma \vdash P \mid Q} \textrm{TPar} \qquad \frac{\Gamma \vdash P \quad \Gamma \vdash Q}{\Gamma \vdash P + Q} \textrm{TPlus}\]
     An output must send a message of the correct structure.
-    \[\frac{\Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \qquad \Gamma \vdash e_1 \colon T_1, \dots, e_n \colon T_n \qquad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n\rangle.P} \textrm{TOut}\]
+    \[\frac{\Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \quad \Gamma \vdash e_i \colon T_i \ \forall 1 \leq i \leq n \quad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n\rangle.P} \textrm{TOut}\]
     In an input, the message must have the correct structure, and its components must be used correctly.
     \[\frac{\Gamma \vdash x \colon \texttt{Chan}[T_1, \dots, T_n] \qquad \Gamma, y_1 \colon T_1, \dots, y_n \colon T_n \vdash P}{\Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P} \textrm{TIn}\]
     When a new channel is created, it must be used correctly.
-    \[\frac{\Gamma, x \colon \texttt{Chan}[T_1, \dots, T_n] \vdash P}{\Gamma \vdash (\nu \ x) \colon \texttt{Chan}[T_1, \dots, T_n] P} \textrm{TNew}\]
+    \[\frac{\Gamma, x \colon \texttt{Chan}[T_1, \dots, T_n] \vdash P}{\Gamma \vdash (\nu \ x \colon \texttt{Chan}[T_1, \dots, T_n]) P} \textrm{TNew}\]
 
     We now illustrate the types with an example. So, consider the following processes:
     \begin{align*}
         \textit{Server} &= a(x).x(y).\overline{x} \langle y + 1 \rangle.0 \\
-        \textit{Client} &= (\nu \ c)\overline{a} \langle c \rangle.\overline{c} \langle 2 \rangle.c(x).0
+        \textit{Client} &= (\nu \ c)\overline{a} \langle c \rangle.\overline{c} \langle 2 \rangle.c(z).0
     \end{align*}
-    % TODO: Construct $\Gamma$ such that $\Gamma \vdash \textit{Server} \mid \textit{Client}$
+    We can see that:
+    \begin{itemize}
+        \item $a$ has type $\texttt{Chan}[\texttt{Chan}[\textit{int}]]$;
+        \item $x$ has type $\texttt{Chan}[\textit{int}]$;
+        \item $c$ has type $\texttt{Chan}[\textit{int}]$;
+        \item $y$ (and $y+1$) has type $\textit{int}$; and
+        \item $z$ has type $\textit{int}$.
+    \end{itemize}
+    So, we can define $\Gamma$ to be the typing context with all these types. Then, $\Gamma \vdash \textit{Server} \mid \textit{Client}$.
+    % So, let $\Gamma$ be the typing judgment with these types. We can then construct the typing derivation for the $\textit{Server}$ as follows:
+    % \[\nfrac{
+    %     \Gamma \vdash a \colon \textit{Chan}[\texttt{Chan}[\textit{int}]] \nfrac{
+    %         \Gamma \vdash x \colon \texttt{Chan}[\textit{int}] \quad \nfrac{
+    %             \Gamma \vdash x \colon \texttt{Chan}[\textit{int}] \quad \Gamma \vdash y + 1 \colon \textit{int}
+    %         }{
+    %             \Gamma, y \colon \textit{int} \vdash \overline{x} \langle y + 1 \rangle.0
+    %         } \textrm{TOut}
+    %     }{\Gamma, x \colon \texttt{Chan}[\textit{int}] \vdash x(y).\overline{x} \langle y + 1 \rangle.0} \textrm{TIn}
+    % }{
+    %     \Gamma \vdash a(x).x(y).\overline{x} \langle y + 1 \rangle.0
+    % } \textrm{TIn}\]
+
+    % \begin{tabular}{cccccccccc}
+    %     && $\Gamma \vdash x \colon \texttt{Chan}[\textit{int}]$ & \quad & $\Gamma \vdash y + 1 \colon \textit{int}$ & \multirow{2}{*}{TOut} \\
+    %     \cline{3-5} 
+    %     & $\Gamma \vdash x \colon \texttt{Chan}[\textit{int}]$ & \multicolumn{3}{c}{$\Gamma, y \colon \textit{int} \vdash \overline{x} \langle y + 1 \rangle.0$} & \multirow{2}{*}{TIn}\\
+    %     \cline{2-5} 
+    %     $\Gamma \vdash a \colon \texttt{Chan}[\texttt{Chan}[\textit{int}]]$ &&& $\Gamma, x \colon \texttt{Chan}[\textit{int}] \vdash x(y).\overline{x} \langle y + 1 \rangle.0$ 
+    % \end{tabular}
 
     The simple type system for $\pi$-calculus has issues. In particular, 
     \begin{itemize}
@@ -693,8 +1066,8 @@
     
     Nonetheless, we will show that the simple type system is safe. This can be done by showing:
     \begin{itemize}
-        \item type preservation: if $\Gamma \vdash P$ and $P \to Q$, then $\Gamma \vdash Q$;
-        \item absence of immediate communication errors: if $\Gamma \vdash P$ at the top level, $P$ does not have an input and an output in parallel on the same channel with different number of message components (and types).
+        \item \emph{type preservation}: if $\Gamma \vdash P$ and $P \to Q$, then $\Gamma \vdash Q$;
+        \item \emph{absence of immediate communication errors}: if $\Gamma \vdash P$ at the top level, $P$ does not have an input and an output in parallel on the same channel with different number of message components (and types).
     \end{itemize}
     Proving these theorems allows us to show that well-typed processes do not generate communication errors.
 
@@ -721,9 +1094,9 @@
         The rule for structural congruence tells us that for processes $P$ and $Q$, and a channel $x \not\in FV(P)$,
         \[(\nu \ x)(P \mid Q) \equiv P \mid (\nu \ x)Q.\]
         If the left hand side is typeable, then we have
-        \[\cfrac{\Gamma, x \colon T \vdash P \qquad \Gamma, x \colon T \vdash Q}{\cfrac{\Gamma, x \colon T \vdash P \mid Q}{\Gamma \vdash (\nu \ x \colon T)(P \mid Q)}}\]
+        \[\cfrac{\Gamma, x \colon T \vdash P \quad \Gamma, x \colon T \vdash Q}{\cfrac{\Gamma, x \colon T \vdash P \mid Q}{\Gamma \vdash (\nu \ x \colon T)(P \mid Q)}}\]
         using TPar and then TNew. Hence, we need $\Gamma, x \colon T \vdash P$ and $\Gamma, x \colon T \vdash Q$ for the left hand side to be typeable. Since $x \not\in FV(P)$, we can show that $\Gamma \vdash P$. Hence,
-        \[\cfrac{\Gamma, x \colon T \vdash Q}{\cfrac{\Gamma \vdash P \qquad \Gamma \vdash (\nu \ x \colon T)Q}{\Gamma \vdash P \mid (\nu \ x \colon T)Q}}\]
+        \[\cfrac{\Gamma, x \colon T \vdash Q}{\cfrac{\Gamma \vdash P \quad \Gamma \vdash (\nu \ x \colon T)Q}{\Gamma \vdash P \mid (\nu \ x \colon T)Q}}\]
         using TNew and then TPar. So, if the left hand side is typeable, then so is the right hand side. Using the reverse argument, we can show that if the right hand side is typeable, then so is the left hand side.
     \end{proof}
 
@@ -781,7 +1154,7 @@
         Considering $\Gamma \vdash x(y_1 \colon U_1, \dots, y_r \colon U_r).P$, $\Gamma_1$ must contain $x \colon \texttt{Chan}[U_1, \dots, U_r]$. Moreover, since $\Gamma \vdash \overline{x} \langle v_1, \dots, v_n \rangle.Q$, we see that $x \colon \texttt{Chan}[U_1, \dots, U_r]$ in the derivation. Hence, $n = r$ and $\Gamma \vdash v_i \colon U_i$ for $1 \leq i \leq n$.
     \end{proof}
 
-    The simple type system for $\pi$-calculus provides a way of statically checking that communication channels are used consistently throughout a program. This eliminates a certain class of communication error.
+    The simple type system for $\pi$-calculus provides a way of statically checking that communication channels are used consistently throughout a program. This eliminates a certain class of communication errors.
     
     Several type systems have been developed for the $\pi$-calculus. Some aim to classify channels in more precise ways (input/output, linear, polymorphic, etc.). Others aim to eliminate more complex behavioural errors, such as deadlocks and livelocks. Lastly, behavioural type systems specify \emph{order} and \emph{sequence} of send and receive.
     
@@ -822,12 +1195,14 @@
     \[\frac{\Gamma \vdash x \colon S \qquad S <: T}{\Gamma \vdash T} \textrm{TSub}\]
 
     An output must send a message of the correct structure on a channel having an output channel type. The inference rule is now:
-    \[\frac{\Gamma \vdash x \colon {\color{red}\texttt{Out}[T_1, \dots, T_n]} \qquad \Gamma \vdash e_1 \colon T_1, \dots, e_n \colon T_n \qquad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n \rangle.P} \textrm{TOut}\]
+    \[\frac{\Gamma \vdash x \colon {\color{red}\texttt{Out}[T_1, \dots, T_n]} \quad \Gamma \vdash e_i \colon T_i \ \forall 1 \leq i \leq n \quad \Gamma \vdash P}{\Gamma \vdash \overline{x} \langle e_1, \dots, e_n \rangle.P} \textrm{TOut}\]
     The change is highlighted in red- we have \texttt{Out} instead of \texttt{Chan}. 
 
     In an input, the message must have the correct structure and its components must be used correctly.
     \[\frac{\Gamma \vdash x \colon {\color{red}\texttt{In}[T_1, \dots, T_n]} \qquad \Gamma, y_1 \colon T_1, \dots, y_n \colon T_n \vdash P}{\Gamma \vdash x(y_1 \colon T_1, \dots, y_n \colon T_n).P} \textrm{TIn}\]
     A channel can only be created of type \texttt{Chan} in TNew; it cannot be the other way round.
+
+    % TODO: The exercises
 
     In addition to capabilities of input/output, channel types can be refined by introducing \emph{multiplicities} for linear and shared channels. \emph{Linearity} restricts channel usage exactly once, in accordance with its capability:
     \begin{itemize}
@@ -917,13 +1292,13 @@
         &\equiv \\
         & P(-2)
     \end{align*}
-    The communication occurs at channel $c$. The server and the client are at the opposite ends of the channel. To distinguish this, we make use of polarities- $c^+$ for one and $c^-$ for the other. We keep track of the type using the server; the client type could have also been used here. Note that the type of the channel $c$ changes during the reduction process.
+    The communication occurs at channel $c$. The server and the client are at the opposite ends of the channel. To distinguish this, we make use of polarities- $c^+$ for one and $c^-$ for the other. We keep track of the type using the server; the client type could have also been used here. Note that the type of the channel $c$ is given as the type of the server, and changes during the reduction process.
 
     As we can see, the communication occurs in a private channel $c$. To accommodate this, the server listens on a standard channel $a$ of type $\texttt{Chan}[S]$ and receives a session channel for $srv$ to use. That is,
     \[\textit{server}(a) = a(x \colon S).srv(x)\]
     The global declaration $a \colon \texttt{Chan}[S]$ advertises the server and its protocol. The client creates a session channel and sends it to the server, i.e.
     \[\textit{client}(a) = (\nu \ c \colon S)(\overline{a}\langle c^+ \rangle.clt(c^-))\]
-    After one step reduction, execution proceeds as above.
+    After one step reduction of $\textit{server}(a) \mid \textit{client}(a)$, execution proceeds as above.
 
     The main features of session types are the following:
     \begin{itemize}
@@ -1013,7 +1388,7 @@
         \item $\texttt{Chan}[T_1, \dots, T_n]$ for input/output for data of type $T_1, \dots, T_n$;
         \item $\texttt{In}[T_1, \dots, T_n]$ and $\texttt{Out}[T_1, \dots, T_n]$ for only input or only output for data of type $T_1, \dots, T_n$;
         \item $\ell_i[T_1, \dots, T_n]$ and $[\ell_o[T_1, \dots, T_n]]$ for only linear input or linear output (i.e. transmit data exactly once); and
-        \item $\langle l_1 \colon T_n, \dots, l_n \colon T_n \rangle$ for a disjoint union of types that are labelled.
+        \item \emph{variant types} $\langle l_1 \colon T_n, \dots, l_n \colon T_n \rangle$ for a disjoint union of types that are labelled.
     \end{itemize}
     On the other hand, session types have:
     \begin{enumerate}
@@ -1072,9 +1447,9 @@
     
     The encoding obeys many properties, such as:
     \begin{itemize}
-        \item it preserves typeability of programs;
-        \item it preserves evaluation of programs; and
-        \item encoding of dual session types gives dual linear $\pi$-types.
+        \item it preserves \emph{typeability} of programs;
+        \item it preserves \emph{evaluation} of programs; and
+        \item encoding of dual session types gives \emph{dual linear $\pi$-types}.
     \end{itemize}
 
     The encoding has quite powerful applications, including:
@@ -1106,13 +1481,13 @@
 
     These are the connections between session types and classical linear logic.
     \begin{align*}
-        \frac{{\color{red} P} \vdash \vartriangle {\color{red} y} \colon A, {\color{red} x} \colon B}{{\color{red}x(y).P} \vdash \vartriangle, x \colon A \parr B} & \textrm{T}\parr \\
-        \frac{{\color{red} P} \vdash \vartriangle, {\color{red} y} \colon A \quad {\color{red} Q} \vdash \vartriangle', {\color{red} x} \colon B}{{\color{red} \overline{x} \langle y \rangle.(P \mid Q)} \vdash \vartriangle, \vartriangle', {\color{red} x} \colon A \otimes B} & \textrm{T}\otimes \\
-        \frac{P \vdash \vartriangle, x \colon \overline{A} \quad Q \vdash \vartriangle', x \colon A}{(\nu \ x)(P \mid Q) \vdash \vartriangle, \vartriangle'} & \textrm{TCut} \\
-        \frac{P_i \vdash \vartriangle, x \colon A_i}{x \vartriangleright \{l_i \colon P_i\}_{i \in I} \vdash \vartriangle, x \colon \&\{I_i \colon A_i\}_{i \in I}} & \textrm{T} \& \\
-        \frac{P \vdash \vartriangle, x \colon A_j \quad j \in I}{x \vartriangleleft l_j.P \vdash \oplus \{I_i \mid A_i\}_{i \in I}} & \textrm{T}\oplus 
+        \frac{{\color{red} P} \dashv \vartriangle {\color{red} y} \colon A, {\color{red} x} \colon B}{{\color{red}x(y).P} \dashv \vartriangle, x \colon A \parr B} & \textrm{T}\parr \\
+        \frac{{\color{red} P} \dashv \vartriangle, {\color{red} y} \colon A \quad {\color{red} Q} \dashv \vartriangle', {\color{red} x} \colon B}{{\color{red} \overline{x} \langle y \rangle.(P \mid Q)} \dashv \vartriangle, \vartriangle', {\color{red} x} \colon A \otimes B} & \textrm{T}\otimes \\
+        \frac{{\color{red} P} \dashv \vartriangle, x \colon \overline{A} \quad {\color{red} Q} \dashv \vartriangle', {\color{red} x} \colon A}{{\color{red} (\nu \ x)(P \mid Q)} \dashv \vartriangle, \vartriangle'} & \textrm{TCut} \\
+        \frac{{\color{red} P_i} \dashv \vartriangle, {\color{red} x} \colon A_i}{{\color{red} x \vartriangleright \{l_i \colon P_i\}_{i \in I}} \dashv \vartriangle, {\color{red} x} \colon \&\{I_i \colon A_i\}_{i \in I}} & \textrm{T} \& \\
+        \frac{{\color{red} P} \dashv \vartriangle, {\color{red} x} \colon A_j \quad j \in I}{{\color{red} x \vartriangleleft l_j.P} \dashv \Delta, {\color{red} x} \colon \oplus \{I_i \mid A_i\}_{i \in I}} & \textrm{T}\oplus 
     \end{align*}
-    % TODO: Finish colouring (and reverse it)
+    % TODO: Reverse judgment and type
     The red values are propositions, while the black ones are classical linear logic. Note that the judgment is reversed.
 
     The session type system based on classical linear logic propositions guarantees:
