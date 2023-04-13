@@ -215,8 +215,7 @@
 
         We next show the uniqueness of elementary divisors and invariant factors. Since there is an algorithm that produces invariant factors from elementary divisors, it suffices to show that the elementary divisors are unique. Assume that 
         \[G \cong \mathbb{Z}_{p_1^{\alpha_1}} \times \mathbb{Z}_{p_2^{\alpha_2}} \times \dots \times \mathbb{Z}_{p_k^{\alpha_k}}.\]
-        Let $p$ be a prime. By Cauchy's Theorem, $p \in \{p_1, p_2, \dots, p_k\}$ if and only if $G$ has an element of order $p$.
-        % TODO: Complete the proof
+        We saw above that for for any $k \in \mathbb{Z}_{\geq 1}$, $p^k$ divides $a_k$ values in the collection $p_1^{\alpha_1}, \dots, p_n^{\alpha_n}$ if and only if $G$ has a fixed number of elements of order dividing $p^k$. This is characterised by each group, and so implies that the elementary divisors are unique.
     \end{proof}
 
     \begin{example}
@@ -237,10 +236,47 @@
         \[G \cong \mathbb{Z}_2 \times \mathbb{Z}_{36} \times \mathbb{Z}_{5616}.\]
     \end{example}
 
-    % TODO: In a group expressed as a product of cyclic groups of prime power order, we counted number of elements or order dividing a certain prime power.
-
-    % Discussed and showed that every finitely generated abelian group is the quotient of Zn/Zm for some m ≤ n.
-
-    % TODO: Smith Normal Form
+    \begin{example}
+        Consider the following presentation for a finitely generated abelian group:
+        \[G = \langle x_1, x_2, x_3 \mid x_1 - 2x_2 = 0, x_1 + 10x_2 + 22x_3 =0 \rangle.\]
+        We will represent this in terms of cyclic groups. We can represent this information in a matrix of generators and relations:
+        \[\begin{bmatrix}
+            1 & -2 & 0 \\
+            1 & 10 & 22
+        \end{bmatrix}.\]
+        We can convert it into Smith Normal Form using the following elementary operations:
+        \begin{itemize}
+            \item multiply a row/column by an integer multiple of other row/column;
+            \item multiply a row/column by $-1$;
+            \item interchange row/columns.
+        \end{itemize}
+        The aim is to keep the upper diagonal entries in the matrix, by keeping positive and minimal (so that multiplying makes it 0).
+        \begin{align*}
+            \begin{bmatrix}
+                1 & -2 & 0 \\
+                1 & 10 & 22
+            \end{bmatrix} &\xrightarrow{R_2 \to R_2 - R_1} \begin{bmatrix}
+                1 & -2 & 0 \\
+                0 & 12 & 18
+            \end{bmatrix} \\
+            &\xrightarrow{C_2 \to C_2 + 2C_1} \begin{bmatrix}
+                1 & 0 & 0 \\
+                0 & 12 & 18
+            \end{bmatrix} \\
+            &\xrightarrow{C_3 \to C_3 - C_2} \begin{bmatrix}
+                1 & 0 & 0 \\
+                0 & 12 & 6
+            \end{bmatrix} \\
+            &\xrightarrow{C_3 \leftrightarrow C_2} \begin{bmatrix}
+                1 & 0 & 0 \\
+                0 & 6 & 12
+            \end{bmatrix} \\
+            &\xrightarrow{C_3 \to C_2 - 2C_3} \begin{bmatrix}
+                1 & 0 & 0 \\
+                0 & 6 & 0
+            \end{bmatrix} 
+        \end{align*}
+        So, the group is isomorphic to $\mathbb{Z}_1 \times \mathbb{Z}_6 \times \mathbb{Z}$- we have a copy of $\mathbb{Z}$ since we need to add one row to make a square matrix.
+    \end{example}
 
 \end{document}

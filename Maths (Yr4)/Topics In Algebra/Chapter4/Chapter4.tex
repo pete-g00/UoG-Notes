@@ -45,11 +45,11 @@
     \chapter{Free Groups}
     \section{Introduction to Free Groups}
     \begin{definition}
-        Let $S$ be a set, and fix a set $S^-$ disjoint to $S$ with a bijection $f\colon S \to S^-$, and a singleton set $\{e\}$. Denote $X_S = S \cup S^- \cup \{1\}$. We define the \emph{inverse map} $-1\colon X_S \to X_S$ by
+        Let $S$ be a set, and fix a set $S^-$ disjoint to $S$ with a bijection $f\colon S \to S^-$, and a singleton set $\{e\}$ disjoint to $S \cup S^-$. Denote $X_S = S \cup S^- \cup \{e\}$. We define the \emph{inverse map} $-1\colon X_S \to X_S$ by
         \[s^{-1} = \begin{cases}
             e & s = e \\
-            \varphi(s) & s \in S \\
-            \varphi^{-1}(s) & s \in S^-.
+            f(s) & s \in S \\
+            f^{-1}(s) & s \in S^-.
         \end{cases}\]
     \end{definition}
 
@@ -57,22 +57,37 @@
         Let $S$ be a set. A \emph{word} on $S$ is an infinite tuple $(s_1, s_2, \dots)$ with values in $X_S$ such that there exists an $N \in \mathbb{Z}_{\geq 1}$ such that for all $n \in \mathbb{Z}_{\geq 1}$, if $n \geq N$, then $s_n = e$. A \emph{reduced word} on $S$ is a word $(s_1, s_2, \dots)$ such that:
         \begin{itemize}
             \item if $s_N = e$ for some $N \geq 1$, then $s_n = e$ for all $n \geq N$;
-            \item if $s_i \neq e$, then $s_{i+1} \neq s_1^{-1}$ for all $n \in \mathbb{Z}_{\geq 1}$.
+            \item if $s_n \neq e$, then $s_{n+1} \neq s_n^{-1}$ for all $n \in \mathbb{Z}_{\geq 1}$.
         \end{itemize}
-        We denote a reduced word $(s_1, s_2, \dots, s_n, e, e, \dots)$ by $s_1s_2 \dots s_n$, where $s_n \neq e$. The set of all reduced words is denoted by $F(S)$. We have the inclusion map $\iota \colon S \to F(S)$ given by $\iota(s) = (s, e, e, \dots)$. We also denote $e = (e, e, e, \dots)$, and call it \emph{identity element}.
+        We denote a reduced word $(s_1, s_2, \dots, s_n, e, e, \dots)$ by $s_1s_2 \dots s_n$, where $s_n \neq e$. The set of all reduced words is denoted by $F(S)$. We also denote $e = (e, e, e, \dots)$, and call it \emph{empty word}.
     \end{definition}
 
     \begin{definition}
-        Let $S$ be a set. Define the operation $\cdot \colon F(S) \to F(S)$ by 
-        \[s_1 \dots s_n \cdot t_1 \dots t_k = \]
-        The operation is called \emph{concatenation}.
+        Let $S$ be a set. Define the operation $\cdot \colon F(S) \to F(S)$ as follows: let $s_1 \dots s_m, t_1 \dots t_n \in F(S)$, with $m \leq n$. Fix $k \in \mathbb{Z}$ such that $s_{m-k+1} \neq t_k^{-1}$. Then,
+        \[(s_1 \dots s_m) \cdot (t_1 \dots t_n) = \begin{cases}
+            s_1 \dots s_{m-k+1} t_k \dots t_n & k \leq m \\
+            t_{m+1} \dots t_n & k = m+1 \leq n \\
+            1 & k = m+1, m = n
+        \end{cases}\]
+        We can similarly define the operation if $m \geq n$. The operation is called \emph{concatenation}.
     \end{definition}
 
     \begin{proposition}
         Let $S$ be a set. Then, $F(S)$ is a group under concatenation.
     \end{proposition}
     \begin{proof}
-        
+        By definition, we have an identity element, and every element in $F(S)$ has an inverse:
+        \[(s_1 \dots s_m)^{-1} = s_m^{-1} \dots s_1^{-1}.\]
+        We now show that the operation is associative. First, for $s \in X_S$, define the map $\sigma_s \colon F(S) \to F(S)$ by:
+        \[\sigma_s(s_1 \dots s_n) = \begin{cases}
+            s s_1 \dots s_n & s^{-1} \neq s_1 \\
+            s_2 \dots s_n & \textrm{otherwise}.
+        \end{cases}\]
+        We note that $\sigma_s \circ \sigma_{s^{-1}} = id$, meaning that $\sigma_s$ is a bijection. Hence, $\sigma_s \in \operatorname{Perm} (F(S))$. So, define
+        \[B(S) = \langle \sigma_s \mid s \in X_S \rangle \leq \operatorname{Perm} (F(S)),\]
+        and the map $f \colon F(S) \to B(S)$ by
+        \[f(s_1 \dots s_n) = \sigma_{s_1} \dots \sigma_{s_n}.\]
+        Since $f$ obeys concatenation in $B(S)$, and $B(S)$ is associative, it follows that concatenation is associative. Hence, $F(S)$ is a group.
     \end{proof}
 
     \begin{proposition}[Universal Property of Free Groups]
@@ -80,13 +95,14 @@
     \end{proposition}
     \begin{proof}
         Define the map $\varphi \colon F(S) \to G$ by 
-        \[\varphi(s_1^{\varepsilon_1} s_2^{\varepsilon_2} \dots s_n^{\varepsilon_n}) = f(s_1)^{\varepsilon_1} f(s_2)^{\varepsilon_2} \dots f(s_n)^{\varepsilon_n}.\]
-        By construction, this is a group homomorphism. Moreover, it extends $f$.
+        \[\varphi(s_1 s_2 \dots s_n) = f(s_1) f(s_2) \dots f(s_n).\]
+        By construction, this is a group homomorphism. Moreover, it extends $f$ by definition.
 
-        Now, let $\psi \colon F(S) \to G$ be such that $\psi(s) = f(s)$ for all $s \in S$. In that case, for all $s_1^{\varepsilon_1} s_2^{\varepsilon_2} \dots s_n^{\varepsilon_n} \in F(S)$, we find that
+        Now, let $\psi \colon F(S) \to G$ be such that $\psi(s) = f(s)$ for all $s \in S$. In that case, for all $s_1 s_2 \dots s_n \in F(S)$, we find that
         \begin{align*}
-            \psi(s_1^{\varepsilon_1} s_2^{\varepsilon_2} \dots s_n^{\varepsilon_n}) &= \psi(s_1)^{\varepsilon_1} \psi(s_2)^{\varepsilon_2} \dots \psi(s_n)^{\varepsilon_n} \\
-            &= f(s_1)^{\varepsilon_1} f(s_2)^{\varepsilon_2} \dots f(s_n)^{\varepsilon_n} = \varphi(s_1^{\varepsilon_1} s_2^{\varepsilon_2} \dots s_n^{\varepsilon_n}).
+            \psi(s_1 s_2 \dots s_n) &= \psi(s_1) \psi(s_2) \dots \psi(s_n) \\
+            &= f(s_1) f(s_2) \dots f(s_n) \\
+            &= \varphi(s_1 s_2 \dots s_n).
         \end{align*}
         So, the map is unique.
     \end{proof}
@@ -106,32 +122,33 @@
         A free group of rank 0 is isomorphic to the trivial group.
     \end{proposition}
     \begin{proof}
-        
+        Let $G$ be a free group of rank 0. In that case, $G$ is the free group on $\varnothing$. Hence, it has precisely one element- the identity.
     \end{proof}
     
     \begin{proposition}
         A free group of rank 1 is isomorphic to $\mathbb{Z}$.
     \end{proposition}
     \begin{proof}
-        
+        Let $F$ be a free group of rank $1$, and let $F$ be generated by some $x \in F$. In that case, we know that every $y \in F$ is of the form $y = x^n$, and so $y \in \langle x \rangle$. Hence, $F = \langle x \rangle$. Since $x$ has infinite order, it follows that $F$ is isomorphic to $\mathbb{Z}$.
     \end{proof}
 
     \begin{proposition}
         A free group of rank $n \geq 2$ is not abelian.
     \end{proposition}
     \begin{proof}
-        
+        Let $F$ be a free group of rank $n$. Consider distinct elements $a, b \in F$ that generate $F$. In that case, we know that in $F(S)$, $ab \neq ba$. Hence, $F(S)$ is not abelian.
     \end{proof}
 
     \begin{proposition}
         A free group has no torsion elements.
     \end{proposition}
     \begin{proof}
-        
+        Let $F$ be a free group, and let $x \in F$ be non-trivial.
+        % TODO: Contradiction?
     \end{proof}
 
     \begin{theorem}[Neilson-Schrier Theorem]
-        Let $F$ be a free group and let $G \subseteq F$. Then, $G$ is free.
+        Let $F$ be a free group and let $G \leq F$. Then, $G$ is free.
     \end{theorem}
     
     \newpage
@@ -172,21 +189,65 @@
         Let $G$ be a finite group. Then, $G$ is finitely presented.
     \end{proposition}
     \begin{proof}
+        Let $S = G$, and define the set
+        \[R = \{ghk^{-1} \in F(S) \mid g, h \in G, gh = h\}.\]
+        Since $G$ is finite, it follows that $R$ is finite. We claim that $G = \langle S \mid R \rangle$. 
         
+        Let $N$ be the normal closure of $R$ in $F(S)$. Consider the group $H = F(S)/N$. We know that there is an extension of the inclusion map $\psi \colon F(S) \to G$- this follows from the universal property of free groups. Moreover, $N \leq \ker \psi$, so the universal property of the quotient gives us a map $\varphi \colon H \to G$. By construction, we find that $\{gN \mid g \in G\}$ generates $H$. Since $G$ is a group, it is also closed under the binary operation. Hence, 
+        \[H = \{gN \mid g \in G\}.\]
+        In particular, $|H| = |G|$. Hence, we find that $N = \ker \psi$. This implies that $\langle S \mid R \rangle$ is a presentation for $G$. So, $G$ is finitely presented.
     \end{proof}
 
     \begin{proposition}
-        Let $G$ and $H$ be groups with bijective presentations. Then, there exists a group isomorphism $G \to H$.
+        Let $G$ be a group with the presentation
+        \[G = \langle a, b \mid r_1, \dots, r_k \rangle.\]
+        Then, for a group $H$ generated by two elements $x, y \in H$ that satisfy the relations $r_1, \dots, r_k$, there exists a group homomorphism $\Phi \colon G \to H$.
     \end{proposition}
     \begin{proof}
-        
+        Consider the presentation homomorphism $\varphi \colon F(a, b) \to G$. This is surjective since it extends the identity map on $\{a, b\}$. Now, consider the map $f \colon \{a, b\} \to H$ given by $f(a) = x$ and $f(b) = y$. By the universal property of free groups, we can extend $f$ to a group homomorphism $\psi \colon F(a, b) \to H$. We know that $H$ satisfies the relations $r_1, \dots, r_k$, so we have $\ker \varphi \leq \ker \psi$. So, the universal property of quotients tells us that there exists a group homomorphism $\Phi \colon G \to H$.
     \end{proof}
 
     \begin{proposition}
         There is one non-abelian group of order 10 up to isomorphism.
     \end{proposition}
     \begin{proof}
-        
+        Let $G$ be a non-abelian group of order 10. By Cauchy's Theorem, we can find a $g \in G$ of order $5$. Set $H = \langle g \rangle$. We know that $H$ has index $2$ in $G$, so it is a normal subgroup of $G$. Now, let $k \in G$ such that $k \not\in H$. We know that $kH \neq H$, so $kH$ must have order 2. Hence, $k^2 \in H$. If $|k^2| = 5$, then $|k| = 10$, meaning that $G$ is cyclic. This cannot be the case, so we must have $k^2 = e$. Since $H$ is normal in $G$, we find that $kgk^{-1} \in H$. Since $G$ is not abelian, $k$ and $g$ cannot commute. Hence, $kgk^{-1} \in \{g^2, g^3, g^4\}$. We consider each case separately:
+        \begin{itemize}
+            \item First, assume that $kgk^{-1} = g^2$. In that case, 
+            \begin{align*}
+                g &= eg \\
+                &= k^2g \\
+                &= k \cdot kg \\
+                &= k \cdot g^2k \\
+                &= kg \cdot gk \\
+                &= g^2k \cdot gk \\
+                &= g^2 \cdot kg \cdot k \\
+                &= g^2 \cdot g^2k \cdot k \\
+                &= g^4 k^2 = g^4.
+            \end{align*}
+            Hence, $g^3 = e$. Since $g$ has order $5$, this is a contradiction.
+
+            \item Now, assume that $kgk^{-1} = g^3$. In that case,
+            \begin{align*}
+                g &= k \cdot kg \\
+                &= k \cdot g^3k \\
+                &= kg \cdot g^2 k \\
+                &= g^3k \cdot g^2 k \\
+                &= g^3 \cdot kg \cdot gk \\
+                &= g^3 \cdot g^3k \cdot gk  \\
+                &= g \cdot kg \cdot k \\
+                &= g \cdot g^3k \cdot k \\
+                &= g^4 k^2 = g^4.
+            \end{align*}
+            Like above, this is a contradiction.
+            
+            \item Finally, assume that $kgk^{-1} = g^4 = g^{-1}$. In that case, the presentation for $G$ is:
+            \[G = \langle g, k \mid g^5 = e = k^2, kgk^{-1} = g^{-1}\rangle.\]
+            We know that
+            \[D_5 = \langle r, s \mid r^5 = e = s^2, rs = sr^{-1} \rangle.\]
+            So, $D_4$ and $G$ have isomophic presentations, meaning that $G \cong D_5$.
+        \end{itemize}
+        Hence, there is only one non-abelian group of order $10$.
     \end{proof}
 
 \end{document}
