@@ -1789,7 +1789,7 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
     \end{bmatrix}\]
     Every diagonal entry is 0- traveling from a vertex to itself should not cost anything\sidefootnote{And it also shouldn't be profitable!}. If a distance is $\infty$, then there is no path between the two vertices, e.g. there is no path from $v_1$ to $v_4$. Since we allow negative weights, it is possible that the shortest path between two vertices has negative value, e.g. the best path from $v_4$ to $v_2$ has weight $-2$- the path is $v_4 \to v_1 \to v_2$.
 
-    We have previously seen the Dijkstra's algorithm to find the path of smallest weight from a vertex to all the other vertices. It takes $O(n^2)$ time (or $O(n \log n + m)$ using a Fibonacci heap), where $n = |V|$ and $m = |E|$. So, we could use this algorithm to get all pairs shortest paths in $O(n^3)$ time applying the algorithm to all the vertices. However, this algorithm does not work with edges that have negative weight. For instance, consider the following graph:
+    We have previously seen the Dijkstra's algorithm to find the path of smallest weight from a vertex to all the other vertices. It takes $O(n^2)$ time (or $O(n \log n + m)$ using a Fibonacci heap), where $n = |V|$ and $m = |E|$. So, we could use this algorithm to get all pairs shortest paths in $O(n^3)$ time applying the algorithm to all the vertices. However, this algorithm does not work with edges that have negative weight. To see this, consider the following graph:
     \begin{figure}[H]
         \centering
         \begin{tikzpicture}
@@ -1805,9 +1805,9 @@ List<(Student, Lecturer)> galeShapley(List<Student> students,
     \noindent When computing the path of smallest weight from $v_1$, the algorithm iterates as follows:
     \begin{itemize}
         \item $v_1$ has an edge to $v_3$ of shortest weight, so $v_1 - v_3$ has weight 2;
-        \item $v_3$ has an edge to $v_2$ of shortest weight, so $v_1 - v_2$ has weight $-1$.
+        \item $v_1$ has an edge to $v_2$ of shortest weight, so $v_1 - v_2$ has weight $4$.
     \end{itemize}
-    However, it is possible to take the path $v_1 - v_2 - v_3$ to get a path of weight 1. We cannot find this since the algorithm is greedy.
+    However, it is possible to take the path $v_1 - v_3 - v_2$ to get a path of weight $1$. We cannot find this since the algorithm is greedy, which only works if the weights do cannot be decreased.
 
     Alternatively, we can use the Bellman-Ford algorithm which can handle negative weights. It has complexity $O(mn)$. So, if we used this algorithm to find all pairs shortest paths, it would take $O(mn^2)$ time. If the graph is dense (i.e. a lot of edges), then this is $O(n^4)$. We will now look at the Floyd-Warshall algorithm which computes all pairs shortest paths in $O(n^3)$ time, using dynamic programming. Although the algorithm works with negative edge weights, it won't work for graphs with negative cycles. For instance, consider the following graph:
     \begin{figure}[H]
