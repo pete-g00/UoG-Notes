@@ -33,13 +33,13 @@
 
     \section{Inference Rules}
     An \emph{inference rule} is a function from a set of premises to a single conclusion. This is denoted as follows:
-    \[\frac{\textrm{premise 1} \quad \dots \quad \textrm{premise } n}{\textrm{conclusion}} \textrm{Rule } 1.\]
+    \[\frac{\textrm{premise 1} \quad \dots \quad \textrm{premise } n}{\textrm{conclusion}} \textrm{Rule } 1\]
     The rule `Rule 1' states that if all premises $1, 2, \dots, n$ hold, then the conclusion holds. We can have $n \geq 0$ premises. In particular, if $n = 0$, then the rule is an \emph{axiom}. In formal systems, the inference rules can be thought of as proofs, and the premises the hypotheses of the proof.
 
     We will now go through some inference rules. The Modus Ponens in propositional logic can be denoted as follows:
-    \[\frac{A \to B \quad A}{B} MP.\]
+    \[\frac{A \to B \quad A}{B} \textrm{MP}\]
     Similarly, Modus Tollenz is denoted as follows:
-    \[\frac{A \to B \quad \lnot B}{\lnot A} \textrm{MT}.\]
+    \[\frac{A \to B \quad \lnot B}{\lnot A} \textrm{MT}\]
 
     We can use the inference rules to define a natural number. In words, the following is a definition for them:
     \begin{itemize}
@@ -47,7 +47,9 @@
         \item if $n$ is a natural number, then its successor $n+1$ is also a natural number.
     \end{itemize}
     The inference rules in this case are given below:
-    \[\frac{}{0 \textrm{ nat}} \textrm{zero} \qquad \frac{n \textrm{ nat}}{\textit{succ}(n) \textrm{ nat}} \textrm{succ}.\]
+    \begin{align*}
+        \frac{}{0 \textrm{ nat}} \textrm{zero} & & \frac{n \textrm{ nat}}{\textit{succ}(n) \textrm{ nat}} \textrm{succ}
+    \end{align*}
     Note that the first rule is an axiom.
 
     A \emph{formal system} is a set of inference rules with at least one axiom, e.g. the definition of the natural numbers. Inference rules can be used to define semantics and type systems.
@@ -57,7 +59,7 @@
     We will now look at \emph{mathematical induction}. It turns out that many of the proofs we will see in the course follow a similar structure to induction, called \emph{structural induction}.
 
     We can use mathematical induction to prove a property $P(n)$ holds for all natural numbers $n \in \mathbb{N}$. Its inference rule is:
-    \[\frac{P(0) \quad P(k) \to P(k+1) \ \forall k \in \mathbb{N}}{P(n) \ \forall n \in \mathbb{N}} \textrm{MI}.\]
+    \[\frac{P(0) \quad P(k) \to P(k+1) \ \forall k \in \mathbb{N}}{P(n) \ \forall n \in \mathbb{N}} \textrm{MI}\]
     That is, if $P(0)$ holds and for all $k \in \mathbb{N}$, $P(k)$ implies $P(k+1)$, then $P(n)$ holds for all $n \in \mathbb{N}$. This follows logically from a domino effect ($P(0)$ implies $P(1)$; $P(1)$ implies $P(2)$; and so on).
 
     We will now illustrate mathematical induction with an example. We prove that for all $n \in \mathbb{N}$,
@@ -108,7 +110,7 @@
         \item the sentence symbol is $exp$;
         \item the production rules are:
         \begin{align*}
-            exp &::= val \mid exp + val \mid exp - val \mid exp = val \\
+            exp &::= val \mid exp + val \mid exp - val \mid exp == val \\
             val &::= 0 \mid 1 \mid \dots \mid \textit{true} \mid \textit{false}.
         \end{align*}
     \end{itemize}
@@ -138,7 +140,7 @@
     \[exp \to exp_1 \to exp_2 \to \dots\]
     until we reach a \emph{stuck expression}. A stuck expression is either:
     \begin{itemize}
-        \item a value (representing the meaning of the original expression). In \textit{Expr}, a value is produced by $val ::== \cdot$; or
+        \item a value (representing the meaning of the original expression). In \textit{Expr}, a value is produced by $val ::= \bullet$; or
         \item a non-value which cannot be reduced any further (e.g. $1 + \textit{true}$, representing a run-time error).
     \end{itemize}
     The use of inference rules following the structure of the syntax to define reductions is known as \emph{Structural Operational Semantics}.
@@ -147,7 +149,7 @@
     \begin{itemize}
         \item $1 + 1 \to 2$;
         \item $3 - 2 \to 1$; and
-        \item $2 = 2 \to \textit{true}$. 
+        \item $2 == 2 \to \textit{true}$. 
     \end{itemize}
     To do so, we define reduction rules, starting with $+$ and $-$:
     \begin{align*}
@@ -156,14 +158,14 @@
     \end{align*}
     We denote by $*$ the side-conditions. These are not premises, but we require them for the inference rule to be applied on top of the premises. So, the rules above are axioms. We can similarly define the rule for $=$:
     \begin{align*}
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \textit{true}} \textrm{R-Eq}_1 \\
-        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 = val_2 \to \textit{false}} \textrm{R-Eq}_2.
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 == val_2 \to \textit{true}} \textrm{R-Eq}_1 \\
+        \frac{\textrm{if } val_1 \textrm{ and } val_2 \textrm{ are equal integer literals}^*}{val_1 == val_2 \to \textit{false}} \textrm{R-Eq}_2.
     \end{align*}
     The inference rules can also be extended to expressions in general.
     \begin{align*}
         \frac{exp \to exp'}{exp + val \to exp' + val} \textrm{R-expSum} \\
         \frac{exp \to exp'}{exp - val \to exp' - val} \textrm{R-expDiff} \\
-        \frac{exp \to exp'}{exp = val \to exp' = val} \textrm{R-expEq}.
+        \frac{exp \to exp'}{exp == val \to exp' == val} \textrm{R-expEq}.
     \end{align*}
 
     \subsection{Type System}
@@ -175,24 +177,17 @@
     \[\vdash expr \colon T.\]
     This denotes that the expression $expr$ is of type $T$, with respect to the typing context (which is empty in this case). In general, the typing context is non-empty, and of the form: 
     \[\Gamma \vdash \textit{term} \colon \textit{type}.\]
-    Hee, $\Gamma$ is a \emph{typing constraint}, meaning that it has some type assumptions, e.g. for variables. This means that under $\Gamma$, the \textit{term} has the given \textit{type}.
+    Here, $\Gamma$ is a \emph{typing constraint}, meaning that it has some type assumptions, e.g. for variables. This means that under $\Gamma$, the \textit{term} has the given \textit{type}.
 
     The type system for \textit{Expr} is given with the following rules:
     \begin{align*}
         \frac{}{\vdash \textit{true} \colon \textit{bool}} \textrm{T-True} \\
         \frac{}{\vdash \textit{false} \colon \textit{bool}} \textrm{T-False} \\
-        \frac{\textrm{if } val \textrm{ is an integer literal}^*}{\vdash val \colon \textit{bool}} \textrm{T-Int} \\
+        \frac{\textrm{if } val \textrm{ is an integer literal}^*}{\vdash val \colon \textit{int}} \textrm{T-Int} \\
         \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp + val \colon \textit{int}} \textrm{T-Sum} \\
         \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp - val \colon \textit{int}} \textrm{T-Diff} \\
-        \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp = val \colon \textit{bool}} \textrm{T-Eq}.
+        \frac{\vdash exp \colon \textit{int} \qquad \vdash val \colon \textit{int}}{\vdash exp == val \colon \textit{bool}} \textrm{T-Eq}.
     \end{align*}
-
-    In summary, the \textit{Expr} language has been defined using:
-    \begin{itemize}
-        \item \textit{syntax}- using a grammar in BNF;
-        \item \textit{dynamic semantics}- meaning of terms of the language (as behaviour); and
-        \item \textit{type system}- assigning types to terms of the language.
-    \end{itemize}
 
     A type system for a PL gives us guarantees about programs during runtime. In particular, they ensure that unwanted type errors are ruled out. This intuition is formalised in the \emph{type safety} property, which tells us that well-typed programs don't go wrong. In particular, there are 2 theorems that make up the type safety property:
     \begin{itemize}
@@ -200,5 +195,12 @@
         \item \emph{progress}- if a term is well-typed, then it either reduces or is a value.
     \end{itemize}
     Note that this doesn't guarantee termination of the reduction process.
+
+    In summary, the \textit{Expr} language has been defined using:
+    \begin{itemize}
+        \item \textit{syntax}- using a grammar in BNF;
+        \item \textit{dynamic semantics}- meaning of terms of the language (as behaviour); and
+        \item \textit{type system}- assigning types to terms of the language.
+    \end{itemize}
 
 \end{document}

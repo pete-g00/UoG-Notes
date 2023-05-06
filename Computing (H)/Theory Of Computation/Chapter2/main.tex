@@ -19,6 +19,9 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 \usepackage{array,multirow}
 \usepackage{cmll}
 \usepackage[usestackEOL]{stackengine}
@@ -184,7 +187,7 @@
         &\mid \tau.P & \textrm{silent action} \\
         &\mid P + Q & \textrm{choice} \\
         &\mid (\nu \ x) P & \textrm{scope/restriction} \\
-        &\mid !P & \textrm{replication} \\
+        &\mid {!P} & \textrm{replication} \\
         &\mid P \mid Q & \textrm{parallel composition}
     \end{align*}
     Other process constructions, like conditions, case, etc. can be added to the syntax of processes, but they are not in the core.
@@ -226,7 +229,7 @@
         P + 0 &\equiv P & \textrm{garbage collection} \\
         (\nu \ x)(\nu \ y)P &\equiv (\nu \ y)(\nu \ x)P & \textrm{reordering } \nu \\
         (\nu \ x)0 &\equiv 0 & \textrm{garbage collection} \\
-        !P &\equiv P \mid !P & \textrm{replication} \\
+        !P &\equiv P \mid {!P} & \textrm{replication} \\
         P \mid (\nu \ x) Q &\equiv (\nu \ x)(P \mid Q) \textrm{ if } x \not\in FV(P) & \textrm{scope expansion}
     \end{align*}
     It also includes $\alpha$-equivalence (renaming of bound variables). Due to the recursive nature, structural congruence is the \emph{smallest} congruence relation that includes $\alpha$-equivalence. Informally, the definition states that:
@@ -267,21 +270,43 @@
     Here, we have a car, two transmitters and a controller. At any time, the car communicates with only one of the transmitters. The controller tells a transmitter to \textit{lose} or \textit{gain} connection to the car. This is summarised in the figure below.
     \begin{figure}[H]
         \centering
-        \begin{tikzpicture}
-            \node[draw] (car) at (0, 0) {$\textit{Car}$};
-            \node[draw] (trans) at (-2, -1.5) {$\textit{Trans}_1$};
-            \node[draw] (idtrans) at (2, -1.5) {$\textit{IdTrans}_2$};
-            \node[draw] (control) at (0, -3) {$\textit{Control}_1$};
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[draw] (car) at (0, 0) {$\textit{Car}$};
+                \node[draw] (trans) at (-2, -1.5) {$\textit{Trans}_1$};
+                \node[draw] (idtrans) at (2, -1.5) {$\textit{IdTrans}_2$};
+                \node[draw] (control) at (0, -3) {$\textit{Control}_1$};
 
-            \draw (car.-135) -- node[above, rotate=25] {$\textit{talk}_1$}  (trans.135);
-            \draw (car.-45) -- node[below, rotate=25] {$\textit{switch}_1$}  (trans.45);
+                \draw (car.-135) -- node[above, rotate=25] {$\textit{talk}_1$}  (trans.135);
+                \draw (car.-45) -- node[below, rotate=25] {$\textit{switch}_1$}  (trans.45);
 
-            \draw (trans.-135) -- node[below, rotate=-45] {$\textit{gain}_1$} (control.-160);
-            \draw (trans.-45) -- node[above, rotate=-45] {$\textit{lose}_1$} (control.160);
+                \draw (trans.-135) -- node[below, rotate=-45] {$\textit{gain}_1$} (control.-160);
+                \draw (trans.-45) -- node[above, rotate=-45] {$\textit{lose}_1$} (control.160);
 
-            \draw (idtrans.-135) -- node[above, rotate=45] {$\textit{lose}_2$} (control.20);
-            \draw (idtrans.-45) -- node[below, rotate=45] {$\textit{gain}_2$} (control.-20);
-        \end{tikzpicture}
+                \draw (idtrans.-135) -- node[above, rotate=45] {$\textit{lose}_2$} (control.20);
+                \draw (idtrans.-45) -- node[below, rotate=45] {$\textit{gain}_2$} (control.-20);
+            \end{tikzpicture}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \begin{tikzpicture}
+                \node[draw] (car) at (0, 0) {$\textit{Car}$};
+                \node[draw] (trans) at (-2, -1.5) {$\textit{Trans}_2$};
+                \node[draw] (idtrans) at (2, -1.5) {$\textit{IdTrans}_1$};
+                \node[draw] (control) at (0, -3) {$\textit{Control}_2$};
+
+                \draw (car.-135) -- node[above, rotate=25] {$\textit{talk}_2$}  (trans.135);
+                \draw (car.-45) -- node[below, rotate=25] {$\textit{switch}_2$}  (trans.45);
+
+                \draw (trans.-135) -- node[below, rotate=-45] {$\textit{gain}_2$} (control.-160);
+                \draw (trans.-45) -- node[above, rotate=-45] {$\textit{lose}_2$} (control.160);
+
+                \draw (idtrans.-135) -- node[above, rotate=45] {$\textit{lose}_1$} (control.20);
+                \draw (idtrans.-45) -- node[below, rotate=45] {$\textit{gain}_1$} (control.-20);
+            \end{tikzpicture}
+        \end{subfigure}
     \end{figure}
 
     We will use parametrised recursive program definitions instead of replication and send/receive with multiple messages. We will later see how to translate recursive definitions into replication. 
@@ -537,7 +562,7 @@
 
     Previously, we define the processes $\textit{True}(x)$ and $\textit{False}(x)$, and $\textit{Not}(x, y)$. We would like to have a theory in which
     \[(\nu \ y)(\textit{Not}(x, y) \mid \textit{True}(y)) = \textit{False}(x).\]
-    The fact that $\textit{False}(x)$ represents the boolean value \textit{false} is to do with the way it interacts on the channel $x$, so the definition of equivalent must take that into account. Moreover, applying \texttt{Not} twice should be the identity function on booleans, i.e.
+    The fact that $\textit{False}(x)$ represents the boolean value \textit{false} is to do with the way it interacts on the channel $x$, so the definition of equivalent must take that into account. Moreover, applying \textit{Not} twice should be the identity function on booleans, i.e.
     \[x(t, f).\overline{y} \langle t, f \rangle = (\nu \ z)(\textit{Not}(x, z) \mid \textit{Not}(z, y))\]
 
     To develop the theory of equivalence, we will simplify $\pi$-calculus by assuming that all messages are empty. To reduce syntax, we will omit the empty messages and just write $x$ or $\overline{x}$. We will refer to $x$ and $\overline{x}$ as actions. This means that we are working in an earlier process calculus called CCS-calculus of Communication Systems. We will start with examples and then give proper definitions.
@@ -548,12 +573,12 @@
     We can describe actual interactions using $\tau$ transitions, e.g.
     \[a.P \mid \overline{a}.Q \xrightarrow{\tau} P \mid Q\]
 
-    We will now define labelled transitions. Let $\alpha$ range over $\{a, \overline{a}, \tau\}$. The the inference rules for labelled transitions are given as follows:
+    We will now define labelled transitions. Let $\alpha \in \{a, \overline{a}, \tau\}$. Then, the inference rules for labelled transitions are given as follows:
     \[\overline{\alpha.P \xrightarrow{\alpha} P}\]
     \[\frac{P \xrightarrow{a} P' \quad Q \xrightarrow{\overline{a}} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad Q \xrightarrow{a} Q'}{P \mid Q \xrightarrow{\tau} P' \mid Q'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{P \mid Q \xrightarrow{\alpha} P' \mid Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P \mid Q \xrightarrow{\alpha} P \mid Q'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{P + Q \xrightarrow{\alpha} P' + Q} \qquad \frac{Q \xrightarrow{\alpha} Q'}{P + Q \xrightarrow{\alpha} P + Q'}\]
-    \[\frac{P \xrightarrow{\alpha} P' \quad \alpha \not\in \{x, \overline{x}\}}{(\nu \ x)P \xrightarrow{\alpha} (\nu \ x)P'}\]
+    \[\frac{P \xrightarrow{\alpha} P' \quad \alpha \not\in \{y, \overline{y}\}}{(\nu \ y)P \xrightarrow{\alpha} (\nu \ y)P'}\]
     \[\frac{P \xrightarrow{\alpha} P'}{!P \xrightarrow{\alpha} P' \mid !P} \qquad \frac{P \xrightarrow{\overline{a}} P' \quad P \xrightarrow{a} P''}{!P \xrightarrow{\tau} (P' \mid P'') \mid !P}\]
 
     We can now talk about \emph{traces} of a process, which are its possible sequences of actions. The empty trace $\epsilon$ is always a possibility. We look at some examples:
@@ -690,7 +715,7 @@
         & & &\downarrow \\
         & & 0 &\mid 0
     \end{align*}
-    Since $\overline{a}.\overline{b}.0$ can communicate with $a.b.0$, there is nothing stopping the left reduction from happening. However, this reduction leads to a deadlock. On the other hand, no reduction of $Q \mid R$ leads to a deadlock. We would like the equivalence of process to be deadlock-invariant, i.e. if two processes are equivalent, then either they both can reduce to a deadlock or neither can.
+    Since $\overline{a}.\overline{b}.0$ can communicate with $a.c.0$ at the top level, there is nothing stopping the left reduction from happening. However, this reduction leads to a deadlock. On the other hand, no reduction of $Q \mid R$ leads to a deadlock. We would like the equivalence of process to be deadlock-invariant, i.e. if two processes are equivalent, then either they both can reduce to a deadlock or neither can.
 
     To do this, we define \emph{bisimulation}. This concept is fundamental in process calculus and concurrency theory.
 
@@ -736,9 +761,9 @@
 
     We can work from the end to prove that $P$ and $Q$ are bisimilar. We use the symbol $\sim$ for strong bisimulation. In this case, $P_3 \sim Q_3$ because neither of them has any transitions; they are both structurally congruent to $0$. So, there is nothing to check here. Now, consider $P_2$ and $Q_2$. We have $P_2 \xrightarrow{c} P_3$, which can be matched by $Q_2 \xrightarrow{c} Q_3$, and we know that $P_3 \sim Q_3$. In the other direction, the only transition of $Q_2$ is $Q_2 \xrightarrow{c} Q_3$, which can equally be matched by $P_2 \xrightarrow{c} P_3$, with $P_3 \sim Q_3$.
 
-    Similarly, we can show that $P_1 \sim Q_1$- the only transition of $P_1$ is $P_1 \xrightarrow{\tau} P_2$ from communication on $b$. This can be matched by $Q_1 \xrightarrow{\tau} Q_2$, and we know that $P_2 \sim Q_2$. In the other direction, the only transition of $Q_1$ is $Q_1 \xrightarrow{\tau} Q_2$, which can be matched by $P_1 \xrightarrow{\tau} P_2$, and we know that $P_2 \sim Q_2$.
+    Similarly, we can show that $P_1 \sim Q_1$- the only transition of $P_1$ is $P_1 \xrightarrow{\tau} P_2$ from communication on $b$. This can be matched by $Q_1 \xrightarrow{\tau} Q_2$, and we know that $P_2 \sim Q_2$. In the other direction, the only transition of $Q_1$ is $Q_1 \xrightarrow{\tau} Q_2$, which can be matched by $P_1 \xrightarrow{\tau} P_2$, and we know that $P_2 \sim Q_2$. 
 
-    Finally, we consider the transitions of $P$ and $Q$ in the same way. We can see that each process has an $a$-transition that can match the $a$-transition of the other process, resulting in $P_1$ and $Q_1$, with $P_1 \sim Q_1$. We conclude that $P \sim Q$.
+    Finally, we consider the transitions of $P$ and $Q$ in the same way. We can see that each process has an $a$-transition that can match the $a$-transition of the other process, resulting in $P_1$ and $Q_1$, with $P_1 \sim Q_1$. We conclude that $P \sim Q$. Note that $b$ is a private channel in $P_1$, meaning that $P_1$ cannot fire a $b$-transition.
 
     Now, consider $P = a.b.0 + a.c.0$ and $Q = a.(b.0 + c.0)$. We saw that $P$ and $Q$ were trace equivalent. However, they are not bisimilar- consider the trace diagram for $P$ and $Q$.
     \begin{figure}[H]
@@ -794,8 +819,8 @@
     \end{definition}
     This definition is recursive in nature, but does not have a base case. Moreover, there is no reason that $P'$ and $Q'$ are 'smaller' than $P$ and $Q$.
 
-    We illustrate the issue further. So, consider the process $P = !a.0$. We would like $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
-    \[P \xrightarrow{a} 0 \mid !a.0 \equiv 0 \mid P.\]
+    We illustrate the issue further. So, consider the process $P = {!a.0}$. We would like $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
+    \[P \xrightarrow{a} 0 \mid {!a.0} \equiv 0 \mid P.\]
     Applying the above definition of strong bisimulation to $P$ both on the left and the right, we see that they can match each other's actions. Checking the subsequent processes tells us that $P \sim P$ depends on $0 \mid P \sim 0 \mid P$. This is circular and not a valid definition. Moreover, the reduced process is equivalent to itself, meaning that the reduced process does not get smaller.
 
     Instead of defining bisimulation for $\pi$-calculus processes, we can work with more abstract \emph{labelled transition systems} (LTS). An LTS is a directed graph in which edges are labelled with actions. We use the transition notation
@@ -875,7 +900,6 @@
 
     We have previously used inductive definitions, e.g. the definitions of reduction and typing judgments. An inductive definition is when we define a set or relation to be the smallest entity satisfying certain conditions. Ordinary recursive function definitions are also in this category. A \emph{coninductive} definition is when we define a set or a relation to be the largest entity satisfying certain conditions, such as strong bisimilarity.
 
-
     We will now look at processes in the syntax $\pi$-calculus, rather than abstract LTS. When defining labelled transitions for $\pi$-calculus, we did not take structural congruence into account. So, if we want to show something like $P \mid Q$ and $Q \mid P$ to be bisimilar, we have to prove it by constructing a strong bisimulation that contains $(P \mid Q, Q \mid P)$. 
     
     \begin{proposition}
@@ -935,7 +959,7 @@
             };
         \end{tikzpicture}
     \end{figure}
-    \noindent Note that $b$ and $c$ are private channels in $P$, meaning that they cannot be part of the trace diagram. In this case, the relation we want is:
+    \noindent In this case, the relation we want is:
     \[\mathcal{R} = \{(P, Q), (P_1, Q_1), (P_2, Q_2)\}.\]
     We note that $P_2$ and $Q_2$ are strongly bisimilar since they have no transitions. Moreover, since the other processes have just one transition, with the coupled result in $\mathcal{R}$, we conclude that $\mathcal{R}$ is a strong bisimulation. Hence, $P$ and $Q$ are strongly bisimilar.
 
@@ -964,7 +988,7 @@
         \item $a(x, y).P$ is well-typed if $x \colon \textit{int}$ and $y \colon \textit{bool}$ in $P$; while
         \item $\overline{a} \langle 1 \rangle$, $\overline{a} \langle true, 1, false \rangle$ and $a(x)$ are incorrect.
     \end{itemize}
-    Instead, if $a \colon \texttt{Chan}[\texttt{Chan}[\textit{int}]]$. Then, $a(x).x(y).Q$ is well-typed if $y \colon \textit{int}$ in $Q$.
+    Instead, if $a \colon \texttt{Chan}[\texttt{Chan}[\textit{int}]]$, then $a(x).x(y).Q$ is well-typed if $y \colon \textit{int}$ in $Q$.
 
     Formally, types are specified by the following grammar:
     \begin{align*}
@@ -1013,7 +1037,7 @@
     \end{itemize}
     
     We now define the typing rules. The process $0$ is well-typed in any environment:
-    \[\overline{\Gamma \vdash 0} \textrm{TNil}.\]
+    \[\frac{}{\Gamma \vdash 0} \textrm{TNil}.\]
     Well-typed processes can be put in parallel, or used as alternatives.
     \[\frac{\Gamma \vdash P \quad \Gamma \vdash Q}{\Gamma \vdash P \mid Q} \textrm{TPar} \qquad \frac{\Gamma \vdash P \quad \Gamma \vdash Q}{\Gamma \vdash P + Q} \textrm{TPlus}\]
     An output must send a message of the correct structure.
@@ -1256,7 +1280,7 @@
     \begin{align*}
         S \triangleq \&  \{ &\textit{add} \colon ?\textit{int}. ?\textit{int}. !\textit{int}. S \\
         & \textit{neg} \colon ?\textit{int}. !\textit{int}. S \\
-        & \textit{quit} \colon \texttt{end} \}
+        & \textit{quit} \colon \textit{end} \}
     \end{align*}
     The symbol $\&$ denotes that the server $S$ is offering 3 services- \textit{add}, \textit{neg} and \textit{quit}. This is called \emph{external choice} (i.e. the client chooses). The \textit{quit} service would end in termination of the protocol. On the other hand, the \textit{add} service takes in 2 integers (as denoted by $?\textit{int}$) and then returns an integer (as denoted by $!\textit{int}$). Similarly, \textit{neg} takes an integer and returns an integer.
 
@@ -1264,7 +1288,7 @@
     \begin{align*}
         C \triangleq \oplus \{ &\textit{add} \colon !\textit{int}. !\textit{int}. ?\textit{int}. C \\
         & \textit{neg} \colon !\textit{int}. ?\textit{int}. C \\
-        & \textit{quit} \colon \texttt{end} \}
+        & \textit{quit} \colon \textit{end} \}
     \end{align*}
     The symbol $\oplus$ denotes that the client must select one of the 3 services. This is called \emph{internal choice}. Note that a send in the server is a receive in the client and vice versa. This is called \emph{duality}, and is denoted $S = \overline{C}$.
 
@@ -1288,7 +1312,7 @@
         &\downarrow \\
         (\nu \ c \colon S)(srv(c^+) &\mid c^- \vartriangleleft \textit{quit}.P(-2)) \\
         &\downarrow \\
-        (\nu \ c \colon \texttt{end})(0 &\mid P(-2)) \\
+        (\nu \ c \colon \textit{end})(0 &\mid P(-2)) \\
         &\equiv \\
         & P(-2)
     \end{align*}
@@ -1318,7 +1342,7 @@
 
     We will now define session types using a grammar:
     \begin{align*}
-        S &::= \texttt{end} & \textrm{termination} \\
+        S &::= \textit{end} & \textrm{termination} \\
         & !T.S & \textrm{send} \\
         &?T.S & \textrm{receive} \\
         &\oplus \{I_i \colon S_i\}_{i \in I} & \textrm{select} \\
@@ -1363,7 +1387,7 @@
 
         \item The process
         \[(\nu \ x)(\overline{x^+} \langle t \rangle.0 \mid \overline{x^-}\langle \textit{true} \rangle.0)\]
-        is not well-typed since both $x^+$ and $x^-$ send a \textit{bool}, and hence are not dual of each other.
+        is not well-typed since both $x^+$ and $x^-$ send data, and hence are not dual of each other.
         
         \item The process
         \[(\nu \ x)(\overline{x^-} \langle \textit{false} \rangle.0 \mid x^+ (t \colon \textit{bool}).0 \mid x^+(w \colon \textit{bool}).0)\]
@@ -1378,8 +1402,8 @@
         is well-typed since the types of $x^-, x^+$ and $y^-, y^+$ are dual, even though the process is actually deadlocked.
 
         \item The process
-        \[(\nu \ x)(x^- \vartriangleleft k.0 \mid x^+ \vartriangleright \{I_i \colon P_i\}_{i \in I}.0)\]
-        is well-typed if and only if $k = I_i$ for some $i \in I$.
+        \[(\nu \ x)(x^- \vartriangleleft k.0 \mid x^+ \vartriangleright \{l_i \colon P_i\}_{i \in I}.0)\]
+        is well-typed if and only if $k = l_i$ for some $i \in I$.
     \end{itemize}
 
     \subsection{Standard types and session types}
@@ -1425,20 +1449,20 @@
     \end{itemize}
     
     We will now consider the encoding process with an example. So, assume that $S$ is a process with session type:
-    \[S = ?\textit{int}.?\textit{int}.!\textit{bool}.\texttt{end}\]
+    \[S = ?\textit{int}.?\textit{int}.!\textit{bool}.\textit{end}\]
     Then, it is encoded as the following type in standard $\pi$-calculus:
     \[\lVert S \rVert = \ell_i[\textit{int}, \ell_i[\textit{int}, \ell_o [\textit{bool}, \varnothing]]]\]
-    As we can see, an input type $?\textit{int}$ becomes $\ell_i[\textit{int}, \cdot]$, where $\cdot$ contains the continuation process. Similarly, an output type $!\textit{int}$ becomes $\ell_o[\textit{int}, \cdot]$. Finally, \texttt{end} is denoted by the empty symbol $\varnothing$.
+    As we can see, an input type $?\textit{int}$ becomes $\ell_i[\textit{int}, \cdot]$, where $\cdot$ contains the continuation process. Similarly, an output type $!\textit{int}$ becomes $\ell_o[\textit{int}, \cdot]$. Finally, \textit{end} is denoted by the empty symbol $\varnothing$.
 
     Now, consider the dual type of $S$:
-    \[\overline{S} = !\textit{int}.!\textit{int}.?\textit{bool}.\texttt{end}\]
+    \[\overline{S} = !\textit{int}.!\textit{int}.?\textit{bool}.\textit{end}\]
     Then, it is encoded as the following type:
     \[\lVert \overline{S} \rVert = \ell_o[\textit{int}, \ell_i[\textit{int}, \ell_o[\textit{bool}, \varnothing]]]\]
     Note that although the first $?\textit{int}$ has been converted into $\ell_o[\textit{int}, \cdot]$, this is not the case for the second one. This is because both $S$ and its dual $\overline{S}$ have to agree on the type of input/output for them to be able to communicate. Hence, the second parameter of the dual $\overline{S}$ must be the same as the second parameter of $S$. We can also think of this as encoding its dual after a receive type. We can think of this in general- in session types, dual types have opposite types throughout, whereas in normal $\pi$-calculus, only the topmost type is of opposite type.
 
     Formally, the algorithm for encoding is given as follows:
     \begin{align*}
-        \lVert \texttt{end} \rVert &\triangleq \varnothing[] \\
+        \lVert \textit{end} \rVert &\triangleq \varnothing[] \\
         \lVert ?T.S \rVert &\triangleq \ell_i[\lVert T \rVert, \lVert S\rVert] \\
         \lVert !T.S \rVert &\triangleq \ell_o[\lVert T\rVert, \lVert\overline{S}\rVert] \\
         \lVert \& \{I_i \mid S_i\}_{i \in I} \rVert &\triangleq \ell_i[\langle l_i \mid \lVert S_i \rVert \rangle_{i \in I}] \\

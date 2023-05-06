@@ -51,9 +51,9 @@
         \item a formal theory of function equivalence.
     \end{itemize}
 
-    We first define the syntax of $\lambda$-calculus. We denote by the set $\Lambda$ the set of all $\lambda$-terms. It is the \emph{smallest} set satisfying the following properties:
+    We first define the syntax of $\lambda$-calculus. We denote by $\Lambda$ the set of all $\lambda$-terms. It is the \emph{smallest} set satisfying the following properties:
     \begin{itemize}
-        \item If $x$ is a \emph{variable}, then $x \in \Lambda$ (i.e. there are infinitely many variables);
+        \item If $x$ is a \emph{variable}, then $x \in \Lambda$ (there are infinitely many variables);
         \item If $M \in \Lambda$, then the \emph{abstraction} $(\lambda x M) \in \Lambda$;
         \item If $M, N \in \Lambda$, then the \emph{application} $(MN) \in \Lambda$.
     \end{itemize}
@@ -62,8 +62,8 @@
     We can define $\lambda$-calculus using BNF as well:
     \begin{align*}
         M &::= x \\
-        &| \ (\lambda x M) \\
-        &| \ (MM)
+        &\mid (\lambda x M) \\
+        &\mid (MM)
     \end{align*}
     Note that in the last line, although we have the application $(MM)$, the two $M$ values need not be the same. Further, we can use inference rules to define it:
     \[\frac{\textrm{if } x \textrm{ is a variable}^*}{x \in \Lambda} \qquad \frac{M \in \Lambda \textrm{ and } x \textrm{ is a variable}^*}{(\lambda x M) \in \Lambda} \qquad \frac{M, N \in \Lambda}{(MN) \in \Lambda}.\]
@@ -184,22 +184,23 @@
     \[C[\lambda y.y] = ((\lambda x.(\lambda y.y) x) M).\]
     We have replaced the hole $[]$ with the given term.
 
-    In general, we can fill contexts with a hole given one term.
+    In general, we can fill contexts with a hole given a term.
     \begin{proposition}
-        Let $C[]$ be a context with one hole and $M$ a term. Then, $C[M]$ is a term.
+        Let $C[]$ be a context and $M$ a term. Then, $C[M]$ is a term.
     \end{proposition}
     \begin{proof}
         We show this using structural induction on the context $C[]$.
         \begin{itemize}
-            \item First, let $C[] = []$. Since $M$ is a term, we find that $C[M] = M$ is a term.
+            \item First, let $C[] = x$. Since $x$ is a variable, we find that
+            \[C[M] = x \in \Lambda.\]
+            \item Next, let $C[] = []$. Since $M$ is a term, we find that $C[M] = M$ is a term.
             \item Now, let $C[] = \lambda x. C'[]$, where $C'[]$ is a context where $C'[M]$ is a term. Then, $C[M] = \lambda x. C'[M]$ must be a term.
+            \item Finally, let $C[] = C_1[] C_2[]$, for contexts $C_1[]$ and $C_2[]$. By the hypothesis, we know that $C_1[M]$ and $C_2[M]$ are terms. Hence, the application
+            \[C[M] = C_1[M] C_2[M]\]
+            is also a term.
         \end{itemize}
         So, the result follows from structural induction.
     \end{proof}
-    \noindent Note that we only considered 2 of the cases from the definition of a context- a variable $x$ has no holes, while the context $(C[] C[])$ has two.
-    
-    In general, we can fill a context with $n$ holes given $n$ terms- this follows from the result above and mathematical induction.
-
     \newpage
 
     \section{Reduction}
@@ -212,7 +213,7 @@
     \[(\lambda x. x+1) 2 \to_\beta (x + 1)[x := 2] \equiv 2 + 1.\]
     We could further reduce this to $3$ by extending mathematical operations, like in the language \textit{Expr}. The $\beta$-rule expresses how we would like to pass parameters into a function.
 
-    Substitution is the main aspect of $\beta$-reduction. However, naive substitution is not necessarily what we want in general. For instance, if we have the term $(\lambda x.\lambda y.yx) y$, then we can $\beta$-reduce it to $\lambda y. yy$. However, this is not what we would like- the first $y$ is meant to be bound by the local $y$, but the second one is not- it is the value we have just substituted. This would not have happened if we have the term $(\lambda x. \lambda y. yx)z$, in which case we get $\lambda y.yz$. So, this happens in the term $(\lambda x. \lambda y. yx)y$ because $y$ is both a free and a bound variable in the term.
+    Substitution is the main aspect of $\beta$-reduction. However, naive substitution is not necessarily what we want in general. For instance, if we have the term $(\lambda x.\lambda y.yx) y$, then we can $\beta$-reduce it to $\lambda y. yy$. However, this is not what we would like- the first $y$ is meant to be bound by the local $y$, but the second one is not; it is the value we have just substituted. This would not have happened if we have the term $(\lambda x. \lambda y. yx)z$, in which case we get $\lambda y.yz$. So, this happens in the term $(\lambda x. \lambda y. yx)y$ because $y$ is both a free and a bound variable in the term.
 
     Hence, we need to define substitution in a more careful manner. This is done as follows:
     \begin{enumerate}
@@ -353,6 +354,7 @@
         \end{itemize}
         So, the result follows from induction.
     \end{proof}
+    \noindent Note that we only considered 2 of the cases from the definition of a context- a variable $x$ has no holes, while the context $(C[] C[])$ has two. 
     \begin{proposition}
         Let $C[]$ be a context with one hole.  If $M \twoheadrightarrow_\beta N$, then $C[M] \twoheadrightarrow_\beta C[N]$.
     \end{proposition}
@@ -360,7 +362,7 @@
         We prove this by structural induction on $\twoheadrightarrow_\beta$:
         \begin{itemize}
             \item If $M \equiv N$, then $C[M] \equiv C[N]$. Hence, $C[M] \twoheadrightarrow_\beta C[N]$.
-            \item Instead, if $M \to_\beta N$, then by the result above, we have $C[M] \to_\beta C[N]$. Hence, $C[M] \twoheadrightarrow_\beta C[N]$.
+            \item Instead, if $M \to_\beta N$, then by the previous proposition, we have $C[M] \to_\beta C[N]$. 
             \item Otherwise, we have $M \twoheadrightarrow_\beta L$ and $L \twoheadrightarrow_\beta N$. By the inductive hypothesis, we find that $C[M] \twoheadrightarrow_\beta C[L]$ and $C[L] \twoheadrightarrow_\beta C[N]$. Hence, we can apply the third inference rule of $\twoheadrightarrow_\beta$ to conclude that $C[M] \twoheadrightarrow_\beta C[N]$.
         \end{itemize}
         So, the result follows from structural induction.
@@ -493,9 +495,9 @@
     \[X \equiv WW \equiv (\lambda xy.(xx)y)(\lambda xy.(xx)y)\]
     We can directly verify if $X$ is a fixed point of $F$:
     \begin{align*}
-        FX &\equiv (\lambda xy.xy)((\lambda xy.(xx)y)(\lambda xy.(xx)y)) \\
+        FX &\equiv (\lambda xy.xy)((\lambda xy.(xx)y)(\lambda xy.(xx)y)) & (\to_\beta) \\
         &= \lambda y.((\lambda xy.(xx)y)(\lambda xy.(xx)y))y \\
-        &= (\lambda xy.(xx)y)(\lambda xy.(xx)y) \\
+        &= (\lambda xy.(xx)y)(\lambda xy.(xx)y) & (\leftarrow_\beta) \\
         &\equiv X
     \end{align*}
     
@@ -504,16 +506,16 @@
     Now, we will see an application of the fixed point theorem-defining recursive functions. The normal definition of the factorial function is the following:
     \[\texttt{fac(n) = if n == 0 then 1 else n*fac(n-1)}\]
     Since $\lambda$-terms do not have the concept of recursion, we will have to implement this algorithm using the fixed point theorem. To do so, define the term
-    \[F = \lambda f.\lambda n.\textit{if} (\textit{eq}(n)(0)) (1) (\textit{mul}(n)(f(n-1))).\]
+    \[F = \lambda f.\lambda n.\textit{if} \ (\textit{eq} \ n \ 0) \ (1) \ (\textit{mul} \ n \ f(n-1)).\]
     In this term, assume that the $\lambda$-calculus has the terms \textit{if}, \textit{eq} and \textit{mul} with their expected meaning. Then, let \textit{fac} be a fixed point of $F$. We can evaluate factorial of 1 using this term:
     \begin{align*}
         \textit{fac}(1) &= F(\textit{fac})(1) \\
-        &\equiv (\lambda f.\lambda n.\textit{if} (\textit{eq} \ n \ 0) \ 1 \ (\textit{mul} \ n \ (f(n-1))))(\textit{fac})(1) \\
-        &= \textit{if} (\textit{eq} \ 1 \ 0) 1 (\textit{mul} \ 1 \ (\textit{fac}(0))) \\
+        &\equiv (\lambda f.\lambda n.\textit{if} \ (\textit{eq} \ n \ 0) \ (1) \ (\textit{mul} \ n \ f(n-1))) \ (\textit{fac}) \ (1) \\
+        &= \textit{if} \ (\textit{eq} \ 1 \ 0) \ (1) \ (\textit{mul} \ 1 \ \textit{fac}(0)) \\
         &= \textit{mul} \ 1 \ \textit{fac}(0) \\
         &= \textit{mul} \ 1 \ F(\textit{fac})(0) \\
-        &\equiv \textit{mul} \ 1 \ (\lambda f.\lambda n.\textit{if} (\textit{eq} \ n \ 0) \ 1 \ (\textit{mul} \ n (f(n-1))))(\textit{fac})(0) \\
-        &= \textit{mul} \ 1 \ \textit{if} (\textit{eq} \ 0 \ 0) 1 (\textit{mul} \ 1 (\textit{fac}(-1)))  \\
+        &\equiv \textit{mul} \ 1 \ (\lambda f.\lambda n.\textit{if} \ (\textit{eq} \ n \ 0) \ (1) \ (\textit{mul} \ n f(n-1))) \ (\textit{fac}) \ (0) \\
+        &= \textit{mul} \ 1 \ \textit{if} \ (\textit{eq} \ 0 \ 0) \ (1) \ (\textit{mul} \ 1 \ \textit{fac}(-1))  \\
         &= \textit{mul} \ 1 \ 1 = 1.
     \end{align*}
     \noindent Clearly, this formula can be used to evaluate higher factorials as well.
@@ -535,7 +537,7 @@
     \begin{proof}
         Since $\lambda \eta$ and $\lambda + ext$ both extend $\lambda$, it suffices to show that their extensions are equivalent.
 
-        We first show that $\lambda \eta \vdash Mx = Nx \implies M = N$ if $x$ is not free in $M$ and $N$. So, let $M, N$ be terms and $x$ a variable not free in $M$ and $N$ such that $Mx = Nx$. This implies that $\lambda x.Mx = \lambda x.Nx$ by $(\xi)$. Hence, by $(\eta)$, we find that
+        We first show that $\lambda \eta \vdash Mx = Nx \to M = N$ if $x$ is not free in $M$ and $N$. So, let $M, N$ be terms and $x$ a variable not free in $M$ and $N$ such that $Mx = Nx$. This implies that $\lambda x.Mx = \lambda x.Nx$ by $(\xi)$. Hence, by $(\eta)$, we find that
         \[M = \lambda x.Mx = \lambda x.Nx = N.\]
         So, $\lambda \eta \vdash \lambda + ext$.
 
@@ -592,7 +594,7 @@
     \end{align*}
     for any terms $M, N$ and $O$. Now, let $M = \lambda xy.y$. Then,
     \[P = M(NO)P = (MN)OP = OP.\]
-    So, if $P = N = I$ and $O$ arbitrary, we find that $O = I$. So, this theory is inconsistent.
+    So, if $P = N = I$ and $O$ arbitrary, we find that $O = I$. Hence, this theory is inconsistent.
 
     \subsection{Normal Forms}
     We will now look at normal forms.
@@ -625,9 +627,9 @@
     \noindent The final equation states that any two distinct $\beta \eta$-nfs cannot be set equal without making the theory inconsistent. Hence, $\beta \eta$ is the weakest consistent form of equality. Note that this does not holds for just $\beta$-nfs: $y$ and $\lambda x.yx$ are two distinct $\beta$-nfs, but do not lead to inconsistency (since they share the $\beta \eta$-nf). 
     
     $\beta \eta$ normal forms having the equal-or-inconsistent property is the property of \emph{completeness}, which is given below.
-    \begin{proposition}
+    \begin{corollary}
         Let $M$ and $N$ be $\lambda$-terms. Then, either $\lambda \eta \vdash M = N$ or $\lambda \eta + (M = N)$ is inconsistent.
-    \end{proposition}
+    \end{corollary}
     \newpage
 
     \section{Reduction and Normal Forms}
@@ -641,7 +643,7 @@
     
     For instance, consider the definition of the factorial function we saw above:
     \begin{align*}
-        F &= \lambda f.\lambda n.\textit{if}(\textit{eq} \ n \ 0)(1)(\textit{mul} \ n \ f(n-1)) \\
+        F &= \lambda f.\lambda n.\textit{if} \ (\textit{eq} \ n \ 0) \ (1) \ (\textit{mul} \ n \ f(n-1)) \\
         \texttt{fac} &= \texttt{fix}(F).
     \end{align*}
     Then, if we wanted to compute $\texttt{fac}(0)$, the following is a possible sequence of reduction:
@@ -912,7 +914,7 @@
     \section{Computability}
     In this section, we consider \emph{computability}. Computability requires a definition of computation. There are many notions of computation, including $\lambda$-calculus, automata and register machines. They all capture the same notion of computability. The \emph{Church-Turing Thesis} states that collectively, these definitions are the `true' notion of computation.
 
-    To formalise computability, we will consider ways of defining functions on positive integers (i.e. natural numbers). We can use $\lambda$-terms to represent natural numbers and booleans, and fixed-point operators to define recursive functions. We will show that recursive functions can be converted into $\lambda$-terms.
+    To formalise computability, we will consider ways of defining functions on natural numbers. We can use $\lambda$-terms to represent natural numbers and booleans, and fixed-point operators to define recursive functions. We will show that recursive functions can be converted into $\lambda$-terms.
 
     \subsection{Primitive Recursive Functions}
     We show that $\lambda$-calculus is the right model of computation by showing it is equivalent to recursive functions. We start by defining \emph{primitive recursive functions}. They can be defined using a fixed type of \emph{recursive functions}. The primitive recursive functions are functions $\mathbb{N} \times \dots \times \mathbb{N} \to \mathbb{N}$ that can be defined using the following \emph{initial functions}:
@@ -961,7 +963,7 @@
             \operatorname{fact}(0) &= S^+(0) \\
             \operatorname{fact}(k+1) &= G(\operatorname{fact}(k), k),
         \end{align*}
-        where $G(x, y) = \operatorname{mult}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$, i.e. $G(x, y) = x * (y+1)$.
+        where $G(x, y) = \operatorname{mult}(U_{0, 1}(x, y), S^+(U_{1, 1}(x, y)))$, i.e. $G(x, y) = x \cdot (y+1)$.
 
         \item the sum of the first $n$ numbers is given by
         \begin{align*}
@@ -1005,7 +1007,7 @@
 
     Finally, we define minimalisation. To do so, let $P$ be the predicate. We define a function that iterates from a given number $n$ until $P \ n$ is true, and returns $n$. So, it can be the fixed point of the function
     \[h_P \equiv \lambda hz.\textit{if} \ (P \ z) \ (z) \ (h(S^+ \ z)).\]
-    So, $\textit{min} P \equiv \texttt{fix}(h_p)(Z)$, where $Z \equiv \lambda x.x$ is zero. If $F$ is given by
+    So, $\textit{min} \ P \equiv \texttt{fix}(h_p)(Z)$, where $Z \equiv \lambda x.x$ is zero. If $F$ is given by
     \[F(\vec{n}) = \min m[H(\vec{n}, m) = 0],\]
     where $H$ is defined by a $\lambda$-term $H$, then we can define $F$ by
     \[F \equiv \lambda \vec{x}.\textit{min} \ (\lambda y.\textit{iszero} \ H \ \vec{x} \ y).\]
