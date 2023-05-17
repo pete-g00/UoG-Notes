@@ -53,8 +53,8 @@
 \setcounter{chapter}{1}
 
 \begin{document}
-    \chapter{$\pi$-calculus}
-    \section{Introduction to $\pi$-calculus}
+    \chapter{Pi-calculus}
+    \section{Introduction to pi-calculus}
     We saw that $\lambda$-calculus is a theory of \emph{sequential computation}. Here, we are interested in the results of functions applied to data. In $\pi$-calculus, we are interested in concurrent and parallel computation, communication between computing agents and continuous exchanges of input and output. There are many theories for \emph{concurrent computation} including $\pi$-calculus, and are described as \emph{process calculus} or \emph{process algebra}. Here, \emph{process} means an identifiable computing agent that can interact with the environment. So, $\pi$-calculus is a process calculus. Moreover, unlike other process calculi, it has \emph{mobility}- we can send a communication link (channel) as data that can be sent across another link.
 
     In $\pi$-calculus, a \emph{process} is a computing agent that can interact with other processes by sending and receiving messages. Messages can be sent on \emph{channels} (or \emph{names}). There can be several senders and receivers on a single channel, but each message is sent by one process and received by one process. Communication is \emph{synchronous}- both sender and receiver block until the message is exchanged. There is no concept of \emph{location}. If we define a system by two processes in parallel, we don't care about whether they are on the same CPU or at different places in a distributed system. Nonetheless, these concepts can be used to extend $\pi$-calculus.
@@ -817,7 +817,7 @@
             \item if $Q \xrightarrow{\alpha} Q'$, then there is a $P'$ such that $P \xrightarrow{\alpha} P'$ and $P' \sim Q'$.
         \end{itemize}
     \end{definition}
-    This definition is recursive in nature, but does not have a base case. Moreover, there is no reason that $P'$ and $Q'$ are 'smaller' than $P$ and $Q$.
+    This definition is recursive in nature. In the base case, the process will not have any action. However, there is no reason that $P'$ and $Q'$ get 'smaller' than $P$ and $Q$, so we might not be headed to the base case in general.
 
     We illustrate the issue further. So, consider the process $P = {!a.0}$. We would like $P \sim P$. Because $a.0 \xrightarrow{a} 0$, we have
     \[P \xrightarrow{a} 0 \mid {!a.0} \equiv 0 \mid P.\]
@@ -1231,7 +1231,7 @@
     In addition to capabilities of input/output, channel types can be refined by introducing \emph{multiplicities} for linear and shared channels. \emph{Linearity} restricts channel usage exactly once, in accordance with its capability:
     \begin{itemize}
         \item linear input type $\ell_i[\cdot]$ can only be used once in input;
-        \item linear output type $\ell_o[\cdot]$ can only be used once in out; and
+        \item linear output type $\ell_o[\cdot]$ can only be used once in output; and
         \item linear channel type $\ell_{\textit{Chan}}[\cdot]$ can only be used once in input and output.
     \end{itemize}
     Linear types allow for resource-aware programming and have inspired ownership types and unique types in PLs. The updated types are the following:

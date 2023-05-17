@@ -503,7 +503,7 @@
     
     In the fixed point theorem, we have self-application, i.e. subterms of the form $xx$. This is not typically seen in programming languages, but has huge consequences in $\lambda$-calculus.
 
-    Now, we will see an application of the fixed point theorem-defining recursive functions. The normal definition of the factorial function is the following:
+    Now, we will see an application of the fixed point theorem- defining recursive functions. The normal definition of the factorial function is the following:
     \[\texttt{fac(n) = if n == 0 then 1 else n*fac(n-1)}\]
     Since $\lambda$-terms do not have the concept of recursion, we will have to implement this algorithm using the fixed point theorem. To do so, define the term
     \[F = \lambda f.\lambda n.\textit{if} \ (\textit{eq} \ n \ 0) \ (1) \ (\textit{mul} \ n \ f(n-1)).\]
